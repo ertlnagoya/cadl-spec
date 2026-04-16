@@ -106,7 +106,7 @@ const config: Config = {
           title: 'Organization',
           items: [
             {
-              label: 'Matsubara Laboratory',
+              label: 'ERTL',
               href: 'https://www.ertl.jp/',
             },
             {
@@ -116,7 +116,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Matsubara Laboratory, Nagoya University. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} ERTL, Nagoya University. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

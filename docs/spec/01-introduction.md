@@ -13,7 +13,7 @@ toolchain design.
 
 This document consolidates the specification for CADL implementation
 based on the SoS research survey report (March 14, 2026 version) and SoS
-architecture design studies conducted at the Matsubara Laboratory.
+architecture design studies conducted at the ERTL.
 
 ## 1.2 Background: Challenges of Institutional Design in SoS
 An SoS is a system configuration in which multiple independently

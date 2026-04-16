@@ -7,7 +7,7 @@ title: "CADL Specification v0.1"
 
 **Language Specification — Version 0.1 (Draft)**
 
-Graduate School of Informatics, Nagoya University — Matsubara Laboratory
+Graduate School of Informatics, Nagoya University — ERTL
 
 March 17, 2026
 
