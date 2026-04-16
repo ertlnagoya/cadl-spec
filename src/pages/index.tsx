@@ -28,6 +28,12 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             style={{marginLeft: '1rem'}}
+            href="https://github.com/ertlnagoya/cadl-explorer">
+            CADL Explorer
+          </Link>
+          <Link
+            className="button button--secondary button--lg"
+            style={{marginLeft: '1rem'}}
             href="https://github.com/ertlnagoya/cadl">
             View on GitHub
           </Link>
