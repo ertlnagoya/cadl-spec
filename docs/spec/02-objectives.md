@@ -1,0 +1,121 @@
+---
+sidebar_position: 2
+title: "Language Objectives"
+---
+
+## 2.1 Problems CADL Solves
+CADL aims to describe the three layers of institutions, protocols, and
+algorithms in a single language for SoS, ensuring consistency and safety
+through formal verification at the design stage. This establishes an
+engineering cycle for institutions: "describe → verify → deploy →
+monitor."
+
+CADL addresses the following specific problems:
+
+**Formalization of institutions:** Convert natural language
+institutional descriptions into machine-readable and verifiable formats.
+Enable authority structures, information sharing scope, and incentive
+designs to be expressed as quantitative parameters.
+
+**Automatic consistency verification:** Automatically detect
+contradictions between multiple contracts, authority conflicts, and
+deadlock possibilities at the design stage.
+
+**Dynamic institutional regime transitions:** Describe dynamic
+institutional switching in response to environmental changes (e.g.,
+transition from C-SoS to A-SoS) with safety guarantees.
+
+**Compositional verification support:** When constituent systems join or
+leave, verify integrity using differential verification rather than full
+re-verification.
+
+**Runtime monitoring:** Support runtime monitoring of deployed
+institutions and detection/response to contract violations.
+
+## 2.2 Design Philosophy and Principles
+**Declarative description:** Describe what institutions should achieve,
+while the toolchain determines how. Designers are freed from
+implementation details.
+
+**Hierarchical composition:** Adopt a hierarchical description structure
+corresponding to the five-layer framework (Policy / Governance / Control
+/ Execution / Environment).
+
+**Parametric institutional design:** Make institutional parameters such
+as information sharing degree (α), decision decentralization degree (β),
+and incentive intensity (λ) numerically manipulable.
+
+**Contract-based composition:** Based on assume-guarantee contracts,
+clearly specify each actor's preconditions and guarantees, enabling
+compositional verification.
+
+**Incremental refinement:** Enable gradual refinement from abstract
+institutional descriptions to detailed implementation specifications. At
+early design stages, allow natural language-like descriptions and
+progressively add information needed for verification.
+
+**Domain-independent:** Provide domain-independent descriptive
+capability applicable to transportation, energy, IoT, daily life, etc.
+Domain-specific extensions are provided through libraries.
+
+**Universal Readability:** Enable students, enterprise practitioners,
+municipal officials, citizens, and other stakeholders without
+specialized knowledge of programming or formal methods to understand the
+intent and structure of institutional descriptions. The means include
+YAML-like declarative syntax, vocabulary close to natural language,
+graduated description levels, and AI-assisted barrier reduction.
+
+## 2.3 Target Users and Application Scenarios
+Based on the principle of "universal readability," CADL envisions a
+broad range of users from experts to non-experts. Below are the main
+user archetypes and their levels of involvement.
+
+**SoS Architects and Designers:** Experts who design and verify
+institutional structures for large-scale SoS. Primarily use
+verification-level descriptions and define formal assume-guarantee
+contracts.
+
+**Institutional Design Researchers:** Researchers who experimentally
+verify theories such as game theory and mechanism design. Leverage
+parametric design-level descriptions and explore institutional parameter
+spaces.
+
+**Students and Educators:** Students and instructors learning SoS and
+institutional design concepts in university and technical college
+courses. Start with overview-level descriptions and progress to design
+level. Educational templates and AI support accelerate learning.
+
+**Enterprise Practitioners and Project Managers:** Practitioners
+designing inter-departmental cooperation rules and supply chain
+institutions. Use natural language-like overview-level descriptions,
+with AI supporting refinement to design level.
+
+**Municipal Officials and Policymakers:** Government officials
+responsible for institutional design in regional public service
+coordination and smart city initiatives. Through visualization and AI
+support, participate in institutional discussion and consensus-building
+without focusing on technical details.
+
+**Citizens and Community Participants:** Users who describe household
+rules, condominium management institutions, and local community
+institutions in CADL with AI support. Participate in everyday
+institutional design through overview-level descriptions and AI
+dialogue.
+
+**AI Agents:** AI systems that perform automatic conversion from natural
+language to CADL descriptions via LLM and provide institutional
+recommendations based on CADL. Generate and process descriptions at all
+levels.
+
+Below shows the correspondence of description levels and support
+mechanisms for each user type.
+
+  **User Type**             **Primary Description Level**              **Primary Support Means**
+  ------------------------- ------------------------------------------ ----------------------------------
+  SoS Architect             Verification Level (Formal Descriptions)   IDE Plugin, Type Checker
+  Researcher                Design Level (Parametric)                  Parameter Exploration Tools
+  Student/Educator          Overview → Design Level                    Educational Templates, Tutorials
+  Enterprise Practitioner   Overview Level → AI Refinement             AI Support, Visualizer
+  Municipal Official        Overview Level                             Visualization, AI Dialogue
+  Citizen                   Overview Level (AI-Supported)              NL→CADL Conversion, AI Assistant
+  AI Agent                  All Levels                                 API, Parser Library
