@@ -25,6 +25,33 @@ computational behavior within a single unified language. From a CADL specificati
 the toolchain automatically generates simulator configurations and verifies
 design consistency.
 
+## Architecture at a Glance
+
+```mermaid
+flowchart LR
+    SRC["CADL source (.cadl)<br/>Institution / Protocol / Algorithm"]
+    IR["Three-layer IR<br/>(cadl-sim)"]
+    VER["Verifier<br/>SMT / model check / proof"]
+    CFG["Simulator config<br/>(Unity / ROS2 / Python)"]
+    CODE["Codegen<br/>Solidity / OPA / Rego"]
+    EXP["Experiment runner<br/>seeds × regimes"]
+    EVAL["Evaluation<br/>throughput / autonomy / fairness"]
+
+    SRC --> IR
+    IR --> VER
+    IR --> CFG
+    IR --> CODE
+    CFG --> EXP
+    EXP --> EVAL
+    VER -. feedback .-> SRC
+    EVAL -. feedback .-> SRC
+```
+
+The same IR drives three outputs in parallel: formal verification,
+runtime simulator configs, and institutional-constraint code
+(smart contracts / policy). Experiment results feed back into the
+CADL source so governance parameters (α, β, λ, ρ) can be tuned.
+
 ## How to Read This Specification
 
 This document is organized into three parts. Readers are encouraged to follow

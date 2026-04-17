@@ -20,6 +20,25 @@ const config: Config = {
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
+  markdown: {
+    mermaid: true,
+  },
+
+  themes: [
+    '@docusaurus/theme-mermaid',
+    [
+      require.resolve('@easyops-cn/docusaurus-search-local'),
+      {
+        hashed: true,
+        indexDocs: true,
+        indexBlog: false,
+        docsRouteBasePath: '/docs',
+        language: ['en', 'ja'],
+        highlightSearchTermsOnTargetPage: true,
+      },
+    ],
+  ],
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'ja'],
