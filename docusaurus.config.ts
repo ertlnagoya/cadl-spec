@@ -41,8 +41,6 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl:
-            'https://github.com/ertlnagoya/cadl-spec/tree/main/',
         },
         blog: false,
         theme: {
@@ -62,17 +60,23 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
+          sidebarId: 'quickstartSidebar',
+          position: 'left',
+          label: 'Quick Start',
+        },
+        {
+          type: 'docSidebar',
           sidebarId: 'specSidebar',
           position: 'left',
           label: 'Specification',
         },
         {
-          type: 'localeDropdown',
+          href: 'https://cadl-explorer.streamlit.app/',
+          label: 'CADL Explorer',
           position: 'right',
         },
         {
-          href: 'https://github.com/ertlnagoya/cadl',
-          label: 'GitHub',
+          type: 'localeDropdown',
           position: 'right',
         },
       ],
@@ -84,21 +88,21 @@ const config: Config = {
           title: 'Documentation',
           items: [
             {
+              label: 'Quick Start',
+              to: '/docs/quickstart/',
+            },
+            {
               label: 'Specification',
               to: '/docs/spec/intro',
             },
           ],
         },
         {
-          title: 'Resources',
+          title: 'Tools',
           items: [
             {
-              label: 'GitHub (CADL)',
-              href: 'https://github.com/ertlnagoya/cadl',
-            },
-            {
-              label: 'GitHub (Spec)',
-              href: 'https://github.com/ertlnagoya/cadl-spec',
+              label: 'CADL Explorer',
+              href: 'https://cadl-explorer.streamlit.app/',
             },
           ],
         },
