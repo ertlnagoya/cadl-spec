@@ -5,31 +5,30 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 
-import styles from './index.module.css';
+import styles from '@site/src/pages/index.module.css';
 
 function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <Heading as="h1" className="hero__title">
-          {siteConfig.title}
+          CADL
         </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p className="hero__subtitle">Contract Architecture Description Language</p>
         <p style={{color: 'var(--ifm-hero-text-color)', opacity: 0.8, fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto 1.5rem'}}>
-          A domain-specific language for formally specifying, verifying, and deploying institutional designs in System of Systems.
+          System of Systems における制度設計を形式的に記述・検証・展開するためのドメイン固有言語
         </p>
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
             to="/docs/spec/intro">
-            Read the Specification
+            仕様書を読む
           </Link>
           <Link
             className="button button--secondary button--lg"
             style={{marginLeft: '1rem'}}
             href="https://cadl-explorer.streamlit.app/">
-            Try CADL Explorer
+            CADL Explorer を試す
           </Link>
         </div>
       </div>
@@ -43,20 +42,20 @@ function WhatIsCADL() {
       <div className="container">
         <div className="row" style={{alignItems: 'center', gap: '2rem'}}>
           <div className="col col--6">
-            <Heading as="h2">What is CADL?</Heading>
+            <Heading as="h2">CADL とは</Heading>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              <strong>CADL (Contract Architecture Description Language)</strong> is a domain-specific language
-              for formally specifying, verifying, and deploying institutional designs in multi-agent
-              System of Systems (SoS).
+              <strong>CADL（Contract Architecture Description Language）</strong>は，
+              マルチエージェント System of Systems（SoS）における制度設計を形式的に記述・検証・展開するための
+              ドメイン固有言語です。
             </p>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              CADL adopts a <strong>three-layer architecture</strong> — Institution, Protocol, and Algorithm —
-              enabling precise description of governance rules, coordination mechanisms, and computational
-              behavior within a single unified language. From a CADL specification, the toolchain
-              automatically generates simulator configurations and verifies design consistency.
+              CADLは<strong>三層アーキテクチャ</strong>——制度層（Institution）・プロトコル層（Protocol）・
+              アルゴリズム層（Algorithm）——を採用し，ガバナンスルール，エージェント間の調整メカニズム，
+              計算的な振る舞いを単一の統合言語で精密に記述できます。
+              CADL仕様からシミュレータ設定の自動生成や設計整合性の検証を行うツールチェーンも提供します。
             </p>
             <Link className="button button--outline button--primary" to="/docs/spec/intro">
-              Read the Specification →
+              仕様書を読む →
             </Link>
           </div>
           <div className="col col--5 col--offset-1">
@@ -69,7 +68,7 @@ function WhatIsCADL() {
               lineHeight: '1.6',
               color: '#cdd6f4',
             }}>
-              <div style={{color: '#6c7086', marginBottom: '0.5rem'}}># CADL — Institution layer</div>
+              <div style={{color: '#6c7086', marginBottom: '0.5rem'}}># CADL — 制度層の記述例</div>
               <div><span style={{color: '#cba6f7'}}>institution</span> <span style={{color: '#89b4fa'}}>DeliveryGovernance</span> {'{'}</div>
               <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>sos_type</span><span style={{color: '#cdd6f4'}}> = </span><span style={{color: '#f38ba8'}}>"directed"</span></div>
               <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>alpha</span><span style={{color: '#cdd6f4'}}> = </span><span style={{color: '#fab387'}}>0.3</span></div>
@@ -108,12 +107,12 @@ function WhatIsExplorer() {
                 flexWrap: 'wrap',
                 fontSize: '0.9rem',
               }}>
-                {['CADL Spec', '→', 'IR', '→', 'Sim Config', '→', 'Experiment', '→', 'Evaluation'].map((item, i) => (
+                {['CADL仕様', '→', 'IR', '→', 'シミュレータ設定', '→', '実験', '→', 'ガバナンス評価'].map((item, i) => (
                   <span key={i} style={{
                     background: item === '→' ? 'transparent' : 'var(--ifm-color-primary-lightest)',
                     padding: item === '→' ? '0' : '0.2rem 0.6rem',
                     borderRadius: '4px',
-                    fontFamily: 'monospace',
+                    fontFamily: item === '→' ? 'inherit' : 'monospace',
                     color: item === '→' ? 'var(--ifm-color-emphasis-600)' : 'var(--ifm-color-primary-darkest)',
                     fontWeight: item === '→' ? 'normal' : '600',
                   }}>{item}</span>
@@ -122,22 +121,21 @@ function WhatIsExplorer() {
             </div>
           </div>
           <div className="col col--6 col--offset-1">
-            <Heading as="h2">What is CADL Explorer?</Heading>
+            <Heading as="h2">CADL Explorer とは</Heading>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              <strong>CADL Explorer</strong> is an interactive web application that demonstrates the
-              CADL governance pipeline end-to-end. Starting from a CADL specification, it traces
-              the full causal chain — from institutional design through simulation configuration
-              to experiment results and governance evaluation.
+              <strong>CADL Explorer</strong> は，CADLのガバナンスパイプラインをエンドツーエンドで体験できる
+              インタラクティブなWebアプリケーションです。CADL仕様から出発し，
+              制度設計 → シミュレータ設定 → 実験 → ガバナンス評価 という因果連鎖を一貫して可視化します。
             </p>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              The tool makes the relationship between design decisions and behavioral outcomes
-              transparent and reproducible, helping researchers explore how governance parameters
-              affect multi-agent system performance.
+              設計上の意思決定がマルチエージェントシステムの振る舞いにどう影響するかを，
+              透明かつ再現可能な形で示すことができます。
+              ガバナンスパラメータを対話的に変えながら，結果への影響をリアルタイムで確認できます。
             </p>
             <Link
               className="button button--primary button--lg"
               href="https://cadl-explorer.streamlit.app/">
-              Try CADL Explorer →
+              CADL Explorer を試す →
             </Link>
           </div>
         </div>
@@ -149,23 +147,23 @@ function WhatIsExplorer() {
 function Features() {
   const features = [
     {
-      title: 'Three-Layer Architecture',
-      description: 'Describe institutions (authority, incentives, information sharing), protocols (coordination procedures), and algorithms in a single language.',
+      title: '三層アーキテクチャ',
+      description: '制度層（権限・インセンティブ・情報共有），プロトコル層（調整手続き），アルゴリズム層（計算的振る舞い）を単一言語で統合的に記述します。',
     },
     {
-      title: 'Formal Verification',
-      description: 'Automatically detect contradictions between contracts, deadlocks in protocols, and safety violations during regime transitions.',
+      title: '形式的検証',
+      description: 'コントラクト間の矛盾，プロトコルのデッドロック，体制遷移時の安全性違反を自動的に検出します。',
     },
     {
-      title: 'End-to-End Pipeline',
-      description: 'Generate simulator configurations from CADL specs and trace the full causal chain from institutional design to behavioral evaluation.',
+      title: 'エンドツーエンドパイプライン',
+      description: 'CADL仕様からシミュレータ設定を自動生成し，制度設計から振る舞い評価までの因果連鎖を一貫してトレースします。',
     },
   ];
 
   return (
     <section style={{padding: '2rem 0', background: 'var(--ifm-background-surface-color)'}}>
       <div className="container">
-        <Heading as="h2" style={{textAlign: 'center', marginBottom: '2rem'}}>Key Features</Heading>
+        <Heading as="h2" style={{textAlign: 'center', marginBottom: '2rem'}}>主な特徴</Heading>
         <div className="row">
           {features.map((feature, idx) => (
             <div key={idx} className="col col--4" style={{marginBottom: '2rem'}}>
@@ -187,11 +185,10 @@ function Features() {
 }
 
 export default function Home(): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
       title="CADL - Contract Architecture Description Language"
-      description="A domain-specific language for formally specifying, verifying, and deploying institutional designs in System of Systems.">
+      description="System of Systems における制度設計を形式的に記述・検証・展開するためのドメイン固有言語">
       <HomepageHeader />
       <main>
         <WhatIsCADL />
