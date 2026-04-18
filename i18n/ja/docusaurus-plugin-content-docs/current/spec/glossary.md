@@ -1,5 +1,5 @@
 ---
-sidebar_position: 12
+sidebar_position: 20
 title: "用語集"
 ---
 

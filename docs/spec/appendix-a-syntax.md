@@ -161,7 +161,7 @@ verify_method        = "smt" | "model_check" | "simulation" | "proof" ;
 ```ebnf
 codegen_section = "codegen:" , INDENT , { codegen_target } , DEDENT ;
 codegen_target  = target_name , ":" , INDENT , codegen_body , DEDENT ;
-target_name     = "unity" | "ros2" | "python" | "solidity" | identifier ;
+target_name     = "unity" | "ros2" | "python" | "solidity" | "opa" | identifier ;
 codegen_body    = [ "output:" , string , NEWLINE ] ,
                   [ "template:", string , NEWLINE ] ,
                   [ "options:" , INDENT , { kv_entry } , DEDENT ] ;
