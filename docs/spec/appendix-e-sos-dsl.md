@@ -217,8 +217,12 @@ contracts:
 ## E.7 Intermediate Representation (IR) addition
 
 The CADL Sim-IR (see `cadl/sim/ir.py`) is extended with a `lifecycle`
-and `monitors` field on each contract IR object. The shape is a direct
-serialization of the AST after normalization:
+and `monitors` field on each contract IR object. The shape is a
+**direct serialization** of the IR dataclasses (`asdict()`), which
+applies normalizations to the surface syntax and **denormalizes** the
+nested `on_violation` / `on_match` / `sampling` blocks into flat
+fields prefixed with their parent (this keeps the JSON stable for
+generators that read it field-by-field):
 
 ```jsonc
 {
@@ -236,21 +240,34 @@ serialization of the AST after normalization:
         "terminal": ["Completed", "Violated", "Terminated"],
         "transitions": [
           { "id": "assign",
-            "from": ["Proposed"], "to": "Assigned",
-            "on": "DISPATCHER -> ROBOT[i] : route_assignment" },
+            "from_states": ["Proposed"],
+            "to_state":    "Assigned",
+            "on":          "DISPATCHER -> ROBOT[i] : route_assignment",
+            "when":        null,
+            "deadline_ms": null,
+            "on_violation_transition": null,
+            "on_violation_severity":   null,
+            "emit":        [] },
           { "id": "accept",
-            "from": ["Assigned"], "to": "Accepted",
-            "on": "ROBOT[i] -> DISPATCHER : ack(accepted)",
+            "from_states": ["Assigned"],
+            "to_state":    "Accepted",
+            "on":          "ROBOT[i] -> DISPATCHER : ack(accepted)",
+            "when":        null,
             "deadline_ms": 5000,
-            "on_violation": { "transition": "Violated", "severity": "Major" } }
+            "on_violation_transition": "Violated",
+            "on_violation_severity":   "Major",
+            "emit":        [] }
         ]
       },
       "monitors": [
         { "id": "battery_guard",
-          "observe": ["ROBOT[i].battery"],
-          "sampling": { "kind": "periodic", "period_ms": 500 },
-          "rule": "ROBOT[i].battery < 20 AND state == Assigned",
-          "on_match": { "transition": "Violated", "severity": "Major" } }
+          "observe":            ["ROBOT[i].battery"],
+          "sampling_kind":      "periodic",
+          "sampling_period_ms": 500,
+          "rule":               "ROBOT[i].battery < 20 AND state == Assigned",
+          "on_match_violation": null,
+          "on_match_transition": "Violated",
+          "on_match_severity":   "Major" }
       ]
     }
   ]
@@ -259,12 +276,22 @@ serialization of the AST after normalization:
 
 Normalizations applied during lowering:
 
-| Sugar | Normalized form |
+| Surface syntax | Normalized IR field(s) |
 | --- | --- |
-| `from: Assigned` (single id) | `"from": ["Assigned"]` |
-| `from: [Assigned, Accepted]` | `"from": ["Assigned", "Accepted"]` |
+| `from: Assigned` (single id) | `"from_states": ["Assigned"]` |
+| `from: [Assigned, Accepted]` | `"from_states": ["Assigned", "Accepted"]` |
+| `to: Accepted` | `"to_state": "Accepted"` |
 | `deadline: 5s` | `"deadline_ms": 5000` |
-| `sampling: periodic(500ms)` | `{"kind":"periodic","period_ms":500}` |
+| `on_violation: { transition: V, severity: Major }` | `"on_violation_transition": "V"`, `"on_violation_severity": "Major"` |
+| `sampling: periodic(500ms)` | `"sampling_kind": "periodic"`, `"sampling_period_ms": 500` |
+| `sampling: event` | `"sampling_kind": "event"`, `"sampling_period_ms": null` |
+| `on_match: { violation, transition, severity }` | `"on_match_violation"`, `"on_match_transition"`, `"on_match_severity"` |
+
+The `cadl sim-ir <file> --format json` command emits this exact
+shape; downstream tools (cadl-explorer's Lifecycle View, the
+Python reference runtime in raspimouse-swarm-simulator's
+`cadl/runtime/`, and the Unity C# generator's
+`unity-csharp` target) all consume the same JSON.
 
 ## E.8 Codegen contract (informative)
 
