@@ -28,6 +28,12 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             style={{marginLeft: '1rem'}}
+            to="/docs/handson/">
+            Take the Hands-on
+          </Link>
+          <Link
+            className="button button--secondary button--lg"
+            style={{marginLeft: '1rem'}}
             href="https://cadl-explorer.streamlit.app/">
             Try CADL Explorer
           </Link>
@@ -146,6 +152,52 @@ function WhatIsExplorer() {
   );
 }
 
+function WhatIsHandson() {
+  return (
+    <section style={{padding: '3rem 0', background: 'var(--ifm-background-surface-color)'}}>
+      <div className="container">
+        <div className="row" style={{alignItems: 'center', gap: '2rem'}}>
+          <div className="col col--6">
+            <Heading as="h2">Take the Hands-on</Heading>
+            <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
+              <strong>SoS-DSL Hands-on</strong> is a 90-minute self-paced workshop (or a 5-session
+              PBL course) that walks you through the entire pipeline of the CADL toolchain on a
+              robot delivery System of Systems: <em>CADL modelling → SoS-DSL contracts (lifecycle
+              + monitors) → visualisation → code generation → live simulation</em>.
+            </p>
+            <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
+              Materials include a bilingual main textbook, a 5-session exercises booklet,
+              a graded difficulty design, an academic background page covering ISO/IEC/IEEE
+              21839/40/41 and Maier's criteria, and a complete instructor course-design document.
+            </p>
+            <Link className="button button--primary button--lg" to="/docs/handson/">
+              Open the Hands-on Index →
+            </Link>
+          </div>
+          <div className="col col--5 col--offset-1">
+            <div style={{
+              background: 'var(--ifm-background-color)',
+              border: '1px solid var(--ifm-color-emphasis-200)',
+              borderRadius: '12px',
+              padding: '1.5rem',
+              fontSize: '0.95rem',
+              lineHeight: '1.7',
+            }}>
+              <div style={{fontWeight: '600', marginBottom: '0.75rem'}}>What's inside</div>
+              <ul style={{paddingLeft: '1.2rem', marginBottom: '0'}}>
+                <li><strong>Main textbook</strong> — 6 steps × 15 min, EN / JA</li>
+                <li><strong>Exercises</strong> — 5-session series with rubric</li>
+                <li><strong>Academic background</strong> — Maier's 5 criteria, ISO 21839/40/41, references</li>
+                <li><strong>PBL course design</strong> — instructor-facing lesson plan with research-link guide</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Features() {
   const features = [
     {
@@ -196,6 +248,7 @@ export default function Home(): ReactNode {
       <main>
         <WhatIsCADL />
         <WhatIsExplorer />
+        <WhatIsHandson />
         <Features />
       </main>
     </Layout>

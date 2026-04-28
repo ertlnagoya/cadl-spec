@@ -90,6 +90,12 @@ const config: Config = {
           label: 'Specification',
         },
         {
+          type: 'docSidebar',
+          sidebarId: 'handsonSidebar',
+          position: 'left',
+          label: 'Hands-on',
+        },
+        {
           href: 'https://cadl-explorer.streamlit.app/',
           label: 'CADL Explorer',
           position: 'right',
@@ -113,6 +119,10 @@ const config: Config = {
             {
               label: 'Specification',
               to: '/docs/spec/intro',
+            },
+            {
+              label: 'Hands-on',
+              to: '/docs/handson/',
             },
           ],
         },
