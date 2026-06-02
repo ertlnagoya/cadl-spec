@@ -1,0 +1,974 @@
+---
+sidebar_position: 3
+sidebar_label: "Course A — Robot Delivery"
+title: "Course A — Robot Delivery (Main Textbook)"
+---
+
+# Course A — Robot Delivery: Designing a System of Systems with CADL & SoS-DSL
+
+> **Audience**: Undergraduates and beginning graduate students who have just been introduced to System of Systems (SoS) thinking. No CADL experience required.
+>
+> **Duration**: 90 minutes — six 15-minute steps plus a 5-minute setup.
+>
+> **What you take home**: A working CADL specification you wrote yourself, a generated Unity C# implementation, and a running 5-robot delivery simulation that visibly enforces deadlines and battery limits.
+
+---
+
+## Why are we doing this?
+
+A **System of Systems (SoS)** is a system whose parts are themselves independent, operationally autonomous systems — for example, a fleet of delivery robots, a central dispatcher, and the customers placing orders. The parts have their own goals and their own software; the SoS designer's job is **not** to write all of their code, but to write the **rules of the game** they all follow: who can ask whom for what, what counts as a violation, what the consequences are.
+
+Today you will learn three things:
+
+1. **Describe the structure** of an SoS in CADL — who exists, who talks to whom.
+2. **Describe the rules** of an SoS in the SoS-DSL extension (Appendix E) — what each contract instance must do, by when, with what consequences for violations.
+3. **Generate executable code** from a single specification, drop it into a Unity project, and watch the rules enforce themselves on a running simulation.
+
+## What makes a system an SoS?
+
+A useful litmus test before declaring something "an SoS" is **Maier's five criteria** ([Maier, 1998]; codified in **ISO/IEC/IEEE 21841:2019**):
+
+| # | Criterion | Plain-English check |
+| --- | --- | --- |
+| 1 | Operational independence | Does each part work on its own when the SoS is "off"? |
+| 2 | Managerial independence | Does each part have its own owner / decision-maker? |
+| 3 | Geographic distribution | Are the parts spread out and exchanging information rather than energy or matter? |
+| 4 | Emergent behaviour | Does the whole do things no individual part can? |
+| 5 | Evolutionary development | Do parts get added, removed, modified over the SoS's lifetime? |
+
+(1) and (2) are essentially mandatory. (3)–(5) usually accompany them.
+
+**Worked example** — the robot delivery in this hands-on:
+
+- ✓ (1) each robot can run wandering motion on its own.
+- ~ (2) all robots share one fictional dispatcher (borderline).
+- ✓ (3) robots are spread on a 30 × 30 grid.
+- ✓ (4) emergent throughput is not designed into a single robot.
+- ~ (5) the population is fixed in this scenario but the simulator supports changes.
+
+Because (2) is borderline, this hands-on is closer to a *parallel control problem* than a textbook SoS. **Part 2 of the exercises booklet** introduces a domain (food delivery) where (2) is unambiguous.
+
+> 📚 For the full standards landscape (ISO/IEC/IEEE 21839 / 21840 / 21841 / 15288 / 42010), the four SoS taxonomy types, related research lines (ADLs, Normative MAS, Runtime Verification), and a curated reading list, see → [`academic-background.md`](academic-background.md).
+
+---
+
+## The big picture
+
+You only need to write the leftmost box (a CADL file). Everything to its right is generated automatically.
+
+```
+   ┌────────────────────────┐
+   │  Your CADL source      │   ← You write this in Step 2 & 3
+   │  my_delivery.cadl      │
+   └──────────┬─────────────┘
+              │
+              │  cadl check    →  catch typos / type errors
+              │  cadl sim-ir   →  emit a JSON Intermediate Representation (IR)
+              │
+              ▼
+   ┌────────────────────────┐
+   │  Sim-IR JSON           │
+   │  (cadl-spec App. E.7)  │
+   └─────┬──────────────┬───┘
+         │              │
+         │              └──────────────┐
+         │  cadl-explorer              │  cadl codegen --target unity-csharp
+         │  Lifecycle View             │
+         ▼                             ▼
+   ┌─────────────────┐       ┌─────────────────────────┐
+   │  State machine  │       │  Unity C# tree          │
+   │  diagram        │       │  Runtime/    Generated/ │
+   └─────────────────┘       └────────────┬────────────┘
+                                          │  drop into
+                                          ▼
+                             ┌──────────────────────────┐
+                             │  Unity scene + arbitrator │
+                             │  → live contract events   │
+                             │  in the Console           │
+                             └──────────────────────────┘
+```
+
+```mermaid
+flowchart LR
+  CADL[my_delivery.cadl<br/>you write this]
+  IR[Sim-IR JSON<br/>intermediate representation]
+  EXPL[Lifecycle View<br/>state machine diagram]
+  CSH[Unity C# tree<br/>Runtime + Generated]
+  UNITY[Unity scene<br/>Console events]
+  CADL -->|cadl sim-ir| IR
+  IR -->|cadl-explorer| EXPL
+  IR -->|cadl codegen<br/>--target unity-csharp| CSH
+  CSH -->|drop into Assets/| UNITY
+```
+
+---
+
+## Prerequisites
+
+| Tool | Version | Why |
+| --- | --- | --- |
+| Python | 3.10+ | runs the `cadl` CLI |
+| Unity | 2022.3.27f1 (LTS) | runs the simulation |
+| Go | 1.21+ | builds the arbitrator |
+| NATS Server | latest | message bus between robots ⇄ arbitrator |
+| Node.js | 18+ | renders the spec website (optional) |
+
+```bash
+# macOS via Homebrew
+brew install python@3.11 go nats-server node
+# Unity is installed via Unity Hub.
+```
+
+---
+
+## Step 0 — Setup (5 min)
+
+### What you'll learn
+- The four repositories that make up the toolchain.
+
+### Background
+
+The CADL toolchain is split across four repositories so each piece can evolve independently:
+
+| Repository | Role |
+| --- | --- |
+| `cadl-spec`            | the language reference (Docusaurus website) |
+| `cadl`                 | the compiler: parser, IR, code generators |
+| `cadl-explorer`        | a Streamlit visualiser |
+| `raspimouse-swarm-simulator` | Unity scene + Go arbitrator + Python reference runtime |
+
+### Procedure
+
+```bash
+mkdir -p ~/program && cd ~/program
+
+# 1) Clone all four — note the trailing --recursive on the last one
+#    (it pulls the unity submodule).
+git clone https://github.com/ertlnagoya/cadl-spec
+git clone https://github.com/ertlnagoya/cadl                         cadl_repo
+git clone https://github.com/ertlnagoya/cadl-explorer
+git clone --recursive https://github.com/ertlnagoya/raspimouse-swarm-simulator
+
+# 2) Switch every repo to the SoS-DSL feature branch.
+for r in cadl-spec cadl_repo cadl-explorer raspimouse-swarm-simulator; do
+  (cd $r && git checkout feature/sos-dsl)
+done
+(cd raspimouse-swarm-simulator/unity && git checkout feature/sos-dsl)
+
+# 3) Install the cadl CLI in editable mode so changes are picked up.
+cd cadl_repo
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e .
+```
+
+### Expected output
+
+```
+$ cadl --help
+usage: cadl [-h] [--version]
+            {parse,check,verify,codegen,regime-map,iec62853,sim-validate,sim-ir,sim-gen,ai}
+            ...
+
+CADL: Contract Architecture Description Language toolchain
+
+positional arguments:
+  {parse,check,verify,codegen,regime-map,iec62853,sim-validate,sim-ir,sim-gen,ai}
+                        Available commands
+    parse               Parse a CADL file and report errors
+    check               Parse and type-check a CADL file
+    verify              Parse, type-check, and verify a CADL file
+    codegen             Generate runtime code from a CADL file
+    ...
+```
+
+### Check 0
+
+If `cadl codegen --help` lists `unity-csharp` among the `--target` choices (`{python,solidity,opa,unity-csharp}`), your branch and install are correct.
+
+---
+
+## Step 1 — Read the CADL spec (15 min)
+
+### What you'll learn
+- Where in the spec the **structure layer** (actors / contracts / protocols) is described.
+- Where in the spec the **norms layer** (Appendix E lifecycle / monitors) lives.
+
+### Background
+
+A specification language has two jobs in an SoS context:
+
+1. **Descriptive** — *what exists*. The actors, the connections, the messages they exchange.
+2. **Normative** — *what should happen*. Which obligations, which deadlines, which violations.
+
+CADL covers (1) directly in its main grammar (Appendix A). The SoS-DSL extension (Appendix E) adds (2) on top of (1) — same syntax family, just two new body keys: `lifecycle:` and `monitors:`.
+
+### Procedure
+
+```bash
+cd ~/program/cadl-spec
+npm install
+npm run start
+# Browser opens at http://localhost:3000
+```
+
+Read these chapters in order; the time guide is what we recommend so you stay within the 15-minute budget.
+
+| Chapter | What it answers | Time |
+| --- | --- | --- |
+| 1. Introduction | What is CADL for? | 2 min |
+| 5. Language Specification | How do I write actors / contracts / protocols? | 5 min |
+| **Appendix E (today's main)** | **How do I write a contract lifecycle and monitors?** | **6 min** |
+| 7. Examples | What does a complete file look like? | 2 min |
+
+### Expected output
+
+The Docusaurus site renders Appendix E.6 with a code block exactly like this. Read it carefully — Step 3 will ask you to write something very similar.
+
+```yaml
+contracts:
+  - id: DELIVERY_SLA
+    parties: [DISPATCHER, "ROBOT[*]", "CUSTOMER[*]"]
+    assume:
+      - "ROBOT[i].battery > 20"
+    guarantee:
+      - "delivery_time <= 300s"
+
+    lifecycle:
+      states: [Proposed, Assigned, Accepted, Delivering, Completed, Violated, Terminated]
+      initial: Proposed
+      terminal: [Completed, Violated, Terminated]
+      transitions:
+        - id: accept
+          from: Assigned
+          to:   Accepted
+          on:   "ROBOT[i] -> DISPATCHER : ack(accepted)"
+          deadline: 5s
+          on_violation:
+            transition: Violated
+            severity:   Major
+
+    monitors:
+      - id: battery_guard
+        observe: "ROBOT[i].battery"
+        sampling: periodic(500ms)
+        rule: "ROBOT[i].battery < 20 AND state == Assigned"
+        on_match:
+          transition: Violated
+          severity:   Major
+```
+
+### Check 1
+
+Without scrolling, can you answer these three questions out loud?
+
+1. What is the **initial state** of a delivery contract? → *Proposed*
+2. If a robot does not ack within **5 seconds**, what happens? → *Lifted to `Violated` with severity `Major`*
+3. Which monitor fires when battery drops below 20% **while still Assigned**? → *`battery_guard`*
+
+If you got all three, you understand the spec well enough to start writing.
+
+---
+
+## Step 2 — Write CADL for Robot Delivery (15 min)
+
+### What you'll learn
+- How to declare actors with `id`, `role`, `autonomy`, `interface`.
+- How to declare a contract's parties, A/G clauses (`assume` / `guarantee`), incentives.
+
+### Background
+
+Think of a CADL `actors:` block as a UML class diagram for the SoS — each actor type has ports (`interface.input` / `interface.output`) and a degree of self-direction (`autonomy: low | medium | high`). The `contracts:` block is the *agreement* between named subsets of those actors.
+
+```mermaid
+flowchart LR
+  D[DISPATCHER<br/>autonomy: low<br/>assigns tasks]
+  R1["ROBOT[1..N]<br/>autonomy: high<br/>follows / picks / delivers"]
+  C1["CUSTOMER[1..M]<br/>autonomy: medium<br/>orders"]
+  C1 -- delivery_request --> D
+  D  -- route_assignment  --> R1
+  R1 -- position_report   --> D
+  D  -- delivery_notif    --> C1
+  R1 -. governed by ........ DELIVERY_SLA[(DELIVERY_SLA<br/>contract)] .-.- D
+```
+
+### Procedure
+
+Open a new file `my_delivery.cadl` next to the example, and paste the skeleton below. Read the comments — they explain what each block does.
+
+```yaml
+# my_delivery.cadl ─── My first SoS specification
+# (this file just describes structure; norms come in Step 3)
+
+sos:
+  name: "MyDelivery"
+  type: Acknowledged           # central authority + autonomous agents
+  version: "0.1.0"
+
+  context:
+    environment:
+      grid_size:    30
+      num_robots:    3
+      time_step_ms: 100
+
+  # ── WHO exists in the SoS ─────────────────────────────────────
+  actors:
+    - id: DISPATCHER
+      role: "central_coordinator"
+      autonomy: low                            # follows policy, no roaming
+      capabilities: [assign_tasks]
+      interface:
+        input:  [position_report, task_completion]
+        output: [route_assignment]
+
+    - id: "ROBOT[1..N]"                        # parametric: N copies
+      role: "delivery_agent"
+      autonomy: high
+      capabilities: [follow_path, pick_up, deliver]
+      interface:
+        input:  [route_assignment]
+        output: [position_report, task_completion]
+
+    - id: "CUSTOMER[1..M]"
+      role: "service_requester"
+      autonomy: medium
+      capabilities: [submit_order]
+      interface:
+        input:  [delivery_notification]
+        output: [delivery_request]
+
+  # ── The agreement between them ────────────────────────────────
+  contracts:
+    - id: DELIVERY_SLA
+      parties: [DISPATCHER, "ROBOT[*]", "CUSTOMER[*]"]
+      assume:
+        - "ROBOT[i].battery > 20"              # input precondition
+      guarantee:
+        - "delivery_time <= 300s"              # output postcondition
+      incentives:
+        type: task_completion
+        lambda: 0.5
+        rules:
+          - "reward(ROBOT[i], 10) when on_time_delivery"
+```
+
+Run the type-checker:
+
+```bash
+cd ~/program/cadl_repo
+cadl check my_delivery.cadl
+```
+
+### Expected output
+
+```
+$ cadl check my_delivery.cadl
+Type check passed: my_delivery.cadl
+```
+
+Now lower it to IR JSON and look at the first 30 lines:
+
+```bash
+cadl sim-ir my_delivery.cadl --format json | head -30
+```
+
+```jsonc
+{
+  "name": "MyDelivery",
+  "sos_type": "Acknowledged",
+  "description": "",
+  "environment": {
+    "grid_size":    30,
+    "num_robots":    3,
+    "time_step_ms": 100
+  },
+  "institution": {
+    "actors": [ ... ],
+    "contracts": [
+      {
+        "id": "DELIVERY_SLA",
+        "parties": ["DISPATCHER", "ROBOT[*]", "CUSTOMER[*]"],
+        "assume":   ["ROBOT[i].battery > 20"],
+        "guarantee":["delivery_time <= 300s"],
+        ...
+        "lifecycle": null,           ← we have NOT written it yet
+        "monitors":  []
+      }
+    ]
+  },
+```
+
+### Check 2
+
+Verify both:
+
+1. `cadl check my_delivery.cadl` prints `Type check passed: my_delivery.cadl` (and no `[ERROR]` lines).
+2. The IR JSON has `"lifecycle": null` and `"monitors": []`.
+
+These two `null` / `[]` are **the gap we will fill in Step 3** — they are why the structure-only specification cannot say "the robot must ack within 5 seconds".
+
+### Common mistakes
+
+| Symptom | Cause |
+| --- | --- |
+| `YAML parse error: while parsing a flow sequence` | You wrote a subscripted identifier without quoting, e.g. `[ROBOT[i].battery, ...]`. Quote it: `["ROBOT[i].battery", ...]`. |
+| `Unknown SoS type: 'Centralized'` | CADL accepts only `Directed | Acknowledged | Collaborative | Virtual`. |
+| `Type check failed: actor 'CUSTOMER' not declared` | You used `CUSTOMER` somewhere but only declared `CUSTOMER[1..M]`. Use `"CUSTOMER[*]"` to refer to all customers. |
+
+### Recap
+
+You now have a CADL file that describes the **structure** of your SoS. It compiles, it lowers to IR, and the IR confirms there is exactly one contract called `DELIVERY_SLA`. We are about to make that contract enforceable.
+
+---
+
+## Step 3 — Add SoS-DSL contracts (lifecycle + monitors) (15 min)
+
+### What you'll learn
+- The seven **lifecycle states** a contract instance can occupy.
+- How to write a `deadline` + `on_violation` to enforce timing.
+- How to write a periodic `monitor` with a predicate over the world snapshot.
+
+### Background
+
+A class-level contract spec (Step 2) describes the **agreement**, but a real SoS has **many concurrent instances** of that agreement — one per delivery request. Each instance has its own state that progresses over time:
+
+```mermaid
+stateDiagram-v2
+  [*] --> Proposed
+  Proposed --> Assigned: assign<br/>(DISPATCHER → ROBOT)
+  Assigned --> Accepted: accept<br/>(ROBOT → DISPATCHER)<br/>deadline 5s
+  Assigned --> Violated: deadline expired
+  Accepted --> Delivering: status==InTransit
+  Delivering --> Completed: status==Delivered
+  Delivering --> Violated: monitor fires
+  Accepted  --> Violated: monitor fires
+  Assigned  --> Violated: monitor fires
+  Completed --> [*]
+  Violated  --> [*]
+  Terminated --> [*]
+```
+
+The **same lifecycle** is reused for every delivery request — only the data (which robot, which customer) differs.
+
+### Procedure
+
+Append the two highlighted blocks below to your `my_delivery.cadl`'s `DELIVERY_SLA` contract. Indentation matters (YAML).
+
+```yaml
+  contracts:
+    - id: DELIVERY_SLA
+      parties: [DISPATCHER, "ROBOT[*]", "CUSTOMER[*]"]
+      assume:
+        - "ROBOT[i].battery > 20"
+      guarantee:
+        - "delivery_time <= 300s"
+      incentives:
+        type: task_completion
+        lambda: 0.5
+        rules:
+          - "reward(ROBOT[i], 10) when on_time_delivery"
+
+      # ╔═══════════════════════════════════════════════════════════════╗
+      # ║  NEW BLOCK 1: per-instance lifecycle                          ║
+      # ╚═══════════════════════════════════════════════════════════════╝
+      lifecycle:
+        states:
+          - Proposed
+          - Assigned
+          - Accepted
+          - Delivering
+          - Completed
+          - Violated
+          - Terminated
+        initial: Proposed
+        terminal: [Completed, Violated, Terminated]
+        transitions:
+          - id: assign
+            from: Proposed
+            to:   Assigned
+            on:   "DISPATCHER -> ROBOT[i] : route_assignment"
+
+          - id: accept
+            from: Assigned
+            to:   Accepted
+            on:   "ROBOT[i] -> DISPATCHER : ack(accepted)"
+            deadline: 5s                           # ⏱  must happen within 5s
+            on_violation:                          # otherwise → Violated
+              transition: Violated
+              severity:   Major
+
+          - id: start_delivery
+            from: Accepted
+            to:   Delivering
+            on:   "ROBOT[i].status == InTransit"
+
+          - id: complete
+            from: Delivering
+            to:   Completed
+            on:   "ROBOT[i].status == Delivered"
+
+      # ╔═══════════════════════════════════════════════════════════════╗
+      # ║  NEW BLOCK 2: declarative monitors                            ║
+      # ╚═══════════════════════════════════════════════════════════════╝
+      monitors:
+        - id: battery_guard
+          observe: "ROBOT[i].battery"
+          sampling: periodic(500ms)
+          rule: "ROBOT[i].battery < 20 AND state == Assigned"
+          on_match:
+            transition: Violated
+            severity:   Major
+```
+
+Re-run the type-checker:
+
+```bash
+cadl check my_delivery.cadl
+```
+
+### Expected output
+
+```
+$ cadl check my_delivery.cadl
+Type check passed: my_delivery.cadl
+```
+
+Lower to IR and verify the new fields are populated:
+
+```bash
+cadl sim-ir my_delivery.cadl --format json \
+  | python3 -c "
+import json, sys
+d = json.load(sys.stdin)
+c = d['institution']['contracts'][0]
+print(f'lifecycle.initial : {c[\"lifecycle\"][\"initial\"]}')
+print(f'lifecycle.states  : {c[\"lifecycle\"][\"states\"]}')
+print(f'monitors[0].id    : {c[\"monitors\"][0][\"id\"]}')
+print(f'  rule            : {c[\"monitors\"][0][\"rule\"]}')
+"
+```
+
+```
+lifecycle.initial : Proposed
+lifecycle.states  : ['Proposed', 'Assigned', 'Accepted', 'Delivering', 'Completed', 'Violated', 'Terminated']
+monitors[0].id    : battery_guard
+  rule            : ROBOT[i].battery < 20 AND state == Assigned
+```
+
+### Check 3
+
+1. The diff between Step 2 and Step 3 is **only the two new blocks**. No actor changed.
+2. The IR's `"lifecycle": null` is now a populated object; `"monitors": []` is now a 1-element list.
+
+### Common mistakes
+
+| Symptom | Why |
+| --- | --- |
+| `KeyError: 'states'` after a copy-paste | The `lifecycle:` block has wrong indentation. It must sit at the same level as `assume:` / `guarantee:`. |
+| Parser silently treats `on:` as a boolean | YAML 1.1 quirk; the example file works because the parser has a workaround (`_yaml_on_key`). If you're writing your own parser, watch for this. |
+| `monitor.rule` "always false" | The right-hand side of `state == Assigned` is a **bare identifier** by CADL convention. Quoting `"Assigned"` changes the meaning. |
+
+### Recap
+
+The same file now describes both the structure (Step 2) and the rules (Step 3). The IR is no longer "structural-only" — it carries enough information to build a runtime.
+
+---
+
+## Step 4 — Visualise the lifecycle (15 min)
+
+### What you'll learn
+- How to read the Lifecycle View page of cadl-explorer.
+- How visual conventions (double circle, dashed border, red edge) map to the spec.
+
+### Procedure
+
+```bash
+cd ~/program/cadl-explorer
+pip install -r requirements.txt
+streamlit run app.py
+# Browser opens at http://localhost:8501
+```
+
+In the sidebar, switch from the default page to **SoS_DSL_Lifecycle**.
+
+Two ways to load IR JSON:
+
+- **(a) Upload** the file you just generated from `my_delivery.cadl` (drag-and-drop into the file uploader).
+- **(b) Pick the bundled example** `sos_dsl_robot_delivery.ir.json` from the dropdown.
+
+### What you should see
+
+The figure below reflects **(a), `my_delivery.cadl`** (4 transitions, 1 monitor). If you instead load **(b), the bundled example `sos_dsl_robot_delivery.cadl`**, you'll see 5 transitions (it adds `late_failure`) and 3 monitors (`battery_guard` / `collision_watch` / `deadline_watch`).
+
+The page is split into two columns:
+
+```
+┌──────────────────────────────────┬──────────────────────────────┐
+│ Lifecycle — DELIVERY_SLA          │  Lifecycle metadata          │
+│                                   │                               │
+│   ┏━━━━━━━━━━┓                    │  states          : 7         │
+│   ┃ Proposed ┃ ←initial(double)   │  initial         : Proposed  │
+│   ┗━━━━┳━━━━━┛                    │  terminal        : 3         │
+│        │ assign                   │  transition_count: 4         │
+│        ▼                          │                               │
+│   ┌──Assigned──┐                  │                               │
+│   │            │ accept Δ 5s      │                               │
+│   │            ▼                  │                               │
+│   │       ┌Accepted┐              │                               │
+│   │       └────┬───┘              │                               │
+│   │ violation  │                  │                               │
+│   │  (red dash)│ start_delivery   │                               │
+│   ▼            ▼                  │                               │
+│ ╔Violated╗ ┌Delivering┐           │                               │
+│ ╚════════╝ └────┬─────┘           │                               │
+│ (red, dashed)   │ complete         │                               │
+│                 ▼                  │                               │
+│             ╔Completed╗            │                               │
+│             ╚═════════╝            │                               │
+│             (green, dashed)        │                               │
+└──────────────────────────────────┴──────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ Monitors                                                          │
+├──────────────┬──────────────────────┬─────────────┬──────────────┤
+│ id           │ sampling             │ on_match    │ severity     │
+├──────────────┼──────────────────────┼─────────────┼──────────────┤
+│ battery_guard│ periodic(500ms)      │ Violated    │ Major        │
+└──────────────┴──────────────────────┴─────────────┴──────────────┘
+```
+
+Visual conventions:
+
+| Element | Meaning |
+| --- | --- |
+| Double circle | `lifecycle.initial` |
+| Dashed box, green fill | terminal state `Completed` |
+| Dashed box, red fill | terminal state `Violated` |
+| Dashed box, grey fill | terminal state `Terminated` |
+| Solid edge, label `Δ 5s` | transition with `deadline_ms = 5000` |
+| **Red dashed edge** with label `violation Major` | the `on_violation` lift |
+
+### Check 4
+
+Take a screenshot of your lifecycle (or just look carefully) and confirm:
+
+- The **only** double-circle node is `Proposed`.
+- There is exactly one **red dashed edge** going from `Assigned` to `Violated`. That is the deadline lift.
+- The monitors table shows `battery_guard` with sampling `periodic(500ms)` and severity `Major`.
+
+### Recap
+
+The diagram is generated **directly from the IR JSON** with zero hand-coding. If you change `deadline: 5s` to `deadline: 10s` in your CADL file, regenerate the IR, refresh the page — the edge label will read `Δ 10s`.
+
+---
+
+## Step 5 — Generate Unity C# (15 min)
+
+### What you'll learn
+- How a single CLI command turns your CADL into a Unity-ready C# tree.
+- Why we have **two** runtimes (Python + C#) with the **same semantics**.
+
+### Procedure
+
+The repo provides a single end-to-end script. Run it:
+
+```bash
+cd ~/program/cadl_repo
+./scripts/sos_dsl_handson_e2e.sh \
+    examples/sos_dsl_robot_delivery.cadl \
+    --unity ../raspimouse-swarm-simulator/unity
+```
+
+> Replace the input with `my_delivery.cadl` if you want to use your own specification — note that your file will need a `lifecycle.transitions[*].on:` matching the bridge's event names, so for the very first run we recommend the bundled example.
+
+### Expected output
+
+```
+$ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
+      --unity ../raspimouse-swarm-simulator/unity
+
+== INPUT ==
+  source : .../examples/sos_dsl_robot_delivery.cadl
+  size   : 153 lines
+
+== Step 1/4 — parse + type-check (cadl check) ==
+  OK
+
+== Step 2/4 — emit Sim-IR JSON (cadl sim-ir) ==
+  output/sos_dsl_handson/sos_dsl_robot_delivery.ir.json
+  contracts : 1
+  states    : 7
+  monitors  : 3
+
+== Step 3/4 — codegen Unity C# (cadl codegen --target unity-csharp) ==
+  output    : output/sos_dsl_handson/unity-csharp
+  runtime   : 5 files
+  generated : 3 files
+  total lines : 770
+
+== Step 4/4 — drop into ../raspimouse-swarm-simulator/unity/Assets/Scripts/SoSDsl/ ==
+  installed : .../Runtime, .../Generated
+  preserved : .../Demo (if it existed)
+
+== DONE ==
+Next steps for the student:
+  1. Open the Unity project at .../unity in Unity 2022.3.x
+  2. Open Assets/Scenes/C-SoS.unity
+  3. Add a ContractRuntimeHost GameObject
+  4. Attach PilotContractBridge to each robot that has Pilot_CSoS
+  5. Press Play and watch the Console
+```
+
+Look at the generated tree:
+
+```
+output/sos_dsl_handson/unity-csharp/
+├── Runtime/                          # constant per generation, common to all contracts
+│   ├── Severity.cs                   # enum Minor / Major / Critical
+│   ├── ContractEvent.cs              # struct used for both lifecycle & violation events
+│   ├── EventBus.cs                   # tiny FIFO publish-subscribe
+│   ├── PredicateEvaluator.cs         # CADL expression evaluator (mirrors the Python one)
+│   └── ContractRuntime.cs            # registry + tick loop
+└── Generated/                        # one set of files per CADL contract
+    ├── DeliverySlaState.cs           # public enum DeliverySlaState { Proposed, Assigned, ... }
+    ├── DeliverySlaContract.cs        # IContractInstance impl for DELIVERY_SLA
+    └── DeliverySlaMonitors.cs        # one Eval_xxx method per monitor
+```
+
+### Why two runtimes?
+
+The same IR drives both:
+
+```
+                             ┌──────────────────────┐
+                             │ multi_robot_demo.py  │ ← run today as Python
+                             │ (Python runtime)     │
+                             │                      │
+                  ┌──────────┘                      │
+   IR JSON ──────►│                                 │
+                  └──────────┐                      │
+                             │ DeliverySlaContract  │ ← run later in Unity
+                             │ (Unity / C#)         │
+                             └──────────────────────┘
+```
+
+If both runtimes are correct, they must produce **the same trace** for the same inputs. We can sanity-check this without Unity:
+
+```bash
+cd ~/program/raspimouse-swarm-simulator
+python3 -m cadl.runtime.multi_robot_demo --summary
+```
+
+```
+$ python3 -m cadl.runtime.multi_robot_demo --summary
+# multi_robot_demo summary (20 events)
+  robot-0-1     state=Completed     violations=[(none)]
+  robot-1-1     state=Violated      violations=[deadline:accept]
+  robot-2-1     state=Violated      violations=[monitor:battery_guard]
+  robot-3-1     state=Violated      violations=[monitor:deadline_watch]
+  robot-4-1     state=Proposed      violations=[(none)]
+```
+
+Five robots, five different scripted outcomes. **This is the ground truth your Unity run must reproduce in Step 6.**
+
+### Check 5
+
+```bash
+cd ~/program/cadl_repo
+PYTHONPATH=src python3 -m pytest tests/test_unity_csharp_structural.py -q
+# 9 passed
+```
+
+These nine tests catch the structural bugs that would prevent Unity from compiling the generated C# (mismatched braces, missing namespaces, name collisions, etc.). If they fail, the codegen has a regression.
+
+### Recap
+
+You now have:
+
+- A 245-line Sim-IR JSON.
+- A 770-line Unity-ready C# tree, dropped into the Unity project.
+- A Python proof-of-concept showing what the C# trace **must** look like once it runs.
+
+----
+
+## Step 6 — Run the simulation in Unity (15 min)
+
+### What you'll learn
+- How to wire `ContractRuntimeHost` and `PilotContractBridge` into an existing scene.
+- How to read live contract events in the Unity Console.
+
+### 6.1 Start NATS and the arbitrator
+
+In **two** separate terminals:
+
+```bash
+# Terminal 1 — NATS message broker
+nats-server -p 4222
+```
+
+```
+[INFO] Starting nats-server
+[INFO] Server is ready
+[INFO] Listening for client connections on 0.0.0.0:4222
+```
+
+```bash
+# Terminal 2 — C-SoS arbitrator (Go)
+cd ~/program/raspimouse-swarm-simulator/arbitrator/C-SoS/main
+go run main.go
+```
+
+```
+[arbitrator] connected to NATS at nats://localhost:4222
+[arbitrator] subscribing to demand.next, demand.init, ...
+[arbitrator] ready (ExpectedRobots = 5)
+```
+
+### 6.2 Open the C-SoS scene
+
+1. Launch Unity Hub. Open `~/program/raspimouse-swarm-simulator/unity` with Unity 2022.3.27f1 (LTS).
+2. First open takes 1–5 minutes (Library reimport).
+3. In the Project pane, double-click `Assets/Scenes/C-SoS.unity`.
+
+You should see a 30 × 30 grid scene with five robot prefabs labelled red / green / blue / yellow / magenta.
+
+### 6.3 Add ContractRuntimeHost (one per scene)
+
+```
+Hierarchy ▸ Right-click ▸ Create Empty
+Rename it to:        ContractRuntimeHost
+Inspector ▸ Add Component ▸ search "ContractRuntimeHost" ▸ select  CADL.SosDsl.Demo.ContractRuntimeHost
+```
+
+Inspector:
+
+```
+ContractRuntimeHost (Script)
+├── Log To Console      ☑  (leave checked)
+└── Runtime              <runtime appears at Play time>
+```
+
+### 6.4 Add PilotContractBridge to every robot
+
+In the Hierarchy search box type `Pilot_CSoS`. Five robots will be filtered.
+
+For each one:
+
+```
+Inspector ▸ Add Component ▸ "PilotContractBridge"   (CADL.SosDsl.Demo.PilotContractBridge)
+```
+
+The Inspector now shows:
+
+```
+PilotContractBridge (Script)
+├── Robot Battery       [───────●───] 90.0
+└── Request Deadline Ms              300000
+```
+
+For one of the five robots, drag the Battery slider down to **15** so the `battery_guard` monitor will fire on that robot.
+
+Save the scene (`Cmd+S` / `Ctrl+S`).
+
+### 6.5 Press Play
+
+Click ▶ at the top of the Editor.
+
+### What you should see
+
+In the Console, lines like the following should appear continuously. You can filter them by typing `lifecycle DELIVERY_SLA` or `violation` in the Console search box.
+
+```
+[lifecycle DELIVERY_SLA/robot-0-1 Proposed -> Assigned     (assign,        event)   @ 1234ms]
+[lifecycle DELIVERY_SLA/robot-0-1 Assigned -> Accepted     (accept,        event)   @ 1234ms]
+[lifecycle DELIVERY_SLA/robot-0-1 Accepted -> Delivering   (start_delivery,event)   @ 1280ms]
+[lifecycle DELIVERY_SLA/robot-0-1 Delivering-> Completed   (complete,      event)   @ 8341ms]
+
+[lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned     (assign,        event)   @ 2050ms]
+[violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard         @ 2150ms]
+[lifecycle DELIVERY_SLA/robot-2-1 Assigned -> Violated     (<jump>,        monitor) @ 2150ms]
+```
+
+### Check 6
+
+Confirm all of these:
+
+| Check | Expected |
+| --- | --- |
+| There are `[lifecycle ... robot-{id}-1 ...]` events for **all five robots** | Yes |
+| The robot with battery 15 has a `monitor:battery_guard` violation | Yes |
+| Every robot's first transition is `Proposed -> Assigned` | Yes |
+| No robot stays `Proposed` for more than a few seconds (the FCFS arbitrator broadcasts quickly) | Yes |
+| The shape of the trace matches the Python `multi_robot_demo --summary` output from Step 5 | Yes |
+
+### Common mistakes
+
+| Symptom | Fix |
+| --- | --- |
+| Console: `[PilotContractBridge X] ContractRuntimeHost.Instance is null` | You forgot to place the host. Redo Step 6.3. |
+| Console silent — no contract events at all | NATS or arbitrator not running. Check Terminals 1 and 2 still show "ready". |
+| Only the lowered-battery robot violates, others stay `Proposed` | The arbitrator never offered them a delivery — usually means CADL's `taskArbitration.enabled` is off in the scene's CADL config. Set it to `true` and replay. |
+| Compile error in Console after Play: `The name 'CADL.SosDsl.Demo.ContractRuntimeHost' could not be found` | Generated/Runtime files not picked up. Re-run the e2e script. Or in Unity, `Assets ▸ Reimport All`. |
+
+### Recap
+
+You have just witnessed the **end-to-end story of an SoS contract**: written in CADL, lowered to IR, generated to C#, executed in a real-time simulation, and observed enforcing real timing and battery rules.
+
+---
+
+## Wrap-up — What did we just learn?
+
+| Layer | We wrote | We didn't write |
+| --- | --- | --- |
+| Spec | a 70-line CADL file (Steps 2 & 3) | nothing — the spec was the only source |
+| IR | nothing | 245 lines of JSON, generated |
+| Visualisation | nothing | the Lifecycle View page |
+| Implementation | nothing | 770 lines of Unity C# |
+| Runtime semantics | nothing | a working state machine + monitors + deadline timers |
+
+Why does this matter for SoS? **The same specification powers everything**: the docs, the diagram, the simulation, the code. When the specification changes — say, you tighten the deadline from 5s to 3s — every downstream artefact updates automatically. That property is what makes large SoS designs maintainable.
+
+---
+
+## What's next?
+
+The hands-on ends here, but the practice exercises continue in a separate booklet:
+
+→ **[`exercises.md`](exercises.md)**
+
+It has two parts:
+
+- **Part 1 — Extending the robot delivery service**: 5 exercises (★ to ★★★) that modify the system you just built one axis at a time — tighter deadlines, new monitors, new lifecycle states, reward execution, a violation-trace view.
+- **Part 2 — Modelling a new SoS end-to-end**: pick a *different* domain (coffee shop, multi-elevator dispatch, food delivery, …), write its CADL, simulate in SimPy, and compare results across parameter sweeps.
+
+Pick whichever fits your goal: solidifying what you learned (Part 1) or trying the workflow on a fresh problem (Part 2).
+
+---
+
+## Reference
+
+| Topic | File |
+| --- | --- |
+| Language reference | `cadl-spec/docs/spec/` (Appendix E for today's content) |
+| Parser implementation | `cadl_repo/src/cadl/parser.py` |
+| IR | `cadl_repo/src/cadl/sim/ir.py`, `cadl_repo/src/cadl/sim/lower.py` |
+| Unity C# generator | `cadl_repo/src/cadl/codegen/unity_csharp/` |
+| Python reference runtime | `raspimouse-swarm-simulator/cadl/runtime/` |
+| Lifecycle visualiser | `cadl-explorer/cadl_sim/sos_dsl/` |
+| End-to-end script | `cadl_repo/scripts/sos_dsl_handson_e2e.sh` |
+
+### Glossary
+
+| Term | Meaning |
+| --- | --- |
+| **SoS** | System of Systems — a system whose parts are themselves operationally independent systems. |
+| **Actor** | An autonomous participant in the SoS (robot, dispatcher, customer). |
+| **Contract** | A class of normative agreement between named parties. |
+| **Contract instance** | A concrete in-flight execution of a contract (one per delivery request). |
+| **Lifecycle** | The state machine a contract instance progresses through. |
+| **Monitor** | A declarative observation rule attached to a contract. |
+| **Deadline** | A timing constraint expressed as `deadline: <duration>` on a transition. |
+| **`on_violation`** | The lift the runtime performs when a deadline expires. |
+| **Severity** | Classification of a violation: Minor / Major / Critical. |
+| **IR** | Intermediate Representation — the JSON between parser and codegen. |
+| **Codegen target** | A code generation backend, e.g. `python`, `solidity`, `unity-csharp`. |
+| **Bridge** | A `MonoBehaviour` translating Pilot state changes into contract events. |
