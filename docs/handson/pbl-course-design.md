@@ -1,19 +1,19 @@
 ---
-sidebar_position: 8
-sidebar_label: "PBL Course Design (EN)"
-title: "PBL Course Design (English)"
+sidebar_position: 6
+sidebar_label: "PBL Course Design (Instructor)"
+title: "PBL Course Design — for Instructors"
 ---
 
-# SoS-DSL Hands-on PBL Course Design
+# PBL Course Design — Instructor's Guide
 
 > A design document for a Project-Based Learning (PBL) course that takes students through CADL modelling → contract DSL design → visualisation → simulation → comparative analysis, end-to-end, using a robot delivery System of Systems (SoS) as the running example.
 
-> 🌐 **日本語版** → [`sos-dsl-pbl-course-design.ja.md`](sos-dsl-pbl-course-design.ja.md)
+> **Note**: This is a syllabus / instructor guide, not a learner-facing tutorial. Learners should start with the [Hands-on Index](index.md).
 >
 > Related documents:
-> - Main textbook → [`sos-dsl-handson-textbook.en.md`](sos-dsl-handson-textbook.en.md)
-> - Exercises booklet (5-session series) → [`sos-dsl-exercises.en.md`](sos-dsl-exercises.en.md)
-> - Academic background and references → [`sos-academic-background.en.md`](sos-academic-background.en.md)
+> - Main textbook → [`main-textbook.md`](main-textbook.md)
+> - Exercises booklet (5-session series) → [`exercises.md`](exercises.md)
+> - Academic background and references → [`academic-background.md`](academic-background.md)
 
 ## Positioning of this course
 
@@ -48,9 +48,9 @@ Each session is **90 minutes of class time** plus **2–3 hours of homework**. T
 | Item | Content |
 | --- | --- |
 | **Theme** | Describe the structure of an SoS in CADL |
-| **Learning goals** | (1) Declare actors, capabilities, interfaces, and contracts in CADL.<br>(2) Articulate the limits of a structure-only specification — i.e., that it cannot express timing, what counts as a violation, or consequences. |
-| **Student work** | (a) Identify the main actors of the robot delivery SoS (Robot, Coordinator, Customer).<br>(b) Define each actor's role / autonomy / capabilities / interface.<br>(c) Write a `DELIVERY_SLA` contract with parties / assume / guarantee.<br>(d) Pass `cadl check` with no errors. |
-| **Instructor support** | (a) Introduce Maier's five criteria; reaffirm "why an SoS at all?"<br>(b) Pre-empt the common mistakes (see §4).<br>(c) Have students inspect the IR JSON and notice `lifecycle: null` / `monitors: []` — the deliberate gap that motivates Session 2. |
+| **Learning goals** | (1) Declare actors, capabilities, interfaces, and contracts in CADL.<br />(2) Articulate the limits of a structure-only specification — i.e., that it cannot express timing, what counts as a violation, or consequences. |
+| **Student work** | (a) Identify the main actors of the robot delivery SoS (Robot, Coordinator, Customer).<br />(b) Define each actor's role / autonomy / capabilities / interface.<br />(c) Write a `DELIVERY_SLA` contract with parties / assume / guarantee.<br />(d) Pass `cadl check` with no errors. |
+| **Instructor support** | (a) Introduce Maier's five criteria; reaffirm "why an SoS at all?"<br />(b) Pre-empt the common mistakes (see §4).<br />(c) Have students inspect the IR JSON and notice `lifecycle: null` / `monitors: []` — the deliberate gap that motivates Session 2. |
 | **Deliverables** | `my_delivery_v1.cadl` (structure only) + a 3-to-5-line memo titled "what v1 cannot express". |
 | **Academic significance** | Positions CADL within the lineage of Architecture Description Languages (Medvidovic & Taylor, 2000). Students experience the structural part of an architecture description as defined by ISO/IEC/IEEE 42010. |
 | **Learning perspective** | Students experience, *as authors*, the separation between "writing structure" and "writing behaviour". The key insight to elicit: **a structural-only specification cannot express promises**. |
@@ -60,9 +60,9 @@ Each session is **90 minutes of class time** plus **2–3 hours of homework**. T
 | Item | Content |
 | --- | --- |
 | **Theme** | Layer norms on top of structure — declarative description of obligations, violations, and consequences |
-| **Learning goals** | (1) Add a `lifecycle:` and `monitors:` block to a contract.<br>(2) Understand the relationship between deadlines and violations (`deadline` + `on_violation`).<br>(3) Articulate the difference between declarative observation (`monitors`) and operational state-machine description (`transitions`). |
-| **Student work** | (a) Define a 7-state lifecycle (Proposed → … → Completed/Violated).<br>(b) Add a 5-second `deadline` to the `accept` transition with `on_violation` lifting to `Violated`.<br>(c) Add a `battery_guard` monitor (battery < 20% AND state == Assigned).<br>(d) Pick at least one ★★ exercise (over-speed monitor or Cancelled state). |
-| **Instructor support** | (a) Concretise the obligation / permission / prohibition trichotomy with examples.<br>(b) Use the comparison table in §5 to pin down "how a contract differs from a program".<br>(c) Have students run `cadl sim-ir` and observe that `lifecycle` is no longer `null`. |
+| **Learning goals** | (1) Add a `lifecycle:` and `monitors:` block to a contract.<br />(2) Understand the relationship between deadlines and violations (`deadline` + `on_violation`).<br />(3) Articulate the difference between declarative observation (`monitors`) and operational state-machine description (`transitions`). |
+| **Student work** | (a) Define a 7-state lifecycle (Proposed → … → Completed/Violated).<br />(b) Add a 5-second `deadline` to the `accept` transition with `on_violation` lifting to `Violated`.<br />(c) Add a `battery_guard` monitor (battery < 20% AND state == Assigned).<br />(d) Pick at least one ★★ exercise (over-speed monitor or Cancelled state). |
+| **Instructor support** | (a) Concretise the obligation / permission / prohibition trichotomy with examples.<br />(b) Use the comparison table in §5 to pin down "how a contract differs from a program".<br />(c) Have students run `cadl sim-ir` and observe that `lifecycle` is no longer `null`. |
 | **Deliverables** | `my_delivery_v2.cadl` (with lifecycle + monitors) and `my_delivery_v2.ir.json`. |
 | **Academic significance** | An attempt to integrate the framework of Normative Multi-Agent Systems (Boella et al., 2006) into an ADL. Operationalises deontic logic going back to von Wright (1951). |
 | **Learning perspective** | By **writing norms as data**, students experience that contracts can change without rewriting code. They become conscious of the boundary between programs and contracts. |
@@ -72,9 +72,9 @@ Each session is **90 minutes of class time** plus **2–3 hours of homework**. T
 | Item | Content |
 | --- | --- |
 | **Theme** | Inspect structure and norms visually — using CADL-explorer |
-| **Learning goals** | (1) Explain the visual conventions of the Lifecycle View (double circle, dashed border, red edge).<br>(2) Compare v1 and v2 visually and articulate what kinds of failures v2 catches that v1 silently allowed.<br>(3) Distinguish static visualisation (Lifecycle View) from dynamic visualisation (Trace View). |
-| **Student work** | (a) Launch cadl-explorer.<br>(b) Load v1 and v2 IR JSON, capture the visualisations.<br>(c) Take screenshots and write a 1-page A/B comparison report.<br>(d) ★★★: build a Violation Trace View as a custom Streamlit page. |
-| **Instructor support** | (a) Explain the legend / visual conventions in 5 minutes.<br>(b) Engineer a strong contrast: have students open v1 first ("nothing is drawn / a warning appears"), then v2 — the difference should be visceral.<br>(c) Have students peer-review each other's reports and check explanatory ability. |
+| **Learning goals** | (1) Explain the visual conventions of the Lifecycle View (double circle, dashed border, red edge).<br />(2) Compare v1 and v2 visually and articulate what kinds of failures v2 catches that v1 silently allowed.<br />(3) Distinguish static visualisation (Lifecycle View) from dynamic visualisation (Trace View). |
+| **Student work** | (a) Launch cadl-explorer.<br />(b) Load v1 and v2 IR JSON, capture the visualisations.<br />(c) Take screenshots and write a 1-page A/B comparison report.<br />(d) ★★★: build a Violation Trace View as a custom Streamlit page. |
+| **Instructor support** | (a) Explain the legend / visual conventions in 5 minutes.<br />(b) Engineer a strong contrast: have students open v1 first ("nothing is drawn / a warning appears"), then v2 — the difference should be visceral.<br />(c) Have students peer-review each other's reports and check explanatory ability. |
 | **Deliverables** | `session3_comparison.md` (1 page) + 2 screenshots. |
 | **Academic significance** | The lineage of architecture visualisation and architecture-driven analysis (Garlan & Schmerl, 2009). Tests the claim that visualisation is not decoration but a **second debugger**. |
 | **Learning perspective** | Students experience that **the same specification exposes different aspects through different views**. SoS designers must master a portfolio of lenses (whole-system view × trace × monitoring dashboard). |
@@ -84,9 +84,9 @@ Each session is **90 minutes of class time** plus **2–3 hours of homework**. T
 | Item | Content |
 | --- | --- |
 | **Theme** | Run the spec and observe whether the norms are actually enforced |
-| **Learning goals** | (1) Run the Python reference runtime against your spec, multi-robot.<br>(2) Read NDJSON traces and aggregate them into per-robot summaries.<br>(3) Run the science cycle: vary one parameter at a time, predict before observing, validate. |
-| **Student work** | (a) Run `multi_robot_demo --summary` to capture the baseline.<br>(b) Tighten the `accept` deadline from 5s to 1s and re-run (★★).<br>(c) Vary world parameters (battery, speed) and try at least three configurations.<br>(d) ★★★: run the Unity scene and verify that the C# runtime produces the same trace shape. |
-| **Instructor support** | (a) Share the "ground truth" table (5 robots × 5 expected outcomes) ahead of time.<br>(b) Stress that the simulation is **deterministic**, not random — replayability is a learning multiplier.<br>(c) Have students post results on a shared whiteboard for cooperative learning. |
+| **Learning goals** | (1) Run the Python reference runtime against your spec, multi-robot.<br />(2) Read NDJSON traces and aggregate them into per-robot summaries.<br />(3) Run the science cycle: vary one parameter at a time, predict before observing, validate. |
+| **Student work** | (a) Run `multi_robot_demo --summary` to capture the baseline.<br />(b) Tighten the `accept` deadline from 5s to 1s and re-run (★★).<br />(c) Vary world parameters (battery, speed) and try at least three configurations.<br />(d) ★★★: run the Unity scene and verify that the C# runtime produces the same trace shape. |
+| **Instructor support** | (a) Share the "ground truth" table (5 robots × 5 expected outcomes) ahead of time.<br />(b) Stress that the simulation is **deterministic**, not random — replayability is a learning multiplier.<br />(c) Have students post results on a shared whiteboard for cooperative learning. |
 | **Deliverables** | `session4_baseline.ndjson` + parameter-sweep table (3+ configurations). |
 | **Academic significance** | A teaching version of Runtime Verification (Bartocci et al., 2018). Spec-driven simulation is the bridge between formal methods and implementation. |
 | **Learning perspective** | Students experience the boundary between **"the spec says so"** and **"the runtime actually does so"**. Spec review and runtime validation are complementary, not interchangeable. |
@@ -96,9 +96,9 @@ Each session is **90 minutes of class time** plus **2–3 hours of homework**. T
 | Item | Content |
 | --- | --- |
 | **Theme** | Use the **contract-OFF vs contract-ON vs improved** comparison to internalise the essence of SoS design |
-| **Learning goals** | (1) Decide *which layer to change* (spec / runtime / environment) based on simulation observations.<br>(2) Quantitatively compare before-and-after and articulate the trade-offs.<br>(3) Report how making the norms explicit changed the SoS-wide behaviour. |
-| **Student work** | (a) Build `my_delivery_v0.cadl` by **removing** lifecycle / monitors from v2; simulate.<br>(b) Compare v2 with v3 (improved version).<br>(c) Tabulate violation rate / delay / completion count.<br>(d) Write the 3-page final report (initial model / simulation comparison / reflection).<br>(e) ★★★: implement reward execution in `cadl/runtime/engine.py`. |
-| **Instructor support** | (a) Introduce the *delete-the-contract* (v0) framing — this is the key idea of Session 5.<br>(b) Standardise the comparison metrics (violation rate / delay / efficiency / collisions).<br>(c) Distribute the 3-page report template. |
+| **Learning goals** | (1) Decide *which layer to change* (spec / runtime / environment) based on simulation observations.<br />(2) Quantitatively compare before-and-after and articulate the trade-offs.<br />(3) Report how making the norms explicit changed the SoS-wide behaviour. |
+| **Student work** | (a) Build `my_delivery_v0.cadl` by **removing** lifecycle / monitors from v2; simulate.<br />(b) Compare v2 with v3 (improved version).<br />(c) Tabulate violation rate / delay / completion count.<br />(d) Write the 3-page final report (initial model / simulation comparison / reflection).<br />(e) ★★★: implement reward execution in `cadl/runtime/engine.py`. |
+| **Instructor support** | (a) Introduce the *delete-the-contract* (v0) framing — this is the key idea of Session 5.<br />(b) Standardise the comparison metrics (violation rate / delay / efficiency / collisions).<br />(c) Distribute the 3-page report template. |
 | **Deliverables** | `my_delivery_v0.cadl` (no contract) + `my_delivery_v3.cadl` (improved) + final report. |
 | **Academic significance** | Empirical validation of *the social benefit of norms* (Andrighetto et al., 2013). A small-scale reproduction of SoS validation methodology (Sahin et al., 2007). |
 | **Learning perspective** | By quantifying *what changes when contracts are present*, students discover the raison d'être of SoS-DSL on their own. The proposition **"the essence of SoS design is neither structure nor behaviour but norms"** is internalised through experience, not lecture. |
@@ -124,9 +124,9 @@ When time is tight:
 **Description**: Describe the robot delivery SoS in CADL. Declare three actors (Coordinator / Robot[1..N] / Customer[1..M]) and one `DELIVERY_SLA` contract between them.
 
 **Inputs (handouts)**:
-- The code excerpt of Step 2 in the main textbook ([`sos-dsl-handson-textbook.en.md`](sos-dsl-handson-textbook.en.md))
+- The code excerpt of Step 2 in the main textbook ([`main-textbook.md`](main-textbook.md))
 - `examples/sos_dsl_robot_delivery.cadl` (for reference only — copy-paste prohibited)
-- Academic background §1 ([`sos-academic-background.en.md`](sos-academic-background.en.md)) on Maier's five criteria
+- Academic background §1 ([`academic-background.md`](academic-background.md)) on Maier's five criteria
 
 **Outputs (submissions)**:
 - `my_delivery_v1.cadl`
@@ -802,9 +802,9 @@ Items the instructor should confirm before each session:
 
 | Document | Purpose |
 | --- | --- |
-| [`sos-dsl-handson-textbook.en.md`](sos-dsl-handson-textbook.en.md) | Main textbook (90-minute version) |
-| [`sos-dsl-exercises.en.md`](sos-dsl-exercises.en.md) | Student exercises booklet (5-session series) |
-| [`sos-academic-background.en.md`](sos-academic-background.en.md) | Academic background and references (ISO 21839/40/41, Maier, etc.) |
+| [`main-textbook.md`](main-textbook.md) | Main textbook (90-minute version) |
+| [`exercises.md`](exercises.md) | Student exercises booklet (5-session series) |
+| [`academic-background.md`](academic-background.md) | Academic background and references (ISO 21839/40/41, Maier, etc.) |
 | [`sos-dsl-pr-drafts.md`](sos-dsl-pr-drafts.md) | Implementation PR drafts (reference) |
 | [`sos-dsl-unity-runbook.md`](sos-dsl-unity-runbook.md) | Unity execution walkthrough |
 | [`sos-contract-dsl-design.md`](sos-contract-dsl-design.md) | Design notes for the contract DSL |

@@ -1,16 +1,14 @@
 ---
-sidebar_position: 5
-sidebar_label: "Exercises (JA)"
-title: "演習問題集 (日本語)"
+sidebar_position: 4
+sidebar_label: "コース A — 演習問題集"
+title: "コース A — 演習問題集"
 ---
 
-# SoS-DSL 演習問題集
+# コース A — 演習問題集
 
-> 🌐 **English version** → [`sos-dsl-exercises.en.md`](sos-dsl-exercises.en.md)
+> ⬅ メイン教材に戻る → [コース A — ロボット配送](main-textbook.md)
 >
-> ⬅ メイン教材に戻る → [`sos-dsl-handson-textbook.ja.md`](sos-dsl-handson-textbook.ja.md)
->
-> 📚 学術背景・参考文献 → [`sos-academic-background.ja.md`](sos-academic-background.ja.md)
+> 📚 学術背景・参考文献 → [`academic-background.md`](academic-background.md)
 
 このブックレットは、SoS-DSL ハンズオンに付属する練習課題をまとめたものです。2 つのパートに分かれています。
 
@@ -546,4 +544,4 @@ Part 1 を終えた発展的な学生は、別のドメインを選び — 推�
 4. シミュレーションは SimPy ハーネスを実装（Unity なし）
 5. パラメータスイープと比較レポート
 
-この Part 2 課題の学術的位置付け（Maier 条件、ISO 規格、分類体系）は [`sos-academic-background.ja.md`](sos-academic-background.ja.md) を参照。
+この Part 2 課題の学術的位置付け（Maier 条件、ISO 規格、分類体系）は [`academic-background.md`](academic-background.md) を参照。
