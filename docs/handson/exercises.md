@@ -1,16 +1,14 @@
 ---
 sidebar_position: 4
-sidebar_label: "Exercises (EN)"
-title: "Exercises (English)"
+sidebar_label: "Course A — Exercises"
+title: "Course A — Exercises (extra problems)"
 ---
 
-# SoS-DSL Exercises
+# Course A — Exercises
 
-> 🌐 **日本語版** → [`sos-dsl-exercises.ja.md`](sos-dsl-exercises.ja.md)
+> ⬅ Back to the main course → [Course A — Robot Delivery](main-textbook.md)
 >
-> ⬅ Back to the main handson textbook → [`sos-dsl-handson-textbook.en.md`](sos-dsl-handson-textbook.en.md)
->
-> 📚 Academic background and references → [`sos-academic-background.en.md`](sos-academic-background.en.md)
+> 📚 Academic background and references → [`academic-background.md`](academic-background.md)
 
 This booklet collects the practice exercises that go with the SoS-DSL hands-on. Two parts:
 
@@ -546,4 +544,4 @@ The goal is to **experience the workflow on a fresh domain**:
 4. Implement a SimPy harness for the simulation step (no Unity).
 5. Sweep parameters and write a comparison report.
 
-For the academic positioning of this Part 2 exercise (Maier criteria, ISO standards, taxonomy), see [`sos-academic-background.en.md`](sos-academic-background.en.md).
+For the academic positioning of this Part 2 exercise (Maier criteria, ISO standards, taxonomy), see [`academic-background.md`](academic-background.md).
