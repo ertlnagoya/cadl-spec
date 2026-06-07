@@ -88,7 +88,7 @@ flowchart LR
   A[actors:<br/>SoS に参加する者]
   P[protocols:<br/>会話の仕方]
   C[contracts:<br/>合意内容]
-  T[transitions:<br/>体制の切替条件]
+  T[transitions:<br/>運用モードの切替条件]
   A --> C
   A --> P
   C --> T
@@ -146,7 +146,7 @@ flowchart LR
 2. アクターを決める。ヒント：*DRONE* は *ROBOT* と違う `capabilities` を必要とする（高度、飛行禁止区域、天候を考慮）。
 3. `cadl check` を実行。
 
-**振り返り**: あなたのファイルのうち、ロボット配送と *同じ* 部分はどれくらい、本当に違う部分はどれくらいですか？ 同じライフサイクルが小修正で再利用できる — これがまさに SoS-DSL の設計意図です。
+**振り返り**: 自分のファイルのうち、ロボット配送と *同じ* 部分はどれくらいで、本当に違う部分はどれくらいですか？ 同じライフサイクルが小修正で再利用できる — これがまさに SoS-DSL の設計意図です。
 
 ### まとめ + 宿題
 
@@ -208,7 +208,7 @@ stateDiagram-v2
 
 #### 演習 2.2 (★★) — 過速度モニターを追加
 
-**目的**: 配送中に 1.5 m/s を超えて走るロボットを検出し、severity `Critical` で `Violated` に lift する。
+**目的**: 配送中に 1.5 m/s を超えて走るロボットを検出し、severity `Critical` で `Violated` へ強制遷移させる。
 
 **手順**: `monitors:` の下に追加：
 
@@ -274,7 +274,7 @@ stateDiagram-v2
 
 ### 概念導入（約 30 分）
 
-ソフトウェアエンジニアはコードをデバッグします。SoS エンジニアは **図** をデバッグします — システムが分散していてデバッガでステップ実行できないからです。Lifecycle View はあなたのデバッガです。
+ソフトウェアエンジニアはコードをデバッグします。SoS エンジニアは **図** をデバッグします — システムが分散していてデバッガでステップ実行できないからです。Lifecycle View がそのデバッガに当たります。
 
 | 視覚要素 | 意味 |
 | --- | --- |
@@ -283,7 +283,7 @@ stateDiagram-v2
 | 破線枠 + 赤塗り | terminal state `Violated` |
 | 破線枠 + 灰塗り | その他の terminal state（`Terminated`, `Cancelled`） |
 | 実線エッジ + `Δ 5s` | `deadline` を持つ遷移 |
-| 赤い破線エッジ | `on_violation` の lift |
+| 赤い破線エッジ | `on_violation` による強制遷移 |
 
 ### 演習（授業 50 分 + 宿題）
 
@@ -352,7 +352,7 @@ stateDiagram-v2
 
 ### 概念導入（約 30 分）
 
-`raspimouse-swarm-simulator/cadl/runtime/` の Python ランタイムは IR を消費し、*決定論的かつリプレイ可能な* 離散時間シミュレーションを提供します。5 ロボットの `multi_robot_demo.py` が固定のテストベンチです：
+`raspimouse-swarm-simulator/cadl/runtime/` の Python ランタイムは IR を読み込み、*決定論的で再実行可能な* 離散時間シミュレーションを実行します。5 ロボットの `multi_robot_demo.py` が固定のテストベンチです：
 
 | ロボット | 期待する終端 | なぜ大事か |
 | --- | --- | --- |
@@ -368,7 +368,7 @@ stateDiagram-v2
 
 #### 演習 4.1 (★) — ベースラインを取得
 
-**目的**: *同梱の* fixture（あなたの `my_delivery_v2.cadl` ではなく — まだ）に対して `multi_robot_demo --summary` を実行し、出力を逐字記録し、各行を説明する。
+**目的**: まずは *同梱の* fixture に対して `multi_robot_demo --summary` を実行し（自分の `my_delivery_v2.cadl` はまだ使いません）、出力をそのまま記録して各行を説明する。
 
 **手順**:
 
@@ -485,7 +485,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 | ページ | 内容 |
 | --- | --- |
 | 1 | 初期 CADL モデル（v1）、モデルが問うている質問、v1 で欠けていたもの |
-| 2 | シミュレーション結果 — ベースライン vs あなたの修正。表と最低 1 枚の cadl-explorer スクリーンショット |
+| 2 | シミュレーション結果 — ベースラインと修正後の比較。表と最低 1 枚の cadl-explorer スクリーンショット |
 | 3 | 振り返り：*規範を追加すること* で何が得られたか？ *シミュレーションを動かすこと* で仕様だけでは分からなかった何を学んだか？ SoS-DSL の次の一手は？ |
 
 ### まとめ

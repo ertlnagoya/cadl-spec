@@ -90,7 +90,7 @@ title: "コース A — ロボット配送 (メイン教材)"
 
 ```mermaid
 flowchart LR
-  CADL[my_delivery.cadl<br/>あなたが書く]
+  CADL[my_delivery.cadl<br/>自分で書く]
   IR[Sim-IR JSON<br/>中間表現]
   EXPL[Lifecycle View<br/>状態機械図]
   CSH[Unity C# ツリー<br/>Runtime + Generated]
@@ -262,7 +262,7 @@ contracts:
 スクロールせずに、次の 3 問に口頭で答えられますか？
 
 1. 配送契約の **初期状態** は何？ → *Proposed*
-2. ロボットが **5 秒** 以内に ack を返さなかったら何が起こる？ → *severity `Major` で `Violated` に lift される*
+2. ロボットが **5 秒** 以内に ack を返さなかったら何が起こる？ → *severity `Major` で `Violated` へ強制遷移（lift）される*
 3. バッテリ 20% 以下で **まだ Assigned のとき** どの監視が発火する？ → *`battery_guard`*
 
 全部答えられたら、書き始めるのに十分な理解ができています。
@@ -365,7 +365,7 @@ $ cadl check my_delivery.cadl
 Type check passed: my_delivery.cadl
 ```
 
-IR JSON にローワリングして最初の 30 行を確認：
+IR JSON に変換して最初の 30 行を確認：
 
 ```bash
 cadl sim-ir my_delivery.cadl --format json | head -30
@@ -416,7 +416,7 @@ cadl sim-ir my_delivery.cadl --format json | head -30
 
 ### おさらい
 
-SoS の **構造** を記述する CADL ファイルが完成しました。コンパイルでき、IR にローワリングでき、IR で `DELIVERY_SLA` という契約が 1 つあることを確認できました。次はこの契約を強制可能にします。
+SoS の **構造** を記述する CADL ファイルが完成しました。コンパイルでき、IR に変換でき、IR の中に契約 `DELIVERY_SLA` が 1 つあることも確認できました。次はこの契約を強制可能にします。
 
 ---
 
@@ -532,7 +532,7 @@ $ cadl check my_delivery.cadl
 Type check passed: my_delivery.cadl
 ```
 
-IR にローワリングして新フィールドが入ったか確認：
+IR に変換して新フィールドが入ったか確認：
 
 ```bash
 cadl sim-ir my_delivery.cadl --format json \
@@ -645,14 +645,14 @@ IR JSON のロード方法は 2 通り：
 | 破線枠 + 赤塗り | terminal state `Violated` |
 | 破線枠 + 灰塗り | terminal state `Terminated` |
 | 実線エッジ + ラベル `Δ 5s` | `deadline_ms = 5000` を持つ遷移 |
-| **赤い破線エッジ** + `violation Major` | `on_violation` の lift |
+| **赤い破線エッジ** + `violation Major` | `on_violation` による強制遷移 |
 
 ### チェック 4
 
 ライフサイクルのスクリーンショットを撮るか、よく見て確認：
 
 - 二重円のノードは `Proposed` だけ。
-- `Assigned` から `Violated` への **赤い破線エッジ** が 1 本ある（これが期限切れの lift）。
+- `Assigned` から `Violated` への **赤い破線エッジ** が 1 本ある（これが期限切れによる強制遷移）。
 - Monitors テーブルに `battery_guard` が `periodic(500ms)` / `Major` で表示されている。
 
 ### おさらい
@@ -911,7 +911,7 @@ Console に以下のような行が連続的に出ます。Console の検索欄�
 
 ### おさらい
 
-SoS 契約の **エンドツーエンドの物語** を目撃しました — CADL で書き、IR にローワリングし、C# に生成し、リアルタイムシミュレーションで実行し、本物の期限とバッテリ規則を強制する様子を観察しました。
+CADL で仕様を書き、IR に変換し、C# を生成し、リアルタイムシミュレーションとして実行するところまでを通しで体験し、期限やバッテリの規則が実際に強制される様子を確認しました。
 
 ---
 
