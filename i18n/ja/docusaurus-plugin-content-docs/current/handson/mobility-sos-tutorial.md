@@ -192,7 +192,7 @@ streamlit run app.py
 | 灰色破線枠 = `Delivered`/`Cancelled`/`Terminated` | 通常終端 |
 | 赤系破線枠 = `Violated` | 違反終端 |
 | 実線エッジ + `Δ 30s` / `Δ 5s` | deadline 付き遷移 |
-| 赤の破線エッジ + `violation Major` | `on_violation` の lift |
+| 赤の破線エッジ + `violation Major` | `on_violation` による強制遷移 |
 
 :::info このパターンは何度も出てきます
 このコースでは「CADL を編集 → `cadl sim-ir` で IR を再生成 → cadl-explorer をリロード」という 3 ステップを、実装の節目（構造を書いた後、契約を書いた後、コード生成後、シミュレーション後、契約改訂後）でそのつど繰り返します。

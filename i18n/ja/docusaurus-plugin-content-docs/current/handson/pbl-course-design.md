@@ -17,7 +17,7 @@ title: "PBL コース設計 — 教員向け"
 
 ## 本コースの位置付け
 
-このコース設計書は **教員のレッスンプラン** であり、同時に **学生の学習ガイド** です。各回・各課題に「学術的意義」と「学びの観点」を併記することで、単なる手順指導ではなく、研究領域の中での位置付けを学生に意識させながら手を動かさせる、PBL 型授業の運営を可能にします。
+このコース設計書は **教員のレッスンプラン** であり、同時に **学生の学習ガイド** です。各回・各課題に「学術的意義」と「学びの観点」を併記し、単なる手順指導ではなく、研究領域の中での位置付けを意識しながら手を動かす PBL 型授業を運営できるようにしています。
 
 > 💡 **本書の読み方**:
 > - § 1〜2 は授業計画の骨格（全 5 回）。
@@ -61,7 +61,7 @@ flowchart LR
 | --- | --- |
 | **テーマ** | 構造に規範（norm）を載せる — 義務・違反・帰結の宣言的記述 |
 | **到達目標** | (1) 契約に `lifecycle:` / `monitors:` を追加できる<br />(2) 期限と違反の関係（`deadline` + `on_violation`）を理解する<br />(3) 述語による宣言的観測（`monitors`）と、状態遷移による動作的記述（`transitions`）の違いを説明できる |
-| **学生の作業** | (a) 7 状態のライフサイクルを定義（Proposed → … → Completed/Violated）<br />(b) `accept` 遷移に 5 秒の `deadline` を設定し、`on_violation` で Violated に lift<br />(c) `battery_guard` モニターを追加（バッテリ < 20% かつ Assigned で発火）<br />(d) 1 つの ★★ 課題（過速度モニター or Cancelled 状態追加） |
+| **学生の作業** | (a) 7 状態のライフサイクルを定義（Proposed → … → Completed/Violated）<br />(b) `accept` 遷移に 5 秒の `deadline` を設定し、`on_violation` で Violated へ強制遷移<br />(c) `battery_guard` モニターを追加（バッテリ < 20% かつ Assigned で発火）<br />(d) 1 つの ★★ 課題（過速度モニター or Cancelled 状態追加） |
 | **教員の支援** | (a) 義務（obligation）/ 許可（permission）/ 禁止（prohibition）の具体例提示<br />(b) 「contract がプログラムと違う点」を§ 5 の比較表で明示<br />(c) `cadl sim-ir` で IR JSON を出力させ、`lifecycle` キーが populated に変わることを確認させる |
 | **成果物** | `my_delivery_v2.cadl`（lifecycle + monitors 付き）+ `my_delivery_v2.ir.json` |
 | **学術的意義** | 規範的マルチエージェントシステム（Normative MAS, Boella et al., 2006）の枠組みを ADL に統合する試み。von Wright（1951）以来の義務論理（deontic logic）の運用化。 |
@@ -536,7 +536,7 @@ CADL-explorer は Streamlit ベースで、現行 / 提案ビューの 3 系統�
 - 赤塗り破線 = `Violated`
 - 灰塗り破線 = `Terminated` 等
 - 実線エッジ + `Δ 5s` = deadline 付き遷移
-- 赤破線エッジ = `on_violation` の lift
+- 赤破線エッジ = `on_violation` による強制遷移
 
 **学生に何を気づかせるか**: 同じ契約を「コードとして」書いた v2 ファイルと、「図として」見たビューが**同じ意味**であること。図の方が **何が違反を引き起こすか** を直感できる。
 

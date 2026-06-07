@@ -34,7 +34,7 @@ flowchart LR
     VER["検証器<br/>SMT / モデル検査 / 証明"]
     CFG["シミュレータ設定<br/>(Unity / ROS2 / Python)"]
     CODE["コード生成<br/>Solidity / OPA / Rego"]
-    EXP["実験ランナー<br/>seed × レジーム"]
+    EXP["実験ランナー<br/>seed × モード"]
     EVAL["評価<br/>スループット / 自律性 / 公平性"]
 
     SRC --> IR
