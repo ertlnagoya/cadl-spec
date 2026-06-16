@@ -185,6 +185,25 @@ positional arguments:
 
 `cadl codegen --help` の `--target` の選択肢に `unity-csharp` が含まれていれば（`{python,solidity,opa,unity-csharp}`）、ブランチと install は正しく完了しています。
 
+### 🛠 セットアップのトラブルシューティング
+
+**ブランチを確認する（最頻のつまずき）。** SoS-DSL のコード（Step 5 の `multi_robot_demo` など）は **`feature/sos-dsl` ブランチにだけ**あります。手順 2 のブランチ切替を飛ばすと `main` のままになり、`git pull` しても「Already up to date」と出るのに中身が無い、という状態になります。全リポジトリで確認してください。
+
+```bash
+for r in cadl-spec cadl_repo cadl-explorer raspimouse-swarm-simulator; do
+  echo "$r: $(git -C ~/program/$r branch --show-current)"   # すべて feature/sos-dsl か
+done
+```
+
+`feature/sos-dsl` 以外のものがあれば `git -C ~/program/<repo> checkout feature/sos-dsl` で切り替えます。
+
+**arbitrator submodule が 404 になる場合。** `git clone --recursive` で `raspimouse-swarm-arbitrator` の指定コミットが取得できない（GitHub で 404）ことがあります。これは多くの場合**アクセス権の問題ではなく、submodule が指す固定コミットがリモートから参照できない**状態が原因です。arbitrator が必要なのは **Step 6（Unity のライブ実行）だけ**なので、Step 1〜5 はそのまま進められます。親リポジトリは取得できているので、他の submodule だけ初期化するには次を実行し、Step 6 を行うときに担当（インストラクタ）へ連絡してください。
+
+```bash
+cd ~/program/raspimouse-swarm-simulator
+git submodule update --init unity     # arbitrator はスキップして Step 1〜5 へ
+```
+
 ---
 
 ## Step 1 — CADL 仕様書を読む (15 分)
@@ -772,7 +791,13 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
 
 > #### 🛠 うまくいかないとき：`multi_robot_demo` が見つからない
 >
-> `No module named cadl.runtime.multi_robot_demo` のように出る場合、`raspimouse-swarm-simulator` のチェックアウトが**古い**可能性が高いです。`multi_robot_demo`（5 ロボット版）は途中のコミットで追加されたため、古い版には**1 契約のスモークテスト `demo_delivery` だけ**が入っています。最新の `feature/sos-dsl` に更新してください。
+> まず **ブランチを確認**してください。`multi_robot_demo` は **`feature/sos-dsl` ブランチにだけ**あります（`main` には**ありません**）。`main` のままだと `git pull` しても「Already up to date」と出るのに見つからない、という症状になります。
+>
+> ```bash
+> git -C ~/program/raspimouse-swarm-simulator branch --show-current   # → feature/sos-dsl になっているか
+> ```
+>
+> ブランチが正しいのに見つからない場合は、チェックアウトが**古い**可能性です（`multi_robot_demo` は途中のコミットで追加されたため、古い版には**1 契約のスモークテスト `demo_delivery` だけ**が入っています）。`feature/sos-dsl` に切替＆更新してください。
 >
 > ```bash
 > cd ~/program/raspimouse-swarm-simulator
