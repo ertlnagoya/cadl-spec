@@ -770,6 +770,25 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
 
 Five robots, five different scripted outcomes. **This is the ground truth your Unity run must reproduce in Step 6.**
 
+> #### 🛠 Troubleshooting: `multi_robot_demo` not found
+>
+> If you see `No module named cadl.runtime.multi_robot_demo`, your `raspimouse-swarm-simulator` checkout is most likely **out of date**. `multi_robot_demo` (the 5-robot version) was added in a later commit, so older checkouts ship only the single-contract smoke test `demo_delivery`. Update to the latest `feature/sos-dsl`:
+>
+> ```bash
+> cd ~/program/raspimouse-swarm-simulator
+> git checkout feature/sos-dsl
+> git pull                      # fetch the latest (brings in multi_robot_demo)
+> python3 -m cadl.runtime.multi_robot_demo --summary
+> ```
+>
+> If you cannot update and want to check on the older version, `demo_delivery` exercises the same three mechanisms (happy path, deadline violation, monitor violation) on one contract instance (its output is for a single contract, so its shape differs from the 5-robot table above):
+>
+> ```bash
+> PYTHONPATH=. python3 -m cadl.runtime.demo_delivery --scenario happy     # accepted, stops at Accepted
+> PYTHONPATH=. python3 -m cadl.runtime.demo_delivery --scenario late      # 5s deadline missed -> Violated via deadline:accept
+> PYTHONPATH=. python3 -m cadl.runtime.demo_delivery --scenario battery   # battery drops -> Violated via monitor:battery_guard
+> ```
+
 ### Check 5
 
 ```bash
