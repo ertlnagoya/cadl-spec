@@ -185,6 +185,25 @@ positional arguments:
 
 If `cadl codegen --help` lists `unity-csharp` among the `--target` choices (`{python,solidity,opa,unity-csharp}`), your branch and install are correct.
 
+### 🛠 Setup troubleshooting
+
+**Check your branch (the most common pitfall).** The SoS-DSL code (including Step 5's `multi_robot_demo`) lives **only on the `feature/sos-dsl` branch**. If you skip the branch switch in step 2, you stay on `main`, and `git pull` will say "Already up to date" even though the content is missing. Verify on every repository:
+
+```bash
+for r in cadl-spec cadl_repo cadl-explorer raspimouse-swarm-simulator; do
+  echo "$r: $(git -C ~/program/$r branch --show-current)"   # all should be feature/sos-dsl
+done
+```
+
+For any repo not on `feature/sos-dsl`, switch with `git -C ~/program/<repo> checkout feature/sos-dsl`.
+
+**If the arbitrator submodule 404s.** `git clone --recursive` may fail to fetch the pinned commit of `raspimouse-swarm-arbitrator` (404 on GitHub). This is usually **not an access-permission problem** but a pinned commit that is no longer reachable on the remote. The arbitrator is needed **only for Step 6 (the live Unity run)**, so Steps 1-5 can proceed. The parent repo is already cloned, so initialize the other submodule only, and contact your instructor when you reach Step 6:
+
+```bash
+cd ~/program/raspimouse-swarm-simulator
+git submodule update --init unity     # skip arbitrator; proceed to Steps 1-5
+```
+
 ---
 
 ## Step 1 — Read the CADL spec (15 min)
@@ -772,7 +791,13 @@ Five robots, five different scripted outcomes. **This is the ground truth your U
 
 > #### 🛠 Troubleshooting: `multi_robot_demo` not found
 >
-> If you see `No module named cadl.runtime.multi_robot_demo`, your `raspimouse-swarm-simulator` checkout is most likely **out of date**. `multi_robot_demo` (the 5-robot version) was added in a later commit, so older checkouts ship only the single-contract smoke test `demo_delivery`. Update to the latest `feature/sos-dsl`:
+> First, **check your branch**. `multi_robot_demo` exists **only on the `feature/sos-dsl` branch** (not on `main`). If you are still on `main`, `git pull` will say "Already up to date" yet the module is missing.
+>
+> ```bash
+> git -C ~/program/raspimouse-swarm-simulator branch --show-current   # → should be feature/sos-dsl
+> ```
+>
+> If the branch is correct but it is still missing, your checkout is likely **out of date** (`multi_robot_demo` was added in a later commit, so older checkouts ship only the single-contract smoke test `demo_delivery`). Switch to and update `feature/sos-dsl`:
 >
 > ```bash
 > cd ~/program/raspimouse-swarm-simulator
