@@ -770,6 +770,25 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
 
 5 ロボット、5 種類の異なる結末。**これが Step 6 の Unity 実行で再現すべき正解です。**
 
+> #### 🛠 うまくいかないとき：`multi_robot_demo` が見つからない
+>
+> `No module named cadl.runtime.multi_robot_demo` のように出る場合、`raspimouse-swarm-simulator` のチェックアウトが**古い**可能性が高いです。`multi_robot_demo`（5 ロボット版）は途中のコミットで追加されたため、古い版には**1 契約のスモークテスト `demo_delivery` だけ**が入っています。最新の `feature/sos-dsl` に更新してください。
+>
+> ```bash
+> cd ~/program/raspimouse-swarm-simulator
+> git checkout feature/sos-dsl
+> git pull                      # 最新に更新（multi_robot_demo を取得）
+> python3 -m cadl.runtime.multi_robot_demo --summary
+> ```
+>
+> 更新できない／旧版のままで確認したいときは、`demo_delivery` で 3 つの仕組み（正常系・期限違反・モニタ違反）を1契約ずつ確認できます（出力は 1 契約ぶんなので上の 5 ロボット表とは形が異なります）。
+>
+> ```bash
+> PYTHONPATH=. python3 -m cadl.runtime.demo_delivery --scenario happy     # 受理されて Accepted で止まる
+> PYTHONPATH=. python3 -m cadl.runtime.demo_delivery --scenario late      # 5 秒の期限切れ → deadline:accept で Violated
+> PYTHONPATH=. python3 -m cadl.runtime.demo_delivery --scenario battery   # バッテリ低下 → monitor:battery_guard で Violated
+> ```
+
 ### チェック 5
 
 ```bash
