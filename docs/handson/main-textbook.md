@@ -869,11 +869,15 @@ go run main.go
 
 ### 6.2 Open the C-SoS scene
 
-1. Launch Unity Hub. Open `~/program/raspimouse-swarm-simulator/unity` with Unity 2022.3.27f1 (LTS).
+1. Launch Unity Hub. Open `~/program/raspimouse-swarm-simulator/unity` with **Unity 2022.3.27f1 (LTS)**.
 2. First open takes 1–5 minutes (Library reimport).
 3. In the Project pane, double-click `Assets/Scenes/C-SoS.unity`.
 
 You should see a 30 × 30 grid scene with five robot prefabs labelled red / green / blue / yellow / magenta.
+
+> #### 🛠 Mind the Unity version (do not use the latest / Unity 6)
+>
+> Open this project with **2022.3.27f1 (LTS)**. **Opening it with the latest Editor (Unity 6 / 6000.x) auto-adds/updates packages** such as `com.unity.modules.accessibility`, `com.unity.multiplayer.center`, `com.unity.test-framework 1.6.0`, and `com.unity.ai.navigation 2.x`, causing errors (you would have to remove/downgrade them manually, and behavior is no longer guaranteed). If these appear in the Package Manager, your Editor is too new — reopen with **2022.3.27f1** via Unity Hub. (Note: once you save in Unity 6, the project version is bumped and cannot be cleanly reverted.)
 
 ### 6.3 Add ContractRuntimeHost (one per scene)
 

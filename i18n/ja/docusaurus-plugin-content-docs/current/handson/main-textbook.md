@@ -869,11 +869,15 @@ go run main.go
 
 ### 6.2 C-SoS シーンを開く
 
-1. Unity Hub を起動。`~/program/raspimouse-swarm-simulator/unity` を Unity 2022.3.27f1 (LTS) で開く。
+1. Unity Hub を起動。`~/program/raspimouse-swarm-simulator/unity` を **Unity 2022.3.27f1 (LTS)** で開く。
 2. 初回オープンは Library 再構築で 1〜5 分かかる。
 3. Project ペインで `Assets/Scenes/C-SoS.unity` をダブルクリック。
 
 30×30 のグリッドシーンと、赤/緑/青/黄/紫のラベルがついた 5 体のロボットプレハブが見えるはずです。
+
+> #### 🛠 Unity のバージョンに注意（最新版／Unity 6 は使わない）
+>
+> このプロジェクトは **2022.3.27f1 (LTS)** で開いてください。**Unity 6（6000.x）など最新版で開くと、`com.unity.modules.accessibility`・`com.unity.multiplayer.center`・`com.unity.test-framework 1.6.0`・`com.unity.ai.navigation 2.x` などが自動で追加・更新され**、エラーになります（手動の削除・ダウングレードが必要になり、挙動も保証外です）。これらが Package Manager に現れたら、開いている Editor が新しすぎる合図です。Unity Hub で **2022.3.27f1** を選んで開き直してください（Unity 6 で一度保存するとプロジェクト版が上がり、戻せなくなる点にも注意）。
 
 ### 6.3 ContractRuntimeHost を追加（シーンに 1 つだけ）
 
