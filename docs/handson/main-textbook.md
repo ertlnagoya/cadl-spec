@@ -867,6 +867,19 @@ go run main.go
 [arbitrator] ready (ExpectedRobots = 5)
 ```
 
+> #### 🛠 Restart the arbitrator before every Play (important)
+>
+> The Go arbitrator initializes robot count and delivery state **once at startup** and does **not** reset when you stop and re-enter Play in Unity. It keeps the previous session's "busy / assigned" state and stops broadcasting new deliveries, so **all robots stay `Proposed` and get `Violated` by `deadline_watch` after ~5 minutes**. **Restart the Terminal-2 arbitrator (`Ctrl+C`, then re-run) before every Play** (restart NATS too if unsure). Start order is always **NATS → arbitrator → Unity Play**.
+>
+> Pass the config as an **absolute path** to be safe (the default is relative and depends on the launch directory):
+>
+> ```bash
+> cd ~/program/raspimouse-swarm-simulator/arbitrator/C-SoS/main
+> go run main.go -config ~/program/raspimouse-swarm-simulator/unity/Assets/streamingAssets/cadl_config.json
+> ```
+>
+> If `[Config] … taskArbitration.enabled=true …` prints at startup, the config loaded correctly.
+
 ### 6.2 Open the C-SoS scene
 
 1. Launch Unity Hub. Open `~/program/raspimouse-swarm-simulator/unity` with **Unity 2022.3.27f1 (LTS)**.
@@ -956,6 +969,9 @@ Confirm all of these:
 | Console silent — no contract events at all | NATS or arbitrator not running. Check Terminals 1 and 2 still show "ready". |
 | Only the lowered-battery robot violates, others stay `Proposed` | The arbitrator never offered them a delivery — usually means CADL's `taskArbitration.enabled` is off in the scene's CADL config. Set it to `true` and replay. |
 | Compile error in Console after Play: `The name 'CADL.SosDsl.Demo.ContractRuntimeHost' could not be found` | Generated/Runtime files not picked up. Re-run the e2e script. Or in Unity, `Assets ▸ Reimport All`. |
+| **All robots stay `Proposed`, then get `Violated` by `deadline_watch` (~5 min)** | The arbitrator carried over state from the previous Play (no deliveries offered). Stop Play, **restart the arbitrator** (and NATS if unsure), then replay. It must be restarted **before every Play** (see the note in 6.1). |
+| **Compile error `... already contains a definition for ...` with paths under `Generated/Generated/…` or `Runtime/Runtime/…`** | The generated tree was copied nested (duplicated). Delete `Assets/Scripts/SoSDsl/Generated/Generated` and `Runtime/Runtime` (the current e2e script self-heals this). |
+| **The battery=15 robot also completes instead of violating** | The bridge fired `assign` and `accept` in the same frame, so the contract never dwells in `Assigned` long enough for the periodic `battery_guard` to sample. The shipped `PilotContractBridge` fixes this via `assignedDwellMs` (default 700 ms); if you replace the bridge, keep it above the monitor period. |
 
 ### Recap
 
