@@ -867,6 +867,19 @@ go run main.go
 [arbitrator] ready (ExpectedRobots = 5)
 ```
 
+> #### 🛠 Play のたびに arbitrator を再起動する（重要）
+>
+> Go の arbitrator はロボット台数や配送状態を**起動時に一度だけ**初期化し、Unity を停止→再生しても**状態をリセットしません**。前回セッションの「busy／割当中」を抱えたまま新しい配送を出さなくなり、**全車が `Proposed` のまま約 5 分後に `deadline_watch` で `Violated`**、という症状になります。**Play のたびに Terminal 2 の arbitrator を `Ctrl+C` で止めて再起動**してください（不安なら NATS も）。起動順は必ず **NATS → arbitrator → Unity の Play**。
+>
+> 設定ファイルは**絶対パスで明示**すると確実です（既定は相対パスで、起動ディレクトリに依存します）。
+>
+> ```bash
+> cd ~/program/raspimouse-swarm-simulator/arbitrator/C-SoS/main
+> go run main.go -config ~/program/raspimouse-swarm-simulator/unity/Assets/streamingAssets/cadl_config.json
+> ```
+>
+> 起動直後に `[Config] … taskArbitration.enabled=true …` が表示されれば config を読めています。
+
 ### 6.2 C-SoS シーンを開く
 
 1. Unity Hub を起動。`~/program/raspimouse-swarm-simulator/unity` を **Unity 2022.3.27f1 (LTS)** で開く。
@@ -956,6 +969,9 @@ Console に以下のような行が連続的に出ます。Console の検索欄�
 | Console に何も出ない | NATS / arbitrator が起動していない。Terminal 1 と 2 が "ready" のままか確認。 |
 | Battery を下げたロボットだけ違反、他は `Proposed` のまま | arbitrator が delivery を offer していない — 通常はシーンの CADL config で `taskArbitration.enabled` が `false` のため。`true` に設定して再生。 |
 | Play 後 Console に `The name 'CADL.SosDsl.Demo.ContractRuntimeHost' could not be found` | Generated/Runtime ファイルが認識されていない。e2e スクリプトを再実行、または Unity で `Assets ▸ Reimport All`。 |
+| **全車が `Proposed` のまま、約 5 分後に `deadline_watch` で `Violated`** | arbitrator が前回 Play の状態を持ち越している（落札が来ない）。Play を止め、**arbitrator を再起動**（必要なら NATS も）してから再生。**Play のたびに再起動が必要**（6.1 の注記参照）。 |
+| **コンパイルエラー `... already contains a definition for ...`（パスが `Generated/Generated/…` や `Runtime/Runtime/…`）** | 生成ツリーが入れ子に二重コピーされている。`Assets/Scripts/SoSDsl/Generated/Generated` と `Runtime/Runtime` を削除（最新の e2e スクリプトは自動で掃除する）。 |
+| **Battery 15 の車も違反せず `Completed` まで進む** | bridge が `assign` と `accept` を同一フレームで撃ち、`Assigned` に留まらないため periodic な `battery_guard` がサンプリングできない。同梱の `PilotContractBridge` は `assignedDwellMs`（既定 700ms）で対策済み。bridge を差し替えた場合はこの値を monitor 周期より大きく保つ。 |
 
 ### おさらい
 
