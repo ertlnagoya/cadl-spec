@@ -185,6 +185,10 @@ positional arguments:
 
 If `cadl codegen --help` lists `unity-csharp` among the `--target` choices (`{python,solidity,opa,unity-csharp}`), your branch and install are correct.
 
+### Recap
+
+After setup you can see that CADL is really four cooperating repositories — the spec site, the compiler, the visualizer, and the simulator. Everything that follows assumes **all of them are on the `feature/sos-dsl` branch with submodules fetched**; the large majority of trouble at this stage comes from a wrong branch or a missing submodule.
+
 ### 🛠 Setup troubleshooting
 
 **Check your branch (the most common pitfall).** The SoS-DSL code (including Step 5's `multi_robot_demo`) lives **only on the `feature/sos-dsl` branch**. If you skip the branch switch in step 2, you stay on `main`, and `git pull` will say "Already up to date" even though the content is missing. Verify on every repository:
@@ -285,6 +289,10 @@ Without scrolling, can you answer these three questions out loud?
 3. Which monitor fires when battery drops below 20% **while still Assigned**? → *`battery_guard`*
 
 If you got all three, you understand the spec well enough to start writing.
+
+### Recap
+
+Having read the spec, you can place its two layers — the **structural** layer (what exists) and the **normative** layer (what must hold) — and say where each one lives. For the delivery contract you now know the key rules: the initial state is `Proposed`, a missing ack within 5 s forces a `Major` jump to `Violated`, and a low battery while `Assigned` trips `battery_guard`. With that map in hand you are ready to start writing in Step 2.
 
 ---
 
