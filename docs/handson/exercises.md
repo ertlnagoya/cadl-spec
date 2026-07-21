@@ -107,9 +107,9 @@ For Session 1 you will only touch **actors** and **contracts**. `protocols` and 
 1. Create `my_delivery_v1.cadl` next to `examples/sos_dsl_robot_delivery.cadl`.
 2. Declare three actors: `DISPATCHER`, `ROBOT[1..N]`, `CUSTOMER[1..M]`. Choose sensible `autonomy` levels for each.
 3. Declare one contract `DELIVERY_SLA` with `parties: [DISPATCHER, "ROBOT[*]", "CUSTOMER[*]"]`, `assume: ["ROBOT[i].battery > 20"]`, `guarantee: ["delivery_time <= 300s"]`.
-4. Run `cadl check my_delivery_v1.cadl` and ensure it returns `OK`.
+4. Run `cadl check my_delivery_v1.cadl` and confirm it prints `Type check passed: my_delivery_v1.cadl`.
 
-**Check**: The file compiles, IR JSON shows 3 actors and 1 contract.
+**Check**: The file passes the type check, and the IR JSON shows 3 actors and 1 contract.
 
 #### Exercise 1.2 (★★) — Add a fourth actor
 
@@ -222,7 +222,7 @@ Two new keys make this explicit:
     severity: Critical
 ```
 
-**Reflection**: You have just added a *new normative rule* without changing a single line of pilot code. What does this say about the separation between the structural code and the normative spec? (See [Maier 1998] criterion (4): emergent behaviour can be *constrained* without redesigning the parts.)
+**Reflection**: You have just added a *new normative rule* without changing a single line of the robot's control code (Unity's `Pilot_CSoS.cs`). What does this say about the separation between the structural code and the normative spec? (See [Maier 1998] criterion (4): emergent behaviour can be *constrained* without redesigning the parts.)
 
 #### Exercise 2.3 (★★) — Add a Cancelled lifecycle state
 
@@ -298,7 +298,7 @@ Software engineers debug code. SoS engineers debug **diagrams** — because the 
 3. Open the *SoS_DSL_Lifecycle* page. Upload v1 first, then v2.
 4. Take screenshots.
 
-**Check**: For v1, the page should display a warning that the contract has no lifecycle. For v2, it should render a state machine with at least 6 states.
+**Check**: For v1, the page should display a warning that the contract has no lifecycle. For v2, it should render a state machine with 7 states.
 
 #### Exercise 3.2 (★★) — A/B comparison report
 
@@ -404,7 +404,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 
 **Goal**: Validate that the C# runtime produces the same trace shape as the Python one.
 
-**Procedure**: Follow Step 6 of the main hands-on. Compare console output to your Python `session4_baseline.ndjson`.
+**Procedure**: Follow Step 6 of the main hands-on. Compare the Console output to your Python `session4_baseline.ndjson` and confirm that the *event format* is the same. (The per-robot breakdown of terminal states will not match the Python scenario — only the shape of the events does.)
 
 ### Wrap-up + homework
 
@@ -526,7 +526,7 @@ By the end of Session 5, every student should have:
 | (Optional) `test_rewards.py` + reward execution code | 5 |
 | (Optional) `violation_trace_view.py` Streamlit page | 3 |
 
-All seven (or nine, with optionals) live in a single course-deliverables repository.
+All five (or seven, with optionals) live in a single course-deliverables repository.
 
 ---
 

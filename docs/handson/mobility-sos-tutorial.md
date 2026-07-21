@@ -62,6 +62,10 @@ Same as the main textbook for `cadl_repo` and `cadl-explorer`.
 The new requirement is **SUMO**:
 
 ```bash
+# Get the exercise repository (skip the clone if it was distributed to you locally)
+cd ~/program
+git clone https://github.com/ertlnagoya/mobility-sos-exercise
+
 # Exercise venv
 cd mobility-sos-exercise
 python -m venv .venv
@@ -107,7 +111,7 @@ So far you've only looked at the **structure** (actors and a contract skeleton).
 
 ```bash
 cd mobility-sos-exercise
-cadl check  cadl/mobility_sos.cadl                              # → Type check passed
+cadl check  cadl/mobility_sos.cadl        # → Type check passed: cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json \
    | python3 -c "import sys, json; d=json.load(sys.stdin); print('lifecycle =', d['institution']['contracts'][0]['lifecycle'])"
 ```
@@ -301,7 +305,9 @@ python scripts/cadl_to_sumo.py
 python scripts/analyze_results.py | grep -E "OK|VIOLATED"
 ```
 
-Output:
+Output (the violation count and the taxis listed vary with the random seed and your SUMO
+version — what matters is the *pattern*: `waiting_time` stays `OK` while `ride_time` turns
+`VIOLATED`):
 
 ```text
 [OK          ] waiting_time <= 300s  (tripinfo.waitingTime)

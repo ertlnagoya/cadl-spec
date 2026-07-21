@@ -53,7 +53,7 @@ Academically, Maier (1998) defines an SoS by five criteria. At minimum (1) and (
 
 > 💡 **Try the test on familiar things**
 > - **Coffee shop** → staff work for that one shop, owner manages all of them. **Not an SoS.**
-> - **Robot warehouse** (Course A's domain) → robots act individually, but a single owner controls everything.
+> - **Robot delivery** (Course A's domain) → robots act individually, but a single owner controls everything.
 >   This is more of a concurrency-control problem than a textbook SoS — yet it's perfect as a training problem
 >   for "writing contracts that govern behaviour".
 > - **A large taxi-dispatch platform** (Course B's domain) → drivers work independently, but the platform sets fares, dispatches rides, and enforces terms. That makes it Acknowledged, not Collaborative.
@@ -111,7 +111,7 @@ in a single source file kept separate from any one runtime implementation.
 All of this lives in **one YAML file**. From there:
 
 - **Visualisation** (cadl-explorer) — the state machine renders in a browser
-- **Code generation** (`cadl codegen`) — Unity C#, SUMO config, Python runtime, ...
+- **Code generation** (`cadl codegen`, or a conversion script) — Unity C#, SUMO config, Python runtime, ...
 - **Compliance check** (analyze_results) — verify that simulation outputs respect the contract
 
 are all **derived from the same CADL source** — the contract becomes the **single source of truth**.
@@ -131,7 +131,7 @@ When you reach §3 of any course and add `lifecycle:` / `monitors:`,
 
 Recommended order:
 
-1. **Course A — Robot Delivery** ─ a minimal example covering actors → contracts → lifecycle → monitors → codegen → execution in 90 minutes.
+1. **Course A — Robot Delivery** ─ a minimal example covering actors → contracts → lifecycle → monitors → codegen → execution in about 95 minutes.
 2. **Course B — Urban Mobility** ─ keep the same CADL syntax, swap domain and runtime.
 3. **Course C — Your own SoS** ─ apply the concepts to a domain you choose (food delivery, emergency response, power grid…).
 
@@ -166,7 +166,7 @@ processes the ISO standards prescribe — the standards themselves stop short of
 
 ### 5.3 Difference from blockchain DSLs
 
-Ethereum's Solidity (Buterin et al. 2014) was an early "contract as code" approach,
+Ethereum (Buterin 2014) and its smart contract language Solidity were an early "contract as code" approach,
 but **contract = executable code** ties it to a blockchain runtime.
 CADL stays at the **specification level** and generates code per target,
 so the same spec drives Unity, SUMO, and Python alike.
@@ -203,10 +203,11 @@ so the same spec drives Unity, SUMO, and Python alike.
 #### E. Runtime verification
 
 - **[Bartocci et al. 2018]** *Introduction to Runtime Verification*.
-- **[Havelund & Goldberg 2008]** *Verify Your Runs*. VSTTE '08.
+- **[Havelund & Goldberg 2008]** *Verify Your Runs*. In VSTTE 2005, LNCS 4171, pp. 374–383, Springer. — Presented at VSTTE 2005; the proceedings were published in 2008.
 
 #### F. Blockchain DSLs (for contrast)
 
+- **[Buterin 2014]** *Ethereum White Paper: A Next-Generation Smart Contract and Decentralized Application Platform*. — Source for the Ethereum / Solidity discussion in §5.3.
 - **[Atzei et al. 2017]** *A Survey of Attacks on Ethereum Smart Contracts (SoK)*. — Why "spec = code" is a dangerous oversimplification.
 
 #### G. Simulation methodology (used in Course B / C)

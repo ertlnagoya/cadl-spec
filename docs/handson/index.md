@@ -36,14 +36,14 @@ it gives you the vocabulary the courses will rely on.
 |---|---|
 | **Domain** | Warehouse robot package delivery |
 | **Target runtime** | Unity C# |
-| **Time** | 90 min (15 min × 6 steps) |
+| **Time** | About 95 min (5 min setup + 15 min × 6 steps) |
 | **Prerequisite** | None — open to CADL beginners |
 | **You will learn** | CADL syntax / actors / contract / lifecycle / monitors / cadl-explorer / Unity integration |
 
 → [Course A — Robot Delivery](main-textbook.md)
 
 After finishing, practice with the extra exercises:
-→ [Course A — Exercises](exercises.md) — 5 graded problems (★ to ★★★)
+→ [Course A — Exercises](exercises.md) — 5 sessions, graded ★ to ★★★
 
 ### Course B — Urban Mobility (applied)
 
@@ -109,5 +109,5 @@ After that, start with **[Why SoS-DSL?](academic-background.md)** and then **[Co
 | Course A — main textbook | [Robot Delivery](main-textbook.md) |
 | Course A — extra problems | [Exercises](exercises.md) |
 | Course B — mobility tutorial | [Urban Mobility](mobility-sos-tutorial.md) |
-| Course C — your own SoS | See Exercises Part 2 |
+| Course C — your own SoS | [Exercises Part 2](exercises.md) |
 | Instructor's syllabus | [PBL Course Design](pbl-course-design.md) |

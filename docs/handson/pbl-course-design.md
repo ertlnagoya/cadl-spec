@@ -12,7 +12,7 @@ title: "PBL Course Design — for Instructors"
 >
 > Related documents:
 > - Main textbook → [`main-textbook.md`](main-textbook.md)
-> - Exercises booklet (5-session series) → [`exercises.md`](exercises.md)
+> - Exercises booklet (Part 1: 5-session robot-delivery series / Part 2: model a new SoS on your own) → [`exercises.md`](exercises.md)
 > - Academic background and references → [`academic-background.md`](academic-background.md)
 
 ## Positioning of this course
@@ -130,13 +130,13 @@ When time is tight:
 
 **Outputs (submissions)**:
 - `my_delivery_v1.cadl`
-- Evidence (terminal output) that `cadl check my_delivery_v1.cadl` returns `OK`
+- Evidence (terminal output) that `cadl check my_delivery_v1.cadl` prints `Type check passed: my_delivery_v1.cadl`
 - A 3-to-5-line memo `session1_gap.md` titled "what v1 cannot express"
 
 **Evaluation**:
 | Criterion | Weight | Rubric |
 | --- | --- | --- |
-| Syntactic correctness | 30% | `cadl check` returns `OK` |
+| Syntactic correctness | 30% | `cadl check` prints `Type check passed: <filename>` |
 | Actor design | 30% | role / autonomy / capabilities are sensible and consistent |
 | Validity of contract A/G | 20% | `assume` and `guarantee` are reasonable for the domain |
 | Articulation of the gap | 20% | Student can put into words what v1 cannot say |
@@ -157,7 +157,7 @@ Without referring to any existing file, write a CADL skeleton for a delivery dro
 
 **Description**: Copy v1 into v2 and add a 7-state lifecycle to `DELIVERY_SLA`. Set a 5-second `deadline` on the `accept` transition with `on_violation` to `Violated`.
 
-**Inputs**: Session 1 deliverable `my_delivery_v1.cadl`; academic background §3.2 (Normative MAS).
+**Inputs**: Session 1 deliverable `my_delivery_v1.cadl`; academic background §5.2 (Normative MAS).
 
 **Outputs**: `my_delivery_v2.cadl`; `my_delivery_v2.ir.json`.
 
@@ -404,7 +404,7 @@ The student is asked to write these 30 lines **not by transcription, but in thei
 
 - "DISPATCHER names a function, but COORDINATOR aligns better with the course-wide vocabulary."
 - "`capabilities: [assign_tasks]` is a single capability. What other capabilities are needed will be discovered in Session 2."
-- "`assume: ['ROBOT[i].battery > 20']` is fine, but who observes and guarantees it? → designed as a `monitor` in Session 2."
+- "`assume: ['ROBOT[i].battery > 20']` is fine, but who observes and guarantees it? → designed as a `monitor` in Session 3."
 
 ### Why structural modelling matters — academic significance
 
@@ -435,7 +435,7 @@ Expressed via CADL's existing `obligations:` / `permissions:` / `prohibitions:` 
 | --- | --- | --- |
 | **Obligation** | "Robot must respond within 5 seconds of being assigned" | `lifecycle.transitions[id=accept].deadline: 5s` + `on_violation.transition: Violated` |
 | **Obligation** | "Robot must complete delivery within 300 seconds" | `contract.guarantee: ["delivery_time <= 300s"]` + `monitor.deadline_watch` |
-| **Permission** | "Coordinator may reassign a delivery if the robot does not respond" | `permissions: [- "reassign(Robot, DeliveryRequest) when no_response"]` (existing CADL clause) |
+| **Permission** | "Coordinator may reassign a delivery if the robot does not respond" | `permissions: ["reassign(Robot, DeliveryRequest) when no_response"]` (existing CADL clause) |
 | **Prohibition** | "When battery is below 20%, robot must not accept new deliveries" | `monitor.battery_guard.rule: "battery < 20 AND state == Assigned"` + `on_match.transition: Violated` |
 | **Prohibition** | "Coordinator must not simultaneously assign the same delivery to two robots" | (Not yet supported by current SoS-DSL — assigned to advanced students) |
 
@@ -590,7 +590,7 @@ The point of using simulation in Sessions 4 and 5 is to **quantify how the SoS-w
 
 **How to run**: as documented in the main textbook (`multi_robot_demo`).
 
-**Expected behaviour**: 5 robots × 5 distinct outcomes (Completed / 3 kinds of Violated / stays-Proposed).
+**Expected behaviour**: 5 robots split across 5 distinct outcomes (Completed / `deadline:accept` violation / `monitor:battery_guard` violation / `monitor:deadline_watch` violation / stays-Proposed). Note that this is the *Python reference runtime's* scenario — a Unity run will not reproduce these same five rows.
 
 ### Comparison metrics and computation
 
@@ -598,7 +598,7 @@ The point of using simulation in Sessions 4 and 5 is to **quantify how the SoS-w
 | --- | --- | --- | --- |
 | **Delay** | Computed by hand: `now - deadline` per delivery | Auto-detected via `deadline:` violations | v0 makes delay **invisible** |
 | **Failure rate** | Manual detection of `delivery_time > 300s` | Count of `Violated` states | v2 puts failure into **language** |
-| **Throughput** | `Completed` deliveries per unit time | Same | v2 may appear *worse* on the surface because some completions become Violated |
+| **Throughput** | `Completed` deliveries per unit time | Same | v2 may appear *worse* on the surface because deliveries that transition to `Violated` are no longer counted as `Completed` |
 | **Collision** | No automatic detection (or sim-internal only) | Auto-detected by `monitor.collision_watch` | v2 treats dangerous behaviour **as a contract violation** |
 
 ### Why comparison matters — academic significance
@@ -659,7 +659,7 @@ Typical "I see!" moments students experience in this course:
 
 1. **End of Session 1**: looking at `"lifecycle": null` in the IR JSON and feeling that *something is missing in the structure-only spec*.
 2. **Mid Session 2**: writing `deadline: 5s`, regenerating the IR, and discovering it was normalised to `deadline_ms: 5000`. **The spec has become processable data.**
-3. **Session 3**: seeing v1's "no lifecycle" page next to v2's 6-state diagram, and being **viscerally** struck by the contrast.
+3. **Session 3**: seeing v1's "no lifecycle" page next to v2's 7-state diagram, and being **viscerally** struck by the contrast.
 4. **Session 4**: running the baseline, seeing five robots × five outcomes, and confirming that *predictions match observations*.
 5. **First half of Session 5**: simulating v0 (no contract) and noticing that no "violations" are reported — followed by the realisation: **"violations are not absent, they are merely invisible."**
 6. **Second half of Session 5**: observing that v3 (improved) has a lower violation rate, and feeling that **"my spec change changed the system's behaviour."**
@@ -802,9 +802,8 @@ Items the instructor should confirm before each session:
 
 | Document | Purpose |
 | --- | --- |
-| [`main-textbook.md`](main-textbook.md) | Main textbook (90-minute version) |
-| [`exercises.md`](exercises.md) | Student exercises booklet (5-session series) |
+| [`index.md`](index.md) | Landing page for the three hands-on courses |
+| [`main-textbook.md`](main-textbook.md) | Main textbook (about 95 minutes) |
+| [`exercises.md`](exercises.md) | Student exercises booklet (Part 1: 5-session robot-delivery series / Part 2: model a new SoS) |
+| [`mobility-sos-tutorial.md`](mobility-sos-tutorial.md) | Course B — mobility SoS with SUMO |
 | [`academic-background.md`](academic-background.md) | Academic background and references (ISO 21839/40/41, Maier, etc.) |
-| [`sos-dsl-pr-drafts.md`](sos-dsl-pr-drafts.md) | Implementation PR drafts (reference) |
-| [`sos-dsl-unity-runbook.md`](sos-dsl-unity-runbook.md) | Unity execution walkthrough |
-| [`sos-contract-dsl-design.md`](sos-contract-dsl-design.md) | Design notes for the contract DSL |
