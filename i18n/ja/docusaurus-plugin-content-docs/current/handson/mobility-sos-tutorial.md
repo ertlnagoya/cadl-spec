@@ -53,6 +53,10 @@ mobility_sos.cadl
 コース B で新しく必要になるのは SUMO だけです。
 
 ```bash
+# 演習リポジトリを取得（すでにローカルに配布されている場合は clone は不要）
+cd ~/program
+git clone https://github.com/ertlnagoya/mobility-sos-exercise
+
 # 演習用 venv
 cd mobility-sos-exercise
 python -m venv .venv
@@ -333,7 +337,7 @@ python scripts/cadl_to_sumo.py
 python scripts/analyze_results.py | grep -E "OK|VIOLATED"
 ```
 
-期待される結果：
+期待される結果（違反件数と該当タクシーの並びは、乱数シードや SUMO のバージョンによって変わります。着目すべきは `waiting_time` が `OK` で `ride_time` が `VIOLATED` になる、という**内訳の形**です）：
 
 ```text
 [OK          ] waiting_time <= 300s  (tripinfo.waitingTime)
