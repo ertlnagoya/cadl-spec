@@ -119,5 +119,5 @@ CADL および周辺の研究プログラムで用いる作業語彙をまとめ
 ## 関連項目
 
 - [仕様書イントロダクション](./intro)
-- [言語仕様（第5章）](./05-language-spec)
+- [言語仕様（第5章）](./05-language-spec.md)
 - [Appendix A — 構文（EBNF）](./appendix-a-syntax)

@@ -59,30 +59,30 @@ the order below, but each chapter is also self-contained.
 
 ### Part I — Background and Requirements
 
-- **[1. Introduction](./01-introduction)** — Motivation, problem setting, and
+- **[1. Introduction](./01-introduction.md)** — Motivation, problem setting, and
   the role of CADL within the SoS research agenda.
-- **[2. Objectives](./02-objectives)** — What CADL aims to solve, and the
+- **[2. Objectives](./02-objectives.md)** — What CADL aims to solve, and the
   scope of this first draft.
-- **[3. Comparison](./03-comparison)** — Relationship to existing ADLs,
+- **[3. Comparison](./03-comparison.md)** — Relationship to existing ADLs,
   contract languages, and multi-agent DSLs.
-- **[4. Requirements](./04-requirements)** — Functional and non-functional
+- **[4. Requirements](./04-requirements.md)** — Functional and non-functional
   requirements that drive the language design.
 
 ### Part II — Language and Design
 
-- **[5. Language Specification](./05-language-spec)** — Core syntax and
+- **[5. Language Specification](./05-language-spec.md)** — Core syntax and
   semantics of the three layers (Institution / Protocol / Algorithm).
-- **[6. Design](./06-design)** — Design rationale, toolchain architecture,
+- **[6. Design](./06-design.md)** — Design rationale, toolchain architecture,
   and intermediate representation (IR).
-- **[7. Examples](./07-examples)** — Worked examples illustrating typical
+- **[7. Examples](./07-examples.md)** — Worked examples illustrating typical
   CADL usage.
 
 ### Part III — Applications and Outlook
 
-- **[8. Use Cases](./08-use-cases)** — Application domains and case studies.
-- **[9. Research](./09-research)** — Open research questions and theoretical
+- **[8. Use Cases](./08-use-cases.md)** — Application domains and case studies.
+- **[9. Research](./09-research.md)** — Open research questions and theoretical
   foundations.
-- **[10. Roadmap](./10-roadmap)** — Planned extensions and the path toward v1.0.
+- **[10. Roadmap](./10-roadmap.md)** — Planned extensions and the path toward v1.0.
 
 ### Appendices
 

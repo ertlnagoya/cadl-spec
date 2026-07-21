@@ -121,5 +121,5 @@ introduced in depth.
 ## See also
 
 - [Specification introduction](./intro)
-- [Language specification (Chapter 5)](./05-language-spec)
+- [Language specification (Chapter 5)](./05-language-spec.md)
 - [Appendix A — Syntax (EBNF)](./appendix-a-syntax)
