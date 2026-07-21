@@ -8,7 +8,7 @@ title: "コース A — ロボット配送 (メイン教材)"
 
 > **対象**: SoS の概念を学び始めたばかりの学部生・大学院初年度。CADL の経験は不要です。
 >
-> **所要時間**: 90 分（5 分のセットアップ + 15 分 × 6 ステップ）。
+> **所要時間**: 約 95 分（5 分のセットアップ + 15 分 × 6 ステップ）。
 >
 > **持ち帰るもの**: 自分で書いた CADL 仕様、その仕様から生成された Unity C# 実装、5 台のロボットが期限切れやバッテリ違反を実際に検出する動くシミュレーション。
 
@@ -16,7 +16,7 @@ title: "コース A — ロボット配送 (メイン教材)"
 
 ## なぜこのハンズオンをやるのか
 
-**System of Systems (SoS)** とは、それぞれが独立して運用される複数のシステムを統合した「システムのシステム」のことです。例えば、配送ロボットの群、中央管制（dispatcher）、注文を出す顧客 — それぞれが独自の目的と独自のソフトウェアを持ちます。SoS 設計者の仕事は、彼ら全員のコードを書くことではなく、彼らが従う「ゲームのルール」を書くことです。誰が誰に何を頼めるか、何が違反となるか、結果はどうなるか。
+**System of Systems (SoS)** とは、それぞれが独立して運用される複数のシステムを統合した「システムのシステム」のことです。例えば、配送ロボットの群、中央管制（dispatcher）、注文を出す顧客 — どれも独自の目的と独自のソフトウェアを持っています。SoS 設計者の仕事は、それら全部のコードを書くことではなく、全員が従う「ゲームのルール」を決めることです。誰が誰に何を頼めるのか、何をしたら違反なのか、違反したらどうなるのか。
 
 今日学ぶことは 3 つです。
 
@@ -36,17 +36,17 @@ title: "コース A — ロボット配送 (メイン教材)"
 | 4 | 創発的振る舞い | 全体は、どの個別構成要素にもできないことをするか？ |
 | 5 | 進化的発展 | 構成要素は SoS のライフタイム中に加除・改変されるか？ |
 
-(1) と (2) は基本的に必須。(3)〜(5) は通常それに伴います。
+(1) と (2) は必須と考えてよく、(3)〜(5) はたいていそれに付いてきます。
 
 **当てはめ** — このハンズオンのロボット配送の場合：
 
-- ✓ (1) 各ロボットは独立に wandering 動作ができる。
-- ~ (2) 全ロボットが架空の同じディスパッチャを共有（境界的）。
-- ✓ (3) ロボットは 30×30 のグリッドに分散。
-- ✓ (4) 集合的なスループットはどの単一ロボットも設計していない。
-- ~ (5) このシナリオでは個体数は固定だが、シミュレータは変更に対応している。
+- ✓ (1) 各ロボットは割り当てが無くても自律的に動き回れる。
+- △ (2) 全ロボットが同じディスパッチャを共有しているため、管理上の独立性は弱い。
+- ✓ (3) ロボットはグラフ状の経路網に分散して配置される。
+- ✓ (4) 全体としての配送スループットは、どの 1 台にも単独では生み出せない。
+- △ (5) このシナリオでは台数は固定だが、シミュレータ自体は増減に対応している。
 
-(2) が境界的なため、このハンズオンは教科書的 SoS よりも *並行制御問題* に近い位置にあります。**演習問題集の Part 2** では (2) が明確に成立するドメイン（フードデリバリー）を採用します。
+(2) が弱いぶん、このハンズオンは教科書的な SoS というより *並行制御の問題* に近い位置にあります。管理上の独立性がはっきり成立するドメイン（フードデリバリー）は、**演習問題集の Part 2** で扱います。
 
 > 📚 ISO/IEC/IEEE 21839 / 21840 / 21841 / 15288 / 42010 の標準ランドスケープ、SoS の 4 類型、関連研究領域（ADL、規範的 MAS、実行時検証）、推薦文献リストの詳細は → [`academic-background.md`](academic-background.md) を参照してください。
 
@@ -153,7 +153,12 @@ git clone --recursive https://github.com/ertlnagoya/raspimouse-swarm-simulator
 for r in cadl-spec cadl_repo cadl-explorer raspimouse-swarm-simulator; do
   (cd $r && git checkout feature/sos-dsl)
 done
-(cd raspimouse-swarm-simulator/unity && git checkout feature/sos-dsl)
+
+# 2') 親リポジトリのブランチを切り替えたら、submodule をそのブランチが
+#     指すコミットに同期し直す。--recursive での clone は「既定ブランチが
+#     指すコミット」を取ってくるので、この一手を入れないと unity や
+#     arbitrator が古いままになります。
+(cd raspimouse-swarm-simulator && git submodule update --init --recursive)
 
 # 3) 編集モードで cadl CLI を install。変更が即反映されます。
 cd cadl_repo
@@ -234,7 +239,7 @@ npm run start
 # ブラウザで http://localhost:3000 が開く
 ```
 
-15 分以内に収まるよう、以下の章を表のおすすめ時間で順に読みます。
+15 分に収まるよう、下表の目安時間に沿って順に読んでいきます。
 
 | 章 | 答えてくれる問い | 時間 |
 | --- | --- | --- |
@@ -285,7 +290,7 @@ contracts:
 スクロールせずに、次の 3 問に口頭で答えられますか？
 
 1. 配送契約の **初期状態** は何？ → *Proposed*
-2. ロボットが **5 秒** 以内に ack を返さなかったら何が起こる？ → *severity `Major` で `Violated` へ強制遷移（lift）される*
+2. ロボットが **5 秒** 以内に ack を返さなかったら何が起こる？ → *severity `Major` の違反として `Violated` へ強制的に遷移する*
 3. バッテリ 20% 以下で **まだ Assigned のとき** どの監視が発火する？ → *`battery_guard`*
 
 全部答えられたら、書き始めるのに十分な理解ができています。
@@ -320,7 +325,7 @@ flowchart LR
 
 ### 手順
 
-example の横に新ファイル `my_delivery.cadl` を作って下の骨組みを貼り付けます。コメントを読んで、各ブロックが何をしているか理解しましょう。
+同梱の例と同じ `examples/` ディレクトリに `my_delivery.cadl` を新規作成し、下の骨組みを貼り付けます。コメントを読みながら、各ブロックが何をしているかを確かめてください。
 
 ```yaml
 # my_delivery.cadl ─── 私の最初の SoS 仕様
@@ -438,7 +443,7 @@ cadl sim-ir my_delivery.cadl --format json | head -30
 | 症状 | 原因 |
 | --- | --- |
 | `YAML parse error: while parsing a flow sequence` | `[ROBOT[i].battery, ...]` のように subscript 付きをクオートなしで書いた。`["ROBOT[i].battery", ...]` のように quote する。 |
-| `Unknown SoS type: 'Centralized'` | CADL は `Directed | Acknowledged | Collaborative | Virtual` のみ受け付ける。 |
+| `Unknown SoS type: 'Centralized'` | CADL が受け付けるのは `Directed` / `Acknowledged` / `Collaborative` / `Virtual` の 4 つだけ。 |
 | `Type check failed: actor 'CUSTOMER' not declared` | `CUSTOMER[1..M]` だけ宣言して `CUSTOMER` を使った。`"CUSTOMER[*]"` で全顧客を参照する。 |
 
 ### おさらい
@@ -591,7 +596,7 @@ monitors[0].id    : battery_guard
 | 症状 | 原因 |
 | --- | --- |
 | コピペ後に `KeyError: 'states'` | `lifecycle:` ブロックのインデントが違う。`assume:` / `guarantee:` と同じレベルに置く。 |
-| パーサが `on:` をブール値として黙って扱う | YAML 1.1 の癖。CADL のパーサは内部で `_yaml_on_key` 回避策を持っているので example は正しく動く。自分でパーサを書くなら注意。 |
+| `on:` がブール値として解釈されてしまう | YAML 1.1 の癖。CADL のパーサは内部に `_yaml_on_key` の回避策を持っているので同梱の例は正しく動く。自分でパーサを書くときは注意。 |
 | `monitor.rule` が常に false | `state == Assigned` の右辺は **裸の識別子** で OK（CADL の慣習）。`"Assigned"` のように quote すると意味が変わる。 |
 
 ### おさらい
@@ -795,7 +800,9 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
   robot-4-1     state=Proposed      violations=[(none)]
 ```
 
-5 ロボット、5 種類の異なる結末。**これが Step 6 の Unity 実行で再現すべき正解です。**
+5 ロボット、5 種類の異なる結末です。これは、契約が取りうる結末（正常完了・期限違反・モニター違反・未割当のまま）を 1 回の実行で一望できるように組んだ **Python 側のシナリオ** です。
+
+Step 6 の Unity 実行では、割当のタイミングも各ロボットのバッテリ設定も違うので、**この 5 行がそのまま再現されるわけではありません**（Unity では通常、バッテリを下げた 1 台が `battery_guard` で違反し、残りは `Completed` まで進みます）。突き合わせるのは個々の結末の並びではなく、**同じ仕組み — lifecycle の遷移・`deadline`・`monitor` — が同じ意味で働くこと** です。
 
 > #### 🛠 うまくいかないとき：`multi_robot_demo` が見つからない
 >
@@ -840,7 +847,7 @@ PYTHONPATH=src python3 -m pytest tests/test_unity_csharp_structural.py -q
 - 770 行の Unity に貼れる C# ツリー（Unity プロジェクトに配置済み）。
 - C# トレースが **どうなるべきか** を示す Python のリファレンス実装。
 
-----
+---
 
 ## Step 6 — Unity でシミュレーションを動かす (15 分)
 
@@ -870,10 +877,12 @@ go run main.go
 ```
 
 ```
-[arbitrator] connected to NATS at nats://localhost:4222
-[arbitrator] subscribing to demand.next, demand.init, ...
-[arbitrator] ready (ExpectedRobots = 5)
+[Config] Loaded from ../../../unity/Assets/streamingAssets/cadl_config.json: nats_url=nats://localhost:4222 numAgents=5
+[Config]   init=init next=next ret=ret fin=fin disp=disp resource=resource
+[Config]   taskArbitration.enabled=true protocol=fcfs intervalSec=1.0
 ```
+
+この 3 行目 `taskArbitration.enabled=true` が出ていれば、arbitrator が設定を読めていて配送を配り始められる状態です。ここが `false` だったり `[Config]` 行自体が出ない場合は、設定ファイルを読めていません（下の注記の `-config` で絶対パスを渡してください）。
 
 > #### 🛠 Play のたびに arbitrator を再起動する（重要）
 >
@@ -894,11 +903,13 @@ go run main.go
 2. 初回オープンは Library 再構築で 1〜5 分かかる。
 3. Project ペインで `Assets/Scenes/C-SoS.unity` をダブルクリック。
 
-30×30 のグリッドシーンと、赤/緑/青/黄/紫のラベルがついた 5 体のロボットプレハブが見えるはずです。
+**11 個のノードと 17 本のエッジ**からなる経路網（グラフ）と、その上を走る **5 体**のロボット（Red / Blue / Green / Yellow / Purple）が見えるはずです。ノード数・エッジ数・台数はいずれも `Assets/streamingAssets/cadl_config.json` から読み込まれるので、Console にも `[GraphDefinition] Loaded from CADL config: 11 nodes, 17 edges` と出ます。
 
 > #### 🛠 Unity のバージョンに注意（最新版／Unity 6 は使わない）
 >
 > このプロジェクトは **2022.3.27f1 (LTS)** で開いてください。**Unity 6（6000.x）など最新版で開くと、`com.unity.modules.accessibility`・`com.unity.multiplayer.center`・`com.unity.test-framework 1.6.0`・`com.unity.ai.navigation 2.x` などが自動で追加・更新され**、エラーになります（手動の削除・ダウングレードが必要になり、挙動も保証外です）。これらが Package Manager に現れたら、開いている Editor が新しすぎる合図です。Unity Hub で **2022.3.27f1** を選んで開き直してください（Unity 6 で一度保存するとプロジェクト版が上がり、戻せなくなる点にも注意）。
+>
+> なお、リポジトリに記録されているプロジェクトのバージョンは `2021.3.26f1` です（`ProjectSettings/ProjectVersion.txt`）。そのため 2022.3.27f1 で開くと初回に**アップグレードの確認ダイアログ**が出ますが、同じ 2022.3 LTS 系への更新なので**そのまま承認して問題ありません**。Unity Hub の一覧でバージョンが赤く警告表示されるのも同じ理由です。
 
 ### 6.3 ContractRuntimeHost を追加（シーンに 1 つだけ）
 
@@ -966,16 +977,16 @@ Console に以下のような行が連続的に出ます。Console の検索欄�
 | `[lifecycle ... robot-{id}-1 ...]` イベントが **5 体すべて** に出る | はい |
 | Battery 15 のロボットには `monitor:battery_guard` の violation が出る | はい |
 | 各ロボットの最初の遷移は `Proposed -> Assigned` | はい |
-| `Proposed` のまま数秒以上留まるロボットはない（FCFS arbitrator がすぐ broadcast する） | はい |
-| トレースの形が Step 5 の Python `multi_robot_demo --summary` の出力と一致する | はい |
+| 各ロボットが 10 秒程度までに `Proposed -> Assigned` に進む（claim 待ちがあるので即時ではない） | はい |
+| Step 5 の Python と **同じ種類のイベント**（lifecycle 遷移・violation）が同じ意味で出ている | はい |
 
 ### よくある間違い
 
 | 症状 | 対処 |
 | --- | --- |
 | Console: `[PilotContractBridge X] ContractRuntimeHost.Instance is null` | host を置き忘れ。Step 6.3 をやり直す。 |
-| Console に何も出ない | NATS / arbitrator が起動していない。Terminal 1 と 2 が "ready" のままか確認。 |
-| Battery を下げたロボットだけ違反、他は `Proposed` のまま | arbitrator が delivery を offer していない — 通常はシーンの CADL config で `taskArbitration.enabled` が `false` のため。`true` に設定して再生。 |
+| Console に contract イベントが何も出ない | NATS / arbitrator が起動していない。Terminal 1 に `Server is ready`、Terminal 2 に `[Config] … taskArbitration.enabled=true …` が出ているか確認。 |
+| 配送が一切割り当てられない（`WON delivery` が出ない） | arbitrator が設定を読めていない可能性。`-config` に `cadl_config.json` の**絶対パス**を渡して起動し直し、`taskArbitration.enabled=true` の表示を確認する（同梱の config は既定で `true`）。 |
 | Play 後 Console に `The name 'CADL.SosDsl.Demo.ContractRuntimeHost' could not be found` | Generated/Runtime ファイルが認識されていない。e2e スクリプトを再実行、または Unity で `Assets ▸ Reimport All`。 |
 | **全車が `Proposed` のまま、約 5 分後に `deadline_watch` で `Violated`** | arbitrator が前回 Play の状態を持ち越している（落札が来ない）。Play を止め、**arbitrator を再起動**（必要なら NATS も）してから再生。**Play のたびに再起動が必要**（6.1 の注記参照）。 |
 | **コンパイルエラー `... already contains a definition for ...`（パスが `Generated/Generated/…` や `Runtime/Runtime/…`）** | 生成ツリーが入れ子に二重コピーされている。`Assets/Scripts/SoSDsl/Generated/Generated` と `Runtime/Runtime` を削除（最新の e2e スクリプトは自動で掃除する）。 |

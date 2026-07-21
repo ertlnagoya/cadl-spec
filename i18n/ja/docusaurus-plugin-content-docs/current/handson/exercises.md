@@ -12,7 +12,7 @@ title: "コース A — 演習問題集"
 
 このブックレットは、SoS-DSL ハンズオンに付属する練習課題をまとめたものです。2 つのパートに分かれています。
 
-- **Part 1 — ロボット配送コース（5 回シリーズ）**。同じロボット配送ドメインを CADL モデリング → DSL 設計 → 可視化 → シミュレーション → 改善の流れで通る、構造化された授業課題。1 セッション 90 分、3〜5 週の授業を想定。**このブックレットの中心。**
+- **Part 1 — ロボット配送コース（5 回シリーズ）**。同じロボット配送ドメインを CADL モデリング → DSL 設計 → 可視化 → シミュレーション → 改善の順にたどる、構造化された授業課題。1 セッション 90 分、3〜5 週の授業を想定。**このブックレットの中心。**
 - **Part 2 — 新しい SoS の end-to-end モデリング**。Part 1 を終えた学生が、*別の*ドメイン（フードデリバリー、緊急対応など）を選んで同じ流れを自走する。研究ミニプロジェクトに近い位置付け。
 
 ---
@@ -26,7 +26,7 @@ title: "コース A — 演習問題集"
 | 1 | **CADL モデリング** | SoS の構造 | `my_delivery_v1.cadl`（構造のみ） |
 | 2 | **DSL 設計** | 規範：ライフサイクルとモニター | `my_delivery_v2.cadl`（lifecycle + monitors 付き） |
 | 3 | **可視化** | 仕様を視覚的に読み・比較する | スクリーンショット付き A/B 比較レポート |
-| 4 | **シミュレーション** | 仕様の実行とトレース解読 | ベースライン トレース + パラメータスイープ |
+| 4 | **シミュレーション** | 仕様の実行とトレース解読 | ベースライントレース + パラメータスイープ |
 | 5 | **改善** | 観察結果を仕様の磨き込みに活かす | `my_delivery_v3.cadl` + Before/After レポート |
 
 各回 **授業 90 分** + **宿題 3 時間程度**。5 回を通した最終提出物は **3 ページのレポート**（初期モデル / シミュレーション比較 / 振り返り）。
@@ -81,7 +81,7 @@ title: "コース A — 演習問題集"
 
 ### 概念導入（約 30 分）
 
-CADL ファイルは「**誰が**参加し、**お互いに何を期待しているか**」を、いつ・どれくらいの頻度よりも前に語ります。構造的なビルディングブロックは：
+CADL ファイルは「**誰が**参加し、**お互いに何を期待しているか**」を、「いつ」「どれくらいの頻度で」よりも先に述べます。構造を組み立てる部品は次のとおりです。
 
 ```mermaid
 flowchart LR
@@ -94,7 +94,7 @@ flowchart LR
   C --> T
 ```
 
-第 1 回では **actors** と **contracts** だけを扱います。`protocols` と `transitions` は発展課題として扱います。
+第 1 回では **actors** と **contracts** だけを扱います。`protocols` と `transitions` は発展課題に回します。
 
 ### 演習（授業 50 分 + 宿題）
 
@@ -104,12 +104,12 @@ flowchart LR
 
 **手順**:
 
-1. `examples/sos_dsl_robot_delivery.cadl` の隣に `my_delivery_v1.cadl` を作成。
+1. `examples/sos_dsl_robot_delivery.cadl` と同じディレクトリに `my_delivery_v1.cadl` を作成。
 2. 3 つのアクターを宣言：`DISPATCHER`、`ROBOT[1..N]`、`CUSTOMER[1..M]`。それぞれに妥当な `autonomy` レベルを選ぶ。
 3. 1 つの契約 `DELIVERY_SLA` を宣言：`parties: [DISPATCHER, "ROBOT[*]", "CUSTOMER[*]"]`、`assume: ["ROBOT[i].battery > 20"]`、`guarantee: ["delivery_time <= 300s"]`。
-4. `cadl check my_delivery_v1.cadl` を実行し、`OK` が返ることを確認。
+4. `cadl check my_delivery_v1.cadl` を実行し、`Type check passed: my_delivery_v1.cadl` と表示されることを確認。
 
-**確認**: ファイルがコンパイルされ、IR JSON にアクター 3 つ、契約 1 つが見える。
+**確認**: ファイルが型検査を通り、IR JSON にアクター 3 つ、契約 1 つが見える。
 
 #### 演習 1.2 (★★) — 4 番目のアクターを追加する
 
@@ -122,7 +122,7 @@ flowchart LR
 3. `assume` に `ROBOT[i].battery > 0` を含めるか、もっと強い条件にするか判断する。
 4. `cadl check` を再実行。
 
-**振り返り**: 同じアクターに *2 つの* 契約があるとき、`assume` clauses はどう作用しますか？（ヒント：両方が同時に成り立つ必要がある — これがまさに Dahmann (2014) が SoS pain point #6 として挙げた *相互依存* の問題です。）
+**振り返り**: 同じアクターに *2 つの* 契約があるとき、`assume` 節はどう作用しますか？（ヒント：両方が同時に成り立つ必要がある — これがまさに Dahmann (2014) が SoS pain point #6 として挙げた *相互依存* の問題です。）
 
 #### 演習 1.3 (★★) — プロトコルを追加する
 
@@ -138,7 +138,7 @@ flowchart LR
 
 #### 演習 1.4 (★★★) — 知らないドメインを書いてみる
 
-**目的**: 既存ファイルを一切コピーせず、**配送ドローンの群**（地上ロボットではなく）の CADL 骨格をゼロから書く。同じドメイン形だが、アクターと capabilities は違う。
+**目的**: 既存ファイルを一切コピーせず、**配送ドローンの群**（地上ロボットではなく）の CADL 骨格をゼロから書く。ドメインの形は同じだが、アクターと capabilities は異なる。
 
 **手順**:
 
@@ -187,7 +187,7 @@ stateDiagram-v2
   Violated --> [*]
 ```
 
-これを明示的に書けるようにする 2 つの新しいキーが：
+これを明示的に書けるようにするキーが 2 つあります。
 
 - `lifecycle:` — 状態、初期 / 終端マーカー、`deadline` + `on_violation` 付き遷移
 - `monitors:` — 周期的またはイベント駆動で動く宣言的な観測者。`rule` がマッチしたら違反や遷移を発火する
@@ -238,7 +238,7 @@ stateDiagram-v2
 
 #### 演習 2.4 (★★★) — 2 つの契約を共存させる
 
-**目的**: `DELIVERY_SLA` の隣に `FLEET_SAFETY` 契約を新設。そのライフサイクルは個別の配送とは独立 — ロボットが稼働中はずっと活きている契約。
+**目的**: `DELIVERY_SLA` とは別に `FLEET_SAFETY` 契約を新設する。そのライフサイクルは個別の配送とは独立していて、ロボットが稼働している間はずっと有効な契約。
 
 **手順**:
 
@@ -298,7 +298,7 @@ stateDiagram-v2
 3. *SoS_DSL_Lifecycle* ページを開く。v1 を先にアップロード、次に v2。
 4. スクリーンショットを取る。
 
-**確認**: v1 では「契約にライフサイクルが無い」旨の警告が表示される。v2 では最低 6 状態の状態機械が描画される。
+**確認**: v1 では「契約にライフサイクルが無い」旨の警告が表示される。v2 では 7 状態の状態機械が描画される。
 
 #### 演習 3.2 (★★) — A/B 比較レポート
 
@@ -356,7 +356,7 @@ stateDiagram-v2
 
 | ロボット | 期待する終端 | なぜ大事か |
 | --- | --- | --- |
-| robot-0-1 | `Completed` | 正常パスの正気チェック |
+| robot-0-1 | `Completed` | 正常系が通ることの確認 |
 | robot-1-1 | `Violated` via `deadline:accept` | deadline 強制のデモ |
 | robot-2-1 | `Violated` via `monitor:battery_guard` | 周期的 monitor のデモ |
 | robot-3-1 | `Violated` via `monitor:deadline_watch` | 宣言的 monitor のデモ |
@@ -396,7 +396,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 
 **目的**: 同じシナリオを per-instance battery / speed / deadline 値を変えて実行。違反パターンがどう変わるかを観察。
 
-**手順**: `multi_robot_demo.py` のコピーを作り、`_seed_battery(...)` と `update_instance_world(...)` の呼び出しを修正、`--summary` で実行。最低 3 構成試す。
+**手順**: `multi_robot_demo.py` のコピーを作り、`_seed_battery(...)` と `update_instance_world(...)` の呼び出しを修正、`--summary` で実行。最低 3 構成を試す。
 
 **提出**: 構成名 → ロボットごとの終端状態の小さな表。
 
@@ -404,7 +404,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 
 **目的**: C# ランタイムが Python と同じトレース形を出すことを検証する。
 
-**手順**: メイン教材の Step 6 に従う。Console 出力を Python の `session4_baseline.ndjson` と比較。
+**手順**: メイン教材の Step 6 に従う。Console 出力を Python の `session4_baseline.ndjson` と比較し、イベントの形式が同じであることを確認する（終端状態の内訳まで Python 側のシナリオと一致するわけではありません）。
 
 ### まとめ + 宿題
 
@@ -440,7 +440,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 | 報酬が支払われない | ランタイム — 報酬実行を実装 | `engine.py` を拡張 |
 | すべて成功するが *集約* がおかしい（例：遅延） | 新 monitor または新契約 | `FLEET_THROUGHPUT_SLA` を追加 |
 
-これは規範的 SoS 仕様における *回帰の小さな分類学* です。
+これは規範的 SoS 仕様における *不具合の小さな分類* です。
 
 ### 演習（授業 50 分 + 宿題）
 
@@ -526,7 +526,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 | （任意）`test_rewards.py` + 報酬実行コード | 5 |
 | （任意）`violation_trace_view.py` Streamlit ページ | 3 |
 
-7 個（任意込みで 9 個）すべてを 1 つのコース提出物リポジトリに置きます。
+5 個（任意込みで 7 個）すべてを 1 つのコース提出物リポジトリに置きます。
 
 ---
 
@@ -534,7 +534,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 
 （概要のみ。Part 1 が運用に乗ったら拡充予定。）
 
-Part 1 を終えた発展的な学生は、別のドメインを選び — 推奨：**フードデリバリー（Collaborative SoS）** をプライマリ、**緊急対応（Virtual SoS）** をストレッチ — それに対して同じ 5 回構成を歩きます。Part 1 との重要な違い：Part 2 では出発点となる `.cadl` ファイルが提供されません。白紙から書きます。
+Part 1 を終えた意欲的な学生は、別のドメインを選び、同じ 5 回構成をもう一度たどります（推奨は **フードデリバリー（Collaborative SoS）**、さらに挑戦するなら **緊急対応（Virtual SoS）**）。Part 1 との大きな違いは、Part 2 では出発点となる `.cadl` ファイルが提供されないことです。白紙から書き起こします。
 
 ねらいは **新しいドメインでワークフローを体験する** ことです：
 
