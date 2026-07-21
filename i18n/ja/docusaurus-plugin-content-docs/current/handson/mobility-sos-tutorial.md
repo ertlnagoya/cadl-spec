@@ -10,7 +10,7 @@ title: "コース B — 都市モビリティ (CADL × SUMO)"
 
 - 対象：コース A（CADL/SoS-DSL の基礎）を済ませた方
 - 所要時間：60〜90 分
-- 完成すると手元に残るもの：タクシー需要を題材に自分で書いた `mobility_sos.cadl`、SUMO で走るシミュレーション、CADL 契約に対する違反検出レポート
+- 完成すると手元に残るもの：タクシー需要を題材に自分で手を入れた `mobility_sos.cadl`、SUMO で走るシミュレーション、CADL 契約に対する違反検出レポート
 
 ---
 
@@ -59,7 +59,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# SUMO（任意の OS で pip 経由が手軽）
+# SUMO（どの OS でも pip 経由が手軽）
 pip install eclipse-sumo
 
 # CADL コンパイラ（メイン教材と同じ）
@@ -96,8 +96,8 @@ sos:
       autonomy: medium
 ```
 
-読み方は次の通りです。プラットフォームは中央の指揮役ですが、ドライバーへの裁量は弱め。
-タクシーは自分の利益を最大化しようとする高自律のエージェント。
+読み方は次の通りです。プラットフォームは中央の調整役で、自分の判断で勝手に動く度合い（autonomy）は低い。
+タクシーは自分の利益を最大化しようとする、自律性の高いエージェント。
 乗客は需要を出して乗降を判断する程度の自律性、というイメージです。
 
 コース A のロボット配送と同じ Acknowledged 型 SoS です。
@@ -109,7 +109,7 @@ sos:
 
 ```bash
 cd mobility-sos-exercise
-cadl check  cadl/mobility_sos.cadl                              # → Type check passed
+cadl check  cadl/mobility_sos.cadl        # → Type check passed: cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json \
    | python3 -c "import sys, json; d=json.load(sys.stdin); print('lifecycle =', d['institution']['contracts'][0]['lifecycle'])"
 ```
@@ -216,7 +216,7 @@ streamlit run app.py
 python scripts/cadl_to_sumo.py
 ```
 
-期待される出力：
+期待される出力（抜粋）：
 
 ```text
 [1/4] CADL.environment 検証
@@ -305,7 +305,7 @@ python scripts/analyze_results.py
 
 | analyze_results.py の出力 | cadl-explorer 上の対応箇所 |
 |---|---|
-| `[OK] waiting_time <= 300s` | 図には出ない（数値ガランティーは事後判定用） |
+| `[OK] waiting_time <= 300s` | 図には出ない（数値の保証条件は事後判定用） |
 | `[OK] ride_time <= 1800s` | 同上 |
 | `[SKIP] match ≤ 30.0s` | `Requested → Matched` の `Δ 30s` ラベル |
 | `[SKIP] accept ≤ 5.0s` | `Matched → Accepted` の `Δ 5s` ラベル |
@@ -385,7 +385,7 @@ python scripts/cadl_to_sumo.py
 
 ## まとめ
 
-コース A は CADL → Unity C# を扱いましたが、コース B は CADL → SUMO を扱いました。
+コース A では CADL → Unity C# を、コース B では CADL → SUMO を扱いました。
 同じ CADL/SoS-DSL の文法のまま、対象ドメインとランタイムを差し替えられることが体感できたはずです。
 契約の deadline / guarantee / monitor を CADL で書き換えるだけで、再シミュレーションなしに評価結果が変わります。
 構造と規範を 1 箇所に書き、それを各ランタイムに伝搬させる ── ここが CADL の中核です。

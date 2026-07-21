@@ -8,7 +8,7 @@ title: "Course A — Robot Delivery (Main Textbook)"
 
 > **Audience**: Undergraduates and beginning graduate students who have just been introduced to System of Systems (SoS) thinking. No CADL experience required.
 >
-> **Duration**: 90 minutes — six 15-minute steps plus a 5-minute setup.
+> **Duration**: about 95 minutes — a 5-minute setup plus six 15-minute steps.
 >
 > **What you take home**: A working CADL specification you wrote yourself, a generated Unity C# implementation, and a running 5-robot delivery simulation that visibly enforces deadlines and battery limits.
 
@@ -38,15 +38,15 @@ A useful litmus test before declaring something "an SoS" is **Maier's five crite
 
 (1) and (2) are essentially mandatory. (3)–(5) usually accompany them.
 
-**Worked example** — the robot delivery in this hands-on:
+**Applying it** — the robot delivery in this hands-on:
 
-- ✓ (1) each robot can run wandering motion on its own.
-- ~ (2) all robots share one fictional dispatcher (borderline).
-- ✓ (3) robots are spread on a 30 × 30 grid.
-- ✓ (4) emergent throughput is not designed into a single robot.
-- ~ (5) the population is fixed in this scenario but the simulator supports changes.
+- ✓ (1) each robot can roam on its own even with no assignment.
+- △ (2) all robots share a single dispatcher, so managerial independence is weak.
+- ✓ (3) robots are distributed over a graph-shaped road network.
+- ✓ (4) the collective delivery throughput is something no single robot can produce alone.
+- △ (5) the robot count is fixed in this scenario, but the simulator itself supports changing it.
 
-Because (2) is borderline, this hands-on is closer to a *parallel control problem* than a textbook SoS. **Part 2 of the exercises booklet** introduces a domain (food delivery) where (2) is unambiguous.
+Because (2) is weak, this hands-on sits closer to a *parallel control problem* than to a textbook SoS. A domain where managerial independence clearly holds (food delivery) is covered in **Part 2 of the exercises booklet**.
 
 > 📚 For the full standards landscape (ISO/IEC/IEEE 21839 / 21840 / 21841 / 15288 / 42010), the four SoS taxonomy types, related research lines (ADLs, Normative MAS, Runtime Verification), and a curated reading list, see → [`academic-background.md`](academic-background.md).
 
@@ -153,7 +153,12 @@ git clone --recursive https://github.com/ertlnagoya/raspimouse-swarm-simulator
 for r in cadl-spec cadl_repo cadl-explorer raspimouse-swarm-simulator; do
   (cd $r && git checkout feature/sos-dsl)
 done
-(cd raspimouse-swarm-simulator/unity && git checkout feature/sos-dsl)
+
+# 2') After switching the parent repo's branch, re-sync the submodules to the
+#     commits that branch pins. `clone --recursive` fetches the commits pinned
+#     by the *default* branch, so without this step unity and arbitrator stay
+#     on the old revisions.
+(cd raspimouse-swarm-simulator && git submodule update --init --recursive)
 
 # 3) Install the cadl CLI in editable mode so changes are picked up.
 cd cadl_repo
@@ -285,7 +290,7 @@ contracts:
 Without scrolling, can you answer these three questions out loud?
 
 1. What is the **initial state** of a delivery contract? → *Proposed*
-2. If a robot does not ack within **5 seconds**, what happens? → *Lifted to `Violated` with severity `Major`*
+2. If a robot does not ack within **5 seconds**, what happens? → *It is forced to transition to `Violated` with severity `Major`*
 3. Which monitor fires when battery drops below 20% **while still Assigned**? → *`battery_guard`*
 
 If you got all three, you understand the spec well enough to start writing.
@@ -438,7 +443,7 @@ These two `null` / `[]` are **the gap we will fill in Step 3** — they are why 
 | Symptom | Cause |
 | --- | --- |
 | `YAML parse error: while parsing a flow sequence` | You wrote a subscripted identifier without quoting, e.g. `[ROBOT[i].battery, ...]`. Quote it: `["ROBOT[i].battery", ...]`. |
-| `Unknown SoS type: 'Centralized'` | CADL accepts only `Directed | Acknowledged | Collaborative | Virtual`. |
+| `Unknown SoS type: 'Centralized'` | CADL accepts only `Directed` / `Acknowledged` / `Collaborative` / `Virtual`. |
 | `Type check failed: actor 'CUSTOMER' not declared` | You used `CUSTOMER` somewhere but only declared `CUSTOMER[1..M]`. Use `"CUSTOMER[*]"` to refer to all customers. |
 
 ### Recap
@@ -795,7 +800,9 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
   robot-4-1     state=Proposed      violations=[(none)]
 ```
 
-Five robots, five different scripted outcomes. **This is the ground truth your Unity run must reproduce in Step 6.**
+Five robots, five different outcomes. This is a **scripted Python scenario**, built so that every outcome a contract can reach (normal completion, deadline violation, monitor violation, still unassigned) is visible in a single run.
+
+The Unity run in Step 6 assigns deliveries at different times and gives the robots different battery settings, so **these five rows will not be reproduced as-is** (in Unity, typically the one robot whose battery you lowered violates via `battery_guard` while the rest progress to `Completed`). What you should be matching is not the per-robot outcomes but the **mechanism** — that the same lifecycle transitions, `deadline`, and `monitor` behave with the same meaning.
 
 > #### 🛠 Troubleshooting: `multi_robot_demo` not found
 >
@@ -870,10 +877,12 @@ go run main.go
 ```
 
 ```
-[arbitrator] connected to NATS at nats://localhost:4222
-[arbitrator] subscribing to demand.next, demand.init, ...
-[arbitrator] ready (ExpectedRobots = 5)
+[Config] Loaded from ../../../unity/Assets/streamingAssets/cadl_config.json: nats_url=nats://localhost:4222 numAgents=5
+[Config]   init=init next=next ret=ret fin=fin disp=disp resource=resource
+[Config]   taskArbitration.enabled=true protocol=fcfs intervalSec=1.0
 ```
+
+If that third line reads `taskArbitration.enabled=true`, the arbitrator has loaded its configuration and is ready to start handing out deliveries. If it says `false`, or the `[Config]` lines do not appear at all, the config file was not read — pass its absolute path with `-config` as shown in the note below.
 
 > #### 🛠 Restart the arbitrator before every Play (important)
 >
@@ -894,11 +903,13 @@ go run main.go
 2. First open takes 1–5 minutes (Library reimport).
 3. In the Project pane, double-click `Assets/Scenes/C-SoS.unity`.
 
-You should see a 30 × 30 grid scene with five robot prefabs labelled red / green / blue / yellow / magenta.
+You should see a road network (graph) made of **11 nodes and 17 edges**, with **five** robots — Red / Blue / Green / Yellow / Purple — driving on it. The node count, edge count, and robot count are all loaded from `Assets/streamingAssets/cadl_config.json`, so the Console also prints `[GraphDefinition] Loaded from CADL config: 11 nodes, 17 edges`.
 
 > #### 🛠 Mind the Unity version (do not use the latest / Unity 6)
 >
 > Open this project with **2022.3.27f1 (LTS)**. **Opening it with the latest Editor (Unity 6 / 6000.x) auto-adds/updates packages** such as `com.unity.modules.accessibility`, `com.unity.multiplayer.center`, `com.unity.test-framework 1.6.0`, and `com.unity.ai.navigation 2.x`, causing errors (you would have to remove/downgrade them manually, and behavior is no longer guaranteed). If these appear in the Package Manager, your Editor is too new — reopen with **2022.3.27f1** via Unity Hub. (Note: once you save in Unity 6, the project version is bumped and cannot be cleanly reverted.)
+>
+> Note that the repository records the project version as `2021.3.26f1` (in `ProjectSettings/ProjectVersion.txt`). Opening it with 2022.3.27f1 therefore shows an **upgrade confirmation dialog** on first open, but since this is an update within the same 2022.3 LTS line it is **safe to accept**. This is also why Unity Hub flags the version in its project list.
 
 ### 6.3 Add ContractRuntimeHost (one per scene)
 
@@ -966,16 +977,16 @@ Confirm all of these:
 | There are `[lifecycle ... robot-{id}-1 ...]` events for **all five robots** | Yes |
 | The robot with battery 15 has a `monitor:battery_guard` violation | Yes |
 | Every robot's first transition is `Proposed -> Assigned` | Yes |
-| No robot stays `Proposed` for more than a few seconds (the FCFS arbitrator broadcasts quickly) | Yes |
-| The shape of the trace matches the Python `multi_robot_demo --summary` output from Step 5 | Yes |
+| Each robot gets from `Proposed` to `Assigned` within roughly 10 seconds (not instantly — there is a claim delay) | Yes |
+| The **same kinds of events** as Step 5's Python run (lifecycle transitions, violations) appear with the same meaning | Yes |
 
 ### Common mistakes
 
 | Symptom | Fix |
 | --- | --- |
 | Console: `[PilotContractBridge X] ContractRuntimeHost.Instance is null` | You forgot to place the host. Redo Step 6.3. |
-| Console silent — no contract events at all | NATS or arbitrator not running. Check Terminals 1 and 2 still show "ready". |
-| Only the lowered-battery robot violates, others stay `Proposed` | The arbitrator never offered them a delivery — usually means CADL's `taskArbitration.enabled` is off in the scene's CADL config. Set it to `true` and replay. |
+| Console silent — no contract events at all | NATS or arbitrator not running. Check that Terminal 1 shows `Server is ready` and Terminal 2 shows the `[Config] … taskArbitration.enabled=true …` line. |
+| No delivery is ever assigned (no `WON delivery` in the Console) | The arbitrator probably did not load its config. Restart it passing the **absolute path** of `cadl_config.json` via `-config`, and confirm `taskArbitration.enabled=true` in its startup output (the shipped config already has it `true`). |
 | Compile error in Console after Play: `The name 'CADL.SosDsl.Demo.ContractRuntimeHost' could not be found` | Generated/Runtime files not picked up. Re-run the e2e script. Or in Unity, `Assets ▸ Reimport All`. |
 | **All robots stay `Proposed`, then get `Violated` by `deadline_watch` (~5 min)** | The arbitrator carried over state from the previous Play (no deliveries offered). Stop Play, **restart the arbitrator** (and NATS if unsure), then replay. It must be restarted **before every Play** (see the note in 6.1). |
 | **Compile error `... already contains a definition for ...` with paths under `Generated/Generated/…` or `Runtime/Runtime/…`** | The generated tree was copied nested (duplicated). Delete `Assets/Scripts/SoSDsl/Generated/Generated` and `Runtime/Runtime` (the current e2e script self-heals this). |
