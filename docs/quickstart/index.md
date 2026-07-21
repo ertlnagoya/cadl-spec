@@ -71,7 +71,7 @@ governance_motivation:
 
 - Read the [Specification Introduction](../spec/intro) for the language as a
   whole.
-- Chapter [5. Language Specification](../spec/05-language-spec) covers the
+- Chapter [5. Language Specification](../spec/05-language-spec.md) covers the
   three-layer syntax.
-- Chapter [7. Examples](../spec/07-examples) walks through larger worked
+- Chapter [7. Examples](../spec/07-examples.md) walks through larger worked
   examples.

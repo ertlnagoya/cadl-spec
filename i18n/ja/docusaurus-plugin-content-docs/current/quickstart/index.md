@@ -68,5 +68,5 @@ governance_motivation:
 ## 次のステップ
 
 - 言語全体については [仕様書の概要](../spec/intro) を参照。
-- 第 [5. 言語仕様](../spec/05-language-spec) 章で三層構文を確認。
-- 第 [7. 例](../spec/07-examples) 章により大きな例が載っています。
+- 第 [5. 言語仕様](../spec/05-language-spec.md) 章で三層構文を確認。
+- 第 [7. 例](../spec/07-examples.md) 章により大きな例が載っています。
