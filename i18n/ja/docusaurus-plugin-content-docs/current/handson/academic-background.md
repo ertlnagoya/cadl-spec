@@ -198,10 +198,11 @@ CADL は仕様レベルに留まり、コードはターゲットごとに生成
 #### E. 実行時検証
 
 - Bartocci, E., Falcone, Y., Francalanza, A., Reger, G. (2018). *Introduction to Runtime Verification*.
-- Havelund, K., Goldberg, A. (2008). *Verify Your Runs*. VSTTE '08.
+- Havelund, K., Goldberg, A. (2008). *Verify Your Runs*. In VSTTE 2005, LNCS 4171, pp. 374–383, Springer. — 発表は VSTTE 2005、論文集は 2008 年刊。
 
 #### F. ブロックチェーン DSL（比較対象）
 
+- Buterin, V. (2014). *Ethereum White Paper: A Next-Generation Smart Contract and Decentralized Application Platform*. — 本文 5.3 で触れた Ethereum / Solidity の出典。
 - Atzei, N., Bartoletti, M., Cimoli, T. (2017). *A Survey of Attacks on Ethereum Smart Contracts (SoK)*. — 「仕様 = コード」が危ういとされる理由。
 
 #### G. シミュレーション関連（コース B / C で参照）
