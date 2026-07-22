@@ -47,6 +47,8 @@ AI融合（7.4節）は，急速に社会的重要性を増すAIガバナンス�
 | 自律システムの安全認証 | 自動運転・ドローン等の自律システムの安全契約をCADLで記述。反応型合成（GR(1)）による安全制御器の自動生成。 | Kang+ [ACM TECS, 2019]: 確率的assume-guarantee契約だがCPS設計限定。Saoud+ [Automatica, 2021]: 連続時間契約だが制度層は対象外。 | 制度層（ガバナンス）と制御層（アルゴリズム）の統合的な安全保証。契約仕様からの反応型合成による安全制御器自動生成。 |
 | AI支援型制度設計ワークフロー | 自然言語→CADL変換→形式検証→配備の自動化パイプライン。LLMが制度設計者と対話しながらCADL記述を生成・改善。 | LLM-Based Symboleo Generation [2024]: 自然言語→法的契約仕様の変換。CURRANTE [SANER 2026]: 仕様→テスト→コードのHuman-in-the-loop。 | NL→制度仕様→検証→コード生成の完全パイプライン。Symboleoが法的契約に限定されるのに対し，CADLは制度全体をカバー。 |
 
+**リファレンス実装。** 本節の 3 方向は、いずれも動く最小実証が [`cadl-ai-governance`](https://github.com/ertlnagoya/cadl-ai-governance) リポジトリにある。[Case 1](https://github.com/ertlnagoya/cadl-ai-governance/tree/HEAD/case1_agent_team) は LLM エージェントチームの行動契約（承認ゲート・レビュー期限・API 予算）をランタイムが実行時に強制する例、[Case 3](https://github.com/ertlnagoya/cadl-ai-governance/tree/HEAD/case3_policy_audit) は AI 運用規程（人間監督 72h・PII 送信禁止）を利用ログの再生で事後監査する例、[Case 2](https://github.com/ertlnagoya/cadl-ai-governance/tree/HEAD/case2_nl2cadl) は自然言語の合意を LLM が CADL に変換し `cadl check` を通るまで有効化しない生成・検証・修復ループの例である。3 事例は同一の IR 駆動ランタイムを Bridge の差し替えで共有しており、契約記述が実行環境から独立であることの実証にもなっている。
+
 ## 8.5 新規性の総括
 
 以上の活用事例分析を通じて，CADLの新規性を以下の5点に総括する。
