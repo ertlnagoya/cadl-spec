@@ -104,6 +104,8 @@ generation.
   Workflow
   ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+**Reference implementations.** Working minimal demonstrations of all three directions in this section are available in the [`cadl-ai-governance`](https://github.com/ertlnagoya/cadl-ai-governance) repository. [Case 1](https://github.com/ertlnagoya/cadl-ai-governance/tree/HEAD/case1_agent_team) enforces behavioural contracts on an LLM agent team at runtime (approval gate, review deadline, API budget); [Case 3](https://github.com/ertlnagoya/cadl-ai-governance/tree/HEAD/case3_policy_audit) audits AI operation policies (72-hour human oversight, no PII egress) by replaying gateway logs; and [Case 2](https://github.com/ertlnagoya/cadl-ai-governance/tree/HEAD/case2_nl2cadl) implements the propose–verify–repair loop in which an LLM's CADL drafts only take effect once they pass `cadl check`. The three cases share one IR-driven runtime with swappable bridges — itself a demonstration that the contract description is independent of the execution environment.
+
 ## 8.5 Summary of Novelty
 Based on the above use case analysis, we summarize CADL's novelty in
 five key points:
