@@ -942,8 +942,11 @@ The Inspector now shows:
 ```
 PilotContractBridge (Script)
 ├── Robot Battery       [───────●───] 90.0
-└── Request Deadline Ms              300000
+├── Request Deadline Ms              300000
+└── Assigned Dwell Ms                700
 ```
+
+> `Assigned Dwell Ms` is the minimum time the contract dwells in `Assigned` before accepting. It gives periodic monitors gated on that state (e.g. `battery_guard`, sampled every 500 ms) at least one evaluation window. Leave it at the default 700 ms — setting it below the monitor period would make violations undetectable.
 
 For one of the five robots, drag the Battery slider down to **15** so the `battery_guard` monitor will fire on that robot.
 
