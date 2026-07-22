@@ -942,8 +942,11 @@ Inspector に：
 ```
 PilotContractBridge (Script)
 ├── Robot Battery       [───────●───] 90.0
-└── Request Deadline Ms              300000
+├── Request Deadline Ms              300000
+└── Assigned Dwell Ms                700
 ```
+
+> `Assigned Dwell Ms` は「`Assigned` 状態に最低どれだけ留まってから accept するか」です。`battery_guard` のような周期モニター（500ms 間隔）が `Assigned` 中に最低 1 回評価される猶予を作るためのもので、既定の 700ms のまま触らないでください（モニター周期より短くすると違反が検出されなくなります）。
 
 5 体のうち 1 体の Battery スライダーを **15** まで下げ、`battery_guard` モニターを発火させます。
 
