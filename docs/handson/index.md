@@ -11,9 +11,9 @@ The materials fall into **three tracks**. Pick the one that matches your role.
 
 | Your role | What you do | Where to start |
 |---|---|---|
-| 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | **Why SoS-DSL? → Course A → Course B → Course C** |
-| 🧑‍🏫 **Instructor** | Design a PBL-style course | **PBL Course Design** |
-| 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim **Why SoS-DSL?** then jump to **Course C** |
+| 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | [Why SoS-DSL?](academic-background.md) → [Course A](main-textbook.md) → B → C |
+| 🧑‍🏫 **Instructor** | Design a PBL-style course | [PBL Course Design](pbl-course-design.md) |
+| 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim [Why SoS-DSL?](academic-background.md) then jump to [Course C](exercises.md) |
 
 ## 🗺️ First time here? A three-stage path
 

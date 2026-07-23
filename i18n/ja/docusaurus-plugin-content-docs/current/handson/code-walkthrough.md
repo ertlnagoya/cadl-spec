@@ -15,7 +15,7 @@ title: "全体構造とコード解説（初学者向け）"
 ```mermaid
 flowchart LR
   subgraph 書く側
-    CADL[".cadl ファイル<br/>（あなたが書く唯一のもの）"]
+    CADL[".cadl ファイル<br/>（人が書く唯一のもの）"]
   end
   subgraph コンパイラ_cadl_repo
     CHECK[cadl check<br/>型検査]
@@ -50,7 +50,7 @@ flowchart LR
 
 ## 3. 1 つの契約が通る道 — ファイル単位で追う
 
-教材の例題 `sos_dsl_robot_delivery.cadl`（153 行）を例に、あなたが書いた 1 行がどこへ流れていくかを追います。
+教材の例題 `sos_dsl_robot_delivery.cadl`（153 行）を例に、自分の書いた 1 行がどこへ流れていくかを追います。
 
 **(1) 仕様 → IR**。`.cadl` の `deadline: 5s` は、`cadl_repo/src/cadl/parser.py` が構文解析し、`sim/lower.py` が IR に落とすと `"deadline_ms": 5000` という JSON になります（IR 全体で 245 行）。IR は「人間向けの書き方」を捨てて「機械が実行しやすい形」だけを残した中間表現です。
 
