@@ -11,6 +11,8 @@ title: "Course A — Robot Delivery (Main Textbook)"
 > **Duration**: about 95 minutes — a 5-minute setup plus six 15-minute steps.
 >
 > **What you take home**: A working CADL specification you wrote yourself, a generated Unity C# implementation, and a running 5-robot delivery simulation that visibly enforces deadlines and battery limits.
+>
+> **First time here?** Read the [Architecture & Code Walkthrough](code-walkthrough.md) first — it shows which part of the system each Step touches.
 
 ---
 

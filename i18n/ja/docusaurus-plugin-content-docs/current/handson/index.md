@@ -11,9 +11,9 @@ CADL と SoS-DSL のハンズオン教材は、目的別に 3 つのトラック
 
 | 読み手 | やること | 入口 |
 |---|---|---|
-| 🧑‍🎓 学習者 | 自分で CADL を書いて動かす | 「なぜ SoS-DSL なのか？」 → コース A → B → C |
-| 🧑‍🏫 教員 | PBL 形式の授業を設計する | PBL コース設計（教員向け） |
-| 🧑‍🔬 研究者 | 教材を自分の SoS の試作に流用する | 「なぜ SoS-DSL なのか？」を流し読み → コース C |
+| 🧑‍🎓 学習者 | 自分で CADL を書いて動かす | [なぜ SoS-DSL なのか？](academic-background.md) → [コース A](main-textbook.md) → B → C |
+| 🧑‍🏫 教員 | PBL 形式の授業を設計する | [PBL コース設計（教員向け）](pbl-course-design.md) |
+| 🧑‍🔬 研究者 | 教材を自分の SoS の試作に流用する | [なぜ SoS-DSL なのか？](academic-background.md)を流し読み → [コース C](exercises.md) |
 
 ## 🗺️ 初めての人へ：3 段階の進め方
 

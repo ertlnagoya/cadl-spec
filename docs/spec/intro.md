@@ -103,6 +103,10 @@ the order below, but each chapter is also self-contained.
   web application that demonstrates the CADL governance pipeline end-to-end,
   from specification through simulation to governance evaluation.
 
+## Learning by doing
+
+To write and run the language rather than only read about it, see the [hands-on materials](../handson/index.md): starting from robot delivery, they walk through authoring a spec, generating code, and running the simulation.
+
 ## Status
 
 This is **Version 0.1 (Draft)**. The language and toolchain are under active
