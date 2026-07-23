@@ -15,6 +15,18 @@ The materials fall into **three tracks**. Pick the one that matches your role.
 | 🧑‍🏫 **Instructor** | Design a PBL-style course | **PBL Course Design** |
 | 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim **Why SoS-DSL?** then jump to **Course C** |
 
+## 🗺️ First time here? A three-stage path
+
+If this is your first contact with the toolchain, follow three stages:
+**understand → practise with templates → build from scratch**. You are
+never asked to write code cold.
+
+| Stage | What you do | Materials | Rough time |
+|---|---|---|---|
+| **① Understand** | Grasp the overall structure (four repositories; the spec → IR → codegen flow) and what each key program does | [Architecture & Code Walkthrough](code-walkthrough.md), then skim the [Academic Background](academic-background.md) | 0.5–1 day |
+| **② Practise with templates** | Copy the provided skeletons and fill them in while going once around the loop: write a contract → check → visualise → run the simulation | [Course A (main textbook)](main-textbook.md) Steps 0–6, then the ★ / ★★ exercises of [the exercises booklet](exercises.md) Part 1 | 1–2 weeks |
+| **③ Build from scratch** | Add features with no template: new monitors and states (★★★), model a new domain (Part 2), or the LLM contract-generation loop (advanced exercise) | ★★★ / advanced exercise / Part 2 of [the exercises booklet](exercises.md) | as your interest dictates |
+
 ---
 
 ## 🧑‍💻 For learners — three courses
