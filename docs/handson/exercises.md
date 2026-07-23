@@ -530,6 +530,42 @@ All five (or seven, with optionals) live in a single course-deliverables reposit
 
 ---
 
+## Advanced exercise (optional, ★★★) — LLM-generated contracts: the propose-and-check loop
+
+**Overview.** In Part 1 you wrote the contracts by hand. In this
+advanced exercise you build and evaluate a loop in which an **LLM
+generates the CADL contract from natural-language operating rules**
+("respond within 5 seconds", "never assign a low-battery robot") and is
+**auto-corrected until the draft passes `cadl check`**, with the
+diagnostics fed back on every failure. The essence: the LLM proposes,
+the type checker gatekeeps — no LLM output takes effect until it passes.
+
+**Key points.**
+
+- A draft that passes the check is **not necessarily what you meant**.
+  Compare the accepted draft's `deadline` values and monitor rules
+  against the contract you hand-wrote in Step 3 — noticing that
+  "passes ≠ matches intent" is the single biggest lesson here.
+- Feed failure diagnostics back to the LLM **verbatim**. Record what
+  it managed to fix and what it could not.
+- Evaluate with counting statistics: first-pass rate, pass@K, and mean
+  rounds to pass.
+
+**Hints.**
+
+- Spelling out the CADL grammar constraints in the system prompt (only
+  four SoS types, ASCII identifiers, `deadline: 5s` duration format,
+  ...) changes the first-pass rate dramatically — comparing with and
+  without the constraints makes a good experiment.
+- `cadl check` can be invoked as a subprocess (inspect the exit code
+  and output).
+- Reference implementations live in the `cadl-ai-governance`
+  repository: `e2e_raspimouse/step_a_design.py` (with a deterministic
+  mock) and `measure_step_a.py` (a measurement harness). Watch the loop
+  run with the mock first, then switch to a real LLM.
+
+---
+
 # Part 2 — Modelling a New SoS End-to-End
 
 (Outline only — content to be expanded once Part 1 is in production.)
