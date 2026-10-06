@@ -126,27 +126,41 @@ A SoS-DSL-aware processor MUST, in addition to existing checks:
   `Timeout` event scoped to that transition's `from` state. Two
   transitions out of the same state MAY have deadlines; their semantics
   are independent.
+- **L-5.** Every `lifecycle.transitions[*].on_violation.transition`
+  MUST name a state that appears in `lifecycle.states` (the target
+  state of the forced move, e.g. `Violated`).
 - **M-1.** `monitor.observe` references MUST resolve to declared actor
   attributes, message names, or the reserved identifiers `time` and
   `state`.
 - **M-2.** `on_match.violation` references MUST name an obligation /
   permission / prohibition declared in the same contract.
-- **M-3.** `on_match.transition` references MUST name a lifecycle
-  transition declared in the same contract.
+- **M-3.** `on_match.transition` references MUST name a state that
+  appears in `lifecycle.states` of the same contract. The value is the
+  *target state* of the forced move (e.g. `Violated`), not the `id` of
+  a declared transition.
+
+In both `on_violation:` and `on_match:`, the key `transition:` therefore
+always holds a target state name. This matches the examples in E.6, the
+IR fields `on_violation_transition` / `on_match_transition` (E.7), and
+the reference runtimes, which record such a move as a `<jump>` from the
+current state to the named state.
 
 ## E.5 Dynamic semantics (informative)
 
 - A contract instance is created when its initial trigger fires (e.g.,
   a `DeliveryRequest` arrives). It advances through `lifecycle.states`
-  driven by `lifecycle.transitions[*].on` events, deadline timers, and
-  `monitors[*].on_match.transition` actions.
+  driven by `lifecycle.transitions[*].on` events, deadline timers
+  (which move the instance to `on_violation.transition`), and
+  `monitors[*].on_match.transition` actions (which move it to the named
+  state).
 - An obligation's `deadline:` defines a normative time bound. Failure
   to fire the obligation's `must` event before the deadline is a
   *violation* of severity `Major` unless overridden in the
   `on_violation:` block.
 - `monitors` evaluate independently of the lifecycle state machine but
   can read `state` (current lifecycle state) in their `rule:`. On
-  match, they MAY emit a violation, drive a transition, or both.
+  match, they MAY emit a violation, move the instance to a target state,
+  or both.
 - `incentives.rules` (existing) and `monitor.on_match` (extension)
   cooperate: rewards/penalties reference the violations and transitions
   that this extension makes addressable.
