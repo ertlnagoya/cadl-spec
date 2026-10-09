@@ -1,0 +1,22 @@
+{
+  "title": {
+    "message": "CADL",
+    "description": "The title in the navbar"
+  },
+  "item.label.Quick Start": {
+    "message": "クイックスタート",
+    "description": "Navbar item with label Quick Start"
+  },
+  "item.label.Specification": {
+    "message": "仕様書",
+    "description": "Navbar item with label Specification"
+  },
+  "item.label.Hands-on": {
+    "message": "ハンズオン",
+    "description": "Navbar item with label Hands-on"
+  },
+  "item.label.CADL Explorer": {
+    "message": "CADL Explorer",
+    "description": "Navbar item with label CADL Explorer"
+  }
+}
