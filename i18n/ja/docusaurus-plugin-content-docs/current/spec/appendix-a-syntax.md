@@ -76,8 +76,7 @@ literal         = string | int_literal | float_literal
 `identifier` は，アクター，契約，プロトコル，レジーム，メトリクスの名前に用いる。
 `hyphen_name` は，拡張の名前とコード生成ターゲットの名前（たとえば `sos-dsl`，
 `unity-csharp`）にだけ用いる。数値リテラルは符号を持たない。
-この版の文法では識別子はASCIIに限られるので，要求NFR-7（Unicodeの識別子，
-[第4章](./04-requirements.md)）はまだ満たしていない。
+識別子はASCIIに限る。文字列とコメントには任意のUnicode文字を使用できる。これが要求NFR-7（[第4章](./04-requirements.md)）の求める内容である。
 
 ## A.2 トップレベル構造 {/* #a2-top-level-structure */}
 

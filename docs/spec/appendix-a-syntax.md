@@ -85,9 +85,9 @@ literal         = string | int_literal | float_literal
 `identifier` names actors, contracts, protocols, regimes, and metrics.
 `hyphen_name` is used only for extension names and codegen target names
 (for example `sos-dsl`, `unity-csharp`). Numeric literals are unsigned.
-Identifiers are ASCII in this version of the grammar, so requirement
-NFR-7 (Unicode identifiers, [Chapter 4](./04-requirements.md)) is not
-yet met.
+Identifiers are ASCII. Strings and comments may contain any Unicode
+character, which is what requirement NFR-7
+([Chapter 4](./04-requirements.md)) asks for.
 
 ## A.2 Top-level structure
 
