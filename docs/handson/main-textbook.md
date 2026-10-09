@@ -942,9 +942,9 @@ Inspector ▸ Add Component ▸ search "ContractRuntimeHost" ▸ select  CADL.So
 Inspector:
 
 ```
-ContractRuntimeHost (Script)
-├── Log To Console      ☑  (leave checked)
-└── Runtime              <runtime appears at Play time>
+Contract Runtime Host (Script)
+└── Logging
+    └── Log To Console   ☑  (leave checked)
 ```
 
 ![Unity Editor with ContractRuntimeHost selected in the Hierarchy; the Inspector shows the Contract Runtime Host component with Log To Console checked](/img/handson/unity-contract-runtime-host.jpg)

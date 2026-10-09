@@ -942,9 +942,9 @@ Inspector ▸ Add Component ▸ "ContractRuntimeHost" を検索 ▸ CADL.SosDsl.
 Inspector：
 
 ```
-ContractRuntimeHost (Script)
-├── Log To Console      ☑  （チェックを入れたまま）
-└── Runtime              <Play 時にランタイムが現れる>
+Contract Runtime Host (Script)
+└── Logging
+    └── Log To Console   ☑  （チェックを入れたまま）
 ```
 
 ![Hierarchy で ContractRuntimeHost を選択した Unity エディタ。Inspector に Contract Runtime Host コンポーネントが表示され、Log To Console にチェックが入っている](/img/handson/unity-contract-runtime-host.jpg)
