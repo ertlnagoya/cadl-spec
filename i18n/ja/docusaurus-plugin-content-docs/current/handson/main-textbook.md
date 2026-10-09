@@ -625,7 +625,7 @@ streamlit run app.py
 # ブラウザで http://localhost:8501 が開く
 ```
 
-サイドバーで、既定のページ（**app**）から **SoS DSL Lifecycle** に切り替えます（サイドバーにこのページが無い場合は、`cadl-explorer` のチェックアウトが古くなっています。`main` で `git pull` してください）。
+サイドバーの一番上にあるページの一覧で、既定のページ（**Explorer**）から **Contract Lifecycle** に切り替えます（v0.4.0 より前は **SoS DSL Lifecycle** という名前でした。どちらも無い場合は、`cadl-explorer` のチェックアウトが古くなっています。`main` で `git pull` してください）。
 
 IR JSON のロード方法は 2 通り：
 
