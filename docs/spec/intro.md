@@ -1,6 +1,7 @@
 ---
 sidebar_position: 0
 title: "CADL Specification v0.1"
+description: "Entry page of the CADL language specification v0.1: overview, architecture, reading guide, how to get the cadl tool, and related tools."
 ---
 
 # CADL: Contract Architecture Description Language
@@ -20,8 +21,9 @@ for formally specifying, verifying, and deploying **institutional designs** in
 multi-agent **System of Systems (SoS)**.
 
 CADL adopts a **three-layer architecture** — Institution, Protocol, and Algorithm —
-enabling precise description of governance rules, coordination mechanisms, and
-computational behavior within a single unified language. From a CADL specification,
+so that governance rules and coordination mechanisms are described precisely
+within a single unified language. The Algorithm layer names the central and
+local algorithms each side runs; it does not describe their internals. From a CADL specification,
 the toolchain automatically generates simulator configurations and verifies
 design consistency.
 
@@ -30,11 +32,11 @@ design consistency.
 ```mermaid
 flowchart LR
     SRC["CADL source (.cadl)<br/>Institution / Protocol / Algorithm"]
-    IR["Three-layer IR<br/>(cadl-sim)"]
+    IR["Three-layer IR<br/>(cadl sim-ir)"]
     VER["Verifier<br/>type check / SMT consistency /<br/>deadlock detection"]
     CFG["Simulator config<br/>(Unity / Go / Python)"]
     CODE["Codegen<br/>Python / Solidity / OPA-Rego / Unity C#"]
-    EXP["Experiment runner<br/>seeds × regimes"]
+    EXP["Experiment runner<br/>(simulator / CADL Explorer)"]
     EVAL["Evaluation<br/>throughput / autonomy / fairness"]
 
     SRC --> VER
@@ -51,7 +53,12 @@ One source drives three outputs: formal verification and
 institutional-constraint code (smart contracts / policy / runtime
 classes) are produced from the parsed definition, and runtime simulator
 configs from the three-layer IR. Experiment results feed back into the
-CADL source so governance parameters (α, β, λ, ρ) can be tuned.
+CADL source so governance parameters ([α, β, λ, ρ](./glossary.md)) can be
+tuned; α, β, and λ are the per-contract parameters, and ρ belongs to the
+motivation extension ([Appendix C](./appendix-c-motivation.md)). The `cadl`
+tool covers the source, verifier, codegen, IR, and simulator-config steps;
+running experiments and evaluating them is done with a simulator or with
+CADL Explorer.
 
 ## How to Read This Specification
 
@@ -83,30 +90,57 @@ the order below, but each chapter is also self-contained.
 - **[8. Use Cases](./08-use-cases.md)** — Application domains and case studies.
 - **[9. Research](./09-research.md)** — Open research questions and theoretical
   foundations.
-- **[10. Roadmap](./10-roadmap.md)** — Planned extensions and the path toward v1.0.
+- **[10. Roadmap](./10-roadmap.md)** — Implementation phases and the current
+  status of the reference implementation.
 
 ### Appendices
 
-- **[Appendix A — Syntax](./appendix-a-syntax)** — EBNF grammar reference.
-- **[Appendix B — References](./appendix-b-references)** — Cited literature.
-- **[Appendix C — Motivation Extension](./appendix-c-motivation)** — Agent motivation models and profiles.
-- **[Appendix D — Code Generation Targets](./appendix-d-codegen)** — Catalogue of codegen targets.
-- **[Appendix E — SoS-DSL Extension](./appendix-e-sos-dsl)** — Contract lifecycles and runtime monitors.
-- **[Glossary](./glossary)** — Terms used throughout the specification.
+- **[Appendix A — Syntax](./appendix-a-syntax.md)** — EBNF grammar reference.
+- **[Appendix B — References](./appendix-b-references.md)** — Cited literature.
+- **[Appendix C — Motivation Extension](./appendix-c-motivation.md)** — Agent motivation models and profiles.
+- **[Appendix D — Code Generation Targets](./appendix-d-codegen.md)** — Catalogue of codegen targets.
+- **[Appendix E — SoS-DSL Extension](./appendix-e-sos-dsl.md)** — Contract lifecycles and runtime monitors.
+- **[Glossary](./glossary.md)** — Terms used throughout the specification.
 
 ## Suggested Reading Paths
 
 - **First-time readers** — Read Chapters 1–2, skim Chapter 5, then look at
-  Chapter 7 for concrete examples.
+  Chapter 7 for concrete examples. The Chapter 7 listings are conceptual;
+  runnable examples are in the
+  [`examples/` directory](https://github.com/ertlnagoya/cadl/tree/master/examples)
+  of the cadl repository and in the [hands-on course](../handson/index.md).
 - **Implementers / tool builders** — Focus on Chapters 5, 6, and Appendix A.
 - **Researchers** — Chapters 3, 9, and 10 give the broader context and
   open problems.
 
+## Getting the tool
+
+The reference implementation is [`cadl`](https://github.com/ertlnagoya/cadl).
+It is installed with `pip install cadl-lang` (Python 3.9+); the command is
+`cadl`. A first check is:
+
+```bash
+pip install cadl-lang
+cadl --version
+```
+
+Then, with a `.cadl` file such as those in the repository's
+[`examples/` directory](https://github.com/ertlnagoya/cadl/tree/master/examples),
+run `cadl check <file>.cadl` and `cadl verify <file>.cadl`. See the
+[repository README](https://github.com/ertlnagoya/cadl#readme) for all
+commands and the [hands-on course](../handson/index.md) for a guided
+walkthrough.
+
 ## Related Tools
 
+- **[cadl](https://github.com/ertlnagoya/cadl)** — The CADL compiler and
+  command-line tool (reference implementation), published on PyPI as
+  [cadl-lang](https://pypi.org/project/cadl-lang/).
 - **[CADL Explorer](https://cadl-explorer.streamlit.app/)** — An interactive
   web application that demonstrates the CADL governance pipeline end-to-end,
   from specification through simulation to governance evaluation.
+- **[cadl-raspimouse-simulator](https://github.com/ertlnagoya/cadl-raspimouse-simulator)** —
+  The simulator used by the hands-on course.
 
 ## Learning by doing
 
@@ -117,3 +151,5 @@ To write and run the language rather than only read about it, see the [hands-on 
 This is **Version 0.1 (Draft)**. The language and toolchain are under active
 development; syntax and semantics may change in future revisions. Feedback
 and discussion are welcome via [GitHub Issues](https://github.com/ertlnagoya/cadl/issues).
+Problems with the specification or this site can be reported at
+[cadl-spec Issues](https://github.com/ertlnagoya/cadl-spec/issues).

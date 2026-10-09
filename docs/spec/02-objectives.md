@@ -1,9 +1,14 @@
 ---
 sidebar_position: 2
-title: "Language Objectives"
+title: "2. Language Objectives"
+description: "The problems CADL addresses, its design philosophy and principles, and the users and application scenarios it targets."
 ---
 
 ## 2.1 Problems CADL Solves
+This chapter, like Chapter 1, describes the goals of the language; what
+the reference implementation provides today is listed in
+[Chapter 10](./10-roadmap.md) and [Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03).
+
 CADL aims to describe the three layers of institutions, protocols, and
 algorithms in a single language for SoS, and to verify consistency and safety
 through formal verification at the design stage. The goal is to establish an
@@ -62,7 +67,7 @@ Domain-specific extensions are provided through libraries.
 municipal officials, citizens, and other stakeholders without
 specialized knowledge of programming or formal methods to understand the
 intent and structure of institutional descriptions. The means include
-YAML-like declarative syntax, vocabulary close to natural language,
+YAML-based declarative syntax, vocabulary close to natural language,
 graduated description levels, and AI-assisted barrier reduction.
 
 ## 2.3 Target Users and Application Scenarios

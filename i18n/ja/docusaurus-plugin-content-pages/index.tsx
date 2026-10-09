@@ -56,9 +56,9 @@ function WhatIsCADL() {
             </p>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
               CADLは<strong>三層アーキテクチャ</strong>——制度層（Institution）・プロトコル層（Protocol）・
-              アルゴリズム層（Algorithm）——を採用し，ガバナンスルール，エージェント間の調整メカニズム，
-              計算的な振る舞いを単一の統合言語で精密に記述できます。
-              CADL仕様からシミュレータ設定の自動生成や設計整合性の検証を行うツールチェーンも提供します。
+              アルゴリズム層（Algorithm）——を採用し，ガバナンスルール，エージェント間の調整手続き，
+              各側が実行するアルゴリズム（名前で参照）を1つの言語で記述できます。
+              ツールチェーンは，CADL仕様から設計の矛盾を検査し，コードとシミュレータ設定を生成します。
             </p>
             <Link className="button button--outline button--primary" to="/docs/spec/intro">
               仕様書を読む →
@@ -78,6 +78,9 @@ function WhatIsCADL() {
               <div style={{paddingLeft: '0rem'}}><span style={{color: '#a6e3a1'}}>sos</span>:</div>
               <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>name</span>: <span style={{color: '#f38ba8'}}>"RobotDelivery"</span></div>
               <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>type</span>: <span style={{color: '#cdd6f4'}}>Acknowledged</span></div>
+              <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>actors</span>:</div>
+              <div style={{paddingLeft: '3rem'}}>- {'{'}<span style={{color: '#a6e3a1'}}>id</span>: <span style={{color: '#cdd6f4'}}>DISPATCHER</span>, <span style={{color: '#a6e3a1'}}>role</span>: <span style={{color: '#cdd6f4'}}>planner</span>{'}'}</div>
+              <div style={{paddingLeft: '3rem'}}>- {'{'}<span style={{color: '#a6e3a1'}}>id</span>: <span style={{color: '#f38ba8'}}>"ROBOT[1..N]"</span>, <span style={{color: '#a6e3a1'}}>role</span>: <span style={{color: '#cdd6f4'}}>courier</span>{'}'}</div>
               <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>contracts</span>:</div>
               <div style={{paddingLeft: '3rem'}}><span style={{color: '#a6e3a1'}}>- id</span>: <span style={{color: '#cdd6f4'}}>DELIVERY_SLA</span></div>
               <div style={{paddingLeft: '4rem'}}><span style={{color: '#a6e3a1'}}>parties</span>: <span style={{color: '#cdd6f4'}}>[DISPATCHER, "ROBOT[*]"]</span></div>
@@ -91,9 +94,51 @@ function WhatIsCADL() {
   );
 }
 
-function WhatIsExplorer() {
+function GetStarted() {
   return (
     <section style={{padding: '3rem 0'}}>
+      <div className="container">
+        <div className="row" style={{alignItems: 'center'}}>
+          <div className="col col--6">
+            <Heading as="h2">はじめる</Heading>
+            <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
+              リファレンス実装は，コマンドラインツール <code>cadl</code> です（Python 3.9 以上）。
+              PyPI からインストールし，サンプルを取得して，検査を実行します。
+            </p>
+            <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
+              コマンドの一覧は <Link href="https://github.com/ertlnagoya/cadl#readme">cadl リポジトリの README</Link> にあります。手順を追って学ぶには <Link to="/docs/handson/">ハンズオン講座</Link> をご利用ください。
+            </p>
+            <Link className="button button--primary" href="https://github.com/ertlnagoya/cadl">
+              GitHub のソース
+            </Link>
+            <Link className="button button--outline button--primary" style={{marginLeft: '1rem'}} href="https://pypi.org/project/cadl-lang/">
+              PyPI の cadl-lang
+            </Link>
+          </div>
+          <div className="col col--5 col--offset-1">
+            <pre style={{
+              background: '#1e1e2e',
+              borderRadius: '8px',
+              padding: '1.5rem',
+              fontSize: '0.85rem',
+              lineHeight: '1.6',
+              color: '#cdd6f4',
+              margin: 0,
+            }}>{`pip install cadl-lang
+git clone https://github.com/ertlnagoya/cadl
+
+cadl check  cadl/examples/robot_delivery.cadl
+cadl verify cadl/examples/robot_delivery.cadl`}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WhatIsExplorer() {
+  return (
+    <section style={{padding: '3rem 0', background: 'var(--ifm-background-surface-color)'}}>
       <div className="container">
         <div className="row" style={{alignItems: 'center'}}>
           <div className="col col--5">
@@ -113,7 +158,7 @@ function WhatIsExplorer() {
                 flexWrap: 'wrap',
                 fontSize: '0.9rem',
               }}>
-                {['CADL仕様', '→', 'IR', '→', 'シミュレータ設定', '→', '実験', '→', 'ガバナンス評価'].map((item, i) => (
+                {['CADL', '→', 'IR', '→', 'Config', '→', 'Results', '→', 'Governance'].map((item, i) => (
                   <span key={i} style={{
                     background: item === '→' ? 'transparent' : 'var(--ifm-color-primary-lightest)',
                     padding: item === '→' ? '0' : '0.2rem 0.6rem',
@@ -136,7 +181,7 @@ function WhatIsExplorer() {
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
               設計上の意思決定がマルチエージェントシステムの振る舞いにどう影響するかを，
               透明かつ再現可能な形で示すことができます。
-              ガバナンスパラメータを対話的に変えながら，結果への影響をリアルタイムで確認できます。
+              ガバナンスパラメータがシステムの性能にどう影響するかを調べる助けになります。
             </p>
             <Link
               className="button button--primary button--lg"
@@ -152,7 +197,7 @@ function WhatIsExplorer() {
 
 function WhatIsHandson() {
   return (
-    <section style={{padding: '3rem 0', background: 'var(--ifm-background-surface-color)'}}>
+    <section style={{padding: '3rem 0'}}>
       <div className="container">
         <div className="row" style={{alignItems: 'center'}}>
           <div className="col col--6">
@@ -164,7 +209,7 @@ function WhatIsHandson() {
               の順に進みます。
             </p>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              教科書，全5回の演習集，学術的背景（Maier の5条件，ISO/IEC/IEEE 21839・21840・21841）を用意しています。
+              教科書，難易度別の課題を収めた全5回の演習集，学術的背景（Maier の5条件，ISO/IEC/IEEE 21839・21840・21841）を用意しています。
             </p>
             <Link className="button button--primary button--lg" to="/docs/handson/">
               ハンズオン入口へ →
@@ -197,7 +242,7 @@ function Features() {
   const features = [
     {
       title: '三層アーキテクチャ',
-      description: '制度層（権限・インセンティブ・情報共有），プロトコル層（調整手続き），アルゴリズム層（計算的振る舞い）を単一言語で統合的に記述します。',
+      description: '制度層（権限・インセンティブ・情報共有），プロトコル層（調整手続き），各側が実行するアルゴリズム（名前で参照）を単一の言語で記述します。',
     },
     {
       title: '形式的検証',
@@ -205,7 +250,7 @@ function Features() {
     },
     {
       title: 'エンドツーエンドパイプライン',
-      description: 'CADL仕様からシミュレータ設定を自動生成し，制度設計から振る舞い評価までの因果連鎖を一貫してトレースします。',
+      description: 'CADL仕様からコードとシミュレータ設定を生成します。シミュレータや CADL Explorer と組み合わせて，制度設計から振る舞い評価までの連鎖をたどれます。',
     },
   ];
 
@@ -236,11 +281,12 @@ function Features() {
 export default function Home(): ReactNode {
   return (
     <Layout
-      title="CADL - Contract Architecture Description Language"
+      title="Contract Architecture Description Language"
       description="System of Systems における制度設計を形式的に記述・検証・展開するためのドメイン固有言語">
       <HomepageHeader />
       <main>
         <WhatIsCADL />
+        <GetStarted />
         <WhatIsExplorer />
         <WhatIsHandson />
         <Features />

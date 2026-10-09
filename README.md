@@ -4,6 +4,18 @@ This repository hosts the specification and teaching materials for **CADL (Contr
 
 **https://www.ertl.jp/cadl-spec/**
 
+## What is on the site
+
+| Section | English | 日本語 |
+| --- | --- | --- |
+| Specification (chapters 1–10, appendices A–E, glossary) | [docs/spec/intro](https://www.ertl.jp/cadl-spec/docs/spec/intro/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/spec/intro/) |
+| Quick Start (CADL Explorer tour) | [docs/quickstart](https://www.ertl.jp/cadl-spec/docs/quickstart/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/quickstart/) |
+| Hands-on course | [docs/handson](https://www.ertl.jp/cadl-spec/docs/handson/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/) |
+
+Sources: the specification is under [`docs/spec/`](docs/spec/) (English) and [`i18n/ja/docusaurus-plugin-content-docs/current/spec/`](i18n/ja/docusaurus-plugin-content-docs/current/spec/) (Japanese); the landing page is [`src/pages/index.tsx`](src/pages/index.tsx) with its Japanese copy under `i18n/ja/docusaurus-plugin-content-pages/`. A change to an English page needs the same change in the Japanese one.
+
+The tool the specification describes is [`cadl`](https://github.com/ertlnagoya/cadl) (`pip install cadl-lang`). Problems with the site or the text can be reported in this repository's [issues](https://github.com/ertlnagoya/cadl-spec/issues).
+
 ## Hands-on
 
 A self-paced workshop of about 95 minutes and a 5-session exercise course that walk through the complete CADL / SoS-DSL toolchain — modelling, contracts (lifecycle + monitors), visualisation, code generation, and live simulation — on a robot-delivery System of Systems.

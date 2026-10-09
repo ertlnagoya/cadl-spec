@@ -1,35 +1,47 @@
 ---
 sidebar_position: 20
 title: "Glossary"
+description: "Definitions of the terms used in the CADL specification, grouped by topic, with links to the chapters and sections that define them."
 ---
 
 # Glossary
 
 Working vocabulary for CADL and the surrounding research programme. Terms
 are grouped by topic. Links point to the chapters where each term is
-introduced in depth.
+introduced in depth. For an introductory glossary with plain
+explanations and examples, see
+[Section 1.3 of Chapter 1](./01-introduction.md#13-glossary).
 
 ## Core language
 
 - **CADL** — Contract Architecture Description Language. A DSL for
   specifying the Institution / Protocol / Algorithm layers of a System
   of Systems in a single, verifiable document. See the
-  [Specification introduction](./intro).
+  [Specification introduction](./intro.md).
 - **Institution layer** — The layer that declares actors and contracts.
   Each contract states its parties, `assume` / `guarantee`, `authority`,
   `information`, `responsibilities`, `incentives`, and `violation`, and
   carries the governance parameters α, β, λ.
 - **Protocol layer** — Coordination procedures: message passing, compute
   steps, conditionals, parallel blocks, and barriers between actors.
+  Defined in [Section 5.2.4](./05-language-spec.md#524-protocol-model) and
+  [Appendix A, §A.5](./appendix-a-syntax.md#a5-protocols).
 - **Algorithm layer** — Reference to central or local algorithms
-  consumed by the protocol steps (a `central` and a `local` entry per
-  algorithm).
+  consumed by the protocol steps. Each algorithm is keyed by a function
+  name and has a `central` and a `local` entry.
 - **Actor** — A constituent system, agent, or role participating in the
   SoS. Identified by its `id`, possibly parameterised by a range.
+  Defined in [Section 5.2.2](./05-language-spec.md#522-actor-model) and
+  [Appendix A, §A.3](./appendix-a-syntax.md#a3-context-actors-metrics).
+- **`autonomy`** — Actor attribute: `low`, `medium`, or `high` (default
+  `medium`). A descriptive label; it is not checked.
 - **Contract** — Assume-guarantee constraint attached to a set of
   parties and an authority. The formal unit of institutional design.
-- **Transition** — A switch between regimes, declared with `from`, `to`,
-  `condition`, and optionally `protocol` and `safety_invariant`.
+  Defined in [Section 5.2.3](./05-language-spec.md#523-contract-model) and
+  [Appendix A, §A.4](./appendix-a-syntax.md#a4-contracts-institution-layer).
+- **Transition** — A switch between regimes, declared with `from` and
+  `to` (both required) and optionally `condition`, `protocol`, and
+  `safety_invariant`. Defined in [Appendix A, §A.7](./appendix-a-syntax.md#a7-transitions).
 
 ## Governance parameters
 
@@ -88,13 +100,19 @@ share symbols and the range [0, 1]. β points the same way in both
 
 See [Chapter 1, §1.3.4](./01-introduction.md).
 
-- **Regime** — The complete set of institutional settings effective at a
-  given time. As environmental conditions change, the optimal regime
-  also changes.
+- **Regime** (also written *operational mode*) — The complete set of
+  institutional settings effective at a given time. As environmental
+  conditions change, the optimal regime also changes. In the v0.1 syntax
+  a regime is a name used in `transitions:`; see
+  [Section 5.1](./05-language-spec.md#51-overall-structure) and
+  [Appendix A, §A.7](./appendix-a-syntax.md#a7-transitions).
 - **Regime map** — A map of which regime is optimal under which
   environmental conditions: the environmental parameter space divided
-  into regions, each assigned a regime.
-- **Regime transition** — Switching from one regime to another in
+  into regions, each assigned a regime. This map of the parameter space
+  is a concept whose construction support is planned; the
+  `cadl regime-map` command reports something narrower: the graph of
+  regime names and transitions.
+- **Regime transition** (also: *institutional transition*) — Switching from one regime to another in
   response to a change in environmental conditions.
 - **Safety invariant** — A condition that must never be violated, also
   during a regime transition.
@@ -119,6 +137,10 @@ Terms of the SoS Contract DSL extension; see
   violation, move the instance to a target state, or both.
 
 ## Verification
+
+The checks of the reference verifier are described in
+[Section 6.3](./06-design.md); the `verification:` block is specified in
+[Appendix A, §A.8](./appendix-a-syntax.md#a8-verification-block).
 
 - **Safety property** — "Nothing bad happens." Expressed as an invariant
   over the system state.
@@ -180,9 +202,9 @@ Terms of the SoS Contract DSL extension; see
 
 ## See also
 
-- [Specification introduction](./intro)
+- [Specification introduction](./intro.md)
 - [Language specification (Chapter 5)](./05-language-spec.md)
-- [Appendix A — Syntax (EBNF)](./appendix-a-syntax)
+- [Appendix A — Syntax (EBNF)](./appendix-a-syntax.md)
 - [Appendix C — Motivation Extension](./appendix-c-motivation.md)
 - [Appendix D — Codegen Target Catalog](./appendix-d-codegen.md)
 - [Appendix E — SoS Contract DSL Extension](./appendix-e-sos-dsl.md)

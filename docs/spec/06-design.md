@@ -1,12 +1,13 @@
 ---
 sidebar_position: 6
-title: "Design"
+title: "6. Design"
+description: "Design of the CADL toolchain: architecture, parser, type checker, verification engine, and runtime, with what the v0.3 reference implementation provides."
 ---
 
 This chapter describes the design of the CADL toolchain. Each section
 separates what the public reference implementation (`cadl` v0.3)
-provides from what is design intent and still planned. Chapter 10 tracks
-the status per phase.
+provides from what is design intent and still planned.
+[Chapter 10](./10-roadmap.md) tracks the status per phase.
 
 ## 6.1 Architecture
 The CADL toolchain is designed around the following four main
@@ -24,7 +25,9 @@ checking and reachability analysis of continuous dynamics are planned.
 
 **Code Generator:** Generates code from CADL descriptions. v0.3 targets
 Python (runtime), Solidity, OPA/Rego, and Unity C# (for the SoS-DSL
-extension), and also emits simulator configurations. TypeScript
+extension, [Appendix E](./appendix-e-sos-dsl.md)), and also emits
+simulator configurations; the targets are listed in
+[Appendix D](./appendix-d-codegen.md). TypeScript
 generation and conversion to SysMLv2 and AADL are planned.
 
 **Runtime Monitor:** Monitors execution of deployed institutions,
@@ -85,6 +88,23 @@ Protocol step senders/receivers match actor definitions, (4) Information
 sharing declarations refer to defined actors, (5) Value constraints for
 institutional parameters (0 ≤ α, β, λ ≤ 1). Checking information sharing
 declarations against the actual message exchanges is planned.
+
+### 6.2.3 Other Commands
+
+Besides `cadl verify` and `cadl codegen`, the reference implementation
+provides the following commands.
+
+- `cadl parse` runs the parser alone, and `cadl check` the parser and
+  the type checker.
+- `cadl regime-map` gives the regime-graph analysis of Section 6.3 as a
+  report (text, DOT, or JSON).
+- `cadl iec62853` gives a dependability summary built from the parsed
+  definition.
+- `cadl sim-validate`, `cadl sim-ir`, and `cadl sim-gen` lower the
+  definition to the three-layer IR and generate simulator configs
+  ([Appendix D](./appendix-d-codegen.md)).
+- `cadl ai` drafts a CADL file from a natural-language description
+  through an LLM API, then parses and type-checks it.
 
 ## 6.3 Verification Engine
 The verification engine is designed to integrate four verification

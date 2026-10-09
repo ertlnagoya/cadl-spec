@@ -1,6 +1,7 @@
 ---
 sidebar_position: 11
 title: "付録A. 構文リファレンス（EBNF）"
+description: "CADL v0.1の参照文法をEBNFで示す。文書の構造，式の部分言語，予約語，リファレンス実装の状況を扱う。"
 ---
 
 # 付録A. 構文リファレンス（EBNF）
@@ -10,11 +11,15 @@ CADLファイルは**YAML 1.2文書**である。本付録は CADL v0.1 の参�
 シーケンスの上のEBNFとして記述する。*式の部分言語*（A.1，A.10）は，
 個々のYAML文字列スカラーの中に書かれる。
 
-第5章と本付録は同じ構文を記述する。具象構文については本付録が規範的であり，
+[第5章](./05-language-spec.md)と本付録は同じ構文を記述する。具象構文については本付録が規範的であり，
 第5章は説明のための記述である。リファレンス実装
 （[`cadl`](https://github.com/ertlnagoya/cadl)）は，この構文をそのまま
 受理することが期待される。v0.3における既知の相違は
 [A.12](#a12-reference-implementation-status-v03)に示す。
+
+この文法を試すには，リファレンス実装をインストールし（`pip install cadl-lang`），
+`cadl parse` または `cadl check` を実行する。実行できるファイルは，
+[cadlリポジトリ](https://github.com/ertlnagoya/cadl)の `examples/` ディレクトリにある。
 
 **記法。** 文法にはISO/IEC 14977のEBNFを用い，次の規約を置く。
 
@@ -27,6 +32,8 @@ CADLファイルは**YAML 1.2文書**である。本付録は CADL v0.1 の参�
 - `text` は任意のYAML文字列スカラー，`number` は任意のYAML整数または
   浮動小数点数，`scalar` は任意のYAMLスカラーである。これらの内容は
   それ以上解釈しない。
+- `any_char` は任意の1文字である。`string` の規則（A.1）はここから二重引用符を除くので，
+  文字列は次の `"` で終わる。
 - `(* string *)` と注記した生成規則は，1つのYAML文字列スカラーの内容を記述する。
 
 インデント，コメント，引用符，ブロック形式とフロー形式の選択はYAMLの規定に従い，
@@ -38,7 +45,7 @@ CADLファイルは**YAML 1.2文書**である。本付録は CADL v0.1 の参�
 本付録が定義しないキーは CADL v0.1 の一部ではない。処理系は，そのようなキーを
 理由にファイルを拒否してはならない。リファレンス実装はそれらを無視する。
 
-本文法は5.1.1節の設計レベルと検証レベルを対象とする。概要レベルの記述は，
+本文法は[5.1.1節](./05-language-spec.md)の設計レベルと検証レベルを対象とする。概要レベルの記述は，
 AIによる精緻化のための非形式的な入力であり，本文法に従う必要はない。
 
 ## A.1 字句規則 {/* #a1-lexical-rules */}
@@ -69,6 +76,8 @@ literal         = string | int_literal | float_literal
 `identifier` は，アクター，契約，プロトコル，レジーム，メトリクスの名前に用いる。
 `hyphen_name` は，拡張の名前とコード生成ターゲットの名前（たとえば `sos-dsl`，
 `unity-csharp`）にだけ用いる。数値リテラルは符号を持たない。
+この版の文法では識別子はASCIIに限られるので，要求NFR-7（Unicodeの識別子，
+[第4章](./04-requirements.md)）はまだ満たしていない。
 
 ## A.2 トップレベル構造 {/* #a2-top-level-structure */}
 
@@ -98,10 +107,12 @@ extension_decl = hyphen_name , ":" , scalar ;
 
 **拡張点。** `extensions:` は，ファイルが依存する言語拡張を，名前とバージョンの組
 （たとえば `- sos-dsl: 0.1`）として宣言する。次の2つの拡張を定義している。
+宣言できる名前を持つのは1つ目だけである。
 
-- SoS-DSL拡張（[付録E](./appendix-e-sos-dsl)）。`contract_def`（A.4）に
-  キー `lifecycle:` と `monitors:` を追加する。
+- SoS-DSL拡張（[付録E](./appendix-e-sos-dsl.md)）。名前 `sos-dsl`，バージョン `0.1` として
+  宣言する。`contract_def`（A.4）にキー `lifecycle:` と `monitors:` を追加する。
 - 動機拡張（[付録C](./appendix-c-motivation.md)）。`motivation_block` を定義する。
+  v0.1では `extensions:` に書く名前を持たず，`motivation:` ブロックを書くだけで用いる。
 
 ## A.3 コンテキスト・アクター・メトリクス {/* #a3-context-actors-metrics */}
 
@@ -315,6 +326,10 @@ indexed_ref      = identifier ,
 AND    OR    NOT    true    false    for all    exists    in
 ```
 
+単独の `for`（内包表記を導入する）と `all` は予約語ではない。`IN`（大文字。モニターの
+`rule` の中での集合への所属，[付録E](./appendix-e-sos-dsl.md)）と `in`（小文字。量化子と
+内包表記の定義域）は，別のキーワードである。
+
 構造のキー。認識されるブロックごとに示す。
 
 | ブロック | キー |
@@ -338,7 +353,8 @@ AND    OR    NOT    true    false    for all    exists    in
 
 列挙値: `Directed` `Acknowledged` `Collaborative` `Virtual`（SoSの型），
 `low` `medium` `high`（自律度），`smt` `model_check` `simulation` `proof`
-（検証手法），`ms` `s` `min` `h`（時間の単位）。拡張のキーと値は付録Cと付録Eに示す。
+（検証手法），`ms` `s` `min` `h`（時間の単位）。拡張のキーと値は
+[付録C](./appendix-c-motivation.md)と[付録E](./appendix-e-sos-dsl.md)に示す。
 
 ## A.12 リファレンス実装の状況（v0.3） {/* #a12-reference-implementation-status-v03 */}
 
@@ -355,13 +371,8 @@ AND    OR    NOT    true    false    for all    exists    in
 `rule:` の述語については，未宣言のアクターの検査を行わない。それ以外の必須キーが
 欠けている場合は，空の値で置き換える。v0.3では，次の点で本付録と相違する（v0.3.8で確認）。
 
-- **式。** v0.3.2より前のリリースでは，`OR` が `AND` より強く結合し，添字付き参照に対する
-  `member_access`（`ROBOT[i].battery`）が受理されず，算術演算子 `+ - * /` が正しく
-  処理されなかった。v0.3.2は，これらの点でA.10に従う。v0.3.3までは，量化子は述語の先頭
-  または括弧の中でだけ受理され，`in` と `exists` は識別子として受理された。
-  v0.3.4はA.10とA.11に従う。v0.3.6までは，キーワードで始まる名前が分割されていた
-  （`NOT_READY` は `NOT _READY` として読まれた）。v0.3.7からは，キーワードは単語の境界で終わる。
-- **型。** 5.2.1節の型は検査されない。型構成子を用いて書いた値（たとえば `Range(1, 4)`）は，
+- **式。** v0.3.8では，式はA.10とA.11に従う。既知の相違はない。
+- **型。** [5.2.1節](./05-language-spec.md)の型は検査されない。型構成子を用いて書いた値（たとえば `Range(1, 4)`）は，
   テキストのまま保持される。
 - **寛容な形式。** パーサーは，1つの文字列として書いた `parties:`（`"[A, B]"`），
   数値の `deadline:`（秒として読まれる），`kind` と `period_ms` を持つマッピングとして
@@ -370,15 +381,16 @@ AND    OR    NOT    true    false    for all    exists    in
 - **ステップ。** `conditional_step` の `else:` の分岐と，`barrier_step` の条件は保持されない。
 - **契約。** `sharing:` の要素は，引用符で囲んだ文字列として書いたときにだけ認識される。
   認識できない `autonomy:` の値は `medium` として読まれる。
-- **検証。** v0.3.2までは，`method:`，`expr:`，`bound:` がファイルから読み込まれないため，すべての項目が
-  `method: smt` として扱われる。`not_supported` の結果は，APIを通じて構築した
-  検証指定に対して実装されている。v0.3.3は3つのキーを読み込み，`smt` 以外の
-  メソッドを `not_supported` として報告する。v0.3.7からは，宣言されたものを何も指さない
-  `target:` は，どのメソッドについてもエラーとなる。`smt` の項目については，充足不能な
-  `expr:` はエラーとなり，A.10に適合しない `expr:` は `unknown` として報告され，検査されない。
-  `expr` をモデルに対して証明することはしない。6.3節の契約と遷移の検査は，項目の有無に
-  かかわらず実行される。
+- **検証。** `method:`，`expr:`，`bound:` は読み込まれる。`smt` 以外のメソッドは
+  `not_supported` として報告され（テキスト出力では `[SKIP]` と表示される），未知のメソッドは
+  エラーとなる。宣言されたものを何も指さない `target:` は，どのメソッドについてもエラーとなる。
+  `smt` の項目については，充足不能な `expr:` はエラーとなり，A.10に適合しない `expr:` は
+  `unknown` として報告され，検査されない。`expr` をモデルに対して証明することはしない。
+  [6.3節](./06-design.md)の契約と遷移の検査は，項目の有無にかかわらず実行される。
 - **コード生成。** `codegen:` の項目は構文解析されるが，それに基づく処理は行われない。
-  ターゲットはコマンドラインで選択する（付録D）。
+  ターゲットはコマンドラインで選択する（[付録D](./appendix-d-codegen.md)）。
 - **拡張。** `extensions:` と `motivation:` は無視される。`lifecycle:` と `monitors:` は，
   `extensions:` が `sos-dsl` を宣言しているかどうかにかかわらず認識される。
+
+v0.3.7より前のリリースは，これらの点のいくつかで異なっていた。その経緯は，cadlリポジトリの
+[CHANGELOG](https://github.com/ertlnagoya/cadl/blob/master/CHANGELOG.md)にある。

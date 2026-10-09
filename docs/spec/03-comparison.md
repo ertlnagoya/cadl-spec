@@ -1,6 +1,7 @@
 ---
 sidebar_position: 3
-title: "Comparison with Existing Languages"
+title: "3. Comparison with Existing Languages"
+description: "How CADL relates to MOISE+, OperA, Symboleo, AADL contract extensions, SysMLv2, smart contracts, and the IAD framework, and what sets it apart."
 ---
 
 ## 3.1 Overview of Related Languages and Frameworks
@@ -41,7 +42,8 @@ not a formal description language and parametrization is limited.
 The table below organizes how existing approaches address requirements
 needed for SoS institutional design. Legend: ◎=Core feature, ○=Partial
 support, △=Limited, ×=Out of scope. The ratings reflect the authors'
-reading of the literature listed in Appendix B. The CADL column shows
+reading of each language's specification and of the literature in
+[Appendix B](./appendix-b-references.md). The CADL column shows
 the intended scope of the language design; it does not mean that the
 current reference implementation already provides every item.
 

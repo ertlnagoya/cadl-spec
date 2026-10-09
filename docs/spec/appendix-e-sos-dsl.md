@@ -1,27 +1,30 @@
 ---
 sidebar_position: 15
-title: "Appendix E — SoS-DSL Extension"
+title: "Appendix E: SoS-DSL Extension"
+description: "SoS Contract DSL extension (sos-dsl 0.1): per-instance contract lifecycles and declarative monitors added to CADL contracts."
 ---
 
 # Appendix E — SoS Contract DSL Extension (sos-dsl 0.1)
 
 This appendix specifies the **SoS Contract DSL extension** to CADL. It
 augments the `contract_def` production of
-[Appendix A.4](./appendix-a-syntax#a4-contracts-institution-layer)
+[Appendix A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)
 with two keys, `lifecycle:` and `monitors:`, that promote contract
 execution state and runtime observation to first-class language
 constructs.
 
-The core language (Chapter 5, Appendix A) does **not** mandate these
+The core language ([Chapter 5](./05-language-spec.md),
+[Appendix A](./appendix-a-syntax.md)) does **not** mandate these
 blocks; a conforming CADL processor that does not implement the
-extension SHOULD accept the new keys syntactically and emit an
-*informational* diagnostic rather than rejecting the file.
+extension MUST NOT reject a file because of the new keys. It SHOULD
+accept them syntactically and emit an *informational* diagnostic.
 
 This extension is versioned independently from the core language. Its
 name is `sos-dsl` and this appendix describes version `0.1` (the same
 revision is labelled `v0.1-sos-ext` in the source of the reference
 implementation). Files that rely on it SHOULD declare it with the
-`extensions:` key of Appendix A.2:
+`extensions:` key of
+[Appendix A.2](./appendix-a-syntax.md#a2-top-level-structure):
 
 ```yaml
 sos:
@@ -70,11 +73,12 @@ backward compatibility with existing contract definitions.
 The extension does **not** introduce a parallel contract namespace.
 `lifecycle:` and `monitors:` are keys of the same `contract_def` that
 already accepts `assume:`, `guarantee:`, and the other keys of
-Appendix A.4.
+[Appendix A.4](./appendix-a-syntax.md#a4-contracts-institution-layer).
 
 ## E.3 Syntax (EBNF additions to A.4)
 
-The grammar uses the notation of Appendix A: a terminal ending in a
+The grammar uses the notation of
+[Appendix A](./appendix-a-syntax.md): a terminal ending in a
 colon is a key of a YAML mapping, `{ "-" , x }` is a YAML sequence, and
 a production marked `(* string *)` describes the content of one YAML
 string scalar. `lifecycle_block` and `monitor_def` are the two
@@ -121,7 +125,10 @@ sampling_spec     = "event"
 `identifier`, `actor_ref`, `duration_lit`, `step_expr`, `predicate`,
 `arith_expr`, and `member_access` are defined in Appendix A (A.1, A.5,
 A.10). Inside a `rule`, `membership` is an additional alternative of
-the `comparison` production of A.10, and `IN` is a reserved keyword.
+the `comparison` production of A.10, and `IN` is a reserved keyword;
+an example is `state IN [Assigned, Accepted]`. `IN` is distinct from
+the lower-case `in` of Appendix A, which introduces the domain of a
+quantifier or comprehension.
 `sampling:` defaults to `event` and `severity:` to `Major`.
 
 The values of `on:`, `when:`, `rule:`, and of `observe:` entries that
@@ -144,7 +151,11 @@ A SoS-DSL-aware processor MUST, in addition to existing checks:
   `Timeout` event scoped to that transition's `from` state. Two
   transitions out of the same state MAY have deadlines; their semantics
   are independent. A transition with a `deadline:` SHOULD also have an
-  `on_violation:` block.
+  `on_violation:` block. When a transition has a `deadline:` but no
+  `on_violation.transition`, missing the deadline is still a violation
+  (severity `Major` unless overridden) but causes no change of state.
+  v0.1 defines no way to refer to the implicit `Timeout` event from
+  `on:`.
 - **L-5.** Every `lifecycle.transitions[*].on_violation.transition`
   MUST name a state that appears in `lifecycle.states` (the target
   state of the forced move, e.g. `Violated`).
@@ -170,14 +181,24 @@ In a `rule` (and therefore in `when:` and in an `on:` event), three
 identifiers are reserved: `state` is the current lifecycle state of the
 instance, `now` is the current time, and `request` is the request that
 created the instance (e.g. `request.deadline`). A bare identifier that
-names a lifecycle state (e.g. `Assigned`) denotes that state.
+names a lifecycle state (e.g. `Assigned`) denotes that state. v0.1 has
+no syntax for the trigger that creates an instance or for the fields of
+`request`; the host application creates instances and supplies
+`request` (see E.8).
+
+In a monitor, `observe:` names the quantities the monitor reads and is
+carried into the IR; in v0.1 it does not restrict which names a `rule`
+may mention. `time` in `observe:` denotes the clock that `now` reads in
+a rule.
 
 The reference implementation at v0.3 parses both blocks and lowers them
 to the IR (E.7) but does not yet check rules L-1 to M-3. From v0.3.7
 `cadl check` reports a `severity:` other than `Minor`, `Major`, or
 `Critical` as an error. `sampling:` and `deadline:` values are not
 validated: an unrecognised `sampling:` is read as `event`, and a
-`deadline:` it cannot read is dropped. The example
+`deadline:` it cannot read is dropped. `rule:`, `when:`, and `on:` are
+kept as text; `cadl check` does not parse them, so a malformed one is
+not reported. The example
 in E.6 accordingly passes although `collision_watch` observes
 `OBSTACLES.positions`, an environment quantity that is not an attribute
 of a declared actor as M-1 requires.
@@ -185,7 +206,9 @@ of a declared actor as M-1 requires.
 ## E.5 Dynamic semantics (informative)
 
 - A contract instance is created when its initial trigger fires (e.g.,
-  a `DeliveryRequest` arrives). It advances through `lifecycle.states`
+  a `DeliveryRequest` arrives). v0.1 has no syntax for this trigger or
+  for the fields of `request`; the host application creates instances
+  and supplies `request` (see E.8). It advances through `lifecycle.states`
   driven by `lifecycle.transitions[*].on` events, deadline timers
   (which move the instance to `on_violation.transition`), and
   `monitors[*].on_match.transition` actions (which move it to the named
@@ -199,7 +222,9 @@ of a declared actor as M-1 requires.
   states. If the transition has not fired by then, this is a
   *violation* whose severity is `Major` unless overridden in the
   `on_violation:` block, and the instance moves to the state named by
-  `on_violation.transition`.
+  `on_violation.transition`. When the transition has no
+  `on_violation.transition`, missing the deadline is still a violation
+  but causes no change of state.
 - `emit:` lists the names of additional events to publish when the
   transition fires, for consumption by visualization and logging
   tools. The reference generators carry `emit:` into the IR but do not
@@ -290,6 +315,9 @@ contracts:
           severity:   Critical
 ```
 
+No transition in this example leads to `Terminated`; the state is
+declared for completeness.
+
 ## E.7 Intermediate Representation (IR) addition
 
 The CADL simulator IR (module `cadl.sim.ir` of the
@@ -368,6 +396,14 @@ Normalizations applied during lowering:
 | `sampling: event` | `"sampling_kind": "event"`, `"sampling_period_ms": null` |
 | `on_match: { violation, transition, severity }` | `"on_match_violation"`, `"on_match_transition"`, `"on_match_severity"` |
 
+The IR does not fill in every default. When the violation label
+(`on_match.violation`) is omitted, the IR records `null`. The severity
+fields are `null` when the whole `on_violation:` or `on_match:` block
+is omitted; when the block is present without `severity:`, the IR
+records `Major`. Where the IR records `null`, applying the defaults
+(`Major`; the monitor's `id` as label) is left to the consumer of the
+IR.
+
 The `cadl sim-ir <file> --format json` command emits this shape
 (abridged above) for downstream tools such as the Lifecycle View of
 CADL Explorer. The Unity C# generator (`cadl codegen --target
@@ -380,7 +416,7 @@ repository under `cadl/runtime/`.
 
 Code generation targets MAY emit code from the `lifecycle` and
 `monitors` blocks. The reference generator for this extension is the
-`unity-csharp` target ([Appendix D](./appendix-d-codegen)). For each
+`unity-csharp` target ([Appendix D](./appendix-d-codegen.md)). For each
 contract that has a `lifecycle:` or `monitors:` block it produces:
 
 - a state machine class per contract (states from `lifecycle.states`,

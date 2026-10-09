@@ -1,19 +1,25 @@
 ---
 sidebar_position: 13
-title: "Appendix C — Motivation Extension"
+title: "Appendix C: Motivation Extension"
+description: "Optional motivation extension of CADL (v0.1-ext): agent motivation profiles and the governance parameters rho and kappa."
 ---
 
 # Appendix C — Motivation Extension (v0.1-ext)
 
 This appendix describes the **motivation extension** to CADL used in the
 CADL Explorer demonstrator and the A-SoS motivation-sensitive governance
-experiments. The core language (Chapter 5 and Appendix A) does **not**
-mandate this block; a conforming CADL processor that does not implement
-the extension SHOULD accept the `motivation:` block syntactically and
-emit an *informational* diagnostic rather than rejecting the file.
+experiments. The core language ([Chapter 5](./05-language-spec.md) and
+[Appendix A](./appendix-a-syntax.md)) does **not** mandate this block; a
+conforming CADL processor that does not implement the extension MUST NOT
+reject a file because of the `motivation:` block. It SHOULD accept the
+block syntactically and emit an *informational* diagnostic.
 
 The extension is versioned independently from the core language; this
-document describes **v0.1-ext**.
+document describes **v0.1-ext**, which is the version label of the
+extension text. In v0.1 the extension has no name to declare under
+`extensions:`
+([Appendix A.2](./appendix-a-syntax.md#a2-top-level-structure)); a file
+uses it simply by writing a `motivation:` block.
 
 ## C.1 Scope
 
@@ -37,8 +43,8 @@ mapping, i.e. the `motivation_block` of
 
 ## C.2 EBNF
 
-The grammar uses the notation of Appendix A; `number` and `int_literal`
-are defined there.
+The grammar uses the notation of [Appendix A](./appendix-a-syntax.md);
+`number` and `int_literal` are defined there.
 
 ```ebnf
 motivation_block      = [ "agent:"      , agent_motivation ] ,
@@ -119,13 +125,16 @@ own flat configuration file, next to simulator settings such as
 simulator parameters — autonomy level, centralization level, and
 exploration probability — and are **not** the per-contract α
 (information sharing), β (decision centralization), and λ (incentive
-intensity) of Section 5.4.2. The simulator configuration file is not a
-CADL file in the sense of Appendix A.
+intensity) of [Section 5.4.2](./05-language-spec.md). The simulator
+configuration file is not a CADL file in the sense of
+[Appendix A](./appendix-a-syntax.md).
 
 ## C.6 Conformance
 
 A CADL processor is **core-conforming** if it accepts files without the
-`motivation:` block and fully implements Chapter 5 and Appendix A.
+`motivation:` block and fully implements
+[Chapter 5](./05-language-spec.md) and
+[Appendix A](./appendix-a-syntax.md).
 
 A processor is **motivation-conforming** if it additionally:
 
@@ -146,8 +155,10 @@ block verbatim so downstream tools can consume it.
 - **[`cadl`](https://github.com/ertlnagoya/cadl)** (reference
   implementation): defines an optional `MotivationBlock` on
   `SoSDefinition` in its AST. At v0.3 the parser does not read the
-  `motivation:` key from a CADL file; the key is ignored, and
-  verification and code generation do not use it. The reference
-  implementation is therefore core-conforming but not
-  motivation-conforming.
-- [Glossary](./glossary) — definitions of ρ, κ, profile terms.
+  `motivation:` key from a CADL file; the block is accepted and
+  ignored, and verification and code generation do not use it. The
+  reference implementation implements the core language with the
+  deviations listed in
+  [Appendix A §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)
+  and does not implement the motivation extension.
+- [Glossary](./glossary.md) — definitions of ρ, κ, profile terms.

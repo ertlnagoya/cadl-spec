@@ -17,6 +17,10 @@ const config: Config = {
   organizationName: 'ertlnagoya',
   projectName: 'cadl-spec',
 
+  // GitHub Pages serves every page at a URL ending in "/"; emit the same
+  // form so canonical URLs, the sitemap and internal links do not redirect.
+  trailingSlash: true,
+
   onBrokenLinks: 'throw',
 
   markdown: {
@@ -102,6 +106,11 @@ const config: Config = {
           position: 'right',
         },
         {
+          href: 'https://github.com/ertlnagoya/cadl',
+          label: 'GitHub',
+          position: 'right',
+        },
+        {
           type: 'localeDropdown',
           position: 'right',
         },
@@ -131,8 +140,37 @@ const config: Config = {
           title: 'Tools',
           items: [
             {
+              label: 'cadl (compiler / CLI)',
+              href: 'https://github.com/ertlnagoya/cadl',
+            },
+            {
+              label: 'cadl-lang on PyPI',
+              href: 'https://pypi.org/project/cadl-lang/',
+            },
+            {
               label: 'CADL Explorer',
               href: 'https://cadl-explorer.streamlit.app/',
+            },
+            {
+              label: 'Hands-on simulator',
+              href: 'https://github.com/ertlnagoya/cadl-raspimouse-simulator',
+            },
+          ],
+        },
+        {
+          title: 'Feedback',
+          items: [
+            {
+              label: 'Report a problem with the tool',
+              href: 'https://github.com/ertlnagoya/cadl/issues',
+            },
+            {
+              label: 'Report a problem with this site',
+              href: 'https://github.com/ertlnagoya/cadl-spec/issues',
+            },
+            {
+              label: 'Source of this site',
+              href: 'https://github.com/ertlnagoya/cadl-spec',
             },
           ],
         },
@@ -150,7 +188,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} ERTL, Nagoya University. Documentation licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; code examples under the Apache License 2.0. Built with Docusaurus.`,
+      copyright: `Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University. Documentation licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; code examples and the site source under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

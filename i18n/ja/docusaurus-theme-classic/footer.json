@@ -36,7 +36,35 @@
     "description": "The label of footer link with label=Nagoya University linking to https://www.nagoya-u.ac.jp/"
   },
   "copyright": {
-    "message": "Copyright © 2026 ERTL, Nagoya University. 文書は <a href=\"https://creativecommons.org/licenses/by/4.0/deed.ja\">CC BY 4.0</a>，コード例は Apache License 2.0 で提供します。Built with Docusaurus.",
+    "message": "Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University. 文書は <a href=\"https://creativecommons.org/licenses/by/4.0/deed.ja\">CC BY 4.0</a>，コード例とサイトのソースは <a href=\"https://www.apache.org/licenses/LICENSE-2.0\">Apache License 2.0</a> で提供します。Built with Docusaurus.",
     "description": "The footer copyright"
+  },
+  "link.title.Feedback": {
+    "message": "フィードバック",
+    "description": "The title of the footer links column with title=Feedback in the footer"
+  },
+  "link.item.label.cadl (compiler / CLI)": {
+    "message": "cadl（コンパイラ / CLI）",
+    "description": "The label of footer link with label=cadl (compiler / CLI) linking to https://github.com/ertlnagoya/cadl"
+  },
+  "link.item.label.cadl-lang on PyPI": {
+    "message": "PyPI の cadl-lang",
+    "description": "The label of footer link with label=cadl-lang on PyPI linking to https://pypi.org/project/cadl-lang/"
+  },
+  "link.item.label.Hands-on simulator": {
+    "message": "ハンズオン用シミュレータ",
+    "description": "The label of footer link with label=Hands-on simulator linking to https://github.com/ertlnagoya/cadl-raspimouse-simulator"
+  },
+  "link.item.label.Report a problem with the tool": {
+    "message": "ツールの問題を報告",
+    "description": "The label of footer link with label=Report a problem with the tool linking to https://github.com/ertlnagoya/cadl/issues"
+  },
+  "link.item.label.Report a problem with this site": {
+    "message": "このサイトの問題を報告",
+    "description": "The label of footer link with label=Report a problem with this site linking to https://github.com/ertlnagoya/cadl-spec/issues"
+  },
+  "link.item.label.Source of this site": {
+    "message": "このサイトのソース",
+    "description": "The label of footer link with label=Source of this site linking to https://github.com/ertlnagoya/cadl-spec"
   }
 }
