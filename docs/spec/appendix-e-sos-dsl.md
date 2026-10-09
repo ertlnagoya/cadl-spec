@@ -365,8 +365,9 @@ The `cadl sim-ir <file> --format json` command emits this shape
 (abridged above) for downstream tools such as the Lifecycle View of
 CADL Explorer. The Unity C# generator (`cadl codegen --target
 unity-csharp`) works from the same parsed contract. A Python reference
-runtime for the simulator also consumes this JSON, but the simulator
-is not publicly available at present.
+runtime also consumes this JSON; it is published in the
+[`cadl-raspimouse-simulator`](https://github.com/ertlnagoya/cadl-raspimouse-simulator)
+repository under `cadl/runtime/`.
 
 ## E.8 Codegen contract (informative)
 

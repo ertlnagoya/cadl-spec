@@ -368,7 +368,8 @@ this appendix as follows (checked against v0.3.2).
 - **Verification.** Up to v0.3.2, `method:`, `expr:`, and `bound:` are not read from
   the file, so every entry is handled as `method: smt`. The
   `not_supported` result is implemented for specifications constructed
-  through the API.
+  through the API. v0.3.3 reads the three keys and reports methods other
+  than `smt` as `not_supported`.
 - **Codegen.** `codegen:` entries are parsed but not acted upon; the
   target is selected on the command line (Appendix D).
 - **Extensions.** `extensions:` and `motivation:` are ignored.

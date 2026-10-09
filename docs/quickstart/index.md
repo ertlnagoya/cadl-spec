@@ -61,6 +61,8 @@ Click **Run Governance Pipeline Demo**. The six tabs update together:
 5. **Results & Evaluation** — scatter, ρ effects, per-robot, and summary views.
 6. **Run History** — compare multiple runs across the session.
 
+![CADL Explorer after running the pipeline demo: sidebar controls on the left, the Causal Chain tab on the right](/img/handson/explorer-pipeline-demo.jpg)
+
 ## 5. Optional — paste your own CADL
 
 Expand **Advanced: Custom CADL YAML** in the sidebar and paste a

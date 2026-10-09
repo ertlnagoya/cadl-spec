@@ -32,7 +32,7 @@ This booklet collects the practice exercises that go with the SoS-DSL hands-on. 
 Each session is **~90 minutes in class** plus **~3 hours of homework**. The final deliverable across all five sessions is a **3-page report** (initial model / simulation comparison / reflection).
 
 :::info[Repository availability]
-Sessions 1–3 need only the public repositories (`cadl`, `cadl-explorer`). Sessions 4–5 run the Python reference runtime that lives in `raspimouse-swarm-simulator`, which is **not publicly available at present** (see Step 0 of the [main textbook](main-textbook.md)).
+Sessions 1–3 need only `cadl` and `cadl-explorer`. Sessions 4–5 run the Python reference runtime that lives in `cadl-raspimouse-simulator` (see Step 0 of the [main textbook](main-textbook.md) for how to get it).
 :::
 
 ### Compact 3-session version
@@ -356,7 +356,7 @@ This builds on what you would expect to see *in advance* — by the time Session
 
 ### Concept introduction (~30 min)
 
-The Python runtime in `raspimouse-swarm-simulator/cadl/runtime/` consumes the IR and gives you *deterministic, replayable* discrete-time simulation. The five-robot `multi_robot_demo.py` is your fixed test bench:
+The Python runtime in `cadl-raspimouse-simulator/cadl/runtime/` consumes the IR and gives you *deterministic, replayable* discrete-time simulation. The five-robot `multi_robot_demo.py` is your fixed test bench:
 
 | Robot | Scripted outcome | Why it matters |
 | --- | --- | --- |
@@ -377,7 +377,7 @@ This is your **ground truth** to validate any spec change you make.
 **Procedure**:
 
 ```bash
-cd ~/program/raspimouse-swarm-simulator
+cd ~/program/cadl-raspimouse-simulator
 python3 -m cadl.runtime.multi_robot_demo --summary > session4_baseline.txt
 python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 ```

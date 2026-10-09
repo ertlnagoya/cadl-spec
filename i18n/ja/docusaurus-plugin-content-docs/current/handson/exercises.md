@@ -32,7 +32,7 @@ title: "コース A — 演習問題集"
 各回 **授業 90 分** + **宿題 3 時間程度**。5 回を通した最終提出物は **3 ページのレポート**（初期モデル / シミュレーション比較 / 振り返り）。
 
 :::info[リポジトリの公開状況]
-第 1〜3 回は公開リポジトリ（`cadl`、`cadl-explorer`）だけで進められます。第 4〜5 回は `raspimouse-swarm-simulator` にある Python 参照ランタイムを使いますが、このリポジトリは**現時点では非公開**です（[メイン教材](main-textbook.md) の Step 0 を参照してください）。
+第 1〜3 回は `cadl` と `cadl-explorer` だけで進められます。第 4〜5 回は `cadl-raspimouse-simulator` にある Python 参照ランタイムを使います（入手方法は [メイン教材](main-textbook.md) の Step 0 を参照してください）。
 :::
 
 ### 縮小 3 回バージョン
@@ -356,7 +356,7 @@ stateDiagram-v2
 
 ### 概念導入（約 30 分）
 
-`raspimouse-swarm-simulator/cadl/runtime/` の Python ランタイムは IR を読み込み、*決定論的で再実行可能な* 離散時間シミュレーションを実行します。5 ロボットの `multi_robot_demo.py` が固定のテストベンチです：
+`cadl-raspimouse-simulator/cadl/runtime/` の Python ランタイムは IR を読み込み、*決定論的で再実行可能な* 離散時間シミュレーションを実行します。5 ロボットの `multi_robot_demo.py` が固定のテストベンチです：
 
 | ロボット | 期待する終端 | なぜ大事か |
 | --- | --- | --- |
@@ -377,7 +377,7 @@ stateDiagram-v2
 **手順**:
 
 ```bash
-cd ~/program/raspimouse-swarm-simulator
+cd ~/program/cadl-raspimouse-simulator
 python3 -m cadl.runtime.multi_robot_demo --summary > session4_baseline.txt
 python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 ```
