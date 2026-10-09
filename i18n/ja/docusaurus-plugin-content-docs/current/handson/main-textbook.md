@@ -785,6 +785,14 @@ output/sos_dsl_handson/unity-csharp/
     └── DeliverySlaMonitors.cs        # monitor 1 個に対し Eval_xxx メソッド
 ```
 
+スクリプトを実行すると、生成されたファイルが Unity プロジェクトに入ります。Project ウィンドウでは `Assets/Scripts/SoSDsl/Generated` の下に表示されます。
+
+![Assets/Scripts/SoSDsl/Generated に生成ファイルが並んだ Unity の Project ウィンドウ](/img/handson/unity-generated-files.jpg)
+
+`DeliverySlaContract` を選ぶと、生成された C# が Inspector に表示されます（このファイルは編集しません。再生成のたびに上書きされます）。
+
+![生成された DeliverySlaContract.cs を表示した Unity の Inspector](/img/handson/unity-generated-contract-inspector.jpg)
+
 ### なぜ 2 つのランタイム？
 
 同じ IR が両方を駆動しますが、駆動の仕方は異なります。Python 参照ランタイム（シミュレータリポジトリの `cadl/runtime/engine.py`）は、起動時に IR JSON を読み込む手書きの**インタプリタ**です。一方、C# の契約クラスは `cadl codegen` が IR から**生成**します。
@@ -917,6 +925,10 @@ go run main.go
 
 **11 個のノードと 17 本のエッジ**からなる経路網（グラフ）と、その上を走る **5 体**のロボット（Red / Blue / Green / Yellow / Purple）が見えるはずです。ノード数・エッジ数・台数はいずれも `Assets/streamingAssets/cadl_config.json` から読み込まれるので、Console にも `[GraphDefinition] Loaded from CADL config: 11 nodes, 17 edges` と出ます（CADL ファイルの `context.environment` にある `grid_size: 30` は IR に引き継がれる抽象的な環境パラメータで、Unity シーンは参照しません。シーンの経路グラフは `cadl_config.json` で定義されたものです）。
 
+![C-SoS シーン：番号の付いたノードを持つ経路網と 5 台のロボット](/img/handson/unity-road-network.jpg)
+
+上の図は、Play 中の経路網を Scene ビューで見下ろしたものです。このプロジェクトの Game ビューは地面に近いカメラを使っているので、ロボットの動きは Scene ビューのほうが見やすくなります。
+
 > #### 🛠 Unity のバージョンに注意
 >
 > このプロジェクトは **Unity 6000.2.9f1** で保存されており（`ProjectSettings/ProjectVersion.txt` に記録）、本コースの動作確認もこのバージョンで行っています。Unity Hub からインストールしてください。プロジェクトを追加したときに対応する Editor が無ければ、Unity Hub がインストールを案内します。
@@ -962,6 +974,10 @@ PilotContractBridge (Script)
 
 5 体のうち 1 体の Battery スライダーを **15** まで下げ、`battery_guard` モニターを発火させます。
 
+このときのエディタは次のようになります。ロボット `m2` を選択した状態で、Inspector の一番下に `Pilot Contract Bridge` コンポーネントが表示されています（Robot Battery は 15）。
+
+![ロボットを選択した Unity エディタ。Inspector に Pilot Contract Bridge が表示され、Robot Battery 15、Request Deadline Ms 300000、Assigned Dwell Ms 700 になっている](/img/handson/unity-pilot-contract-bridge.jpg)
+
 シーンを保存（`Cmd+S` / `Ctrl+S`）。
 
 ### 6.5 Play を押す
@@ -971,6 +987,10 @@ Editor 上部の ▶ をクリック。
 ### 表示されるもの
 
 Console に以下のような行が連続的に出ます。Console の検索欄に `lifecycle DELIVERY_SLA` または `violation` と入れて絞り込めます。
+
+![Play 中の Unity：Scene ビューに経路網上のロボット、Console に DELIVERY_SLA で絞り込んだライフサイクルイベント](/img/handson/unity-play-console.jpg)
+
+このスクリーンショットは Play 開始から数秒後のもので、Console の検索欄に `DELIVERY_SLA` と入力し、Scene タブを選んだ状態です。
 
 ```
 [lifecycle DELIVERY_SLA/robot-0-1 Proposed -> Assigned     (assign,        event)   @ 1234ms]
