@@ -15,7 +15,7 @@ The materials fall into **two tracks**. Pick the one that matches your role.
 | 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim [Why SoS-DSL?](academic-background.md) then jump to [Course C](exercises.md) |
 
 :::info[Repository availability]
-`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
+`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI), `cadl-explorer` (visualisation) and `cadl-raspimouse-simulator` (simulator) are public, so every step of Course A can be followed with public repositories. `mobility-sos-exercise`, used by Course B, is **not publicly available at present**.
 :::
 
 ## 🗺️ First time here? A three-stage path
@@ -102,8 +102,8 @@ cd ~/program/cadl_repo
 This assumes the setup in Step 0 of [Course A](main-textbook.md) is done (the `cadl` repository cloned as
 `~/program/cadl_repo`). The script runs the end-to-end pipeline (parse → IR → codegen) on the bundled
 `examples/sos_dsl_robot_delivery.cadl` and prints what to do next. Its last stage copies the generated C#
-into the Unity project of `raspimouse-swarm-simulator`, which is not publicly available; without that
-repository, run `./scripts/sos_dsl_handson_e2e.sh --unity ""` instead, which stops after code generation.
+into the Unity project of `cadl-raspimouse-simulator` (expected next to `cadl_repo`); if you have not
+cloned it yet, run `./scripts/sos_dsl_handson_e2e.sh --unity ""` instead, which stops after code generation.
 
 After that, start with **[Why SoS-DSL?](academic-background.md)** and then **[Course A](main-textbook.md)**.
 

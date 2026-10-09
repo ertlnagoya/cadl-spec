@@ -22,7 +22,7 @@ flowchart LR
     IR["Sim-IR JSON<br/>intermediate representation"]
     GEN[cadl codegen<br/>C# generation]
   end
-  subgraph C["Execution side (raspimouse-swarm-simulator)"]
+  subgraph C["Execution side (cadl-raspimouse-simulator)"]
     PY["Python reference runtime<br/>engine.py"]
     UN["Unity C# runtime<br/>SoSDsl/"]
     SIM["Robot swarm simulation<br/>Pilot_CSoS + arbitrator + NATS"]
@@ -46,9 +46,9 @@ There are only three things to remember.
 | `cadl-spec` | The language specification and this textbook site | Yes | Read only |
 | `cadl` (cloned as `cadl_repo`) | The compiler (parser, type checker, IR, code generation) | Yes | Used as a command |
 | `cadl-explorer` | Streamlit visualization (state machine diagrams) | Yes | Used as a command |
-| `raspimouse-swarm-simulator` | Unity scene, Go arbitrator, Python runtime | No | **Where you mainly work in Steps 5–6** |
+| `cadl-raspimouse-simulator` | Unity project, Go arbitrator, Python runtime | Yes | **Where you mainly work in Steps 5–6** |
 
-These are the four top-level repositories. The simulator additionally pulls in two git submodules, `raspimouse-unity` (the Unity project, checked out as `unity/`) and `raspimouse-swarm-arbitrator` (the Go arbitrator, `arbitrator/`), which are not public either. With the three public repositories you can follow Course A up to Step 4; the files described in Section 4 below belong to the non-public simulator, so without access read that section as a description of how the pieces fit together.
+These are the four repositories. The simulator keeps the Unity project (`unity/`), the Go arbitrator (`arbitrator/`) and the Python runtime (`cadl/runtime/`) together in one repository; the files described in Section 4 below are all found there.
 
 A note on names: the Unity scene (`C-SoS.unity`), the robot controller (`Pilot_CSoS`) and the arbitrator directory (`C-SoS/`) carry the label "C-SoS". That is the simulator's own name for its centralised-arbitrator mode (as opposed to its "D-SoS" mode); it is independent of CADL and does not mean CADL's `Collaborative` type. The CADL file of this course declares `type: Acknowledged`, and that declaration is what the course text means when it classifies the robot-delivery SoS.
 
