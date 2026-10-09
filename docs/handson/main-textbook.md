@@ -18,7 +18,7 @@ title: "Course A — Robot Delivery (Main Textbook)"
 
 ## Why are we doing this?
 
-A **System of Systems (SoS)** is a system whose parts are themselves independent, operationally autonomous systems — for example, a fleet of delivery robots, a central dispatcher, and the customers placing orders. The robot simulated in this hands-on is the **Raspberry Pi Mouse** ("raspimouse"), a small autonomous mobile robot — hence the simulator name `raspimouse-swarm-simulator`. (The physical robot runs on ROS; this hands-on is entirely simulator-based.) The parts have their own goals and their own software; the SoS designer's job is **not** to write all of their code, but to write the **rules of the game** they all follow: who can ask whom for what, what counts as a violation, what the consequences are.
+A **System of Systems (SoS)** is a system whose parts are themselves independent, operationally autonomous systems — for example, a fleet of delivery robots, a central dispatcher, and the customers placing orders. The robot simulated in this hands-on is the **Raspberry Pi Mouse** ("raspimouse"), a small autonomous mobile robot — hence the simulator name `cadl-raspimouse-simulator`. (The physical robot runs on ROS; this hands-on is entirely simulator-based.) The parts have their own goals and their own software; the SoS designer's job is **not** to write all of their code, but to write the **rules of the game** they all follow: who can ask whom for what, what counts as a violation, what the consequences are.
 
 Today you will learn three things:
 
@@ -110,7 +110,7 @@ flowchart LR
 | Tool | Version | Why |
 | --- | --- | --- |
 | Python | 3.10+ | runs the `cadl` CLI |
-| Unity | 2022.3.27f1 (LTS) | runs the simulation |
+| Unity | 6000.2.9f1 (Unity 6.2) | runs the simulation |
 | Go | 1.21+ | builds the arbitrator |
 | NATS Server | latest | message bus between robots ⇄ arbitrator |
 | Node.js | 18+ | renders the spec website (optional) |
@@ -126,21 +126,21 @@ brew install python@3.11 go nats-server node
 ## Step 0 — Setup (5 min)
 
 ### What you'll learn
-- The repositories that make up the toolchain, which of them are public, and which branch of each one to use.
+- The repositories that make up the toolchain and which branch of each one to use.
 
 ### Background
 
 The CADL toolchain is split across four repositories so each piece can evolve independently:
 
-| Repository | Role | Public? | Branch to use |
-| --- | --- | --- | --- |
-| `cadl-spec`            | the language reference and this hands-on site (Docusaurus) | yes | `main` (default) |
-| `cadl` (cloned as `cadl_repo`) | the compiler: parser, IR, code generators | yes | `master` (default) |
-| `cadl-explorer`        | a Streamlit visualiser | yes | `feature/sos-dsl` (the Lifecycle View page used in Step 4 is on this branch and not yet on `main`) |
-| `raspimouse-swarm-simulator` | Unity scene + Go arbitrator + Python reference runtime. The Unity project and the arbitrator are git submodules (`raspimouse-unity`, `raspimouse-swarm-arbitrator`) | no | `feature/sos-dsl` |
+| Repository | Role | Branch to use |
+| --- | --- | --- |
+| `cadl-spec`            | the language reference and this hands-on site (Docusaurus) | `main` (default) |
+| `cadl` (cloned as `cadl_repo`) | the compiler: parser, IR, code generators | `master` (default) |
+| `cadl-explorer`        | a Streamlit visualiser | `feature/sos-dsl` (the Lifecycle View page used in Step 4 is on this branch and not yet on `main`) |
+| `cadl-raspimouse-simulator` | the simulator used in Steps 5–6: Unity project, Go arbitrator and Python reference runtime in one repository | `main` (default) |
 
 :::info[Repository availability]
-`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
+`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI), `cadl-explorer` (visualisation) and `cadl-raspimouse-simulator` (simulator) are public, so every step of Course A can be followed with public repositories. `mobility-sos-exercise`, used by Course B, is **not publicly available at present**.
 :::
 
 ### Procedure
@@ -148,11 +148,13 @@ The CADL toolchain is split across four repositories so each piece can evolve in
 ```bash
 mkdir -p ~/program && cd ~/program
 
-# 1) Public repositories (enough for Steps 1–4).
-#    cadl-spec and cadl stay on their default branches (main / master).
+# 1) Clone the repositories.
+#    cadl-spec, cadl and cadl-raspimouse-simulator stay on their default
+#    branches (main / master / main).
 git clone https://github.com/ertlnagoya/cadl-spec
 git clone https://github.com/ertlnagoya/cadl                         cadl_repo
 git clone https://github.com/ertlnagoya/cadl-explorer
+git clone https://github.com/ertlnagoya/cadl-raspimouse-simulator
 
 #    cadl-explorer only: the Lifecycle View page used in Step 4 is on the
 #    feature/sos-dsl branch (it is not on main yet).
@@ -163,15 +165,6 @@ cd ~/program/cadl_repo
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e .
 cd ~/program
-
-# 3) Non-public repository (Steps 5–6 only; requires access).
-#    Skip this block if you have not been granted access.
-git clone https://github.com/ertlnagoya/raspimouse-swarm-simulator
-git -C raspimouse-swarm-simulator checkout feature/sos-dsl
-#    Fetch the submodules *after* switching the branch, so that unity and
-#    arbitrator are at the commits pinned by feature/sos-dsl (a plain
-#    `clone --recursive` would fetch the commits pinned by the default branch).
-git -C raspimouse-swarm-simulator submodule update --init --recursive
 ```
 
 ### Expected output
@@ -200,29 +193,21 @@ If `cadl codegen --help` lists `unity-csharp` among the `--target` choices (`{py
 
 ### Recap
 
-After setup you can see that CADL is really four cooperating repositories — the spec site, the compiler, the visualizer, and the simulator. Everything that follows assumes **each repository is on the branch listed in the table above** (`cadl-spec`: `main`, `cadl_repo`: `master`, `cadl-explorer`: `feature/sos-dsl`, and, for Steps 5–6, `raspimouse-swarm-simulator`: `feature/sos-dsl` with its submodules fetched); most trouble at this stage comes from a wrong branch or a missing submodule.
+After setup you can see that CADL is really four cooperating repositories — the spec site, the compiler, the visualizer, and the simulator. Everything that follows assumes **each repository is on the branch listed in the table above** (`cadl-spec`: `main`, `cadl_repo`: `master`, `cadl-explorer`: `feature/sos-dsl`, `cadl-raspimouse-simulator`: `main`); most trouble at this stage comes from a wrong branch.
 
 ### 🛠 Setup troubleshooting
 
-**Check your branches (the most common pitfall).** The repositories do not all use the same branch. The Lifecycle View page (Step 4) is only on `feature/sos-dsl` of `cadl-explorer`, and the SoS-DSL runtime of the simulator (including Step 5's `multi_robot_demo`) is only on `feature/sos-dsl` of `raspimouse-swarm-simulator`. If you stay on `main` in those two repositories, `git pull` will say "Already up to date" even though the content is missing. Conversely, keep `cadl-spec` on `main` and `cadl_repo` on `master`: their `feature/sos-dsl` branches are older than the default branches (in `cadl-spec` that branch still carries an outdated textbook and Appendix E). Verify:
+**Check your branches (the most common pitfall).** The repositories do not all use the same branch. The Lifecycle View page (Step 4) is only on `feature/sos-dsl` of `cadl-explorer`. If you stay on `main` there, `git pull` will say "Already up to date" even though the page is missing. Conversely, keep `cadl-spec` and `cadl-raspimouse-simulator` on `main` and `cadl_repo` on `master`: their `feature/sos-dsl` branches are older than the default branches (in `cadl-spec` that branch still carries an outdated textbook and Appendix E). Verify:
 
 ```bash
 cd ~/program
 echo "cadl-spec:     $(git -C cadl-spec branch --show-current)"       # main
 echo "cadl_repo:     $(git -C cadl_repo branch --show-current)"       # master
 echo "cadl-explorer: $(git -C cadl-explorer branch --show-current)"   # feature/sos-dsl
-# only if you have access to the simulator:
-echo "simulator:     $(git -C raspimouse-swarm-simulator branch --show-current)"   # feature/sos-dsl
+echo "simulator:     $(git -C cadl-raspimouse-simulator branch --show-current)"   # main
 ```
 
 For any repository on the wrong branch, switch with `git -C ~/program/<repo> checkout <branch>`.
-
-**If the arbitrator submodule cannot be fetched.** The arbitrator (`raspimouse-swarm-arbitrator`) is a submodule of the non-public simulator and is needed **only for Step 6 (the live Unity run)**. If `git submodule update` fails because the arbitrator commit pinned by the simulator cannot be fetched from the remote, initialise the other submodule only and carry on; before Step 6, ask whoever granted you access to the simulator repository which arbitrator commit is current.
-
-```bash
-cd ~/program/raspimouse-swarm-simulator
-git submodule update --init unity     # skip arbitrator for now
-```
 
 ---
 
@@ -729,7 +714,7 @@ The repo provides a single end-to-end script. Run it:
 cd ~/program/cadl_repo
 ./scripts/sos_dsl_handson_e2e.sh \
     examples/sos_dsl_robot_delivery.cadl \
-    --unity ../raspimouse-swarm-simulator/unity
+    --unity ../cadl-raspimouse-simulator/unity
 ```
 
 > Without the simulator repository you can still run the pipeline up to code generation: pass `--unity ""` and the script stops after generating the C# tree under `output/sos_dsl_handson/`.
@@ -740,7 +725,7 @@ cd ~/program/cadl_repo
 
 ```
 $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
-      --unity ../raspimouse-swarm-simulator/unity
+      --unity ../cadl-raspimouse-simulator/unity
 
 == INPUT ==
   source : .../examples/sos_dsl_robot_delivery.cadl
@@ -761,13 +746,13 @@ $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
   generated : 3 files
   total lines : 770
 
-== Step 4/4 — drop into ../raspimouse-swarm-simulator/unity/Assets/Scripts/SoSDsl/ ==
+== Step 4/4 — drop into ../cadl-raspimouse-simulator/unity/Assets/Scripts/SoSDsl/ ==
   installed : .../Runtime, .../Generated
   preserved : .../Demo (if it existed)
 
 == DONE ==
 Next steps for the student:
-  1. Open the Unity project at .../unity in Unity 2022.3.x
+  1. Open the Unity project at .../unity in Unity 6 (6000.2)
   2. Open Assets/Scenes/C-SoS.unity
   3. Add a ContractRuntimeHost GameObject
   4. Attach PilotContractBridge to each robot that has Pilot_CSoS
@@ -810,7 +795,7 @@ The same IR drives both, in different ways. The Python reference runtime (`cadl/
 If both runtimes are correct, they must produce **the same trace** for the same inputs. We can sanity-check this without Unity:
 
 ```bash
-cd ~/program/raspimouse-swarm-simulator
+cd ~/program/cadl-raspimouse-simulator
 python3 -m cadl.runtime.multi_robot_demo --summary
 ```
 
@@ -830,22 +815,15 @@ The Unity run in Step 6 assigns deliveries at different times and gives the robo
 
 > #### 🛠 Troubleshooting: `multi_robot_demo` not found
 >
-> First, **check the branch of `raspimouse-swarm-simulator`**. `multi_robot_demo` exists **only on its `feature/sos-dsl` branch** (not on its `main`). If you are still on `main`, `git pull` will say "Already up to date" yet the module is missing.
+> Run the command **from the root of `cadl-raspimouse-simulator`**. Python finds `cadl.runtime` relative to the current directory; from anywhere else it finds only the `cadl` compiler package, which has no `runtime` module, and reports `No module named cadl.runtime`.
 >
 > ```bash
-> git -C ~/program/raspimouse-swarm-simulator branch --show-current   # → should be feature/sos-dsl
-> ```
->
-> If the branch is correct but it is still missing, your checkout is likely **out of date** (`multi_robot_demo` was added in a later commit, so older checkouts ship only the single-contract smoke test `demo_delivery`). Switch to and update `feature/sos-dsl`:
->
-> ```bash
-> cd ~/program/raspimouse-swarm-simulator
-> git checkout feature/sos-dsl
-> git pull                      # fetch the latest (brings in multi_robot_demo)
+> cd ~/program/cadl-raspimouse-simulator
+> git pull                      # make sure the checkout is current
 > python3 -m cadl.runtime.multi_robot_demo --summary
 > ```
 >
-> If you cannot update and want to check on the older version, `demo_delivery` exercises the same three mechanisms (happy path, deadline violation, monitor violation) on one contract instance (its output is for a single contract, so its shape differs from the 5-robot table above):
+> To look at one contract instance at a time, `demo_delivery` exercises the same three mechanisms (happy path, deadline violation, monitor violation) on one contract instance (its output is for a single contract, so its shape differs from the 5-robot table above):
 >
 > ```bash
 > PYTHONPATH=. python3 -m cadl.runtime.demo_delivery --scenario happy     # accepted, stops at Accepted
@@ -896,7 +874,7 @@ nats-server -p 4222
 
 ```bash
 # Terminal 2 — C-SoS arbitrator (Go)
-cd ~/program/raspimouse-swarm-simulator/arbitrator/C-SoS/main
+cd ~/program/cadl-raspimouse-simulator/arbitrator/C-SoS/main
 go run main.go
 ```
 
@@ -915,25 +893,25 @@ If that third line reads `taskArbitration.enabled=true`, the arbitrator has load
 > Pass the config as an **absolute path** to be safe (the default is relative and depends on the launch directory):
 >
 > ```bash
-> cd ~/program/raspimouse-swarm-simulator/arbitrator/C-SoS/main
-> go run main.go -config ~/program/raspimouse-swarm-simulator/unity/Assets/streamingAssets/cadl_config.json
+> cd ~/program/cadl-raspimouse-simulator/arbitrator/C-SoS/main
+> go run main.go -config ~/program/cadl-raspimouse-simulator/unity/Assets/streamingAssets/cadl_config.json
 > ```
 >
 > If `[Config] … taskArbitration.enabled=true …` prints at startup, the config loaded correctly.
 
 ### 6.2 Open the C-SoS scene
 
-1. Launch Unity Hub. Open `~/program/raspimouse-swarm-simulator/unity` with **Unity 2022.3.27f1 (LTS)**.
-2. First open takes 1–5 minutes (Library reimport).
+1. Launch Unity Hub. Open `~/program/cadl-raspimouse-simulator/unity` with **Unity 6000.2.9f1 (Unity 6.2)**.
+2. First open takes several minutes (package download and Library import).
 3. In the Project pane, double-click `Assets/Scenes/C-SoS.unity`.
 
 You should see a road network (graph) made of **11 nodes and 17 edges**, with **five** robots — Red / Blue / Green / Yellow / Purple — driving on it. The node count, edge count, and robot count are all loaded from `Assets/streamingAssets/cadl_config.json`, so the Console also prints `[GraphDefinition] Loaded from CADL config: 11 nodes, 17 edges`. (The `grid_size: 30` under `context.environment` in the CADL file is an abstract environment parameter that is carried into the IR; the Unity scene does not read it — its road graph is the one defined in `cadl_config.json`.)
 
-> #### 🛠 Mind the Unity version (do not use the latest / Unity 6)
+> #### 🛠 Mind the Unity version
 >
-> Open this project with **2022.3.27f1 (LTS)**. **Opening it with the latest Editor (Unity 6 / 6000.x) auto-adds/updates packages** such as `com.unity.modules.accessibility`, `com.unity.multiplayer.center`, `com.unity.test-framework 1.6.0`, and `com.unity.ai.navigation 2.x`, causing errors (you would have to remove/downgrade them manually, and behavior is no longer guaranteed). If these appear in the Package Manager, your Editor is too new — reopen with **2022.3.27f1** via Unity Hub. (Note: once you save in Unity 6, the project version is bumped and cannot be cleanly reverted.)
+> The project is saved with **Unity 6000.2.9f1** (recorded in `ProjectSettings/ProjectVersion.txt`), and this course is checked with that version. Install it from Unity Hub; when you add the project, Unity Hub offers to install the matching Editor if it is missing.
 >
-> Note that the repository records the project version as `2021.3.26f1` (in `ProjectSettings/ProjectVersion.txt`). Opening it with 2022.3.27f1 therefore shows an **upgrade confirmation dialog** on first open, This is an upgrade across LTS lines (2021.3 → 2022.3); for this hands-on project you can **accept it**. This is also why Unity Hub flags the version in its project list.
+> Do not open the project with Unity 2022.3 or older: `Packages/manifest.json` lists packages that exist only in Unity 6. A newer Unity 6 release will ask to upgrade the project on first open; that has not been checked for this course.
 
 ### 6.3 Add ContractRuntimeHost (one per scene)
 
@@ -1064,7 +1042,7 @@ Pick whichever fits your goal: solidifying what you learned (Part 1) or trying t
 | Parser implementation | `cadl_repo/src/cadl/parser.py` |
 | IR | `cadl_repo/src/cadl/sim/ir.py`, `cadl_repo/src/cadl/sim/lower.py` |
 | Unity C# generator | `cadl_repo/src/cadl/codegen/unity_csharp/` |
-| Python reference runtime | `raspimouse-swarm-simulator/cadl/runtime/` |
+| Python reference runtime | `cadl-raspimouse-simulator/cadl/runtime/` |
 | Lifecycle visualiser | `cadl-explorer/cadl_sim/sos_dsl/` |
 | End-to-end script | `cadl_repo/scripts/sos_dsl_handson_e2e.sh` |
 

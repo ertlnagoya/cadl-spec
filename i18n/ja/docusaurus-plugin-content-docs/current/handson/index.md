@@ -15,7 +15,7 @@ CADL と SoS-DSL のハンズオン教材は、目的別に 2 つのトラック
 | 🧑‍🔬 研究者 | 教材を自分の SoS の試作に流用する | [なぜ SoS-DSL なのか？](academic-background.md)を流し読み → [コース C](exercises.md) |
 
 :::info[リポジトリの公開状況]
-`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
+`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）、`cadl-raspimouse-simulator`（シミュレータ）は公開しています。コース A はすべての Step を公開リポジトリだけで進められます。コース B で使う `mobility-sos-exercise` は**現時点では非公開**です。
 :::
 
 ## 🗺️ 初めての人へ：3 段階の進め方
@@ -101,7 +101,7 @@ cd ~/program/cadl_repo
 
 [コース A](main-textbook.md) の Step 0 のセットアップ（`cadl` リポジトリを `~/program/cadl_repo` としてクローン）が済んでいることが前提です。
 スクリプトは同梱の `examples/sos_dsl_robot_delivery.cadl` に対して parse → IR → codegen を一気に通し、続きの案内を出します。
-最後の段階では、生成した C# を `raspimouse-swarm-simulator` の Unity プロジェクトにコピーしますが、このリポジトリは非公開です。手元に無い場合は、代わりに `./scripts/sos_dsl_handson_e2e.sh --unity ""` を実行してください。コード生成までで終了します。
+最後の段階では、生成した C# を `cadl-raspimouse-simulator`（`cadl_repo` の隣にある想定）の Unity プロジェクトにコピーします。まだクローンしていない場合は、代わりに `./scripts/sos_dsl_handson_e2e.sh --unity ""` を実行してください。コード生成までで終了します。
 このあとは [なぜ SoS-DSL なのか？](academic-background.md) → [コース A](main-textbook.md) の順で本編に入るのが自然です。
 
 ---

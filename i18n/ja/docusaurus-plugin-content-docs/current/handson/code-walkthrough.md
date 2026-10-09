@@ -22,7 +22,7 @@ flowchart LR
     IR["Sim-IR JSON<br/>中間表現"]
     GEN[cadl codegen<br/>C# 生成]
   end
-  subgraph C["動く側（raspimouse-swarm-simulator）"]
+  subgraph C["動く側（cadl-raspimouse-simulator）"]
     PY["Python 参照ランタイム<br/>engine.py"]
     UN["Unity C# ランタイム<br/>SoSDsl/"]
     SIM["ロボット群シミュレーション<br/>Pilot_CSoS + arbitrator + NATS"]
@@ -46,9 +46,9 @@ flowchart LR
 | `cadl-spec` | 言語仕様書とこの教材サイト | 公開 | 読むだけ |
 | `cadl`（`cadl_repo` としてクローン） | コンパイラ（パーサ・型検査・IR・コード生成） | 公開 | コマンドとして使う |
 | `cadl-explorer` | Streamlit の可視化（状態機械図） | 公開 | コマンドとして使う |
-| `raspimouse-swarm-simulator` | Unity シーン・Go アービトレータ・Python ランタイム | 非公開 | **Step 5〜6 で主に触る場所** |
+| `cadl-raspimouse-simulator` | Unity プロジェクト・Go アービトレータ・Python ランタイム | 公開 | **Step 5〜6 で主に触る場所** |
 
-トップレベルのリポジトリはこの 4 つです。シミュレータはさらに 2 つの git submodule、`raspimouse-unity`（Unity プロジェクト。`unity/` に展開）と `raspimouse-swarm-arbitrator`（Go アービトレータ。`arbitrator/` に展開）を取り込みますが、これらも非公開です。公開されている 3 つのリポジトリだけで、コース A の Step 4 まで進められます。下の第 4 節で説明するファイルは非公開のシミュレータに属するので、アクセス権がない場合は、部品どうしのつながりの説明として読んでください。
+リポジトリはこの 4 つです。シミュレータは、Unity プロジェクト（`unity/`）、Go アービトレータ（`arbitrator/`）、Python ランタイム（`cadl/runtime/`）を 1 つのリポジトリにまとめています。下の第 4 節で説明するファイルは、すべてこのリポジトリにあります。
 
 名前についての補足です。Unity シーン（`C-SoS.unity`）、ロボットの制御コード（`Pilot_CSoS`）、アービトレータのディレクトリ（`C-SoS/`）に付いている「C-SoS」は、シミュレータ側が中央アービトレータ方式のモード（「D-SoS」モードと対になるもの）に付けた名前です。CADL とは独立で、CADL の `Collaborative` 型を意味するものではありません。このコースの CADL ファイルは `type: Acknowledged` と宣言しており、教材がロボット配送 SoS の類型を述べるときは、この宣言を指しています。
 
