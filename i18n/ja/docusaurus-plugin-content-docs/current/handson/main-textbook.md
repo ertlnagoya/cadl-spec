@@ -785,13 +785,9 @@ output/sos_dsl_handson/unity-csharp/
     └── DeliverySlaMonitors.cs        # monitor 1 個に対し Eval_xxx メソッド
 ```
 
-スクリプトを実行すると、生成されたファイルが Unity プロジェクトに入ります。Project ウィンドウでは `Assets/Scripts/SoSDsl/Generated` の下に表示されます。
+スクリプトを実行すると、生成されたファイルが Unity プロジェクトに入ります。Unity でプロジェクトを開き（開き方は Step 6.2）、Project ウィンドウを見ると、`Assets/Scripts/SoSDsl/Generated` の下に表示されます。`DeliverySlaContract` を選ぶと、生成された C# が Inspector に表示されます（このファイルは編集しません。再生成のたびに上書きされます）。
 
-![Assets/Scripts/SoSDsl/Generated に生成ファイルが並んだ Unity の Project ウィンドウ](/img/handson/unity-generated-files.jpg)
-
-`DeliverySlaContract` を選ぶと、生成された C# が Inspector に表示されます（このファイルは編集しません。再生成のたびに上書きされます）。
-
-![生成された DeliverySlaContract.cs を表示した Unity の Inspector](/img/handson/unity-generated-contract-inspector.jpg)
+![Step 5 を終えた Unity エディタ。Project ウィンドウに Assets/Scripts/SoSDsl/Generated、Inspector に生成された DeliverySlaContract.cs が表示されている](/img/handson/unity-generated-contract.jpg)
 
 ### なぜ 2 つのランタイム？
 
@@ -925,9 +921,9 @@ go run main.go
 
 **11 個のノードと 17 本のエッジ**からなる経路網（グラフ）と、その上を走る **5 体**のロボット（Red / Blue / Green / Yellow / Purple）が見えるはずです。ノード数・エッジ数・台数はいずれも `Assets/streamingAssets/cadl_config.json` から読み込まれるので、Console にも `[GraphDefinition] Loaded from CADL config: 11 nodes, 17 edges` と出ます（CADL ファイルの `context.environment` にある `grid_size: 30` は IR に引き継がれる抽象的な環境パラメータで、Unity シーンは参照しません。シーンの経路グラフは `cadl_config.json` で定義されたものです）。
 
-![C-SoS シーン：番号の付いたノードを持つ経路網と 5 台のロボット](/img/handson/unity-road-network.jpg)
+![C-SoS.unity を開いた直後の Unity エディタ。Scene ビューに、番号の付いたノードを持つ経路網と 5 台のロボットが表示されている](/img/handson/unity-scene-opened.jpg)
 
-上の図は、Play 中の経路網を Scene ビューで見下ろしたものです。このプロジェクトの Game ビューは地面に近いカメラを使っているので、ロボットの動きは Scene ビューのほうが見やすくなります。
+Scene ビューで経路網が小さく見える場合は、Hierarchy で `road` を選び、マウスを Scene ビューの上に置いて `F` キーを押すと、経路網が画面いっぱいに表示されます。ロボットの動きは **Scene** ビューで見てください。このプロジェクトでは、**Game** ビューのカメラは経路網のほうを向いていません。
 
 > #### 🛠 Unity のバージョンに注意
 >
@@ -950,6 +946,8 @@ ContractRuntimeHost (Script)
 ├── Log To Console      ☑  （チェックを入れたまま）
 └── Runtime              <Play 時にランタイムが現れる>
 ```
+
+![Hierarchy で ContractRuntimeHost を選択した Unity エディタ。Inspector に Contract Runtime Host コンポーネントが表示され、Log To Console にチェックが入っている](/img/handson/unity-contract-runtime-host.jpg)
 
 ### 6.4 各ロボットに PilotContractBridge を追加
 
@@ -991,6 +989,10 @@ Console に以下のような行が連続的に出ます。Console の検索欄�
 ![Play 中の Unity：Scene ビューに経路網上のロボット、Console に DELIVERY_SLA で絞り込んだライフサイクルイベント](/img/handson/unity-play-console.jpg)
 
 このスクリーンショットは Play 開始から数秒後のもので、Console の検索欄に `DELIVERY_SLA` と入力し、Scene タブを選んだ状態です。
+
+同じ実行中の経路網を拡大したものです。5 台のロボットが走行しています。
+
+![Play 中の C-SoS の経路網と 5 台のロボット](/img/handson/unity-road-network.jpg)
 
 ```
 [lifecycle DELIVERY_SLA/robot-0-1 Proposed -> Assigned     (assign,        event)   @ 1234ms]
