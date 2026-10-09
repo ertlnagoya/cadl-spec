@@ -52,7 +52,7 @@ mobility_sos.cadl
 
 The reference implementation lives in the `mobility-sos-exercise` repository.
 
-:::info Repository availability
+:::info[Repository availability]
 `mobility-sos-exercise` is **not publicly available at present**. The commands below assume you have been given access to it; without it, this page can still be read as a worked example of applying CADL to a mobility SoS.
 :::
 
@@ -114,7 +114,7 @@ the taxis are self-interested agents with high autonomy; passengers issue reques
 
 The same **Acknowledged** SoS type as the robot-delivery example.
 
-:::tip 🔍 Visualization Checkpoint 0 — What a structure-only spec gives you
+:::tip[🔍 Visualization Checkpoint 0 — What a structure-only spec gives you]
 So far you have read only the **structure** (the actors). Check the file, and print how much of the
 contract's normative part the IR carries:
 
@@ -214,7 +214,7 @@ You should see something like:
 | Solid edge with `Δ 30s` / `Δ 5s` | deadline-bearing transitions |
 | Red dashed edge with `violation Major` | forced move to the `on_violation` target state |
 
-:::info This pattern repeats throughout the tutorial
+:::info[This pattern repeats throughout the tutorial]
 You will run **edit CADL → `cadl sim-ir` → reload cadl-explorer** at every milestone:
 after reading the structure, after reading the contract, after codegen, after the simulation, after revising the contract.
 The whole point of the tutorial is to internalize that **the picture changes in lockstep with the code**.
@@ -265,7 +265,7 @@ Produces:
 - `sumo/cadl_constraints.json` — the contract conditions (guarantees / deadlines / monitors) that
   `analyze_results.py` reads.
 
-:::tip 🔍 Visualization Checkpoint 2 — Post-codegen (CADL source is unchanged)
+:::tip[🔍 Visualization Checkpoint 2 — Post-codegen (CADL source is unchanged)]
 `cadl_to_sumo.py` only **reads** the IR and **writes** SUMO config files; it never
 modifies `cadl/mobility_sos.cadl`. The `lifecycle:` and `monitors:` blocks are
 byte-for-byte identical to what they were in §3.
@@ -326,7 +326,7 @@ What is actually checked here is the two `guarantee` clauses only; the deadlines
 - **Deadlines** for matching/accept events are not modeled in SUMO yet — flagged SKIP.
 - **Monitors** referencing `battery` / `route_deviation` are not exported by SUMO — flagged SKIP.
 
-:::tip 🔍 Visualization Checkpoint 3 — Post-simulation (spec ↔ outcomes)
+:::tip[🔍 Visualization Checkpoint 3 — Post-simulation (spec ↔ outcomes)]
 Each line of `analyze_results.py`'s output traces back to something in cadl-explorer's diagram.
 With the explorer open beside the terminal, walk through the correspondence:
 
@@ -370,7 +370,7 @@ version — what matters is the *pattern*: `waiting_time` stays `OK` while `ride
 [VIOLATED (13)] ride_time <= 100s  (tripinfo.duration  e.g. ['taxi_8', 'taxi_9', ...])
 ```
 
-:::tip 🔍 Visualization Checkpoint 4 — Post-revision (★ highlight)
+:::tip[🔍 Visualization Checkpoint 4 — Post-revision (★ highlight)]
 Reload cadl-explorer **before** running `analyze_results.py`.
 
 The change you just made touches only a guarantee value (`ride_time <= 1800s` → `100s`).

@@ -46,7 +46,7 @@ function WhatIsCADL() {
   return (
     <section style={{padding: '3rem 0', background: 'var(--ifm-background-surface-color)'}}>
       <div className="container">
-        <div className="row" style={{alignItems: 'center', gap: '2rem'}}>
+        <div className="row" style={{alignItems: 'center'}}>
           <div className="col col--6">
             <Heading as="h2">CADL とは</Heading>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
@@ -95,7 +95,7 @@ function WhatIsExplorer() {
   return (
     <section style={{padding: '3rem 0'}}>
       <div className="container">
-        <div className="row" style={{alignItems: 'center', gap: '2rem'}}>
+        <div className="row" style={{alignItems: 'center'}}>
           <div className="col col--5">
             <div style={{
               background: 'linear-gradient(135deg, #667eea22 0%, #764ba222 100%)',
@@ -104,7 +104,7 @@ function WhatIsExplorer() {
               padding: '2rem',
               textAlign: 'center',
             }}>
-              <div style={{fontSize: '3rem', marginBottom: '1rem'}}>CADL → IR → Config → Results → Governance</div>
+              <div style={{fontSize: '1.4rem', fontWeight: 600, marginBottom: '1rem'}}>CADL → IR → Config → Results → Governance</div>
               <div style={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -154,7 +154,7 @@ function WhatIsHandson() {
   return (
     <section style={{padding: '3rem 0', background: 'var(--ifm-background-surface-color)'}}>
       <div className="container">
-        <div className="row" style={{alignItems: 'center', gap: '2rem'}}>
+        <div className="row" style={{alignItems: 'center'}}>
           <div className="col col--6">
             <Heading as="h2">ハンズオンで学ぶ</Heading>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
