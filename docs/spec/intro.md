@@ -31,7 +31,7 @@ design consistency.
 flowchart LR
     SRC["CADL source (.cadl)<br/>Institution / Protocol / Algorithm"]
     IR["Three-layer IR<br/>(cadl-sim)"]
-    VER["Verifier<br/>SMT / model check / proof"]
+    VER["Verifier<br/>type check / SMT consistency /<br/>deadlock detection"]
     CFG["Simulator config<br/>(Unity / Go / Python)"]
     CODE["Codegen<br/>Python / Solidity / OPA-Rego / Unity C#"]
     EXP["Experiment runner<br/>seeds × regimes"]

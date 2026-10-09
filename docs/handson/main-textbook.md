@@ -113,7 +113,7 @@ flowchart LR
 | Unity | 6000.2.9f1 (Unity 6.2) | runs the simulation |
 | Go | 1.21+ | builds the arbitrator |
 | NATS Server | latest | message bus between robots ⇄ arbitrator |
-| Node.js | 18+ | renders the spec website (optional) |
+| Node.js | 20+ | renders the spec website (optional) |
 
 ```bash
 # macOS via Homebrew
@@ -437,8 +437,8 @@ These two `null` / `[]` are **the gap we will fill in Step 3** — they are why 
 | Symptom | Cause |
 | --- | --- |
 | `YAML parse error: while parsing a flow sequence` | You wrote a subscripted identifier without quoting, e.g. `[ROBOT[i].battery, ...]`. Quote it: `["ROBOT[i].battery", ...]`. |
-| `Unknown SoS type: 'Centralized'` | CADL accepts only `Directed` / `Acknowledged` / `Collaborative` / `Virtual`. |
-| `Type check failed: actor 'CUSTOMER' not declared` | You used `CUSTOMER` somewhere but only declared `CUSTOMER[1..M]`. Use `"CUSTOMER[*]"` to refer to all customers. |
+| `Parse error: Invalid SoS type: 'Centralized'. Must be one of: Directed, Acknowledged, Collaborative, Virtual` | CADL accepts only these four values for `type:`. |
+| `[ERROR]: Undefined actor 'CUSTMER' referenced in contract 'DELIVERY_SLA' parties` | A name under `parties:` (or inside a predicate, e.g. `CUSTMER[i].x`) is not declared under `actors:`. Usually a typo. An actor declared as `CUSTOMER[1..M]` is referred to as `"CUSTOMER[*]"` (all) or `CUSTOMER[i]` (one). |
 
 ### Recap
 
@@ -600,7 +600,7 @@ monitors[0].id    : battery_guard
 
 | Symptom | Why |
 | --- | --- |
-| `KeyError: 'states'` after a copy-paste | The `lifecycle:` block has wrong indentation. It must sit at the same level as `assume:` / `guarantee:`. |
+| `cadl check` passes, but the IR has `"lifecycle": null` and Step 4 shows no states | The `lifecycle:` block has wrong indentation, so it is not read as part of the contract. `lifecycle:` must sit at the same level as `assume:` / `guarantee:`, with `states:` one level below it. The checker does not report this. |
 | Parser silently treats `on:` as a boolean | YAML 1.1 quirk; the example file works because the parser has a workaround (`_yaml_on_key`). If you're writing your own parser, watch for this. |
 | `monitor.rule` "always false" | The right-hand side of `state == Assigned` is a **bare identifier** by CADL convention. Quoting `"Assigned"` changes the meaning. |
 

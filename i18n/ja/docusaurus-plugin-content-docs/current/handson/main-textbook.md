@@ -113,7 +113,7 @@ flowchart LR
 | Unity | 6000.2.9f1 (Unity 6.2) | シミュレーションを実行 |
 | Go | 1.21 以上 | arbitrator をビルド |
 | NATS Server | 最新版 | ロボットと arbitrator のメッセージバス |
-| Node.js | 18 以上 | 仕様サイトを表示（任意） |
+| Node.js | 20 以上 | 仕様サイトを表示（任意） |
 
 ```bash
 # macOS / Homebrew
@@ -437,8 +437,8 @@ cadl sim-ir my_delivery.cadl --format json | head -30
 | 症状 | 原因 |
 | --- | --- |
 | `YAML parse error: while parsing a flow sequence` | `[ROBOT[i].battery, ...]` のように subscript 付きをクオートなしで書いた。`["ROBOT[i].battery", ...]` のように quote する。 |
-| `Unknown SoS type: 'Centralized'` | CADL が受け付けるのは `Directed` / `Acknowledged` / `Collaborative` / `Virtual` の 4 つだけ。 |
-| `Type check failed: actor 'CUSTOMER' not declared` | `CUSTOMER[1..M]` だけ宣言して `CUSTOMER` を使った。`"CUSTOMER[*]"` で全顧客を参照する。 |
+| `Parse error: Invalid SoS type: 'Centralized'. Must be one of: Directed, Acknowledged, Collaborative, Virtual` | `type:` に書けるのはこの 4 つだけ。 |
+| `[ERROR]: Undefined actor 'CUSTMER' referenced in contract 'DELIVERY_SLA' parties` | `parties:`（または述語の中。例：`CUSTMER[i].x`）に書いた名前が `actors:` で宣言されていない。多くは打ち間違い。`CUSTOMER[1..M]` と宣言したアクターは，`"CUSTOMER[*]"`（全員）または `CUSTOMER[i]`（1 人）で参照する。 |
 
 ### おさらい
 
@@ -600,7 +600,7 @@ monitors[0].id    : battery_guard
 
 | 症状 | 原因 |
 | --- | --- |
-| コピペ後に `KeyError: 'states'` | `lifecycle:` ブロックのインデントが違う。`assume:` / `guarantee:` と同じレベルに置く。 |
+| `cadl check` は通るが，IR が `"lifecycle": null` になり，Step 4 で状態が表示されない | `lifecycle:` ブロックのインデントが違い，契約の一部として読まれていない。`lifecycle:` は `assume:` / `guarantee:` と同じレベルに置き，`states:` はその 1 段下に書く。チェッカはこの誤りを報告しない。 |
 | `on:` がブール値として解釈されてしまう | YAML 1.1 の癖。CADL のパーサは内部に `_yaml_on_key` の回避策を持っているので同梱の例は正しく動く。自分でパーサを書くときは注意。 |
 | `monitor.rule` が常に false | `state == Assigned` の右辺は **裸の識別子** で OK（CADL の慣習）。`"Assigned"` のように quote すると意味が変わる。 |
 
