@@ -1,6 +1,7 @@
 ---
 sidebar_position: 0
 title: "CADL仕様書 v0.1"
+description: "CADL言語仕様書 v0.1 の入口ページ。概要，アーキテクチャ全体像，読み方，cadlツールの入手方法，関連ツールを示します。"
 ---
 
 # CADL: Contract Architecture Description Language
@@ -20,8 +21,9 @@ CADL（Contract Architecture Description Language）は，マルチエージェ�
 するためのドメイン特化言語（DSL）です。
 
 CADLは**三層アーキテクチャ**——制度層（Institution）・プロトコル層（Protocol）・
-アルゴリズム層（Algorithm）——を採用し，ガバナンスルール，エージェント間の
-調整メカニズム，計算的な振る舞いを単一の統合言語で精密に記述できます。
+アルゴリズム層（Algorithm）——を採用し，ガバナンスルールとエージェント間の
+調整メカニズムを単一の統合言語で精密に記述できます。
+アルゴリズム層は，中央側とローカル側がそれぞれ実行するアルゴリズムの名前を示すものであり，その内部は記述しません。
 CADL仕様からシミュレータ設定の自動生成や設計整合性の検証を行うツールチェーンも
 提供します。
 
@@ -30,11 +32,11 @@ CADL仕様からシミュレータ設定の自動生成や設計整合性の検�
 ```mermaid
 flowchart LR
     SRC["CADL ソース (.cadl)<br/>Institution / Protocol / Algorithm"]
-    IR["三層 IR<br/>(cadl-sim)"]
+    IR["三層 IR<br/>(cadl sim-ir)"]
     VER["検証器<br/>型検査 / SMT 整合性 /<br/>デッドロック検出"]
     CFG["シミュレータ設定<br/>(Unity / Go / Python)"]
     CODE["コード生成<br/>Python / Solidity / OPA-Rego / Unity C#"]
-    EXP["実験ランナー<br/>seed × モード"]
+    EXP["実験ランナー<br/>(シミュレータ / CADL Explorer)"]
     EVAL["評価<br/>スループット / 自律性 / 公平性"]
 
     SRC --> VER
@@ -51,7 +53,10 @@ flowchart LR
 （スマートコントラクト／ポリシー／ランタイムクラス）は構文解析された定義から，
 ランタイムシミュレータ設定は三層 IR から生成されます。
 実験結果は CADL ソースへフィードバックされ，ガバナンスパラメータ
-（α, β, λ, ρ）の調整に利用されます。
+（[α, β, λ, ρ](./glossary.md)）の調整に利用されます。α，β，λ は契約ごとのパラメータであり，
+ρ は動機拡張（[付録C](./appendix-c-motivation.md)）のパラメータです。
+`cadl` ツールが扱うのは，ソース，検証器，コード生成，IR，シミュレータ設定の各ステップです。
+実験の実行とその評価は，シミュレータまたは CADL Explorer で行います。
 
 ## 本仕様書の読み方
 
@@ -77,29 +82,54 @@ flowchart LR
 
 - **[8. ユースケース](./08-use-cases.md)** — 応用領域とケーススタディ。
 - **[9. 研究](./09-research.md)** — 未解決の研究課題と理論的基盤。
-- **[10. ロードマップ](./10-roadmap.md)** — 拡張計画とv1.0に向けた道筋。
+- **[10. ロードマップ](./10-roadmap.md)** — 実装フェーズと，リファレンス実装の現在の状況。
 
 ### 付録
 
-- **[付録A — 構文](./appendix-a-syntax)** — EBNF文法リファレンス。
-- **[付録B — 参考文献](./appendix-b-references)** — 参照文献。
-- **[付録C — 動機拡張](./appendix-c-motivation)** — エージェントの動機モデルとプロファイル。
-- **[付録D — コード生成ターゲット](./appendix-d-codegen)** — コード生成ターゲットの一覧。
-- **[付録E — SoS-DSL拡張](./appendix-e-sos-dsl)** — 契約のライフサイクルとランタイムモニター。
-- **[用語集](./glossary)** — 仕様全体で用いる用語。
+- **[付録A — 構文](./appendix-a-syntax.md)** — EBNF文法リファレンス。
+- **[付録B — 参考文献](./appendix-b-references.md)** — 参照文献。
+- **[付録C — 動機拡張](./appendix-c-motivation.md)** — エージェントの動機モデルとプロファイル。
+- **[付録D — コード生成ターゲット](./appendix-d-codegen.md)** — コード生成ターゲットの一覧。
+- **[付録E — SoS-DSL拡張](./appendix-e-sos-dsl.md)** — 契約のライフサイクルとランタイムモニター。
+- **[用語集](./glossary.md)** — 仕様全体で用いる用語。
 
 ## 推奨される読み順
 
 - **はじめて読む方** — 1〜2章を読み，5章をざっと眺めてから7章で具体例を確認。
+  7章の記述例は概念的なものです。実行できる例は，cadlリポジトリの
+  [`examples/` ディレクトリ](https://github.com/ertlnagoya/cadl/tree/master/examples)と
+  [ハンズオン教材](../handson/index.md)にあります。
 - **実装者・ツール開発者** — 5章，6章，付録Aを中心に。
 - **研究者** — 3章，9章，10章で全体的な文脈と未解決問題を把握。
 
+## ツールの入手
+
+リファレンス実装は [`cadl`](https://github.com/ertlnagoya/cadl) です。
+`pip install cadl-lang` でインストールします（Python 3.9以上）。コマンド名は `cadl` です。
+まず，次のように確認します。
+
+```bash
+pip install cadl-lang
+cadl --version
+```
+
+続いて，リポジトリの
+[`examples/` ディレクトリ](https://github.com/ertlnagoya/cadl/tree/master/examples)にあるような
+`.cadl` ファイルに対して，`cadl check <file>.cadl` と `cadl verify <file>.cadl` を実行します。
+すべてのコマンドは[リポジトリのREADME](https://github.com/ertlnagoya/cadl#readme)を，
+手順を追った説明は[ハンズオン教材](../handson/index.md)を参照してください。
+
 ## 関連ツール
 
+- **[cadl](https://github.com/ertlnagoya/cadl)** — CADLのコンパイラ兼コマンドラインツール
+  （リファレンス実装）。PyPIでは [cadl-lang](https://pypi.org/project/cadl-lang/) として
+  公開しています。
 - **[CADL Explorer](https://cadl-explorer.streamlit.app/)** — CADLの
   ガバナンスパイプラインをエンドツーエンドで体験できるインタラクティブな
   Webアプリケーション。仕様からシミュレーション，ガバナンス評価までを
   一貫して可視化します。
+- **[cadl-raspimouse-simulator](https://github.com/ertlnagoya/cadl-raspimouse-simulator)** —
+  ハンズオン教材で使用するシミュレータ。
 
 ## 手を動かして学ぶ
 
@@ -110,3 +140,4 @@ flowchart LR
 本書は**Version 0.1（ドラフト）** です。言語およびツールチェーンは開発中であり，
 構文・意味論は今後のリビジョンで変更される可能性があります。
 フィードバックや議論は[GitHub Issues](https://github.com/ertlnagoya/cadl/issues)で歓迎します。
+仕様書や本サイトの問題は，[cadl-specのIssues](https://github.com/ertlnagoya/cadl-spec/issues)で報告できます。

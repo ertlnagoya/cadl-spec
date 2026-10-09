@@ -57,9 +57,9 @@ function WhatIsCADL() {
             </p>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
               CADL adopts a <strong>three-layer architecture</strong> — Institution, Protocol, and Algorithm —
-              enabling precise description of governance rules, coordination mechanisms, and computational
-              behavior within a single unified language. From a CADL specification, the toolchain
-              automatically generates simulator configurations and verifies design consistency.
+              so that governance rules, coordination procedures, and the algorithms each side runs
+              (referred to by name) are described in one language. From a CADL specification, the toolchain
+              checks the design for contradictions and generates code and simulator configurations.
             </p>
             <Link className="button button--outline button--primary" to="/docs/spec/intro">
               Read the Specification →
@@ -79,6 +79,9 @@ function WhatIsCADL() {
               <div style={{paddingLeft: '0rem'}}><span style={{color: '#a6e3a1'}}>sos</span>:</div>
               <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>name</span>: <span style={{color: '#f38ba8'}}>"RobotDelivery"</span></div>
               <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>type</span>: <span style={{color: '#cdd6f4'}}>Acknowledged</span></div>
+              <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>actors</span>:</div>
+              <div style={{paddingLeft: '3rem'}}>- {'{'}<span style={{color: '#a6e3a1'}}>id</span>: <span style={{color: '#cdd6f4'}}>DISPATCHER</span>, <span style={{color: '#a6e3a1'}}>role</span>: <span style={{color: '#cdd6f4'}}>planner</span>{'}'}</div>
+              <div style={{paddingLeft: '3rem'}}>- {'{'}<span style={{color: '#a6e3a1'}}>id</span>: <span style={{color: '#f38ba8'}}>"ROBOT[1..N]"</span>, <span style={{color: '#a6e3a1'}}>role</span>: <span style={{color: '#cdd6f4'}}>courier</span>{'}'}</div>
               <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>contracts</span>:</div>
               <div style={{paddingLeft: '3rem'}}><span style={{color: '#a6e3a1'}}>- id</span>: <span style={{color: '#cdd6f4'}}>DELIVERY_SLA</span></div>
               <div style={{paddingLeft: '4rem'}}><span style={{color: '#a6e3a1'}}>parties</span>: <span style={{color: '#cdd6f4'}}>[DISPATCHER, "ROBOT[*]"]</span></div>
@@ -92,9 +95,51 @@ function WhatIsCADL() {
   );
 }
 
-function WhatIsExplorer() {
+function GetStarted() {
   return (
     <section style={{padding: '3rem 0'}}>
+      <div className="container">
+        <div className="row" style={{alignItems: 'center'}}>
+          <div className="col col--6">
+            <Heading as="h2">Get started</Heading>
+            <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
+              The reference implementation is the <code>cadl</code> command-line tool (Python 3.9 or later).
+              Install it from PyPI, fetch the examples, and check one:
+            </p>
+            <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
+              All commands are listed in the <Link href="https://github.com/ertlnagoya/cadl#readme">README of the cadl repository</Link>. For a guided walkthrough, take the <Link to="/docs/handson/">hands-on course</Link>.
+            </p>
+            <Link className="button button--primary" href="https://github.com/ertlnagoya/cadl">
+              Source on GitHub
+            </Link>
+            <Link className="button button--outline button--primary" style={{marginLeft: '1rem'}} href="https://pypi.org/project/cadl-lang/">
+              cadl-lang on PyPI
+            </Link>
+          </div>
+          <div className="col col--5 col--offset-1">
+            <pre style={{
+              background: '#1e1e2e',
+              borderRadius: '8px',
+              padding: '1.5rem',
+              fontSize: '0.85rem',
+              lineHeight: '1.6',
+              color: '#cdd6f4',
+              margin: 0,
+            }}>{`pip install cadl-lang
+git clone https://github.com/ertlnagoya/cadl
+
+cadl check  cadl/examples/robot_delivery.cadl
+cadl verify cadl/examples/robot_delivery.cadl`}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WhatIsExplorer() {
+  return (
+    <section style={{padding: '3rem 0', background: 'var(--ifm-background-surface-color)'}}>
       <div className="container">
         <div className="row" style={{alignItems: 'center'}}>
           <div className="col col--5">
@@ -114,7 +159,7 @@ function WhatIsExplorer() {
                 flexWrap: 'wrap',
                 fontSize: '0.9rem',
               }}>
-                {['CADL Spec', '→', 'IR', '→', 'Sim Config', '→', 'Experiment', '→', 'Evaluation'].map((item, i) => (
+                {['CADL', '→', 'IR', '→', 'Config', '→', 'Results', '→', 'Governance'].map((item, i) => (
                   <span key={i} style={{
                     background: item === '→' ? 'transparent' : 'var(--ifm-color-primary-lightest)',
                     padding: item === '→' ? '0' : '0.2rem 0.6rem',
@@ -154,7 +199,7 @@ function WhatIsExplorer() {
 
 function WhatIsHandson() {
   return (
-    <section style={{padding: '3rem 0', background: 'var(--ifm-background-surface-color)'}}>
+    <section style={{padding: '3rem 0'}}>
       <div className="container">
         <div className="row" style={{alignItems: 'center'}}>
           <div className="col col--6">
@@ -166,9 +211,8 @@ function WhatIsHandson() {
               + monitors) → visualisation → code generation → live simulation</em>.
             </p>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              Materials include a main textbook, a 5-session exercises booklet,
-              a graded difficulty design, and an academic background page covering ISO/IEC/IEEE
-              21839/40/41 and Maier's criteria.
+              Materials include a main textbook, a 5-session exercises booklet with graded tasks,
+              and an academic background page covering ISO/IEC/IEEE 21839/40/41 and Maier's criteria.
             </p>
             <Link className="button button--primary button--lg" to="/docs/handson/">
               Open the Hands-on Index →
@@ -201,7 +245,7 @@ function Features() {
   const features = [
     {
       title: 'Three-Layer Architecture',
-      description: 'Describe institutions (authority, incentives, information sharing), protocols (coordination procedures), and algorithms in a single language.',
+      description: 'Describe institutions (authority, incentives, information sharing), protocols (coordination procedures), and the algorithms each side runs (by name) in a single language.',
     },
     {
       title: 'Formal Verification',
@@ -209,7 +253,7 @@ function Features() {
     },
     {
       title: 'End-to-End Pipeline',
-      description: 'Generate simulator configurations from CADL specs and trace the full causal chain from institutional design to behavioral evaluation.',
+      description: 'Generate code and simulator configurations from CADL specs, and trace the chain from institutional design to behavioral evaluation with a simulator or CADL Explorer.',
     },
   ];
 
@@ -241,11 +285,12 @@ export default function Home(): ReactNode {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title="CADL - Contract Architecture Description Language"
+      title="Contract Architecture Description Language"
       description="A domain-specific language for formally specifying, verifying, and deploying institutional designs in System of Systems.">
       <HomepageHeader />
       <main>
         <WhatIsCADL />
+        <GetStarted />
         <WhatIsExplorer />
         <WhatIsHandson />
         <Features />

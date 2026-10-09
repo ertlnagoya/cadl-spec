@@ -1,23 +1,26 @@
 ---
 sidebar_position: 15
 title: "付録E. SoS-DSL拡張"
+description: "SoS Contract DSL拡張（sos-dsl 0.1）を規定する。契約にインスタンスごとのライフサイクルと宣言的なモニターを追加する。"
 ---
 
 # 付録E. SoS Contract DSL拡張（sos-dsl 0.1）
 
 本付録は，CADLの**SoS Contract DSL拡張**を規定する。この拡張は，
-[付録A.4](./appendix-a-syntax#a4-contracts-institution-layer)の生成規則
+[付録A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)の生成規則
 `contract_def` に2つのキー `lifecycle:` と `monitors:` を追加し，
 契約の実行状態と実行時の観測を，言語の第一級の構成要素として記述できるようにする。
 
-コア言語（第5章，付録A）は，これらのブロックを必須と**しない**。
-本拡張を実装していないCADL準拠の処理系は，新しいキーを構文上は受理し，
-ファイルを拒否するのではなく*情報レベル*の診断を出すことが望ましい。
+コア言語（[第5章](./05-language-spec.md)，[付録A](./appendix-a-syntax.md)）は，
+これらのブロックを必須と**しない**。
+本拡張を実装していないCADL準拠の処理系は，新しいキーを理由にファイルを
+拒否してはならない。新しいキーを構文上は受理し，*情報レベル*の診断を出すことが望ましい。
 
 本拡張のバージョンは，コア言語とは独立に管理する。拡張の名前は `sos-dsl` であり，
 本付録はバージョン `0.1` を記述する（リファレンス実装のソースでは，同じ版に
 `v0.1-sos-ext` というラベルが付いている）。本拡張に依存するファイルは，
-付録A.2の `extensions:` キーでそのことを宣言することが望ましい。
+[付録A.2](./appendix-a-syntax.md#a2-top-level-structure)の `extensions:` キーで
+そのことを宣言することが望ましい。
 
 ```yaml
 sos:
@@ -60,12 +63,12 @@ SoS-DSL拡張は，この4つの不足を，既存の定義に追加する形で
 | 規範に結び付いた期限 | `timing` による暗黙の指定 | **ライフサイクル遷移の `deadline:`** |
 
 本拡張は，契約のための別の名前空間を導入**しない**。`lifecycle:` と `monitors:` は，
-`assume:`，`guarantee:`，その他の付録A.4のキーをすでに受理している，
+`assume:`，`guarantee:`，その他の[付録A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)のキーをすでに受理している，
 同じ `contract_def` のキーである。
 
 ## E.3 構文（A.4へのEBNFの追加） {/* #e3-syntax-ebnf-additions-to-a4 */}
 
-文法には付録Aの記法を用いる。コロンで終わる終端記号はYAMLマッピングのキーであり，
+文法には[付録A](./appendix-a-syntax.md)の記法を用いる。コロンで終わる終端記号はYAMLマッピングのキーであり，
 `{ "-" , x }` はYAMLシーケンスである。`(* string *)` と注記した生成規則は，
 1つのYAML文字列スカラーの内容を記述する。`lifecycle_block` と `monitor_def` は，
 A.4が参照している2つの非終端記号である。
@@ -111,6 +114,8 @@ sampling_spec     = "event"
 `identifier`，`actor_ref`，`duration_lit`，`step_expr`，`predicate`，`arith_expr`，
 `member_access` は付録A（A.1，A.5，A.10）で定義している。`rule` の中では，
 `membership` がA.10の生成規則 `comparison` の選択肢として加わり，`IN` は予約語となる。
+たとえば `state IN [Assigned, Accepted]` と書く。`IN` は，付録Aの小文字の `in`
+（量化子と内包表記の定義域を導入する）とは別のキーワードである。
 `sampling:` の既定値は `event`，`severity:` の既定値は `Major` である。
 
 `on:`，`when:`，`rule:` の値，および `observe:` の要素のうち `[`，`->`，`": "` を
@@ -131,7 +136,10 @@ SoS-DSL拡張に対応する処理系は，既存の検査に加えて，次の�
 - **L-4.** 遷移に `deadline:` を書くと，その遷移の `from` の状態を有効範囲とする
   `Timeout` イベントが暗黙に導入される。同じ状態から出る2つの遷移がともに期限を
   持ってもよく，それらの意味は互いに独立である。`deadline:` を持つ遷移は，
-  `on_violation:` ブロックも持つことが望ましい。
+  `on_violation:` ブロックも持つことが望ましい。遷移が `deadline:` を持ち
+  `on_violation.transition` を持たない場合も，期限を過ぎることは違反である
+  （重大度は，上書きしない限り `Major`）が，状態は変化しない。v0.1は，暗黙の
+  `Timeout` イベントを `on:` から参照する手段を定義していない。
 - **L-5.** `lifecycle.transitions[*].on_violation.transition` の値は，
   `lifecycle.states` に現れる状態の名前でなければならない（強制的な移動の
   遷移先の状態である。たとえば `Violated`）。
@@ -155,20 +163,30 @@ Unity C#ジェネレータと一致する。このジェネレータは，その
 予約されている。`state` はインスタンスの現在のライフサイクル状態，`now` は現在時刻，
 `request` はそのインスタンスを生成した要求（たとえば `request.deadline`）である。
 ライフサイクルの状態の名前を単独で書いた識別子（たとえば `Assigned`）は，
-その状態を表す。
+その状態を表す。v0.1には，インスタンスを生成するトリガと `request` のフィールドを
+記述する構文がない。インスタンスの生成と `request` の値の供給は，ホストアプリケーションが
+行う（E.8を参照）。
+
+モニターの `observe:` は，モニターが読む量の名前を挙げるものであり，IRに引き継がれる。
+v0.1では，`observe:` は `rule` に書ける名前を制限しない。`observe:` の `time` は，
+`rule` の中で `now` が読む時計を表す。
 
 v0.3のリファレンス実装は，2つのブロックを構文解析してIR（E.7）に変換するが，
 規則L-1からM-3まではまだ検査しない。v0.3.7からは，`cadl check` が `Minor`，`Major`，
 `Critical` 以外の `severity:` をエラーとして報告する。`sampling:` と `deadline:` の値の
 妥当性は検査しない。認識できない `sampling:` は `event` として読まれ，読み取れない
-`deadline:` は捨てられる。したがって，E.6の例は，
+`deadline:` は捨てられる。`rule:`，`when:`，`on:` はテキストのまま保持される。
+`cadl check` はこれらを構文解析しないので，形式の誤ったものがあっても報告されない。
+したがって，E.6の例は，
 `collision_watch` が `OBSTACLES.positions` を観測しているにもかかわらず検査を通る。
 これは環境の量であり，M-1が求める宣言済みのアクターの属性ではない。
 
 ## E.5 動的意味論（参考） {/* #e5-dynamic-semantics-informative */}
 
 - 契約インスタンスは，初期トリガが発火したとき（たとえば `DeliveryRequest` が
-  到着したとき）に生成される。インスタンスは `lifecycle.states` の状態を進む。
+  到着したとき）に生成される。v0.1には，このトリガと `request` のフィールドを
+  記述する構文がない。インスタンスの生成と `request` の値の供給は，ホストアプリケーションが
+  行う（E.8を参照）。インスタンスは `lifecycle.states` の状態を進む。
   これを駆動するのは，`lifecycle.transitions[*].on` のイベント，期限のタイマー
   （インスタンスを `on_violation.transition` の状態へ移す），および
   `monitors[*].on_match.transition` のアクション（インスタンスを指定された状態へ移す）
@@ -181,7 +199,8 @@ v0.3のリファレンス実装は，2つのブロックを構文解析してIR�
   その遷移の `from` の状態のいずれかに入った時点から測る。それまでに遷移が
   発火しなければ，*違反*となる。違反の重大度は，`on_violation:` ブロックで
   上書きしない限り `Major` であり，インスタンスは `on_violation.transition` が
-  指定する状態へ移る。
+  指定する状態へ移る。遷移が `on_violation.transition` を持たない場合も，
+  期限を過ぎることは違反であるが，状態は変化しない。
 - `emit:` には，遷移の発火時に追加で発行するイベントの名前を列挙する。これらは
   可視化ツールやログ記録ツールが利用する。リファレンス実装のジェネレータは
   `emit:` をIRに引き継ぐが，v0.3ではそれに基づく処理を行わない。`emit:` の有無に
@@ -268,6 +287,8 @@ contracts:
           severity:   Critical
 ```
 
+この例には，`Terminated` へ至る遷移がない。この状態は，網羅のために宣言している。
+
 ## E.7 中間表現（IR）への追加 {/* #e7-intermediate-representation-ir-addition */}
 
 CADLシミュレータのIR（[`cadl`](https://github.com/ertlnagoya/cadl) リポジトリの
@@ -344,6 +365,12 @@ IRへの変換時に行う正規化は次のとおりである。
 | `sampling: event` | `"sampling_kind": "event"`，`"sampling_period_ms": null` |
 | `on_match: { violation, transition, severity }` | `"on_match_violation"`，`"on_match_transition"`，`"on_match_severity"` |
 
+IRは，すべての既定値を補うわけではない。違反のラベル（`on_match.violation`）を省略すると，
+IRには `null` が記録される。重大度のフィールドは，`on_violation:` または `on_match:` の
+ブロック全体を省略したときに `null` となり，ブロックがあって `severity:` だけを省略したときは
+`Major` が記録される。IRが `null` を記録している箇所に既定値（`Major`，およびラベルとしての
+モニターの `id`）を適用することは，IRを利用する側に委ねる。
+
 コマンド `cadl sim-ir <file> --format json` は，CADL ExplorerのLifecycle Viewなどの
 下流のツールに向けて，この形（上の例は一部を省略している）を出力する。
 Unity C#ジェネレータ（`cadl codegen --target unity-csharp`）は，構文解析された
@@ -355,7 +382,7 @@ Unity C#ジェネレータ（`cadl codegen --target unity-csharp`）は，構文
 
 コード生成ターゲットは，`lifecycle` ブロックと `monitors` ブロックからコードを
 生成してよい。本拡張のリファレンスジェネレータは，`unity-csharp` ターゲット
-（[付録D](./appendix-d-codegen)）である。このジェネレータは，`lifecycle:` または
+（[付録D](./appendix-d-codegen.md)）である。このジェネレータは，`lifecycle:` または
 `monitors:` のブロックを持つ契約ごとに，次のものを生成する。
 
 - 契約ごとに1つの状態機械クラス（状態は `lifecycle.states` から，

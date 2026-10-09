@@ -1,6 +1,7 @@
 ---
 sidebar_position: 11
 title: "Appendix A: Syntax Reference (EBNF)"
+description: "Reference grammar of CADL v0.1 in EBNF: document structure, expression sub-language, reserved keywords, and reference implementation status."
 ---
 
 # Appendix A. Syntax Reference (EBNF)
@@ -11,11 +12,17 @@ grammar of CADL v0.1 in two parts: the *structure* of the document
 *expression sub-language* (A.1, A.10) that is written inside individual
 YAML string scalars.
 
-Chapter 5 and this appendix describe the same syntax. This appendix is
-normative for the concrete syntax; Chapter 5 is explanatory. The
+[Chapter 5](./05-language-spec.md) and this appendix describe the same
+syntax. This appendix is normative for the concrete syntax; Chapter 5 is
+explanatory. The
 reference implementation ([`cadl`](https://github.com/ertlnagoya/cadl))
 is expected to accept exactly this syntax; known deviations of v0.3 are
 listed in [A.12](#a12-reference-implementation-status-v03).
+
+To try the grammar, install the reference implementation
+(`pip install cadl-lang`) and run `cadl parse` or `cadl check`; runnable
+files are in the `examples/` directory of the
+[cadl repository](https://github.com/ertlnagoya/cadl).
 
 **Notation.** The grammar uses ISO/IEC 14977 EBNF with the following
 conventions.
@@ -29,6 +36,8 @@ conventions.
   chosen by the author.
 - `text` is any YAML string scalar, `number` any YAML integer or float,
   and `scalar` any YAML scalar. Their content is not interpreted further.
+- `any_char` is any single character. The `string` rule (A.1) excludes
+  the double quotation mark from it, so a string ends at the next `"`.
 - Productions marked `(* string *)` describe the content of a single
   YAML string scalar.
 
@@ -43,7 +52,8 @@ Keys that this appendix does not define are not part of CADL v0.1. A
 processor MUST NOT reject a file because of them; the reference
 implementation ignores them.
 
-The grammar covers the design and verification levels of Section 5.1.1.
+The grammar covers the design and verification levels of
+[Section 5.1.1](./05-language-spec.md).
 An overview-level description is informal input for AI-assisted
 refinement and need not conform to it.
 
@@ -75,6 +85,9 @@ literal         = string | int_literal | float_literal
 `identifier` names actors, contracts, protocols, regimes, and metrics.
 `hyphen_name` is used only for extension names and codegen target names
 (for example `sos-dsl`, `unity-csharp`). Numeric literals are unsigned.
+Identifiers are ASCII in this version of the grammar, so requirement
+NFR-7 (Unicode identifiers, [Chapter 4](./04-requirements.md)) is not
+yet met.
 
 ## A.2 Top-level structure
 
@@ -104,12 +117,15 @@ semantic version string such as `"1.0.0"`.
 
 **Extension points.** `extensions:` declares the language extensions a
 file relies on, each as a name and a version (for example
-`- sos-dsl: 0.1`). Two extensions are defined:
+`- sos-dsl: 0.1`). Two extensions are defined; only the first has a
+name that can be declared:
 
-- the SoS-DSL extension ([Appendix E](./appendix-e-sos-dsl.md)), which
-  adds the keys `lifecycle:` and `monitors:` to `contract_def` (A.4);
+- the SoS-DSL extension ([Appendix E](./appendix-e-sos-dsl.md)),
+  declared as `sos-dsl` with version `0.1`, which adds the keys
+  `lifecycle:` and `monitors:` to `contract_def` (A.4);
 - the motivation extension ([Appendix C](./appendix-c-motivation.md)),
-  which defines `motivation_block`.
+  which defines `motivation_block`. It has no `extensions:` name in
+  v0.1 and is used simply by writing a `motivation:` block.
 
 ## A.3 Context, actors, metrics
 
@@ -330,6 +346,11 @@ identifiers.
 AND    OR    NOT    true    false    for all    exists    in
 ```
 
+`for` on its own (it introduces a comprehension) and `all` are not
+reserved. `IN` (upper case, set membership inside a monitor `rule`,
+[Appendix E](./appendix-e-sos-dsl.md)) and `in` (lower case, quantifier
+and comprehension domains) are distinct keywords.
+
 Keys of the structure, by the block in which they are recognised.
 
 | Block | Keys |
@@ -355,7 +376,8 @@ Enumerated values: `Directed` `Acknowledged` `Collaborative` `Virtual`
 (SoS type); `low` `medium` `high` (autonomy); `smt` `model_check`
 `simulation` `proof` (verification method); `ms` `s` `min` `h`
 (duration units). The keys and values of the extensions are listed in
-Appendices C and E.
+[Appendix C](./appendix-c-motivation.md) and
+[Appendix E](./appendix-e-sos-dsl.md).
 
 ## A.12 Reference implementation status (v0.3)
 
@@ -375,16 +397,10 @@ and monitor `rule:` are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. At v0.3 it
 deviates from this appendix as follows (checked against v0.3.8).
 
-- **Expressions.** Releases before v0.3.2 parsed `OR` more tightly than
-  `AND`, did not accept a `member_access` on an indexed reference
-  (`ROBOT[i].battery`), and mishandled the arithmetic operators
-  `+ - * /`. v0.3.2 follows A.10 in these respects. Up to v0.3.3 a
-  quantifier was accepted only at the start of a predicate or inside
-  parentheses, and `in` and `exists` were accepted as identifiers;
-  v0.3.4 follows A.10 and A.11. Up to v0.3.6 a name that begins with a
-  keyword was split (`NOT_READY` was read as `NOT _READY`); from v0.3.7
-  a keyword ends at a word boundary.
-- **Types.** The types of Section 5.2.1 are not checked. A value
+- **Expressions.** Expressions follow A.10 and A.11 in v0.3.8; no
+  deviation is known.
+- **Types.** The types of [Section 5.2.1](./05-language-spec.md) are not
+  checked. A value
   written with a type constructor (for example `Range(1, 4)`) is kept
   as text.
 - **Lenient forms.** The parser also accepts `parties:` written as one
@@ -397,18 +413,23 @@ deviates from this appendix as follows (checked against v0.3.8).
 - **Contracts.** A `sharing:` entry is recognised only when it is
   written as a quoted string. An unrecognised `autonomy:` value is read
   as `medium`.
-- **Verification.** Up to v0.3.2, `method:`, `expr:`, and `bound:` are not read from
-  the file, so every entry is handled as `method: smt`. The
-  `not_supported` result is implemented for specifications constructed
-  through the API. v0.3.3 reads the three keys and reports methods other
-  than `smt` as `not_supported`. From v0.3.7 a `target:` that names
-  nothing declared is an error for every method. For an `smt` entry an
-  unsatisfiable `expr:` is an error, and an `expr:` that does not
-  conform to A.10 is reported as `unknown` and not checked; `expr` is
-  not proved against the model. The contract and transition checks of
-  Section 6.3 run whether or not entries are present.
+- **Verification.** `method:`, `expr:`, and `bound:` are read. Methods
+  other than `smt` are reported as `not_supported` (shown as `[SKIP]`
+  in text output), and an unknown method is an error. A `target:` that
+  names nothing declared is an error for every method. For an `smt`
+  entry an unsatisfiable `expr:` is an error, and an `expr:` that does
+  not conform to A.10 is reported as `unknown` and not checked; `expr`
+  is not proved against the model. The contract and transition checks
+  of [Section 6.3](./06-design.md) run whether or not entries are
+  present.
 - **Codegen.** `codegen:` entries are parsed but not acted upon; the
-  target is selected on the command line (Appendix D).
+  target is selected on the command line
+  ([Appendix D](./appendix-d-codegen.md)).
 - **Extensions.** `extensions:` and `motivation:` are ignored.
   `lifecycle:` and `monitors:` are recognised whether or not
   `extensions:` declares `sos-dsl`.
+
+Releases before v0.3.7 differed in several of these points; the history
+is in the
+[CHANGELOG](https://github.com/ertlnagoya/cadl/blob/master/CHANGELOG.md)
+of the cadl repository.

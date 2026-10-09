@@ -18,5 +18,9 @@
   "item.label.CADL Explorer": {
     "message": "CADL Explorer",
     "description": "Navbar item with label CADL Explorer"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
   }
 }

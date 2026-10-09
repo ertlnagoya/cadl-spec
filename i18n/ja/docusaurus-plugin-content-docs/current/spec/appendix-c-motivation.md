@@ -1,18 +1,24 @@
 ---
 sidebar_position: 13
-title: "Appendix C — 動機拡張"
+title: "付録C. 動機拡張"
+description: "CADLの任意の動機拡張（v0.1-ext）を規定する。エージェントの動機プロファイルと、ガバナンスのパラメータ ρ・κ を扱う。"
 ---
 
-# Appendix C — 動機拡張（Motivation Extension, v0.1-ext）
+# 付録C. 動機拡張（Motivation Extension, v0.1-ext）
 
 本付録は、CADL Explorer デモおよび A-SoS 動機感応型ガバナンス実験で
 使用される CADL の**動機拡張**を規定する。
-コア言語（第 5 章・Appendix A）は本ブロックを必須としない。
-拡張を未実装のコア準拠プロセッサは `motivation:` ブロックを
-構文上受理し、エラーではなく**情報レベルの診断**を出すことが望ましい。
+コア言語（[第 5 章](./05-language-spec.md)・[付録A](./appendix-a-syntax.md)）は
+本ブロックを必須としない。
+拡張を未実装の CADL 準拠の処理系は、`motivation:` ブロックを理由に
+ファイルを拒否してはならない。ブロックを構文上受理し、
+**情報レベルの診断**を出すことが望ましい。
 
 本拡張はコア言語と独立にバージョニングされる。
-本書は **v0.1-ext** を規定する。
+本書は **v0.1-ext** を規定する。v0.1-ext は本拡張の文書の版を示すラベルである。
+v0.1 では、本拡張は `extensions:` に宣言する名前を持たない
+（[付録A.2](./appendix-a-syntax.md#a2-top-level-structure)）。
+ファイルは `motivation:` ブロックを書くだけで本拡張を用いる。
 
 ## C.1 スコープ
 
@@ -31,12 +37,12 @@ title: "Appendix C — 動機拡張"
 本ブロックは、[CADL Explorer](https://github.com/ertlnagoya/cadl-explorer)
 のシミュレータ（`cadl_sim`）の設定スキーマとして生まれた。CADL ファイルでは、
 `sos:` マッピングの省略可能なキー `motivation:`、すなわち
-[Appendix A.2](./appendix-a-syntax.md#a2-top-level-structure) の
+[付録A.2](./appendix-a-syntax.md#a2-top-level-structure) の
 `motivation_block` である。
 
 ## C.2 EBNF
 
-文法は Appendix A の記法に従う。`number` と `int_literal` は Appendix A で
+文法は[付録A](./appendix-a-syntax.md) の記法に従う。`number` と `int_literal` は付録A で
 定義する。
 
 ```ebnf
@@ -114,15 +120,15 @@ CADL Explorer のシミュレータは、同じ `motivation:` ブロックを、
 フラットな設定ファイルから読み込む。この設定ファイルでは、`sos_type:` や
 `environment:` などのシミュレータ設定と並べて書く。同ファイルには、キー
 `alpha`、`beta`、`lambda` を持つトップレベルの `governance:` マッピングもある。
-これらはシミュレータのパラメータ（自律度、集中度、探索確率）であり、5.4.2 節の
+これらはシミュレータのパラメータ（自律度、集中度、探索確率）であり、[5.4.2 節](./05-language-spec.md)の
 契約ごとの α（情報共有度）、β（意思決定集中度）、λ（インセンティブ強度）
-**ではない**。シミュレータの設定ファイルは、Appendix A の意味での CADL
+**ではない**。シミュレータの設定ファイルは、[付録A](./appendix-a-syntax.md) の意味での CADL
 ファイルではない。
 
 ## C.6 準拠性
 
-CADL プロセッサは、`motivation:` ブロックを持たないファイルを受理し
-第 5 章および Appendix A を完全実装するとき **コア準拠**。
+CADL 処理系は、`motivation:` ブロックを持たないファイルを受理し
+[第 5 章](./05-language-spec.md)および[付録A](./appendix-a-syntax.md) を完全実装するとき **コア準拠**。
 
 さらに以下を満たすとき **動機準拠**：
 
@@ -132,7 +138,7 @@ CADL プロセッサは、`motivation:` ブロックを持たないファイル�
 4. 下流 codegen ターゲット（シミュレータ設定、ポリシーコード等）
    に動機パラメータを引き渡す方法を文書化する。
 
-拡張未対応プロセッサはブロックを**原文のまま保持**することが望ましい
+拡張未対応の処理系はブロックを**原文のまま保持**することが望ましい
 （下流ツールが消費できるように）。
 
 ## C.7 相互参照
@@ -143,6 +149,8 @@ CADL プロセッサは、`motivation:` ブロックを持たないファイル�
 - **[`cadl`](https://github.com/ertlnagoya/cadl)**（リファレンス実装）:
   AST の `SoSDefinition` に省略可能な `MotivationBlock` を定義している。
   v0.3 のパーサーは CADL ファイルの `motivation:` キーを読み込まない。
-  このキーは無視され、検証とコード生成でも使われない。したがって、
-  リファレンス実装はコア準拠であるが、動機準拠ではない。
-- [用語集](./glossary) — ρ, κ, プロファイル用語の定義。
+  このブロックは受理されたうえで無視され、検証とコード生成でも使われない。
+  リファレンス実装は、
+  [付録A §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)
+  に挙げた相違を伴ってコア言語を実装しており、動機拡張は実装していない。
+- [用語集](./glossary.md) — ρ, κ, プロファイル用語の定義。

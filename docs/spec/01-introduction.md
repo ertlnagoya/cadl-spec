@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
-title: "Introduction"
+title: "1. Introduction"
+description: "Purpose and scope of the CADL specification, the challenges of SoS institutional design that motivate the language, and an introductory glossary."
 ---
 
 ## 1.1 Purpose and Scope
@@ -14,6 +15,10 @@ toolchain design.
 This document consolidates the specification for CADL implementation
 based on a survey of SoS research and SoS
 architecture design studies conducted at the ERTL.
+
+Chapters 1 and 2 describe the goals of the language; what the reference
+implementation provides today is listed in [Chapter 10](./10-roadmap.md)
+and [Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03).
 
 ## 1.2 Background: Challenges of Institutional Design in SoS
 An SoS is a system configuration in which multiple independently
@@ -59,8 +64,7 @@ is the need to treat SoS institutional design as a computational object.
 The following three objectives serve as the direct motivation for
 designing the CADL language.
 
-**Objective 1: Making SoS Institutional Design Computationally
-Tractable**
+### Objective 1: Making SoS Institutional Design Computationally Tractable
 
 In real-world SoS, many institutions exist as human tacit knowledge,
 customs, and rules of thumb, often without any documentation. For
@@ -98,7 +102,7 @@ computational data, the following operations become possible.
     CADL descriptions. This creates a common foundation for sharing,
     discussing, and improving institutions.
 
-**Objective 2: Computing Institutional Violations and Contradictions**
+### Objective 2: Computing Institutional Violations and Contradictions
 
 If institutions are formally described, it becomes possible to
 computationally verify consistency and detect violations at runtime.
@@ -127,8 +131,7 @@ encompasses the following two aspects.
     institutional changes (what-if analysis) to understand impacts in
     advance.
 
-**Objective 3: Automatic Conversion from Institutional Design to Control
-Logic, Optimization, and Code Generation**
+### Objective 3: Automatic Conversion from Institutional Design to Control Logic, Optimization, and Code Generation
 
 Once institutional design is described in a formal language and
 verification is complete, the natural next step is to automatically
@@ -164,8 +167,7 @@ following conversions are envisioned.
     (safety arguments) and export to IEC 62853 agreement description
     databases.
 
-**Cross-Cutting Feature: Institutional Description Language Anyone Can
-Understand**
+### Cross-Cutting Feature: Institutional Description Language Anyone Can Understand
 
 As a cross-cutting feature spanning all three objectives, CADL
 emphasizes that "anyone from students to enterprise practitioners,
@@ -179,7 +181,7 @@ design cannot be achieved.
 To achieve this universal readability, CADL adopts the following
 approaches.
 
--   YAML-like declarative syntax: Adopts indent-based descriptions that
+-   YAML-based declarative syntax: Adopts indent-based descriptions that
     allow intuitive structural understanding even without programming
     experience, prioritizing readable syntax over JSON/XML.
 
@@ -217,7 +219,9 @@ to society as a whole.
 ## 1.3 Glossary
 This document uses many technical terms. Below, key terms are organized
 by field with plain explanations and concrete examples to ensure
-comprehension by readers without specialized knowledge.
+comprehension by readers without specialized knowledge. For further
+terms (ρ, κ, IR, lifecycle, and the simulator meanings of α/β/λ), see the
+full [Glossary](./glossary.md) page.
 
 ### 1.3.1 Basic Concepts
 
@@ -258,7 +262,7 @@ institutional "degree."
 | **Term** | **Description** | **Example** |
 | --- | --- | --- |
 | Regime | The "complete set of institutional settings" effective at a given time. As environmental conditions change, the optimal regime also changes. | Normal regime: Dispatcher manages centrally<br />Failure regime: Each robot decides autonomously |
-| Regime Map | A map-like representation showing "which regime (institutional settings) is optimal under which environmental conditions." Divides the environmental parameter space into regions and maps each to an optimal institution. | Low failure rate and low latency -> Centralized management regime<br />High failure rate or high latency -> Distributed autonomous regime |
+| Regime Map | A map-like representation showing "which regime (institutional settings) is optimal under which environmental conditions." Divides the environmental parameter space into regions and maps each to an optimal institution. This map of the parameter space is a concept whose construction support is planned; the `cadl regime-map` command reports something narrower: the graph of regime names and transitions. | Low failure rate and low latency -> Centralized management regime<br />High failure rate or high latency -> Distributed autonomous regime |
 | Regime Transition | Switching from one regime to another in response to changes in environmental conditions. Safety (collision avoidance, etc.) must be guaranteed during the transition. | When communication latency exceeds 300ms, switch from centralized to distributed autonomous. Maintain "no collisions, no lost orders" during transition. |
 | Safety Invariant | A condition that "must never be violated under any circumstances." This condition must always be satisfied even during regime transitions. | "Robots do not collide with each other" "Order data is not lost" |
 
@@ -266,7 +270,7 @@ institutional "degree."
 
 | **Term** | **Description** | **Example** |
 | --- | --- | --- |
-| Formal Verification | Using computers to mathematically check whether stated properties (such as freedom from contradiction) hold for institutional descriptions. Can automatically discover contradictions that human reviews tend to miss. | "Whether conditions of two contracts are contradictory" "Whether a protocol deadlocks" automatically verified using SMT solvers. |
+| Formal Verification | Using computers to mathematically check whether stated properties (such as freedom from contradiction) hold for institutional descriptions. Can automatically discover contradictions that human reviews tend to miss. | "Whether conditions of two contracts are contradictory" (contract consistency) is checked with an SMT solver; "whether a protocol deadlocks" is checked by structural analysis (see [Section 6.3](./06-design.md)). |
 | Contradiction<br />Detection | Detecting whether institutional descriptions contain mutually contradictory rules. For example, one contract grants authority to person A while another grants the same authority to person B. | "Two chores assigned to the same time slot" "Privacy constraints contradict data publication requirements" |
 | Model Checking | A method that exhaustively examines all possible system states to verify that undesirable states are never reached. | Checking all patterns to confirm "no possibility of reaching a state where robots collide during regime transition." |
 | Code Generation | Automatically generating working program code (Python, TypeScript, etc.) from CADL institutional descriptions. Automatically creating "implementation" from the institutional "blueprint." | From delivery SLA contract descriptions, automatically generate dispatch algorithm skeleton code and SLA violation monitoring code. |

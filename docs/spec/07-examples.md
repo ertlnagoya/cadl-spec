@@ -1,11 +1,13 @@
 ---
 sidebar_position: 7
-title: "Domain-Specific Description Examples"
+title: "7. Domain-Specific Description Examples"
+description: "CADL description examples in four domains: household rules, robot delivery, IoT data sharing, and AI integration."
 ---
 
 This chapter presents CADL description examples through four application
 domains. Each example concretely illustrates descriptive capabilities
-corresponding to the three objectives outlined in Chapter 1.
+corresponding to the three objectives outlined in
+[Chapter 1](./01-introduction.md).
 
 :::note
 The examples illustrate the intended design of CADL; they are conceptual
@@ -13,10 +15,17 @@ and are not accepted as written by the v0.3 reference implementation.
 The base definitions write actor references such as `ROBOT[*]` unquoted
 inside inline lists, which its YAML-based parser rejects, and the
 `verification:` / `codegen:` listings are fragments placed outside
-`sos:`. They also use forward-looking constructs beyond Appendix A, such
+`sos:`. They also use forward-looking constructs beyond
+[Appendix A](./appendix-a-syntax.md), such
 as `optimization:`, `policy_codegen:`, `post_generation_verification:`,
 `calendar_integration:`, `tool:`, and verification methods like
 `Monte_Carlo(...)`; the reference verifier implements only `smt`.
+Besides these constructs, the `verification:` listings use keys
+(`check:`, `severity:`, `message:`, `contracts:`) and the `codegen:`
+listings use shapes (`modules:`, `generates:`, `targets:`) that are not
+the keys of Appendix A
+[§A.8](./appendix-a-syntax.md#a8-verification-block) and
+[§A.9](./appendix-a-syntax.md#a9-codegen-block).
 Runnable examples live in the `examples/` directory of the
 [`cadl` repository](https://github.com/ertlnagoya/cadl).
 :::
@@ -106,12 +115,16 @@ sos:
         beta: 0.5
       information:
         views:
-          ALL: "resource_calendar"
+          PARENT[*]: "resource_calendar"
+          CHILD[*]: "resource_calendar"
       responsibilities:
         AI_ASSISTANT:
           - optimize_schedule(fairness_weight: 0.7)
           - notify_conflicts
-        ALL:
+        PARENT[*]:
+          - book_resource_via_app
+          - release_resource_after_use
+        CHILD[*]:
           - book_resource_via_app
           - release_resource_after_use
 
@@ -120,6 +133,7 @@ sos:
       trigger: "resource_conflict_detected"
       steps:
         - AI_ASSISTANT : propose_alternatives(all_parties)
+        # conflicting_parties: the actors involved in the conflict (not a declared actor)
         - AI_ASSISTANT -> conflicting_parties : alternatives
         - conflicting_parties : vote(preferred_alternative)
         - if consensus_reached:
@@ -220,9 +234,10 @@ codegen:
 
 ## 7.2 Robot Delivery System
 An example of a robot delivery system using MAPF as an institutional
-experimentation platform. We describe two institutional regimes---D-SoS
-(centralized) and C-SoS (distributed collaborative)---in CADL and define
-dynamic switching based on environmental conditions.
+experimentation platform. The listing defines the contract of the
+centralized regime (D-SoS) and the conditions for switching to and from
+a distributed one (C-SoS, distributed collaborative), depending on
+environmental conditions.
 
 ```yaml
 sos:
@@ -296,18 +311,18 @@ sos:
       to: DISTRIBUTED_REGIME
       condition: >
         failure_rate > 5 per 1000 steps
-        OR latency > 300ms
+        OR latency_ms > 300
         OR DISPATCHER.is_operational == false
-      protocol: REGIME_SHIFT_PROTOCOL
+      protocol: REGIME_SHIFT_PROTOCOL   # protocol definition omitted from this listing
       safety_invariant: "no_collision AND no_order_loss"
 
     - from: DISTRIBUTED_REGIME
       to: CENTRALIZED_REGIME
       condition: >
         failure_rate <= 2 per 1000 steps
-        AND latency <= 100ms
+        AND latency_ms <= 100
         AND DISPATCHER.is_operational == true
-      protocol: REGIME_SHIFT_PROTOCOL
+      protocol: REGIME_SHIFT_PROTOCOL   # protocol definition omitted from this listing
       safety_invariant: "no_collision"
 
   metrics:
@@ -348,8 +363,8 @@ verification:
   - id: TRANSITION_EXCLUSIVITY
     type: mutex
     check: >
-      NOT(condition(CENTRALIZED->DISTRIBUTED)
-        AND condition(DISTRIBUTED->CENTRALIZED))
+      NOT(condition(CENTRALIZED_REGIME->DISTRIBUTED_REGIME)
+        AND condition(DISTRIBUTED_REGIME->CENTRALIZED_REGIME))
     severity: error
     message: "Transition conditions may be satisfied simultaneously: risk of deadlock"
 
@@ -357,7 +372,7 @@ verification:
   - id: SLA_REGIME_CONSISTENCY
     type: cross_contract
     check: >
-      for all regime in [CENTRALIZED, DISTRIBUTED]:
+      for all regime in [CENTRALIZED_REGIME, DISTRIBUTED_REGIME]:
         regime.can_satisfy(DELIVERY_SLA.guarantee)
     severity: error
     message: "Regime {regime} may not satisfy SLA guarantees"
@@ -371,7 +386,7 @@ verification:
       P(fairness >= target) >= 0.90
     parameters:
       failure_rate: Uniform(0, 10)
-      latency: Uniform(0, 500)
+      latency_ms: Uniform(0, 500)
 ```
 
 ### 7.2.2 Code Generation and Auto-Conversion (Objective 3)
@@ -420,8 +435,8 @@ codegen:
 
     # Institutional transition controller generation
     - id: REGIME_CONTROLLER
-      source_transitions: [CENTRALIZED->DISTRIBUTED,
-                           DISTRIBUTED->CENTRALIZED]
+      source_transitions: [CENTRALIZED_REGIME->DISTRIBUTED_REGIME,
+                           DISTRIBUTED_REGIME->CENTRALIZED_REGIME]
       generates:
         - "class RegimeController:"
         - "    def evaluate_transition_condition(self, env):"
@@ -553,7 +568,7 @@ verification:
           provider_i.privacy_policy.min_level
             <= consumer_j.required_privacy
     severity: error
-    message: "PROVIDER[{i}] privacy policy contradicts CONSUMER[{j}] requirements"
+    message: "{provider_i} privacy policy contradicts {consumer_j} requirements"
 
   # Contradiction between SLAs: Feasibility of bandwidth and latency constraints
   - id: SLA_FEASIBILITY
@@ -584,7 +599,7 @@ verification:
     type: deontic_logic
     check: >
       no_cyclic_obligation(
-        DATA_PROVIDER.maintain_quality,
+        DATA_PROVIDER.maintain_data_quality,
         DATA_CONSUMER.respect_usage_terms,
         DATA_BROKER.verify_quality_claims)
     severity: warning
@@ -755,7 +770,7 @@ sos:
         - HUMAN_OPERATOR : review
         - if approved:
             - HUMAN_OPERATOR -> AI_ADVISOR : approve
-            - AI_ADVISOR : initiate_transition(protocol: REGIME_TRANSITION)
+            - AI_ADVISOR : initiate_transition(protocol: REGIME_TRANSITION)   # REGIME_TRANSITION: definition omitted
           else:
             - HUMAN_OPERATOR -> AI_ADVISOR : reject(reason)
             - AI_ADVISOR : learn_from_rejection(reason)
@@ -834,6 +849,7 @@ verification:
   # Deontic logic: Do AI_ADVISOR obligations conflict?
   - id: AI_DEONTIC_CONSISTENCY
     type: deontic_logic
+    # protect_training_data: definition omitted from this listing
     check: >
       # Do "explainability" and "confidentiality" obligations conflict?
       compatible(
@@ -872,7 +888,7 @@ codegen:
       synthesis:
         method: "reactive_synthesis"      # GR(1) realizability
         environment: "AI_AGENT[*].actions"
-        system: "SAFETY_CONTROLLER.decisions"
+        system: "SAFETY_CONTROLLER.decisions"   # SAFETY_CONTROLLER: definition omitted
         specification: >
           # Environment assumption: AI acts within contract scope
           assume G(ai_action IN permitted_range)
@@ -919,8 +935,13 @@ codegen:
       - ""
       - "# Force transition to safe mode"
       - "force_safe_mode {"
-      - "    input.confidence < 0.5"
+      - "    input.confidence < 0.7"
+      - "}"
+      - "force_safe_mode {"
       - "    input.action_outside_permitted_range"
+      - "}"
+      - "force_safe_mode {"
+      - "    input.human_override_signal"
       - "}"
 ```
 
@@ -930,6 +951,8 @@ realize three objectives within a unified language framework: Objective 1
 (detection and verification of institutional contradictions and
 violations), Objective 3 (automatic transformation from institutional
 description to executable code). Although each example is applied to
-different domains (household, robotics, IoT, AI), the common structure
-of verification blocks and codegen blocks is meant to enable
-construction of cross-domain verification and generation pipelines.
+different domains (household, robotics, IoT, AI), the examples share
+the layered structure of actors, contracts, and protocols, which is
+meant to enable construction of cross-domain verification and
+generation pipelines. The verification and codegen listings are
+sketches (see the note at the top of this chapter).

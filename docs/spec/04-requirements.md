@@ -1,14 +1,15 @@
 ---
 sidebar_position: 4
-title: "Requirements Specification"
+title: "4. Requirements Specification"
+description: "Functional requirements, non-functional requirements, and constraints that the CADL language and its toolchain aim to meet."
 ---
 
 ## 4.1 Functional Requirements
 
 The requirements in this chapter are targets for the CADL language and
 its toolchain; they do not state that the current implementation meets
-them. The implementation status is tracked in
-[Chapter 10](./10-roadmap.md).
+them. [Chapter 10](./10-roadmap.md) gives the implementation status per
+implementation phase, not per requirement.
 
 ### 4.1.1 Institution Description (FR-1)
 
@@ -60,11 +61,13 @@ them. The implementation status is tracked in
 The following are likewise targets, including the quantitative ones
 (e.g. NFR-3) and the conversion targets (NFR-5); see
 [Chapter 10](./10-roadmap.md) for what the current implementation
-provides.
+provides. The v0.1 expression grammar
+([Appendix A, §A.1](./appendix-a-syntax.md#a1-lexical-rules)) admits ASCII
+identifiers only, so NFR-7 is not yet met.
 
 | **ID** | **Requirement Name** | **Description** |
 | --- | --- | --- |
-| NFR-1 | Universal Readability | A broad range of stakeholders including students, enterprise practitioners, municipal officials, and citizens can understand the intent and structure of institutional descriptions. The primary means are YAML-like declarative syntax, vocabulary close to natural language (authority, responsibility, incentive, etc.), and graduated description levels (overview/design/verification). |
+| NFR-1 | Universal Readability | A broad range of stakeholders including students, enterprise practitioners, municipal officials, and citizens can understand the intent and structure of institutional descriptions. The primary means are YAML-based declarative syntax, vocabulary close to natural language (authority, responsibility, incentive, etc.), and graduated description levels (overview/design/verification). |
 | NFR-2 | Graduated Participation | Provide three graduated description levels (overview, design, verification) matching user expertise, enabling non-experts to participate from overview level and experts up to verification level, each according to their abilities. |
 | NFR-3 | Scalability | Be able to process SoS descriptions including 100 or more actors and 50 or more contracts within practical timeframes (verification: within minutes). |
 | NFR-4 | Extensibility | Have a plugin mechanism to add domain-specific vocabulary and constraints as libraries. |

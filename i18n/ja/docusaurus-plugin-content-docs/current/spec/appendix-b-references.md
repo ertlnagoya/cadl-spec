@@ -1,6 +1,7 @@
 ---
 sidebar_position: 12
 title: "付録B. 参考文献"
+description: "CADL仕様書が引用する参考文献の一覧。"
 ---
 
 # 付録B. 参考文献

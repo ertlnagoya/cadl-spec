@@ -1,9 +1,10 @@
 ---
 sidebar_position: 9
-title: "Research Directions and Open Challenges"
+title: "9. Research Directions and Open Challenges"
+description: "Research directions and open challenges for CADL, with related work, concrete research challenges, and a research roadmap."
 ---
 
-Based on use case analysis in Section 8 and survey of existing research,
+Based on use case analysis in [Section 8](./08-use-cases.md) and survey of existing research,
 we organize research directions toward CADL realization and development.
 For each direction, we present related existing research and concrete
 research challenges that CADL should address.
@@ -11,24 +12,24 @@ research challenges that CADL should address.
 ## 9.1 Algebraic Composition Theory for Institutions
 Establishment of an algebraic foundation for safely composing and
 decomposing multiple institutional descriptions is necessary. Benveniste
-et al. [Foundations and Trends in EDA, 2018] theorized parallel
+et al. [[Foundations and Trends in EDA, 2018]](./appendix-b-references.md) theorized parallel
 composition of contracts C₁ ⊗ C₂ in component design, but composition
-theory including three institutional layers (authority, protocol,
-incentives) remains unestablished. For example, when composing household
+theory including three institutional layers (Institution, Protocol,
+Algorithm) remains unestablished. For example, when composing household
 chore-sharing institution with shared resource usage institution, a
 theory that algebraically guarantees absence of obligation conflicts and
 incentive interference is required.
 
 | **ID** | **Challenge** | **Content** |
 | --- | --- | --- |
-| RD-1.1 | Institutional Composition Algebra | Algebraic definitions and soundness proofs for parallel, sequential, and choice composition of institutions including three layers (authority, protocol, incentives). |
+| RD-1.1 | Institutional Composition Algebra | Algebraic definitions and soundness proofs for parallel, sequential, and choice composition of institutions including three layers (Institution, Protocol, Algorithm). |
 | RD-1.2 | Institutional Refinement Relations | Formal proofs that overview level → design level → verification level refinements preserve institutional properties. |
 | RD-1.3 | Topological Structure of<br />Parameter Space | Mathematical characterization of regime boundaries on institutional parameter space (α, β, λ). Continuity, convexity, monotonicity conditions. |
 
 ## 9.2 Extraction and Institutionalization of Tacit Knowledge
 Establishment of technology to explicitly formalize institutional
 knowledge implicitly shared in household rules and community customs as
-CADL descriptions is required. IndoorWorld [Wu+, Findings of EMNLP 2025]
+CADL descriptions is required. IndoorWorld [[Wu+, Findings of EMNLP 2025]](./appendix-b-references.md)
 realizes household behavior simulation with LLM agents, but the inverse
 problem of extracting institutional rules from observed behavior
 patterns (institutional reverse engineering) remains unaddressed.
@@ -36,15 +37,15 @@ patterns (institutional reverse engineering) remains unaddressed.
 | **ID** | **Challenge** | **Content** |
 | --- | --- | --- |
 | RD-2.1 | Institutional Inference from<br />Behavioral Observation | Algorithm to infer potential institutional rules (implicit authority structures, information sharing patterns, incentive structures) from IoT sensor data and behavior logs. |
-| RD-2.2 | LLM-based<br />Institutional Description Generation | Technology to automatically generate CADL descriptions from natural language interview records and meeting minutes. Extends LLM-based Symboleo generation [Zitouni+, 2025] methods to general institutional descriptions. |
-| RD-2.3 | Tacit Knowledge Ontology<br />for Institutions | Build ontology systematically classifying and structuring implicit institutional knowledge. Map Ostrom [1990] IAD framework to CADL vocabulary. |
+| RD-2.2 | LLM-based<br />Institutional Description Generation | Technology to automatically generate CADL descriptions from natural language interview records and meeting minutes. Extends LLM-based Symboleo generation [[Zitouni+, 2025]](./appendix-b-references.md) methods to general institutional descriptions. |
+| RD-2.3 | Tacit Knowledge Ontology<br />for Institutions | Build ontology systematically classifying and structuring implicit institutional knowledge. Map Ostrom [[1990]](./appendix-b-references.md) IAD framework to CADL vocabulary. |
 
 ## 9.3 Institutional Digital Twins
-Developing the concept of Digital Twins of Organization [Lyytinen+, J.
-Organization Design, 2024], establishment of technology to build and
+Developing the concept of Digital Twins of Organization [[Lyytinen+, J.
+Organization Design, 2024]](./appendix-b-references.md), establishment of technology to build and
 simulate institutions themselves as digital twins is the next-generation
-research direction. vCity [BSC] and Social Digital Twin
-[Fujitsu] advance twinning of physical and social
+research direction. vCity [[BSC]](./appendix-b-references.md) and Social Digital Twin
+[[Fujitsu]](./appendix-b-references.md) advance twinning of physical and social
 aspects, but twinning of institutions (governance structures, rules,
 incentives) is, to our knowledge, not their main target.
 
@@ -52,7 +53,7 @@ incentives) is, to our knowledge, not their main target.
 | --- | --- | --- |
 | RD-3.1 | Institutional Simulator | Technology to automatically generate institutional simulation models from CADL descriptions and what-if analyze impacts of institutional parameter changes. MAPF simulator integration is initial target. |
 | RD-3.2 | Institutional Synchronization and<br />Divergence Detection | Technology to detect divergence between real institutional operation and CADL descriptions (twins) via runtime monitoring and automatically update institutional descriptions. Integration with IEC 62853 change management process. |
-| RD-3.3 | Institutional A/B Testing | Technology to operate different institutional designs in parallel and perform comparative experiments on performance. Integration with AI Economist [Zheng+, 2022] mechanism design automation methods. |
+| RD-3.3 | Institutional A/B Testing | Technology to operate different institutional designs in parallel and perform comparative experiments on performance. Integration with AI Economist [[Zheng+, 2022]](./appendix-b-references.md) mechanism design automation methods. |
 
 ## 9.4 Scalability and Computational Complexity
 Scalability of formal verification and code generation of institutions
@@ -70,8 +71,8 @@ algorithms are necessary.
 
 ## 9.5 Multi-Cultural and Multi-Jurisdictional Support
 For CADL to be applied to international SoS, support for different legal
-systems, cultural norms, and language environments is necessary. The EU Data
-Act (Regulation (EU) 2023/2854) sets essential requirements for smart
+systems, cultural norms, and language environments is necessary. The [EU Data
+Act](./appendix-b-references.md) (Regulation (EU) 2023/2854) sets essential requirements for smart
 contracts used for the automated execution of data sharing agreements, but institutional compatibility with other jurisdictions
 (Japan, US, China, etc.) remains an unresolved challenge.
 

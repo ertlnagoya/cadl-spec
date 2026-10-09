@@ -1,6 +1,7 @@
 ---
 sidebar_position: 12
 title: "Appendix B: References"
+description: "References cited in the CADL specification."
 ---
 
 [1] M. W. Maier, "Architecting Principles for Systems-of-Systems," Systems Engineering, vol. 1, no. 4, pp. 267-284, 1998.

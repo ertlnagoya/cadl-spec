@@ -1,14 +1,17 @@
 ---
 sidebar_position: 10
-title: "Implementation Roadmap"
+title: "10. Implementation Roadmap"
+description: "Phased roadmap for implementing and deploying CADL, with the status of each phase in the public reference implementation."
 ---
 
 Below is a roadmap for CADL implementation and practical deployment,
-considering the research directions in Chapter 9. The periods are the
+considering the research directions in [Chapter 9](./09-research.md). The periods are the
 originally planned ones; the status column records what the public
 reference implementation (`cadl` v0.3.8, as of October 2026) provides.
 For the up-to-date status, see the status table in the README of the
-[`cadl` repository](https://github.com/ertlnagoya/cadl).
+[`cadl` repository](https://github.com/ertlnagoya/cadl). The README
+lists features, not phases, so the two tables do not correspond row by
+row.
 
 | **Phase**<br />(planned period) | **Goal** | **Content** | **Status** |
 | --- | --- | --- | --- |

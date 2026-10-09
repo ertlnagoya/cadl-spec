@@ -1,14 +1,15 @@
 ---
 sidebar_position: 7
 title: "7. 用途別記述例"
+description: "家庭内ルール，ロボット配送，IoTデータ共有，AI融合の4つの適用領域におけるCADLの記述例を示す。"
 ---
 
 # 7. 用途別記述例
 
-本章では，4つの適用領域を通じてCADLの記述例を示す。各例は，第1章で掲げた3つの目的に対応する記述機能を具体的に例示している。
+本章では，4つの適用領域を通じてCADLの記述例を示す。各例は，[第1章](./01-introduction.md)で掲げた3つの目的に対応する記述機能を具体的に例示している。
 
 :::note
-本章の記述例はCADLが意図する設計を例示する概念的なものであり，v0.3リファレンス実装はこのままの形では受理しない。基本構造の記述は，`ROBOT[*]`のようなアクター参照を引用符なしでインラインリスト内に書いており，YAMLベースのパーサはこれを拒否する。`verification:`と`codegen:`の記述は，`sos:`の外に置いた断片である。また，`optimization:`，`policy_codegen:`，`post_generation_verification:`，`calendar_integration:`，`tool:`や，`Monte_Carlo(...)`のような検証手法など，Appendix Aの範囲を超える将来の構成要素も含む。リファレンス実装の検証器が実装する検証手法は`smt`だけである。実行できる例は，[`cadl`リポジトリ](https://github.com/ertlnagoya/cadl)の`examples/`ディレクトリにある。
+本章の記述例はCADLが意図する設計を例示する概念的なものであり，v0.3リファレンス実装はこのままの形では受理しない。基本構造の記述は，`ROBOT[*]`のようなアクター参照を引用符なしでインラインリスト内に書いており，YAMLベースのパーサはこれを拒否する。`verification:`と`codegen:`の記述は，`sos:`の外に置いた断片である。また，`optimization:`，`policy_codegen:`，`post_generation_verification:`，`calendar_integration:`，`tool:`や，`Monte_Carlo(...)`のような検証手法など，[付録A](./appendix-a-syntax.md)の範囲を超える将来の構成要素も含む。リファレンス実装の検証器が実装する検証手法は`smt`だけである。これらの構成要素のほかにも，`verification:`の記述はキー（`check:`，`severity:`，`message:`，`contracts:`）を，`codegen:`の記述は形（`modules:`，`generates:`，`targets:`）を用いているが，これらは付録Aの[§A.8](./appendix-a-syntax.md#a8-verification-block)と[§A.9](./appendix-a-syntax.md#a9-codegen-block)のキーではない。実行できる例は，[`cadl`リポジトリ](https://github.com/ertlnagoya/cadl)の`examples/`ディレクトリにある。
 :::
 
 | **記述例** | **目的1: 計算機処理** | **目的2: 矛盾検出** | **目的3: 自動変換・コード生成** |
@@ -89,12 +90,16 @@ sos:
         beta: 0.5
       information:
         views:
-          ALL: "resource_calendar"
+          PARENT[*]: "resource_calendar"
+          CHILD[*]: "resource_calendar"
       responsibilities:
         AI_ASSISTANT:
           - optimize_schedule(fairness_weight: 0.7)
           - notify_conflicts
-        ALL:
+        PARENT[*]:
+          - book_resource_via_app
+          - release_resource_after_use
+        CHILD[*]:
           - book_resource_via_app
           - release_resource_after_use
 
@@ -103,6 +108,7 @@ sos:
       trigger: "resource_conflict_detected"
       steps:
         - AI_ASSISTANT : propose_alternatives(all_parties)
+        # conflicting_parties: 衝突に関わるアクター（宣言されたアクターではない）
         - AI_ASSISTANT -> conflicting_parties : alternatives
         - conflicting_parties : vote(preferred_alternative)
         - if consensus_reached:
@@ -199,7 +205,7 @@ codegen:
 
 ## 7.2 ロボット配送システム
 
-MAPFを制度実験プラットフォームとして活用するロボット配送システムの例である。D-SoS（中央集権型）とC-SoS（分散協調型）の2つの制度をCADLで記述し，環境条件に応じた動的切替を定義する。
+MAPFを制度実験プラットフォームとして活用するロボット配送システムの例である。この記述例は，中央集権型の制度（D-SoS）の契約と，環境条件に応じて分散協調型の制度（C-SoS）との間で切り替える条件を定義する。
 
 ```yaml
 sos:
@@ -273,18 +279,18 @@ sos:
       to: DISTRIBUTED_REGIME
       condition: >
         failure_rate > 5 per 1000 steps
-        OR latency > 300ms
+        OR latency_ms > 300
         OR DISPATCHER.is_operational == false
-      protocol: REGIME_SHIFT_PROTOCOL
+      protocol: REGIME_SHIFT_PROTOCOL   # プロトコルの定義はこの記述例では省略
       safety_invariant: "no_collision AND no_order_loss"
 
     - from: DISTRIBUTED_REGIME
       to: CENTRALIZED_REGIME
       condition: >
         failure_rate <= 2 per 1000 steps
-        AND latency <= 100ms
+        AND latency_ms <= 100
         AND DISPATCHER.is_operational == true
-      protocol: REGIME_SHIFT_PROTOCOL
+      protocol: REGIME_SHIFT_PROTOCOL   # プロトコルの定義はこの記述例では省略
       safety_invariant: "no_collision"
 
   metrics:
@@ -322,8 +328,8 @@ verification:
   - id: TRANSITION_EXCLUSIVITY
     type: mutex
     check: >
-      NOT(condition(CENTRALIZED->DISTRIBUTED)
-        AND condition(DISTRIBUTED->CENTRALIZED))
+      NOT(condition(CENTRALIZED_REGIME->DISTRIBUTED_REGIME)
+        AND condition(DISTRIBUTED_REGIME->CENTRALIZED_REGIME))
     severity: error
     message: "遷移条件が同時に成立し得ます: デッドロックの危険"
 
@@ -331,7 +337,7 @@ verification:
   - id: SLA_REGIME_CONSISTENCY
     type: cross_contract
     check: >
-      for all regime in [CENTRALIZED, DISTRIBUTED]:
+      for all regime in [CENTRALIZED_REGIME, DISTRIBUTED_REGIME]:
         regime.can_satisfy(DELIVERY_SLA.guarantee)
     severity: error
     message: "{regime}下でSLA保証を満たせない可能性があります"
@@ -345,7 +351,7 @@ verification:
       P(fairness >= target) >= 0.90
     parameters:
       failure_rate: Uniform(0, 10)
-      latency: Uniform(0, 500)
+      latency_ms: Uniform(0, 500)
 ```
 
 ### 7.2.2 コード生成・自動変換（目的3）
@@ -391,8 +397,8 @@ codegen:
 
     # 制度遷移コントローラ生成
     - id: REGIME_CONTROLLER
-      source_transitions: [CENTRALIZED->DISTRIBUTED,
-                           DISTRIBUTED->CENTRALIZED]
+      source_transitions: [CENTRALIZED_REGIME->DISTRIBUTED_REGIME,
+                           DISTRIBUTED_REGIME->CENTRALIZED_REGIME]
       generates:
         - "class RegimeController:"
         - "    def evaluate_transition_condition(self, env):"
@@ -520,7 +526,7 @@ verification:
           provider_i.privacy_policy.min_level
             <= consumer_j.required_privacy
     severity: error
-    message: "PROVIDER[{i}]のプライバシーポリシーとCONSUMER[{j}]の要件が矛盾"
+    message: "{provider_i}のプライバシーポリシーと{consumer_j}の要件が矛盾"
 
   # SLA間の矛盾: 帯域・遅延制約の同時充足可能性
   - id: SLA_FEASIBILITY
@@ -551,7 +557,7 @@ verification:
     type: deontic_logic
     check: >
       no_cyclic_obligation(
-        DATA_PROVIDER.maintain_quality,
+        DATA_PROVIDER.maintain_data_quality,
         DATA_CONSUMER.respect_usage_terms,
         DATA_BROKER.verify_quality_claims)
     severity: warning
@@ -717,7 +723,7 @@ sos:
         - HUMAN_OPERATOR : review
         - if approved:
             - HUMAN_OPERATOR -> AI_ADVISOR : approve
-            - AI_ADVISOR : initiate_transition(protocol: REGIME_TRANSITION)
+            - AI_ADVISOR : initiate_transition(protocol: REGIME_TRANSITION)   # REGIME_TRANSITION: 定義は省略
           else:
             - HUMAN_OPERATOR -> AI_ADVISOR : reject(reason)
             - AI_ADVISOR : learn_from_rejection(reason)
@@ -793,6 +799,7 @@ verification:
   # 義務論理: AI_ADVISORの義務が矛盾しないか
   - id: AI_DEONTIC_CONSISTENCY
     type: deontic_logic
+    # protect_training_data: 定義はこの記述例では省略
     check: >
       # "explainability"義務と"confidentiality"義務が矛盾しないか
       compatible(
@@ -828,7 +835,7 @@ codegen:
       synthesis:
         method: "reactive_synthesis"      # GR(1) realizability
         environment: "AI_AGENT[*].actions"
-        system: "SAFETY_CONTROLLER.decisions"
+        system: "SAFETY_CONTROLLER.decisions"   # SAFETY_CONTROLLER: 定義は省略
         specification: >
           # 環境仮定: AIは契約範囲内で行動
           assume G(ai_action IN permitted_range)
@@ -875,9 +882,14 @@ codegen:
       - ""
       - "# 安全モードへの強制遷移"
       - "force_safe_mode {"
-      - "    input.confidence < 0.5"
+      - "    input.confidence < 0.7"
+      - "}"
+      - "force_safe_mode {"
       - "    input.action_outside_permitted_range"
+      - "}"
+      - "force_safe_mode {"
+      - "    input.human_override_signal"
       - "}"
 ```
 
-以上の4つの記述例は，CADLが目的1（制度の形式的・計算的表現），目的2（制度矛盾・違反の検出と検証），目的3（制度記述から実行可能コードへの自動変換）を一貫した言語フレームワーク内でどのように実現しようとしているかを例示している。各例は異なるドメイン（家庭・ロボティクス・IoT・AI）に適用されているが，共通のverificationブロックとcodegenブロックの構造により，ドメイン横断的な検証・生成パイプラインを構築できるようにすることを意図している。
+以上の4つの記述例は，CADLが目的1（制度の形式的・計算的表現），目的2（制度矛盾・違反の検出と検証），目的3（制度記述から実行可能コードへの自動変換）を一貫した言語フレームワーク内でどのように実現しようとしているかを例示している。各例は異なるドメイン（家庭・ロボティクス・IoT・AI）に適用されているが，アクター・契約・プロトコルという階層構造を共有しており，これにより，ドメイン横断的な検証・生成パイプラインを構築できるようにすることを意図している。verificationとcodegenの記述は素描である（本章冒頭の注記を参照）。
