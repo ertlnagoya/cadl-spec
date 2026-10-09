@@ -625,7 +625,7 @@ streamlit run app.py
 # Browser opens at http://localhost:8501
 ```
 
-In the sidebar, switch from the default page (**app**) to **SoS DSL Lifecycle**. (If the sidebar has no such page, your checkout of `cadl-explorer` is out of date; run `git pull` on `main`.)
+In the list of pages at the top of the sidebar, switch from the default page (**Explorer**) to **Contract Lifecycle**. (Before v0.4.0 the page was called **SoS DSL Lifecycle**. If the sidebar has neither, your checkout of `cadl-explorer` is out of date; run `git pull` on `main`.)
 
 Two ways to load IR JSON:
 
