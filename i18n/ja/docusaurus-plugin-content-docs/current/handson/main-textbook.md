@@ -10,7 +10,7 @@ title: "コース A — ロボット配送 (メイン教材)"
 >
 > **所要時間**: 約 95 分（5 分のセットアップ + 15 分 × 6 ステップ）。
 >
-> **持ち帰るもの**: 自分で書いた CADL 仕様、その仕様から生成された Unity C# 実装、5 台のロボットが期限切れやバッテリ違反を実際に検出する動くシミュレーション。
+> **持ち帰るもの**: 自分で書いた CADL 仕様、その仕様から生成された Unity C# 実装、期限切れやバッテリ規則への違反が検出され、該当する契約インスタンスが `Violated` に移る、5 台構成の動くシミュレーション。
 >
 > **初めての人へ**: 先に [全体構造とコード解説](code-walkthrough.md) を読んでおくと、各 Step で自分がどの部品を触っているのかが見えます。
 
@@ -23,12 +23,12 @@ title: "コース A — ロボット配送 (メイン教材)"
 今日学ぶことは 3 つです。
 
 1. **構造を記述する** — CADL で SoS の構造を書く。誰がいて、誰が誰と話すか。
-2. **規範を記述する** — SoS-DSL 拡張（Appendix E）で SoS の規範を書く。各契約インスタンスがいつまでに何をすべきか、違反したらどうなるか。
-3. **実行可能コードを生成する** — 単一の仕様から実行可能コードを生成し、Unity プロジェクトに配置して、シミュレーション上で規範が自動的に守られるのを観察する。
+2. **規範を記述する** — SoS-DSL 拡張（[Appendix E](../spec/appendix-e-sos-dsl.md)）で SoS の規範を書く。各契約インスタンスがいつまでに何をすべきか、違反したらどうなるか。
+3. **実行可能コードを生成する** — 単一の仕様から実行可能コードを生成し、Unity プロジェクトに配置して、シミュレーション上で規範への違反がランタイムによって検出されるのを観察する。
 
 ## ある対象が SoS かどうかを見分ける
 
-「これは SoS だ」と言う前にかける試金石が **Maier の 5 条件** です（[Maier, 1998]、**ISO/IEC/IEEE 21841:2019** に標準化）。
+「これは SoS だ」と言う前にかける試金石が **Maier の 5 条件** です（[Maier, 1998]。SoS の分類自体は **ISO/IEC/IEEE 21841:2019** で標準化）。
 
 | # | 条件 | 平易な確認 |
 | --- | --- | --- |
@@ -48,7 +48,7 @@ title: "コース A — ロボット配送 (メイン教材)"
 - ✓ (4) 全体としての配送スループットは、どの 1 台にも単独では生み出せない。
 - △ (5) このシナリオでは台数は固定だが、シミュレータ自体は増減に対応している。
 
-(2) が弱いぶん、このハンズオンは教科書的な SoS というより *並行制御の問題* に近い位置にあります。管理上の独立性がはっきり成立するドメイン（フードデリバリー）は、**演習問題集の Part 2** で扱います。
+(2) が弱いぶん、このハンズオンは教科書的な SoS というより *並行制御の問題* に近い位置にあります。それでも CADL ファイルでは `type: Acknowledged` と宣言しています。各ロボットを、自前の制御ソフトウェアと自律性（`autonomy: high`）を保ちつつ、タスク割当についてはディスパッチャを SoS レベルの権威として認める構成システムとしてモデル化しているためです。管理上の独立性がはっきり成立するドメイン（フードデリバリー）は、**演習問題集の Part 2** の推奨題材です。
 
 > 📚 ISO/IEC/IEEE 21839 / 21840 / 21841 / 15288 / 42010 の標準ランドスケープ、SoS の 4 類型、関連研究領域（ADL、規範的 MAS、実行時検証）、推薦文献リストの詳細は → [`academic-background.md`](academic-background.md) を参照してください。
 
@@ -56,7 +56,7 @@ title: "コース A — ロボット配送 (メイン教材)"
 
 ## 全体像
 
-書くのは一番左のボックス（CADL ファイル）だけです。右側はすべて自動生成されます。
+書くのは一番左のボックス（CADL ファイル）だけです。右側はすべて、ツールチェインのコマンドがこのファイルから生成します。
 
 ```
    ┌────────────────────────┐
@@ -126,46 +126,52 @@ brew install python@3.11 go nats-server node
 ## Step 0 — セットアップ (5 分)
 
 ### 学ぶこと
-- ツールチェインを構成する 4 つのリポジトリ。
+- ツールチェインを構成するリポジトリと、その公開状況、それぞれで使うブランチ。
 
 ### 背景
 
 CADL ツールチェインは、各部分が独立して進化できるよう 4 つのリポジトリに分かれています。
 
-| リポジトリ | 役割 |
-| --- | --- |
-| `cadl-spec`            | 言語仕様書（Docusaurus サイト） |
-| `cadl`                 | コンパイラ本体（パーサ・IR・コード生成器） |
-| `cadl-explorer`        | Streamlit ベースの可視化 |
-| `raspimouse-swarm-simulator` | Unity シーン + Go arbitrator + Python 参照ランタイム |
+| リポジトリ | 役割 | 公開 | 使うブランチ |
+| --- | --- | --- | --- |
+| `cadl-spec`            | 言語仕様書とこのハンズオンサイト（Docusaurus） | 公開 | `main`（既定） |
+| `cadl`（`cadl_repo` としてクローン） | コンパイラ本体（パーサ・IR・コード生成器） | 公開 | `master`（既定） |
+| `cadl-explorer`        | Streamlit ベースの可視化 | 公開 | `feature/sos-dsl`（Step 4 で使う Lifecycle View ページはこのブランチにあり、`main` にはまだありません） |
+| `raspimouse-swarm-simulator` | Unity シーン + Go arbitrator + Python 参照ランタイム。Unity プロジェクトと arbitrator は git submodule（`raspimouse-unity`、`raspimouse-swarm-arbitrator`）です | 非公開 | `feature/sos-dsl` |
+
+:::info リポジトリの公開状況
+`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
+:::
 
 ### 手順
 
 ```bash
 mkdir -p ~/program && cd ~/program
 
-# 1) 4つすべてをクローン。最後の --recursive を忘れずに
-#    （unity submodule を引き込みます）。
+# 1) 公開リポジトリ（Step 1〜4 はこれだけで進められます）。
+#    cadl-spec と cadl は既定ブランチ（main / master）のまま使います。
 git clone https://github.com/ertlnagoya/cadl-spec
 git clone https://github.com/ertlnagoya/cadl                         cadl_repo
 git clone https://github.com/ertlnagoya/cadl-explorer
-git clone --recursive https://github.com/ertlnagoya/raspimouse-swarm-simulator
 
-# 2) 全リポジトリで SoS-DSL feature ブランチに切り替え。
-for r in cadl-spec cadl_repo cadl-explorer raspimouse-swarm-simulator; do
-  (cd $r && git checkout feature/sos-dsl)
-done
+#    cadl-explorer だけは、Step 4 で使う Lifecycle View ページが
+#    feature/sos-dsl ブランチにあるので切り替えます（main にはまだありません）。
+git -C cadl-explorer checkout feature/sos-dsl
 
-# 2') 親リポジトリのブランチを切り替えたら、submodule をそのブランチが
-#     指すコミットに同期し直す。--recursive での clone は「既定ブランチが
-#     指すコミット」を取ってくるので、この一手を入れないと unity や
-#     arbitrator が古いままになります。
-(cd raspimouse-swarm-simulator && git submodule update --init --recursive)
-
-# 3) 編集モードで cadl CLI を install。変更が即反映されます。
-cd cadl_repo
+# 2) 編集モードで cadl CLI を install。変更が即反映されます。
+cd ~/program/cadl_repo
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e .
+cd ~/program
+
+# 3) 非公開リポジトリ（Step 5〜6 のみ。アクセス権が必要）。
+#    アクセス権がない場合は、このブロックを飛ばしてください。
+git clone https://github.com/ertlnagoya/raspimouse-swarm-simulator
+git -C raspimouse-swarm-simulator checkout feature/sos-dsl
+#    submodule はブランチを切り替えた「後」に取得します。こうすると unity と
+#    arbitrator が feature/sos-dsl の指すコミットになります（clone --recursive
+#    だと既定ブランチが指すコミットを取ってきてしまいます）。
+git -C raspimouse-swarm-simulator submodule update --init --recursive
 ```
 
 ### 期待される出力
@@ -190,29 +196,32 @@ positional arguments:
 
 ### チェック 0
 
-`cadl codegen --help` の `--target` の選択肢に `unity-csharp` が含まれていれば（`{python,solidity,opa,unity-csharp}`）、ブランチと install は正しく完了しています。
+`cadl codegen --help` の `--target` の選択肢に `unity-csharp` が含まれていれば（`{python,solidity,opa,unity-csharp}`）、install は正しく完了しています。
 
 ### おさらい
 
-セットアップを終えて分かるのは、CADL が「仕様サイト・コンパイラ・可視化・シミュレータ」という 4 つのリポジトリが噛み合って動く仕組みだ、ということです。そして以降のすべては、**全リポジトリが `feature/sos-dsl` ブランチに揃っていて submodule も取得済み**、という前提の上に成り立ちます。この段階でのつまずきの大半は、ブランチ違いか submodule の取りこぼしです。
+セットアップを終えて分かるのは、CADL が「仕様サイト・コンパイラ・可視化・シミュレータ」という 4 つのリポジトリが噛み合って動く仕組みだ、ということです。そして以降のすべては、**各リポジトリが上の表のブランチになっている**（`cadl-spec` は `main`、`cadl_repo` は `master`、`cadl-explorer` は `feature/sos-dsl`、Step 5〜6 で使う `raspimouse-swarm-simulator` は `feature/sos-dsl` で submodule も取得済み）、という前提の上に成り立ちます。この段階でのつまずきの大半は、ブランチ違いか submodule の取りこぼしです。
 
 ### 🛠 セットアップのトラブルシューティング
 
-**ブランチを確認する（最頻のつまずき）。** SoS-DSL のコード（Step 5 の `multi_robot_demo` など）は **`feature/sos-dsl` ブランチにだけ**あります。手順 2 のブランチ切替を飛ばすと `main` のままになり、`git pull` しても「Already up to date」と出るのに中身が無い、という状態になります。全リポジトリで確認してください。
+**ブランチを確認する（最頻のつまずき）。** 使うブランチはリポジトリごとに異なります。Lifecycle View ページ（Step 4）は `cadl-explorer` の `feature/sos-dsl` にだけあり、シミュレータ側の SoS-DSL ランタイム（Step 5 の `multi_robot_demo` など）は `raspimouse-swarm-simulator` の `feature/sos-dsl` にだけあります。この 2 つを `main` のままにしていると、`git pull` しても「Already up to date」と出るのに中身が無い、という状態になります。逆に、`cadl-spec` は `main`、`cadl_repo` は `master` のままにしてください。これらの `feature/sos-dsl` ブランチは既定ブランチより古く、`cadl-spec` では古い版の教材と Appendix E が残っています。次のコマンドで確認できます。
 
 ```bash
-for r in cadl-spec cadl_repo cadl-explorer raspimouse-swarm-simulator; do
-  echo "$r: $(git -C ~/program/$r branch --show-current)"   # すべて feature/sos-dsl か
-done
+cd ~/program
+echo "cadl-spec:     $(git -C cadl-spec branch --show-current)"       # main
+echo "cadl_repo:     $(git -C cadl_repo branch --show-current)"       # master
+echo "cadl-explorer: $(git -C cadl-explorer branch --show-current)"   # feature/sos-dsl
+# シミュレータへのアクセス権がある場合のみ：
+echo "simulator:     $(git -C raspimouse-swarm-simulator branch --show-current)"   # feature/sos-dsl
 ```
 
-`feature/sos-dsl` 以外のものがあれば `git -C ~/program/<repo> checkout feature/sos-dsl` で切り替えます。
+ブランチが違うリポジトリがあれば、`git -C ~/program/<repo> checkout <branch>` で切り替えます。
 
-**arbitrator submodule が 404 になる場合。** `git clone --recursive` で `raspimouse-swarm-arbitrator` の指定コミットが取得できない（GitHub で 404）ことがあります。これは多くの場合**アクセス権の問題ではなく、submodule が指す固定コミットがリモートから参照できない**状態が原因です。arbitrator が必要なのは **Step 6（Unity のライブ実行）だけ**なので、Step 1〜5 はそのまま進められます。親リポジトリは取得できているので、他の submodule だけ初期化するには次を実行し、Step 6 を行うときに担当（インストラクタ）へ連絡してください。
+**arbitrator submodule を取得できない場合。** arbitrator（`raspimouse-swarm-arbitrator`）は非公開のシミュレータの submodule で、必要になるのは **Step 6（Unity のライブ実行）だけ**です。シミュレータが指す arbitrator のコミットをリモートから取得できず `git submodule update` が失敗する場合は、もう一方の submodule だけを初期化して先へ進んでください。Step 6 の前に、シミュレータリポジトリへのアクセス権を付与した人に、現在使うべき arbitrator のコミットを確認してください。
 
 ```bash
 cd ~/program/raspimouse-swarm-simulator
-git submodule update --init unity     # arbitrator はスキップして Step 1〜5 へ
+git submodule update --init unity     # arbitrator はいったんスキップ
 ```
 
 ---
@@ -230,7 +239,11 @@ SoS の文脈では、仕様言語が果たすべき仕事は 2 つあります�
 1. **記述的（descriptive）** — *何が存在するか*。アクター、接続、交換するメッセージ。
 2. **規範的（normative）** — *何が起こるべきか*。義務、期限、違反。
 
-CADL は (1) を本体文法（Appendix A）でカバーします。SoS-DSL 拡張（Appendix E）は (1) の上に (2) を加えます — 同じ構文ファミリーで、新しい body キーは `lifecycle:` と `monitors:` の 2 つだけです。
+CADL は (1) を本体文法（Appendix A）でカバーします。SoS-DSL 拡張（[Appendix E](../spec/appendix-e-sos-dsl.md)）は (1) の上に (2) を加えます — 同じ構文ファミリーで、新しい body キーは `lifecycle:` と `monitors:` の 2 つだけです。
+
+:::info リポジトリの公開状況
+`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
+:::
 
 ### 手順
 
@@ -247,12 +260,12 @@ npm run start
 | --- | --- | --- |
 | 1. Introduction | CADL は何のため？ | 2 分 |
 | 5. Language Specification | actors / contracts / protocols はどう書く？ | 5 分 |
-| **Appendix E（今日のメイン）** | **契約のライフサイクルと監視はどう書く？** | **6 分** |
+| **[Appendix E](../spec/appendix-e-sos-dsl.md)（今日のメイン）** | **契約のライフサイクルと監視はどう書く？** | **6 分** |
 | 7. Examples | 完全なファイルはどう見える？ | 2 分 |
 
 ### 期待される出力
 
-Docusaurus サイトには Appendix E.6 が以下のようなコードブロックで表示されます。よく読んでください。Step 3 で同じようなものを書いてもらいます。
+[Appendix E](../spec/appendix-e-sos-dsl.md) の E.6 節に、ロボット配送の例が載っています。以下はその抜粋（遷移 1 つとモニター 1 つに絞った短縮版）です。よく読んでください。Step 3 で同じようなものを書いてもらいます。
 
 ```yaml
 contracts:
@@ -293,7 +306,7 @@ contracts:
 
 1. 配送契約の **初期状態** は何？ → *Proposed*
 2. ロボットが **5 秒** 以内に ack を返さなかったら何が起こる？ → *severity `Major` の違反として `Violated` へ強制的に遷移する*
-3. バッテリ 20% 以下で **まだ Assigned のとき** どの監視が発火する？ → *`battery_guard`*
+3. バッテリ 20% 未満で **まだ Assigned のとき** どの監視が発火する？ → *`battery_guard`*
 
 全部答えられたら、書き始めるのに十分な理解ができています。
 
@@ -325,9 +338,13 @@ flowchart LR
   R1 -. governed by ........ DELIVERY_SLA[(DELIVERY_SLA<br/>契約)] .-.- D
 ```
 
+:::info リポジトリの公開状況
+`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
+:::
+
 ### 手順
 
-同梱の例と同じ `examples/` ディレクトリに `my_delivery.cadl` を新規作成し、下の骨組みを貼り付けます。コメントを読みながら、各ブロックが何をしているかを確かめてください。
+`cadl_repo` の直下に `my_delivery.cadl` を新規作成し（`~/program/cadl_repo/my_delivery.cadl`。手本になる同梱の例は `examples/sos_dsl_robot_delivery.cadl` です）、下の骨組みを貼り付けます。Step 2〜4 のコマンドは `~/program/cadl_repo` で実行します。コメントを読みながら、各ブロックが何をしているかを確かめてください。
 
 ```yaml
 # my_delivery.cadl ─── 私の最初の SoS 仕様
@@ -340,7 +357,7 @@ sos:
 
   context:
     environment:
-      grid_size:    30
+      grid_size:    30                         # 抽象的な環境パラメータ（Unity の経路グラフとは別）
       num_robots:    3
       time_step_ms: 100
 
@@ -450,7 +467,7 @@ cadl sim-ir my_delivery.cadl --format json | head -30
 
 ### おさらい
 
-SoS の **構造** を記述する CADL ファイルが完成しました。コンパイルでき、IR に変換でき、IR の中に契約 `DELIVERY_SLA` が 1 つあることも確認できました。次はこの契約を強制可能にします。
+SoS の **構造** を記述する CADL ファイルが完成しました。コンパイルでき、IR に変換でき、IR の中に契約 `DELIVERY_SLA` が 1 つあることも確認できました。次は、ランタイムがこの契約への違反を検出できるように、規範を書き加えます。
 
 ---
 
@@ -458,7 +475,7 @@ SoS の **構造** を記述する CADL ファイルが完成しました。コ�
 
 ### 学ぶこと
 - 契約インスタンスが取りうる **7 つのライフサイクル状態**。
-- 期限を強制する `deadline` + `on_violation` の書き方。
+- 遷移に期限を付け、期限切れのときにインスタンスをどの状態へ移すかを指定する `deadline` + `on_violation` の書き方。
 - ワールドスナップショットの述語で動く周期的 `monitor` の書き方。
 
 ### 背景
@@ -483,9 +500,24 @@ stateDiagram-v2
 
 **同じライフサイクル** が全配送要求に再利用され、データ（どのロボット、どの顧客）だけが異なります。
 
+:::info リポジトリの公開状況
+`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
+:::
+
 ### 手順
 
-`my_delivery.cadl` の `DELIVERY_SLA` 契約に、以下のハイライトされた 2 ブロックを追加します。インデントが重要です（YAML）。
+まず `my_delivery.cadl` の先頭付近で、このファイルが SoS-DSL 拡張を使うことを宣言します。[Appendix E](../spec/appendix-e-sos-dsl.md) はこの宣言を求めており（SHOULD）、同梱の例にも入っています。
+
+```yaml
+sos:
+  name: "MyDelivery"
+  type: Acknowledged           # 中央権威 + 自律エージェント
+  version: "0.1.0"
+  extensions:                  # ← 追加: SoS-DSL 拡張を使うことの宣言
+    - sos-dsl: 0.1
+```
+
+続いて、`DELIVERY_SLA` 契約に、以下のハイライトされた 2 ブロックを追加します。インデントが重要です（YAML）。
 
 ```yaml
   contracts:
@@ -590,7 +622,7 @@ monitors[0].id    : battery_guard
 
 ### チェック 3
 
-1. Step 2 と Step 3 の差分は **新ブロック 2 つだけ**。アクターは変更なし。
+1. Step 2 と Step 3 の差分は **`extensions:` の宣言と新ブロック 2 つだけ**。アクターは変更なし。
 2. IR の `"lifecycle": null` がオブジェクトになり、`"monitors": []` が要素 1 のリストになった。
 
 ### よくある間違い
@@ -613,6 +645,10 @@ monitors[0].id    : battery_guard
 - cadl-explorer の Lifecycle View ページの読み方。
 - 視覚的な慣習（二重円、破線枠、赤エッジ）が仕様のどこに対応するか。
 
+:::info リポジトリの公開状況
+`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
+:::
+
 ### 手順
 
 ```bash
@@ -622,7 +658,7 @@ streamlit run app.py
 # ブラウザで http://localhost:8501 が開く
 ```
 
-サイドバーから **SoS_DSL_Lifecycle** ページを選択します。
+サイドバーから **SoS_DSL_Lifecycle** ページを選択します（サイドバーにこのページが無い場合は、`cadl-explorer` が `main` のままです。Step 0 のとおり `feature/sos-dsl` に切り替えてください）。
 
 IR JSON のロード方法は 2 通り：
 
@@ -699,7 +735,11 @@ IR JSON のロード方法は 2 通り：
 
 ### 学ぶこと
 - 1 つの CLI コマンドで CADL が Unity に貼れる C# ツリーに変わる仕組み。
-- なぜ **2 つの**ランタイム（Python + C#）が **同じ意味論**で動くのか。
+- なぜ **同じ意味論**のランタイムが **2 つ**あるのか（IR を解釈実行する Python 参照ランタイムと、生成される C#）。
+
+:::info リポジトリの公開状況
+`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
+:::
 
 ### 手順
 
@@ -712,6 +752,8 @@ cd ~/program/cadl_repo
     --unity ../raspimouse-swarm-simulator/unity
 ```
 
+> シミュレータのリポジトリが無くても、コード生成までは実行できます。`--unity ""` を渡すと、`output/sos_dsl_handson/` に C# ツリーを生成したところでスクリプトが終了します。
+>
 > 自分の仕様を使いたいなら入力を `my_delivery.cadl` に変えてください。ただし bridge が発火するイベント名と `lifecycle.transitions[*].on:` がマッチする必要があるので、最初は同梱の example を推奨します。
 
 ### 期待される出力
@@ -770,7 +812,7 @@ output/sos_dsl_handson/unity-csharp/
 
 ### なぜ 2 つのランタイム？
 
-同じ IR が両方を駆動します：
+同じ IR が両方を駆動しますが、駆動の仕方は異なります。Python 参照ランタイム（シミュレータリポジトリの `cadl/runtime/engine.py`）は、起動時に IR JSON を読み込む手書きの**インタプリタ**です。一方、C# の契約クラスは `cadl codegen` が IR から**生成**します。
 
 ```
                              ┌──────────────────────┐
@@ -808,7 +850,7 @@ Step 6 の Unity 実行では、割当のタイミングも各ロボットのバ
 
 > #### 🛠 うまくいかないとき：`multi_robot_demo` が見つからない
 >
-> まず **ブランチを確認**してください。`multi_robot_demo` は **`feature/sos-dsl` ブランチにだけ**あります（`main` には**ありません**）。`main` のままだと `git pull` しても「Already up to date」と出るのに見つからない、という症状になります。
+> まず **`raspimouse-swarm-simulator` のブランチを確認**してください。`multi_robot_demo` は、このリポジトリの **`feature/sos-dsl` ブランチにだけ**あります（`main` には**ありません**）。`main` のままだと `git pull` しても「Already up to date」と出るのに見つからない、という症状になります。
 >
 > ```bash
 > git -C ~/program/raspimouse-swarm-simulator branch --show-current   # → feature/sos-dsl になっているか
@@ -845,7 +887,7 @@ PYTHONPATH=src python3 -m pytest tests/test_unity_csharp_structural.py -q
 
 今あるもの：
 
-- 245 行の Sim-IR JSON。
+- 245 行の Sim-IR JSON（同梱の例の場合）。
 - 770 行の Unity に貼れる C# ツリー（Unity プロジェクトに配置済み）。
 - C# トレースが **どうなるべきか** を示す Python のリファレンス実装。
 
@@ -905,13 +947,13 @@ go run main.go
 2. 初回オープンは Library 再構築で 1〜5 分かかる。
 3. Project ペインで `Assets/Scenes/C-SoS.unity` をダブルクリック。
 
-**11 個のノードと 17 本のエッジ**からなる経路網（グラフ）と、その上を走る **5 体**のロボット（Red / Blue / Green / Yellow / Purple）が見えるはずです。ノード数・エッジ数・台数はいずれも `Assets/streamingAssets/cadl_config.json` から読み込まれるので、Console にも `[GraphDefinition] Loaded from CADL config: 11 nodes, 17 edges` と出ます。
+**11 個のノードと 17 本のエッジ**からなる経路網（グラフ）と、その上を走る **5 体**のロボット（Red / Blue / Green / Yellow / Purple）が見えるはずです。ノード数・エッジ数・台数はいずれも `Assets/streamingAssets/cadl_config.json` から読み込まれるので、Console にも `[GraphDefinition] Loaded from CADL config: 11 nodes, 17 edges` と出ます（CADL ファイルの `context.environment` にある `grid_size: 30` は IR に引き継がれる抽象的な環境パラメータで、Unity シーンは参照しません。シーンの経路グラフは `cadl_config.json` で定義されたものです）。
 
 > #### 🛠 Unity のバージョンに注意（最新版／Unity 6 は使わない）
 >
 > このプロジェクトは **2022.3.27f1 (LTS)** で開いてください。**Unity 6（6000.x）など最新版で開くと、`com.unity.modules.accessibility`・`com.unity.multiplayer.center`・`com.unity.test-framework 1.6.0`・`com.unity.ai.navigation 2.x` などが自動で追加・更新され**、エラーになります（手動の削除・ダウングレードが必要になり、挙動も保証外です）。これらが Package Manager に現れたら、開いている Editor が新しすぎる合図です。Unity Hub で **2022.3.27f1** を選んで開き直してください（Unity 6 で一度保存するとプロジェクト版が上がり、戻せなくなる点にも注意）。
 >
-> なお、リポジトリに記録されているプロジェクトのバージョンは `2021.3.26f1` です（`ProjectSettings/ProjectVersion.txt`）。そのため 2022.3.27f1 で開くと初回に**アップグレードの確認ダイアログ**が出ますが、同じ 2022.3 LTS 系への更新なので**そのまま承認して問題ありません**。Unity Hub の一覧でバージョンが赤く警告表示されるのも同じ理由です。
+> なお、リポジトリに記録されているプロジェクトのバージョンは `2021.3.26f1` です（`ProjectSettings/ProjectVersion.txt`）。そのため 2022.3.27f1 で開くと初回に**アップグレードの確認ダイアログ**が出ますが、LTS 系列をまたぐ更新（2021.3 → 2022.3）ですが、本ハンズオンのプロジェクトでは**そのまま承認して問題ありません**。Unity Hub の一覧でバージョンが赤く警告表示されるのも同じ理由です。
 
 ### 6.3 ContractRuntimeHost を追加（シーンに 1 つだけ）
 
@@ -964,14 +1006,16 @@ Console に以下のような行が連続的に出ます。Console の検索欄�
 
 ```
 [lifecycle DELIVERY_SLA/robot-0-1 Proposed -> Assigned     (assign,        event)   @ 1234ms]
-[lifecycle DELIVERY_SLA/robot-0-1 Assigned -> Accepted     (accept,        event)   @ 1234ms]
-[lifecycle DELIVERY_SLA/robot-0-1 Accepted -> Delivering   (start_delivery,event)   @ 1280ms]
+[lifecycle DELIVERY_SLA/robot-0-1 Assigned -> Accepted     (accept,        event)   @ 1934ms]
+[lifecycle DELIVERY_SLA/robot-0-1 Accepted -> Delivering   (start_delivery,event)   @ 1980ms]
 [lifecycle DELIVERY_SLA/robot-0-1 Delivering-> Completed   (complete,      event)   @ 8341ms]
 
 [lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned     (assign,        event)   @ 2050ms]
 [violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard         @ 2150ms]
 [lifecycle DELIVERY_SLA/robot-2-1 Assigned -> Violated     (<jump>,        monitor) @ 2150ms]
 ```
+
+`robot-0-1` の `assign` と `accept` の間が 700 ms 空いているのは、6.4 で設定した `Assigned Dwell Ms` によるものです。
 
 ### チェック 6
 
@@ -999,7 +1043,7 @@ Console に以下のような行が連続的に出ます。Console の検索欄�
 
 ### おさらい
 
-CADL で仕様を書き、IR に変換し、C# を生成し、リアルタイムシミュレーションとして実行するところまでを通しで体験し、期限やバッテリの規則が実際に強制される様子を確認しました。
+CADL で仕様を書き、IR に変換し、C# を生成し、リアルタイムシミュレーションとして実行するところまでを通しで体験し、期限切れやバッテリ規則への違反が検出され、該当する契約インスタンスが `Violated` に移る様子を確認しました（ランタイムが行うのは違反の検出と記録であり、ロボットの逸脱そのものを防ぐわけではありません）。
 
 ---
 
@@ -1007,13 +1051,13 @@ CADL で仕様を書き、IR に変換し、C# を生成し、リアルタイム
 
 | 層 | 書いたもの | 書かずに済んだもの |
 | --- | --- | --- |
-| 仕様 | 70 行の CADL ファイル（Step 2 と 3） | なし — 仕様こそが唯一の source of truth |
-| IR | なし | 245 行の JSON が自動生成 |
+| 仕様 | 約 100 行の CADL ファイル（Step 2 と 3） | なし — 仕様こそが唯一の source of truth |
+| IR | なし | 生成された JSON（同梱の例で 245 行） |
 | 可視化 | なし | Lifecycle View ページ |
-| 実装 | なし | 770 行の Unity C# |
+| 実装 | なし | 生成された Unity C#（同梱の例で 770 行） |
 | ランタイム意味論 | なし | 動く状態機械 + monitors + deadline timers |
 
-これは SoS にとってなぜ重要なのか？ **同じ仕様がすべての成果物を駆動する** — ドキュメント、図、シミュレーション、コード。仕様を変える（例えば期限を 5s から 3s にする）と、下流の成果物が自動的に更新されます。この性質こそが大規模 SoS 設計を保守可能にします。
+これは SoS にとってなぜ重要なのか？ **同じ仕様がすべての成果物を駆動する** — ドキュメント、図、シミュレーション、コード。仕様を変える（例えば期限を 5s から 3s にする）ときは、1 つのファイルを編集して生成コマンド（`cadl sim-ir`、`cadl codegen`、または e2e スクリプト）を再実行します。すると IR も図も生成 C# も同じ出典から作り直され、同じ規則を別の場所で手作業で書き直す必要がありません。出典を 1 つに保てることが、大規模な SoS 設計の保守を助けます。
 
 ---
 
@@ -1025,8 +1069,8 @@ CADL で仕様を書き、IR に変換し、C# を生成し、リアルタイム
 
 2 つのパートに分かれています：
 
-- **Part 1 — ロボット配送サービスの拡張演習**: 今ビルドしたシステムを 1 軸ずつ改造する 5 課題（★ 〜 ★★★）。期限を縮める、モニターを増やす、ライフサイクル状態を追加する、報酬実行を実装する、Violation Trace View を作る。
-- **Part 2 — 新しい SoS のモデリングを一通り体験する演習**: *別のドメイン*（コーヒーショップ、複数エレベータ、フードデリバリー…）を選び、CADL を書き、SimPy でシミュレートし、パラメータスイープで結果を比較する。
+- **Part 1 — ロボット配送コース**: 全 5 回・計 19 課題（★ 〜 ★★★）と、任意の発展課題 1 つ。今ビルドしたシステムを作り直したうえで、1 軸ずつ改造します。期限を縮める、モニターを増やす、ライフサイクル状態を追加する、報酬実行を実装する、Violation Trace View を作る、などです。
+- **Part 2 — 新しい SoS のモデリングを一通り体験する演習（コース C）**: 概要だけを示した、自由度の高い自走型の課題です。*別のドメイン*（フードデリバリー、スマート交通、組織間のデータ共有など）を選び、白紙から CADL を書き、自分で選んだ小さなシミュレーションハーネス（SimPy のような Python の離散事象ハーネスが標準の選択肢です）で動かし、パラメータスイープで結果を比較します。
 
 ゴールに合わせて選んでください — 学んだことを定着させたいなら Part 1、新しい問題でワークフローを試したいなら Part 2。
 
@@ -1036,7 +1080,7 @@ CADL で仕様を書き、IR に変換し、C# を生成し、リアルタイム
 
 | トピック | ファイル |
 | --- | --- |
-| 言語仕様 | `cadl-spec/docs/spec/`（今日のメインは Appendix E） |
+| 言語仕様 | `cadl-spec/docs/spec/`（今日のメインは [Appendix E](../spec/appendix-e-sos-dsl.md)） |
 | パーサ実装 | `cadl_repo/src/cadl/parser.py` |
 | IR | `cadl_repo/src/cadl/sim/ir.py`, `cadl_repo/src/cadl/sim/lower.py` |
 | Unity C# 生成器 | `cadl_repo/src/cadl/codegen/unity_csharp/` |
@@ -1055,7 +1099,8 @@ CADL で仕様を書き、IR に変換し、C# を生成し、リアルタイム
 | **Lifecycle（ライフサイクル）** | 契約インスタンスが辿る状態機械 |
 | **Monitor（モニター）** | 契約に紐づく宣言的な観測ルール |
 | **Deadline（期限）** | 遷移に対する `deadline: <時間>` 形式のタイミング制約 |
-| **`on_violation`** | 期限切れ時にランタイムが行う状態遷移 |
+| **`on_violation`** | 遷移の期限が切れたときのランタイムの動作。`transition:` には、インスタンスの移動先となる**状態名**（例：`Violated`）を書く（遷移の `id` ではない） |
+| **`on_match`** | モニターの `rule` が成立したときのランタイムの動作。`transition:` には同じく移動先の状態名（例：`Violated`）を、`violation:` には記録する違反名を書く |
 | **Severity（深刻度）** | 違反の分類：Minor / Major / Critical |
 | **IR** | 中間表現（Intermediate Representation）— パーサと生成器の間の JSON |
 | **Codegen target** | コード生成のバックエンド。例：`python`, `solidity`, `unity-csharp` |
