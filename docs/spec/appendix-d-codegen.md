@@ -7,35 +7,48 @@ title: "Appendix D — Codegen Target Catalog"
 
 This appendix enumerates the code-generation targets defined by CADL v0.1
 and the mapping to the reference implementation's directory layout.
-Appendix A §A.9 defines the EBNF for `codegen:` blocks; this appendix
-pairs each enumerated `target_name` with its **category**, **intended
-artifact**, and **implementation location** in `cadl_repo`.
+Appendix A §A.9 defines the EBNF for `codegen:` entries; this appendix
+pairs each target name with its **category**, **intended artifact**, and
+**implementation location** in the reference implementation
+([`cadl`](https://github.com/ertlnagoya/cadl), v0.3).
 
 ## D.1 Target catalog
 
-| `target_name` | Category | Emitted artifact | Reference-impl module |
-|---------------|----------|------------------|-----------------------|
-| `unity` | Simulator config | JSON for the Unity runtime | `cadl.sim.gen_unity` |
-| `ros2` | Runtime node | Go / ROS 2 node scaffolds | `cadl.sim.gen_go` |
-| `python` | Runtime node | Python agent scaffolds | `cadl.sim.gen_python` |
-| `solidity` | Institutional contract | Solidity smart contracts | `cadl.codegen.solidity` |
-| `opa` | Institutional policy | Rego / OPA policies | `cadl.codegen.opa` |
-| `identifier` (user-defined) | Plugin | Whatever the user plugin emits | user-supplied |
+| Target name | Category | Emitted artifact | Reference-impl module | Command |
+|-------------|----------|------------------|-----------------------|---------|
+| `python` | Runtime code | Python package (actors, contract monitors, protocols, regime controller, metrics, runtime) | `cadl.codegen` | `cadl codegen -t python` |
+| `solidity` | Institutional contract | Solidity smart contracts, one per contract | `cadl.codegen.solidity` | `cadl codegen -t solidity` |
+| `opa` | Institutional policy | Rego / OPA policies, one per contract | `cadl.codegen.opa` | `cadl codegen -t opa` |
+| `unity-csharp` | Runtime code | Unity C# classes for the lifecycles and monitors of [Appendix E](./appendix-e-sos-dsl.md) | `cadl.codegen.unity_csharp` | `cadl codegen -t unity-csharp` |
+| `unity` | Simulator config | JSON for a Unity-based simulator | `cadl.sim.gen_unity` | `cadl sim-gen -t unity` |
+| `go` | Simulator config | JSON for a Go-based simulator | `cadl.sim.gen_go` | `cadl sim-gen -t go` |
+| `python` (simulator) | Simulator config | YAML for a Python-based simulator | `cadl.sim.gen_python` | `cadl sim-gen -t python` |
+| `ros2` | Runtime node | ROS 2 node scaffolds | not implemented at v0.3 | — |
+| other name (user-defined) | Plugin | Whatever the user plugin emits | user-supplied | — |
+
+The name `python` denotes the runtime-code target in a `codegen:` entry;
+the simulator configuration of the same name is requested with
+`cadl sim-gen`. In the reference implementation at v0.3 the target is
+selected on the command line as shown in the last column; `codegen:`
+entries in the file are parsed but do not yet drive generation.
 
 ## D.2 Two-tier generator layout
 
 The reference implementation splits codegen into two tiers, reflecting
-whether the output enforces **institutional constraints** or configures a
-**runtime / simulator**:
+whether the output is **code that enforces or executes the contracts**
+or a **configuration for a simulator**:
 
 ```
-cadl/
-├── codegen/          ← institutional-constraint tier
-│   ├── solidity/     ← smart-contract enforcement of contracts
-│   └── opa/          ← policy enforcement (Rego) of contracts
-└── sim/              ← runtime / simulator tier
+src/cadl/
+├── codegen/            ← code tier (cadl codegen)
+│   ├── *_gen.py        ← Python runtime package
+│   ├── solidity/       ← smart-contract enforcement of contracts
+│   ├── opa/            ← policy enforcement (Rego) of contracts
+│   └── unity_csharp/   ← Unity C# lifecycle / monitor runtime
+└── sim/                ← simulator tier (cadl sim-gen)
+    ├── ir.py           ← three-layer simulator IR
     ├── gen_unity.py
-    ├── gen_ros2.py   (alias: gen_go.py)
+    ├── gen_go.py
     └── gen_python.py
 ```
 
@@ -46,9 +59,11 @@ independently.
 ## D.3 Selection guidance
 
 - Pick **`unity`** when the experiment is a multi-agent simulation with
-  graphical inspection.
-- Pick **`ros2` / `python`** when you want to drive actual runtime
-  actors (robots, services).
+  graphical inspection, and **`unity-csharp`** when contract lifecycles
+  and monitors (Appendix E) are to run inside that simulation.
+- Pick **`python`** when you want an executable runtime skeleton of the
+  actors, contract monitors, and protocols; **`ros2`** is reserved for
+  driving actual robots and is not implemented at v0.3.
 - Pick **`solidity`** when the Institution-layer contracts must be
   enforced on-chain (blockchain deployment).
 - Pick **`opa`** when contracts should be enforced as policies at API
@@ -62,14 +77,15 @@ contract generated from the same source.
 ## D.4 Conformance
 
 A processor is **codegen-core-conforming** if it supports at least one
-target from each tier (at minimum `unity` + one of `{solidity, opa}`).
+target from each tier (at minimum `unity` + one of `solidity` and
+`opa`).
 
-A processor that cannot emit a declared target MUST report a clear
-diagnostic (e.g. `"codegen target `ros2` not supported by this
-processor"`) rather than silently skipping it. See also Appendix C §C.6
-for the parallel requirement on the motivation extension.
+A processor that cannot emit a requested target MUST report a clear
+diagnostic (for example, "codegen target `ros2` is not supported by
+this processor") rather than silently skipping it. See also Appendix C
+§C.6 for the parallel requirement on the motivation extension.
 
 ## D.5 Cross-reference
 
-- [Appendix A §A.9](./appendix-a-syntax#a9-codegen-block) — EBNF.
+- [Appendix A §A.9](./appendix-a-syntax.md#a9-codegen-block) — EBNF.
 - [Glossary](./glossary) — **Codegen target** definition.

@@ -24,8 +24,8 @@ Design Language that introduces contract concepts. Integrates
 assume-guarantee contracts into architecture descriptions, but does not
 target SoS institutional layer in design.
 
-**SysMLv2 / HAMR:** Next-generation system modeling language and its
-code generation tool. Excellent for architecture description, but
+**SysMLv2 / HAMR:** Next-generation system modeling language, and a
+model-driven code generation toolchain that originated for AADL and also targets SysMLv2. Excellent for architecture description, but
 institutional design variables are outside scope.
 
 **Smart Contracts (Solidity, etc.):** Implementation platform for
@@ -40,50 +40,42 @@ not a formal description language and parametrization is limited.
 ## 3.2 Comparative Analysis
 The table below organizes how existing approaches address requirements
 needed for SoS institutional design. Legend: ◎=Core feature, ○=Partial
-support, △=Limited, ×=Out of scope.
+support, △=Limited, ×=Out of scope. The ratings reflect the authors'
+reading of the literature listed in Appendix B. The CADL column shows
+the intended scope of the language design; it does not mean that the
+v0.1 toolchain already implements every item.
 
-  --------------------------------------------------------------------------------------------------------------------------------------------
-  **Requirement**                      **MOISE+**   **OperA**   **Symboleo**   **AADL Ext.**   **SysMLv2**   **Smart\      **CADL\
-                                                                                                             Contracts**   (This Language)**
-  ------------------------------------ ------------ ----------- -------------- --------------- ------------- ------------- -------------------
-  Organization structure description   ◎            ○           ×              ○               ◎             ×             ◎
-
-  Contract description                 ×            ×           ◎              △               ×             ◎             ◎
-
-  Protocol description                 △            ○           ×              △               △             △             ◎
-
-  Algorithm reference                  ×            ×           ×              ○               ○             △             ◎
-
-  SoS institutional parametrization    ×            ×           △              ×               ×             ×             ◎
-
-  Dynamic institutional switching      ×            ×           ×              ×               ×             ×             ◎
-
-  Formal verification                  △            △           ○              ◎               △             △             ◎
-
-  Runtime monitoring                   △            △           ×              △               ×             ◎             ◎
-
-  Environment modeling                 ×            ×           ×              △               ○             ×             ◎
-
-  AI integration                       ×            ×           ×              ×               ×             △             ◎
-  --------------------------------------------------------------------------------------------------------------------------------------------
+| **Requirement** | **MOISE+** | **OperA** | **Symboleo** | **AADL Ext.** | **SysMLv2** | **Smart<br />Contracts** | **CADL<br />(This Language)** |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Organization structure description | ◎ | ○ | × | ○ | ◎ | × | ◎ |
+| Contract description | × | × | ◎ | △ | × | ◎ | ◎ |
+| Protocol description | △ | ○ | × | △ | △ | △ | ◎ |
+| Algorithm reference | × | × | × | ○ | ○ | △ | ◎ |
+| SoS institutional parametrization | × | × | △ | × | × | × | ◎ |
+| Dynamic institutional switching | × | × | × | × | × | × | ◎ |
+| Formal verification | △ | △ | ○ | ◎ | △ | △ | ◎ |
+| Runtime monitoring | △ | △ | × | △ | × | ◎ | ◎ |
+| Environment modeling | × | × | × | △ | ○ | × | ◎ |
+| AI integration | × | × | × | × | × | △ | ◎ |
 
 ## 3.3 Uniqueness of CADL
-As is clear from the above comparison, no existing approach alone
-satisfies all requirements. CADL's uniqueness is summarized in three
-points:
+Within the scope of our survey, we found no existing approach that
+alone satisfies all requirements. CADL's distinguishing features are
+summarized in three points:
 
-**(1) Three-layer integrated description:** The only DSL that can
-consistently describe three layers within a single language:
+**(1) Three-layer integrated description:** CADL consistently describes
+three layers within a single language:
 institutions (authority, incentives, information sharing), protocols
 (coordination procedures, timing constraints), and algorithms (abstract
-references to computational methods).
+references to computational methods). Within the scope of our survey, we
+found no existing DSL that covers all three layers in one language.
 
 **(2) Parametric institutional design:** Directly supports regime map
 construction by defining institutional design variables such as decision
-decentralization degree (β), information sharing degree (α), and
+centralization degree (β), information sharing degree (α), and
 incentive intensity (λ) as numerical parameters.
 
-**(3) Unified describe-verify-deploy-monitor cycle:** Realizes formal
+**(3) Unified describe-verify-deploy-monitor cycle:** Aims to support formal
 verification at design stage (consistency and safety), code generation
 at deployment, and runtime monitoring at operation, all on a unified
 language foundation.

@@ -12,7 +12,7 @@ objectives, requirements, syntax and semantics definitions, and
 toolchain design.
 
 This document consolidates the specification for CADL implementation
-based on the SoS research survey report (March 14, 2026 version) and SoS
+based on a survey of SoS research and SoS
 architecture design studies conducted at the ERTL.
 
 ## 1.2 Background: Challenges of Institutional Design in SoS
@@ -221,46 +221,25 @@ comprehension by readers without specialized knowledge.
 
 ### 1.3.1 Basic Concepts
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Term**                  **Description**                                                                                                                                                                                                                                                                                                  **Example**
-  ------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  SoS\                      A configuration where multiple independently operating systems cooperate to achieve objectives that no single system can achieve alone.                                                                                                                                                                          A system where delivery robots from multiple companies cooperate to optimize city-wide delivery. Each robot operates independently, but together they achieve an optimal delivery network.
-  (System of Systems)
-
-  CADL\                     The institutional description language defined in this document. A language for writing down "who has what authority, how they cooperate, and what rules they follow" in SoS in a computer-understandable form.                                                                                                Any institution can be described in CADL, from household chore-sharing rules to large-scale urban transportation system governance.
-  (Contract Architecture\
-  Description Language)
-
-  Institution               A general term for "rules, authorities, role assignments, and reward mechanisms" between people or systems. Includes both codified forms like laws and contracts, and implicit household rules. CADL describes institutions through three aspects: authority structure, information sharing, and incentives.   "Children must finish chores before dinner" and "They receive 100 yen upon completion" are examples of household institutions.
-
-  Actor                     An entity participating in the SoS (humans, robots, AI systems, organizations, etc.). Each has roles and capabilities and acts according to institutional rules.                                                                                                                                                 In a delivery system, robots, dispatchers, and customers are each actors.
-
-  Stakeholder               All parties with interest in institutional design. Includes not only actors directly participating in institutions, but also people affected by institutions and those in supervisory positions.                                                                                                                 In a delivery system, users, delivery companies, municipalities, and nearby residents are stakeholders.
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| **Term** | **Description** | **Example** |
+| --- | --- | --- |
+| SoS<br />(System of Systems) | A configuration where multiple independently operating systems cooperate to achieve objectives that no single system can achieve alone. | A system where delivery robots from multiple companies cooperate to optimize city-wide delivery. Each robot operates independently, but together they achieve an optimal delivery network. |
+| CADL<br />(Contract Architecture<br />Description Language) | The institutional description language defined in this document. A language for writing down "who has what authority, how they cooperate, and what rules they follow" in SoS in a computer-understandable form. | CADL targets a wide range of institutions, from household chore-sharing rules to large-scale urban transportation system governance. |
+| Institution | A general term for "rules, authorities, role assignments, and reward mechanisms" between people or systems. Includes both codified forms like laws and contracts, and implicit household rules. CADL describes institutions through three aspects: authority structure, information sharing, and incentives. | "Children must finish chores before dinner" and "They receive 100 yen upon completion" are examples of household institutions. |
+| Actor | An entity participating in the SoS (humans, robots, AI systems, organizations, etc.). Each has roles and capabilities and acts according to institutional rules. | In a delivery system, robots, dispatchers, and customers are each actors. |
+| Stakeholder | All parties with interest in institutional design. Includes not only actors directly participating in institutions, but also people affected by institutions and those in supervisory positions. | In a delivery system, users, delivery companies, municipalities, and nearby residents are stakeholders. |
 
 ### 1.3.2 Institutional Design Terminology
 
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Term**              **Description**                                                                                                                                                                                                   **Example**
-  --------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- --------------------------------------------------------------------------------------------------------------------------------
-  Contract              A formal written statement of "promises" between actors. Clarifies who guarantees what and under what preconditions it is valid. Written in assume-guarantee form in CADL.                                      "As long as the robot operates normally (assume), delivery arrives within 1.2x the promised time (guarantee)"
-
-  Assume-Guarantee      The basic structure of a contract. A formal statement: "If this precondition (assume) is satisfied, then we promise this guarantee." If the precondition is violated, the guarantee is void.                    assume: "Road accessibility >= 80%"\
-                                                                                                                                                                                                                                          guarantee: "Delivery success rate >= 95%"
-
-  Authority Structure   The structure of "who has authority to decide what." Ranges from centralized (one person decides) to distributed (collective decision-making), expressed by the beta parameter.                                 beta=0.2: Dispatcher decides almost everything\
-                                                                                                                                                                                                                                          beta=0.8: Each robot decides autonomously
-
-  Incentive             A "reward and penalty mechanism" to encourage actor behavior. By rewarding good behavior and penalizing bad behavior, desirable outcomes are achieved overall. The lambda parameter represents its intensity.   "On-time delivery: +bonus" "Late delivery: -50% of base fee." Higher lambda means stronger reward/penalty effects.
-
-  Protocol              The "interaction procedures" between actors defined with timing constraints. Describes who sends what to whom and in what order processing occurs.                                                              \(1\) Customer orders -> (2) Dispatcher assigns robot -> (3) Robot delivers -> (4) Customer notified, as a series of steps.
-
-  SLA\                  A service quality guarantee agreement. A numerical agreement between service providers and users on "what level of quality is guaranteed."                                                                      "Data latency within 5 seconds" "Uptime >= 99.9%" "Delivery time within 1.2x the promise"
-  (Service Level\
-  Agreement)
-
-  Obligation            Something an actor "must do." A contractual responsibility, where violations may result in penalties.                                                                                                           "Data providers have the obligation to maintain data accuracy >= 95%"
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| **Term** | **Description** | **Example** |
+| --- | --- | --- |
+| Contract | A formal written statement of "promises" between actors. Clarifies who guarantees what and under what preconditions it is valid. Written in assume-guarantee form in CADL. | "As long as the robot operates normally (assume), delivery arrives within 1.2x the promised time (guarantee)" |
+| Assume-Guarantee | The basic structure of a contract. A formal statement: "If this precondition (assume) is satisfied, then we promise this guarantee." If the precondition is violated, the guarantee is void. | assume: "Road accessibility >= 80%"<br />guarantee: "Delivery success rate >= 95%" |
+| Authority Structure | The structure of "who has authority to decide what." Ranges from centralized (one person decides) to distributed (collective decision-making), expressed by the beta parameter. | beta=0.8: Dispatcher decides almost everything<br />beta=0.2: Each robot decides autonomously |
+| Incentive | A "reward and penalty mechanism" to encourage actor behavior. By rewarding good behavior and penalizing bad behavior, desirable outcomes are achieved overall. The lambda parameter represents its intensity. | "On-time delivery: +bonus" "Late delivery: -50% of base fee." Higher lambda means stronger reward/penalty effects. |
+| Protocol | The "interaction procedures" between actors defined with timing constraints. Describes who sends what to whom and in what order processing occurs. | \(1\) Customer orders -> (2) Dispatcher assigns robot -> (3) Robot delivers -> (4) Customer notified, as a series of steps. |
+| SLA<br />(Service Level<br />Agreement) | A service quality guarantee agreement. A numerical agreement between service providers and users on "what level of quality is guaranteed." | "Data latency within 5 seconds" "Uptime >= 99.9%" "Delivery time within 1.2x the promise" |
+| Obligation | Something an actor "must do." A contractual responsibility, where violations may result in penalties. | "Data providers have the obligation to maintain data accuracy >= 95%" |
 
 ### 1.3.3 Institutional Parameters
 
@@ -268,76 +247,43 @@ In CADL, institutional characteristics are expressed as quantitative
 parameters. This enables numerical adjustment and optimization of
 institutional "degree."
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Parameter**         **Meaning**                                                                                                                                          **Example**
-  --------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------- --------------------------------------------------------------------------
-  alpha (Information\   Represents how much information is shared. Closer to 0 means restricted information (privacy-focused), closer to 1 means open to all.                alpha=1.0: All family members can view the schedule\
-  Sharing Degree)                                                                                                                                                            alpha=0.4: IoT data shares metadata only
-
-  beta (Decision\       Represents how distributed decision-making is. Closer to 0 means one person (central) decides, closer to 1 means distributed collective decisions.   beta=0.2: Dispatcher centrally decides routes\
-  Decentralization)                                                                                                                                                          beta=0.8: Each data provider autonomously decides their data publication
-
-  lambda (Incentive\    Represents how much rewards/penalties affect behavior. Closer to 0 means weak incentive effects, closer to 1 means strong.                           lambda=0.6: Allowance moderately affects behavior\
-  Intensity)                                                                                                                                                                 lambda=0.9: Strong control via market mechanisms
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| **Parameter** | **Meaning** | **Example** |
+| --- | --- | --- |
+| alpha (Information<br />Sharing Degree) | Represents how much information is shared. Closer to 0 means restricted information (privacy-focused), closer to 1 means open to all. | alpha=1.0: All family members can view the schedule<br />alpha=0.4: IoT data shares metadata only |
+| beta (Decision<br />Centralization) | Represents how centralized decision-making is. Closer to 1 means one person (central) decides, closer to 0 means distributed collective decisions. | beta=0.8: Dispatcher centrally decides routes<br />beta=0.2: Each data provider autonomously decides their data publication |
+| lambda (Incentive<br />Intensity) | Represents how much rewards/penalties affect behavior. Closer to 0 means weak incentive effects, closer to 1 means strong. | lambda=0.6: Allowance moderately affects behavior<br />lambda=0.9: Strong control via market mechanisms |
 
 ### 1.3.4 Terms Related to Institutional Dynamics
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Term**            **Description**                                                                                                                                                                                                                **Example**
-  ------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ ------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Regime              The "complete set of institutional settings" effective at a given time. As environmental conditions change, the optimal regime also changes.                                                                                 Normal regime: Dispatcher manages centrally\
-                                                                                                                                                                                                                                                     Failure regime: Each robot decides autonomously
-
-  Regime Map          A map-like representation showing "which regime (institutional settings) is optimal under which environmental conditions." Divides the environmental parameter space into regions and maps each to an optimal institution.   Low failure rate and low latency -> Centralized management regime\
-                                                                                                                                                                                                                                                     High failure rate or high latency -> Distributed autonomous regime
-
-  Regime Transition   Switching from one regime to another in response to changes in environmental conditions. Safety (collision avoidance, etc.) must be guaranteed during the transition.                                                          When communication latency exceeds 300ms, switch from centralized to distributed autonomous. Maintain "no collisions, no lost orders" during transition.
-
-  Safety Invariant    A condition that "must never be violated under any circumstances." This condition must always be satisfied even during regime transitions.                                                                                   "Robots do not collide with each other" "Order data is not lost"
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| **Term** | **Description** | **Example** |
+| --- | --- | --- |
+| Regime | The "complete set of institutional settings" effective at a given time. As environmental conditions change, the optimal regime also changes. | Normal regime: Dispatcher manages centrally<br />Failure regime: Each robot decides autonomously |
+| Regime Map | A map-like representation showing "which regime (institutional settings) is optimal under which environmental conditions." Divides the environmental parameter space into regions and maps each to an optimal institution. | Low failure rate and low latency -> Centralized management regime<br />High failure rate or high latency -> Distributed autonomous regime |
+| Regime Transition | Switching from one regime to another in response to changes in environmental conditions. Safety (collision avoidance, etc.) must be guaranteed during the transition. | When communication latency exceeds 300ms, switch from centralized to distributed autonomous. Maintain "no collisions, no lost orders" during transition. |
+| Safety Invariant | A condition that "must never be violated under any circumstances." This condition must always be satisfied even during regime transitions. | "Robots do not collide with each other" "Order data is not lost" |
 
 ### 1.3.5 Verification and Code Generation Terminology
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Term**              **Description**                                                                                                                                                                                  **Example**
-  --------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Formal Verification   Using computers to mathematically prove that institutional descriptions are free of contradictions and problems. Can automatically discover contradictions that human reviews tend to miss.      "Whether conditions of two contracts are contradictory" "Whether a protocol deadlocks" automatically verified using SMT solvers.
-
-  Contradiction\        Detecting whether institutional descriptions contain mutually contradictory rules. For example, one contract grants authority to person A while another grants the same authority to person B.   "Two chores assigned to the same time slot" "Privacy constraints contradict data publication requirements"
-  Detection
-
-  Model Checking        A method that exhaustively examines all possible system states to verify that undesirable states are never reached.                                                                              Checking all patterns to confirm "no possibility of reaching a state where robots collide during regime transition."
-
-  Code Generation       Automatically generating working program code (Python, TypeScript, etc.) from CADL institutional descriptions. Automatically creating "implementation" from the institutional "blueprint."   From delivery SLA contract descriptions, automatically generate dispatch algorithm skeleton code and SLA violation monitoring code.
-
-  Reactive Synthesis    A method for automatically synthesizing control programs that satisfy specifications (requirements for "how to behave").                                                                       From AI safety contract specifications, automatically synthesize a controller that "always prevents harmful actions and escalates to humans when uncertain."
-
-  Runtime Monitoring    Real-time monitoring of whether contract conditions are being maintained while institutions are actually in operation. When violations are detected, warnings or countermeasures are executed.   During delivery, continuously check "delivery_time &lt;= promised_time x 1.2" and execute reassignment if likely to exceed.
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| **Term** | **Description** | **Example** |
+| --- | --- | --- |
+| Formal Verification | Using computers to mathematically check whether stated properties (such as freedom from contradiction) hold for institutional descriptions. Can automatically discover contradictions that human reviews tend to miss. | "Whether conditions of two contracts are contradictory" "Whether a protocol deadlocks" automatically verified using SMT solvers. |
+| Contradiction<br />Detection | Detecting whether institutional descriptions contain mutually contradictory rules. For example, one contract grants authority to person A while another grants the same authority to person B. | "Two chores assigned to the same time slot" "Privacy constraints contradict data publication requirements" |
+| Model Checking | A method that exhaustively examines all possible system states to verify that undesirable states are never reached. | Checking all patterns to confirm "no possibility of reaching a state where robots collide during regime transition." |
+| Code Generation | Automatically generating working program code (Python, TypeScript, etc.) from CADL institutional descriptions. Automatically creating "implementation" from the institutional "blueprint." | From delivery SLA contract descriptions, automatically generate dispatch algorithm skeleton code and SLA violation monitoring code. |
+| Reactive Synthesis | A method for automatically synthesizing control programs that satisfy specifications (requirements for "how to behave"). | From AI safety contract specifications, automatically synthesize a controller that "always prevents harmful actions and escalates to humans when uncertain." |
+| Runtime Monitoring | Real-time monitoring of whether contract conditions are being maintained while institutions are actually in operation. When violations are detected, warnings or countermeasures are executed. | During delivery, continuously check "delivery_time &lt;= promised_time x 1.2" and execute reassignment if likely to exceed. |
 
 ### 1.3.6 SoS Classification and Related Standards
 
 ISO/IEC/IEEE 21841:2019 classifies SoS into four types based on
-differences in governance structures. CADL can describe all of these
+differences in governance structures. CADL covers all four of these
 types.
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Term**               **Description**                                                                                                                                                                                                                    **Example**
-  ---------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------
-  D-SoS\                 An SoS where a central authority directs the whole. Each constituent system follows the authority's instructions. The most centralized management structure.                                                                      Military chain of command. Headquarters controls the actions of all units.
-  (Directed SoS)
-
-  A-SoS\                 A central authority exists, but each constituent system has some degree of autonomy. Operated through consultation between the authority and constituent systems.                                                                  Robot delivery system. The dispatcher manages overall, but each robot autonomously handles local obstacle avoidance.
-  (Acknowledged SoS)
-
-  C-SoS\                 No central authority; constituent systems of equal standing voluntarily cooperate. Decision-making through consensus building.                                                                                                     Family rule-making. Decided through family meetings. Condominium management association operations.
-  (Collaborative SoS)
-
-  V-SoS\                 An SoS with no clear management structure where constituent systems cooperate incidentally. Overall objectives may not be explicitly stated.                                                                                       The Internet as a whole. Individual services operate independently but collectively form a massive ecosystem.
-  (Virtual SoS)
-
-  Five-Layer Framework   A framework that structures SoS design into five layers (Policy / Governance / Control / Execution / Environment). CADL primarily describes the Governance and Control layers.                                                     Policy: "Safety first" -> Governance: "Collision avoidance rules" -> Control: "Route planning" -> Execution: "Motor control"
-
-  IEC 62853              International standard for Open Systems Dependability. Defines processes for consensus building, accountability, and change response to continuously ensure system dependability. CADL considers integration with this standard.   Describing consensus-building processes during institutional changes and accountability mechanisms during fault response in CADL.
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| **Term** | **Description** | **Example** |
+| --- | --- | --- |
+| D-SoS<br />(Directed SoS) | An SoS where a central authority directs the whole. Each constituent system follows the authority's instructions. The most centralized management structure. | Military chain of command. Headquarters controls the actions of all units. |
+| A-SoS<br />(Acknowledged SoS) | A central authority exists, but each constituent system has some degree of autonomy. Operated through consultation between the authority and constituent systems. | Robot delivery system. The dispatcher manages overall, but each robot autonomously handles local obstacle avoidance. |
+| C-SoS<br />(Collaborative SoS) | No central authority; constituent systems of equal standing voluntarily cooperate. Decision-making through consensus building. | Family rule-making. Decided through family meetings. Condominium management association operations. |
+| V-SoS<br />(Virtual SoS) | An SoS with no clear management structure where constituent systems cooperate incidentally. Overall objectives may not be explicitly stated. | The Internet as a whole. Individual services operate independently but collectively form a massive ecosystem. |
+| Five-Layer Framework | A framework that structures SoS design into five layers (Policy / Governance / Control / Execution / Environment). CADL primarily describes the Governance and Control layers. | Policy: "Safety first" -> Governance: "Collision avoidance rules" -> Control: "Route planning" -> Execution: "Motor control" |
+| IEC 62853 | International standard for Open Systems Dependability. Defines processes for consensus building, accountability, and change response to continuously ensure system dependability. CADL considers integration with this standard. | Describing consensus-building processes during institutional changes and accountability mechanisms during fault response in CADL. |
