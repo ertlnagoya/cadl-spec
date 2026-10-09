@@ -15,9 +15,10 @@ introduced in depth.
   specifying the Institution / Protocol / Algorithm layers of a System
   of Systems in a single, verifiable document. See the
   [Specification introduction](./intro).
-- **Institution layer** — The top layer of a CADL file. Declares
-  authority structure, obligations, permissions, prohibitions, and
-  sanctions. Carries the governance parameters α, β, λ.
+- **Institution layer** — The layer that declares actors and contracts.
+  Each contract states its parties, `assume` / `guarantee`, `authority`,
+  `information`, `responsibilities`, `incentives`, and `violation`, and
+  carries the governance parameters α, β, λ.
 - **Protocol layer** — Coordination procedures: message passing, compute
   steps, conditionals, parallel blocks, barriers, and loops between
   actors.
@@ -28,17 +29,38 @@ introduced in depth.
   SoS. Identified by `actor_id`, possibly parameterised by a range.
 - **Contract** — Assume-guarantee constraint attached to a set of
   parties and an authority. The formal unit of institutional design.
-- **Transition** — Regime shift defined by a source/target pair with a
-  trigger, guard, and effect. Used to model operational mode changes.
+- **Transition** — A switch between regimes, declared with `from`, `to`,
+  `condition`, and optionally `protocol` and `safety_invariant`.
 
 ## Governance parameters
 
-- **α (alpha)** — Authority / centralisation weight. Higher α ⇒ stronger
-  central enforcement of contracts.
-- **β (beta)** — Incentive weight. Higher β ⇒ rewards / sanctions have
-  more influence on behaviour than top-down authority.
-- **λ (lambda)** — Information-sharing weight. Higher λ ⇒ actors share
-  more state with each other and with the governance layer.
+The letters α, β, λ are used in two distinct parameterizations. They
+share symbols and the range [0, 1]. β points the same way in both
+(higher = more centralized), but α and λ have different meanings.
+
+**Core language (per contract; [Chapter 5](./05-language-spec.md))**
+
+- **α (alpha)** — Information sharing degree. 0 = no sharing (each actor
+  has only local information); 1 = full sharing. Written in a contract's
+  `information` block.
+- **β (beta)** — Decision centralization degree. 0 = distributed (each
+  actor decides autonomously); 1 = centralized (a single actor
+  decides). Written in a contract's `authority` block.
+- **λ (lambda)** — Incentive strength. 0 = directive-based; 1 = market
+  mechanism. Written in a contract's `incentives` block.
+
+**CADL Explorer simulation configuration (top-level `governance:` block;
+[Appendix C](./appendix-c-motivation.md))**
+
+- **α (alpha)** — Autonomy level of the agents. Higher α ⇒ more local
+  judgment.
+- **β (beta)** — Centralization level. Higher β ⇒ the central authority
+  is more dominant.
+- **λ (lambda)** — Exploration probability. λ = 0 means deterministic
+  routing.
+
+**Motivation extension ([Appendix C](./appendix-c-motivation.md))**
+
 - **ρ (rho)** — Motivation sensitivity. Governs how strongly decisions
   respond to per-agent motivation values. ρ = 0 is motivation-blind;
   ρ = 1 fully couples budget / wait decisions to motivation.
@@ -46,23 +68,56 @@ introduced in depth.
 - **Budget base** — Baseline resource quota assigned to an actor before
   motivation adjustments.
 - **Motivation profile** — Distribution of motivation across actors:
-  `uniform`, `linear`, or `polarized`.
+  `uniform`, `linear`, `polarized`, or `custom` (an explicit list of
+  values).
 
 ## System of Systems (SoS)
 
 - **SoS** — System of Systems. A collection of independently managed
   systems that cooperate toward a shared purpose while retaining
   operational autonomy.
-- **Directed SoS (A-SoS variant)** — A central authority dictates
+- **Directed SoS (D-SoS)** — A central authority dictates
   coordination among constituent systems.
 - **Acknowledged SoS (A-SoS)** — Constituent systems retain autonomy but
   recognise a shared governance arrangement.
 - **Collaborative SoS (C-SoS)** — Cooperation emerges through mutual
   agreement without a dominant authority.
-- **Virtual SoS** — No formal coordination mechanism; cooperation is
-  implicit and opportunistic.
-- **Regime** — A named operating condition (e.g. normal / degraded /
-  emergency) that governs which contracts and protocols are active.
+- **Virtual SoS (V-SoS)** — No formal coordination mechanism;
+  cooperation is implicit and opportunistic.
+
+## Institutional dynamics
+
+See [Chapter 1, §1.3.4](./01-introduction.md).
+
+- **Regime** — The complete set of institutional settings effective at a
+  given time. As environmental conditions change, the optimal regime
+  also changes.
+- **Regime map** — A map of which regime is optimal under which
+  environmental conditions: the environmental parameter space divided
+  into regions, each assigned a regime.
+- **Regime transition** — Switching from one regime to another in
+  response to a change in environmental conditions.
+- **Safety invariant** — A condition that must never be violated, also
+  during a regime transition.
+
+## SoS-DSL extension
+
+Terms of the SoS Contract DSL extension; see
+[Appendix E](./appendix-e-sos-dsl.md).
+
+- **Lifecycle** — The `lifecycle:` block of a contract: its `states`,
+  the `initial` and `terminal` states, and the `transitions` between
+  them.
+- **Contract instance** — One execution of a contract, created when its
+  initial trigger fires. It advances through the lifecycle states.
+- **Monitor** — An entry of a contract's `monitors:` block: what to
+  `observe`, the `sampling` (event or periodic), and a `rule` predicate.
+- **Severity** — Grade of a violation: `Minor`, `Major`, or `Critical`.
+- **`deadline` / `on_violation`** — A time bound on a lifecycle
+  transition. When it expires, the instance moves to the state named by
+  `on_violation.transition`, with the given severity.
+- **`on_match`** — What a monitor does when its rule matches: report a
+  violation, move the instance to a target state, or both.
 
 ## Verification
 
@@ -74,7 +129,8 @@ introduced in depth.
   constraint: no participant is indefinitely starved.
 - **Invariant** — A predicate that must hold in every reachable state.
 - **Verification methods** — `smt` (SMT solving, e.g. Z3),
-  `model_check`, `simulation`, `proof`.
+  `model_check`, `simulation`, `proof`. The reference implementation
+  implements `smt` only.
 - **Deadlock** — A global state where no protocol step is enabled.
 - **Regime transition safety** — No invariant is violated during a
   transition between regimes.
@@ -82,16 +138,18 @@ introduced in depth.
 ## Pipeline and toolchain
 
 - **IR (Intermediate Representation)** — The three-layer data structure
-  the toolchain builds from a CADL source file. Consumed by simulator
-  generators and verifiers.
-- **Codegen target** — An output format produced from the IR:
-  `unity` (simulation config), `solidity` (smart contracts),
-  `ros2` (runtime nodes), `python`, or a user-defined target.
+  the toolchain builds from a CADL source file. Consumed by the
+  simulator config generators.
+- **Codegen target** — An output format named in the catalog of
+  [Appendix D](./appendix-d-codegen.md): `unity` (simulation config),
+  `ros2` (runtime nodes), `python`, `solidity` (smart contracts),
+  `opa` (Rego policies), or a user-defined target.
 - **Simulator config** — Environment + actor + governance settings
   passed to the downstream simulator (e.g. Unity).
 - **Pipeline** — `CADL → IR → Simulator config → Experiment → Evaluation`.
 - **CADL Explorer** — Interactive web app that walks the pipeline
-  end-to-end. See [cadl-explorer.streamlit.app](https://cadl-explorer.streamlit.app/).
+  end-to-end. See [cadl-explorer.streamlit.app](https://cadl-explorer.streamlit.app/)
+  and the [source repository](https://github.com/ertlnagoya/cadl-explorer).
 - **Run history** — Session-local record of experiment runs in CADL
   Explorer, exportable as CSV / JSON.
 - **Config hash** — SHA-256 fingerprint of the full CADL config; equal
@@ -107,8 +165,10 @@ introduced in depth.
 
 ## Related standards and acronyms
 
-- **IEC 62853** — Open Systems Dependability standard; CADL's regime
-  model draws on its terminology.
+- **IEC 62853** — Open Systems Dependability standard. CADL's framing of
+  the system life cycle, consensus building, and accountability draws on
+  open systems dependability; CADL does not claim conformance to the
+  standard.
 - **ISO/IEC/IEEE 21841** — Taxonomy of Systems of Systems
   (Directed / Acknowledged / Collaborative / Virtual).
 - **EBNF** — Extended Backus–Naur Form. Used in Appendix A to define
@@ -123,3 +183,6 @@ introduced in depth.
 - [Specification introduction](./intro)
 - [Language specification (Chapter 5)](./05-language-spec.md)
 - [Appendix A — Syntax (EBNF)](./appendix-a-syntax)
+- [Appendix C — Motivation Extension](./appendix-c-motivation.md)
+- [Appendix D — Codegen Target Catalog](./appendix-d-codegen.md)
+- [Appendix E — SoS Contract DSL Extension](./appendix-e-sos-dsl.md)

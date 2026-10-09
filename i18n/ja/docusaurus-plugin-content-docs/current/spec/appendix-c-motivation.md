@@ -5,7 +5,7 @@ title: "Appendix C — 動機拡張"
 
 # Appendix C — 動機拡張（Motivation Extension, v0.1-ext）
 
-本付録は、cadl-explorer デモおよび A-SoS 動機感応型ガバナンス実験で
+本付録は、CADL Explorer デモおよび A-SoS 動機感応型ガバナンス実験で
 使用される CADL の**動機拡張**を規定する。
 コア言語（第 5 章・Appendix A）は本ブロックを必須としない。
 拡張を未実装のコア準拠プロセッサは `motivation:` ブロックを
@@ -25,43 +25,47 @@ title: "Appendix C — 動機拡張"
    予算／待機時間決定に結合するか。パラメータ ρ（感度）と
    κ（スケール）により制御。
 
-これらのパラメータはコアガバナンス三項組（α, β, λ）を**補完**する
+これらのパラメータは契約のガバナンスパラメータ（α, β, λ）を**補完**する
 ものであり、置換ではない。
+
+本ブロックは、[CADL Explorer](https://github.com/ertlnagoya/cadl-explorer)
+のシミュレータ（`cadl_sim`）の設定スキーマとして生まれた。CADL ファイルでは、
+`sos:` マッピングの省略可能なキー `motivation:`、すなわち
+[Appendix A.2](./appendix-a-syntax.md#a2-top-level-structure) の
+`motivation_block` である。
 
 ## C.2 EBNF
 
+文法は Appendix A の記法に従う。`number` と `int_literal` は Appendix A で
+定義する。
+
 ```ebnf
-motivation_section  = "motivation:" , INDENT ,
-                      [ agent_motivation ] ,
-                      [ governance_motivation ] ,
-                      DEDENT ;
+motivation_block      = [ "agent:"      , agent_motivation ] ,
+                        [ "governance:" , governance_motivation ] ;
 
-agent_motivation    = "agent:" , INDENT ,
-                        "profile:" , motivation_profile , NEWLINE ,
-                        [ "values:" , float_list , NEWLINE ] ,
-                      DEDENT ;
+agent_motivation      = [ "profile:" , motivation_profile ] ,
+                        [ "values:"  , { "-" , number } ] ;
+motivation_profile    = "uniform" | "linear" | "polarized" | "custom" ;
 
-motivation_profile  = "uniform" | "linear" | "polarized" | "custom" ;
-
-governance_motivation = "governance:" , INDENT ,
-                          "model:" , motivation_model , NEWLINE ,
-                          [ "rho:"         , float_literal , NEWLINE ] ,
-                          [ "kappa:"       , float_literal , NEWLINE ] ,
-                          [ "budget_base:" , int_literal   , NEWLINE ] ,
-                          [ "wait_scale:"  , float_literal , NEWLINE ] ,
-                        DEDENT ;
-
-motivation_model    = "none" | "commitment_budget" | "hybrid" ;
+governance_motivation = [ "model:"       , motivation_model ] ,
+                        [ "rho:"         , number ] ,
+                        [ "kappa:"       , number ] ,
+                        [ "budget_base:" , int_literal ] ,
+                        [ "wait_scale:"  , number ] ;
+motivation_model      = "none" | "commitment_budget" | "hybrid" ;
 ```
+
+既定値: `profile: uniform`、`model: none`、`rho: 0.0`、`kappa: 5.0`、
+`budget_base: 3`、`wait_scale: 3.0`。
 
 ## C.3 パラメータ意味論
 
 | 記号 | 名称 | 範囲 | 意味 |
 |------|------|------|------|
 | m_i | アクター i の動機 | [0, 1] | 0 = 非意欲、1 = 完全意欲 |
-| ρ (rho) | 動機感度 | [0, 1] | 0 = 動機無視、1 = 意思決定を m に完全連動 |
-| κ (kappa) | 予算スケール | ≥ 0 | 動機差分から予算調整量への係数 |
-| budget_base | 予算基準値 | ℤ ≥ 0 | 動機調整前のアクター別リソース量 |
+| ρ (rho) | 動機感度 | [0, 1] | 0 = 動機無視、1 = 予算超過アクターを最大の強さで抑制 |
+| κ (kappa) | 予算スケール | ≥ 0 | 動機から予算拡張量への係数 |
+| budget_base | 予算基準値 | ℤ ≥ 0 | 動機調整前のアクター別コミットメント予算 |
 | wait_scale | 超過→再試行係数 | ≥ 0 | 予算超過量を再試行待機時間に変換する係数 |
 
 ### プロファイル意味論
@@ -70,7 +74,7 @@ motivation_model    = "none" | "commitment_budget" | "hybrid" ;
 
 - `uniform` — 全アクターが `m = 0.5`。
 - `linear` — `[0.2, 1.0]` 上に等間隔
-  （`m_i = 0.2 + 0.8 · i/(N−1)`、`N = 1` なら `m = 0.5`）。
+  （`i = 0 … N−1` に対し `m_i = 0.2 + 0.8 · i/(N−1)`、`N = 1` なら `m = 0.5`）。
 - `polarized` — 前半 `⌊N/2⌋` 個が `m = 0.2`、残りが `m = 0.9`。
 - `custom` — 長さ `N` の明示的 `values` リストが必須。
 
@@ -79,31 +83,41 @@ motivation_model    = "none" | "commitment_budget" | "hybrid" ;
 | `model` | 効果 |
 |---------|------|
 | `none` | ベースライン — 動機を無視（ρ = 0 と等価） |
-| `commitment_budget` | 各アクターに `budget_base` トークン、動機に応じ `κ · (m − 0.5)` で拡張 |
-| `hybrid` | 予算制約ディスパッチ**に加え**、嗜好重み付きタスク調停 |
+| `commitment_budget` | アクター i にコミットメント予算 `B_i = budget_base + κ · m_i` を与える。予算を超過したアクターは、`⌊ρ · overshoot · wait_scale⌋` の追加待機により抑制される |
+| `hybrid` | 上記の予算制約**に加え**、嗜好を考慮した経路優先度。ρ が両方を制御する |
 
 実効感度は `ρ · 𝟙[model ≠ "none"]`。
 `model = "none"` のとき、ランタイムは `rho` を無視しなければならない。
 
 ## C.5 記述例
 
-```yaml
-sos_type: Directed
-governance:
-  alpha: 0.3
-  beta: 0.7
-  lambda: 0.0
+CADL ファイルでは、本ブロックを `sos:` の下に書く。
 
-motivation:
-  agent:
-    profile: linear
-  governance:
-    model: hybrid
-    rho: 0.6
-    kappa: 5.0
-    budget_base: 3
-    wait_scale: 3.0
+```yaml
+sos:
+  name: "MotivationSensitiveDelivery"
+  type: Directed
+  # actors, contracts, ... は第 5 章のとおり
+
+  motivation:
+    agent:
+      profile: linear
+    governance:
+      model: hybrid
+      rho: 0.6
+      kappa: 5.0
+      budget_base: 3
+      wait_scale: 3.0
 ```
+
+CADL Explorer のシミュレータは、同じ `motivation:` ブロックを、独自の
+フラットな設定ファイルから読み込む。この設定ファイルでは、`sos_type:` や
+`environment:` などのシミュレータ設定と並べて書く。同ファイルには、キー
+`alpha`、`beta`、`lambda` を持つトップレベルの `governance:` マッピングもある。
+これらはシミュレータのパラメータ（自律度、集中度、探索確率）であり、5.4.2 節の
+契約ごとの α（情報共有度）、β（意思決定集中度）、λ（インセンティブ強度）
+**ではない**。シミュレータの設定ファイルは、Appendix A の意味での CADL
+ファイルではない。
 
 ## C.6 準拠性
 
@@ -123,9 +137,12 @@ CADL プロセッサは、`motivation:` ブロックを持たないファイル�
 
 ## C.7 相互参照
 
-- **cadl-explorer**（デモ）: v0.1-ext を
-  `cadl_sim/schema/motivation_schema.py` に実装。
-- **cadl（実装、`cadl_repo`）**: `motivation:` ブロックをオプトイン
-  `MotivationBlock` として `SoSDefinition` に付随させ、
-  検証・codegen ではコア意味論チェックなしに引き渡す。
+- **[CADL Explorer](https://github.com/ertlnagoya/cadl-explorer)**（デモ）:
+  v0.1-ext を、シミュレータの設定スキーマ
+  （`cadl_sim/schema/motivation_schema.py`）に実装。
+- **[`cadl`](https://github.com/ertlnagoya/cadl)**（リファレンス実装）:
+  AST の `SoSDefinition` に省略可能な `MotivationBlock` を定義している。
+  v0.3 のパーサーは CADL ファイルの `motivation:` キーを読み込まない。
+  このキーは無視され、検証とコード生成でも使われない。したがって、
+  リファレンス実装はコア準拠であるが、動機準拠ではない。
 - [用語集](./glossary) — ρ, κ, プロファイル用語の定義。

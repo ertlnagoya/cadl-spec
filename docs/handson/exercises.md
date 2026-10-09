@@ -13,7 +13,7 @@ title: "Course A — Exercises (extra problems)"
 This booklet collects the practice exercises that go with the SoS-DSL hands-on. Two parts:
 
 - **Part 1 — Robot Delivery course (5-session series)**. A structured course that takes the same robot delivery domain through CADL modelling → DSL design → visualisation → simulation → improvement, one session per week. Designed for a 3 to 5 week class. **The bulk of this booklet.**
-- **Part 2 — Modelling a new SoS end-to-end**. After Part 1, you pick a *different* domain (food delivery, emergency response, …) and walk the full loop yourself. Closer to a research mini-project than to weekly homework.
+- **Part 2 — Modelling a new SoS end-to-end (Course C)**. After Part 1, you pick a *different* domain (food delivery, emergency response, …) and walk the full loop yourself. It is deliberately open-ended and given as an outline: closer to a self-directed mini-project than to weekly homework.
 
 ---
 
@@ -30,6 +30,10 @@ This booklet collects the practice exercises that go with the SoS-DSL hands-on. 
 | 5 | **Improvement** | Using observations to refine the spec | `my_delivery_v3.cadl` + before/after report |
 
 Each session is **~90 minutes in class** plus **~3 hours of homework**. The final deliverable across all five sessions is a **3-page report** (initial model / simulation comparison / reflection).
+
+:::info Repository availability
+Sessions 1–3 need only the public repositories (`cadl`, `cadl-explorer`). Sessions 4–5 run the Python reference runtime that lives in `raspimouse-swarm-simulator`, which is **not publicly available at present** (see Step 0 of the [main textbook](main-textbook.md)).
+:::
 
 ### Compact 3-session version
 
@@ -76,7 +80,7 @@ The instructor can use this for grading; the student can self-check.
 
 ### Prerequisites
 
-- Steps 0 and 1 of the main hands-on textbook (cloned repos, browsed Appendix A).
+- Steps 0 and 1 of the main hands-on textbook (repositories cloned; the chapters listed in Step 1 read — Introduction, Language Specification, Appendix E, Examples).
 - 30 min of pre-reading: cadl-spec Chapter 5 — *Language Specification*.
 
 ### Concept introduction (~30 min)
@@ -104,7 +108,7 @@ For Session 1 you will only touch **actors** and **contracts**. `protocols` and 
 
 **Procedure**:
 
-1. Create `my_delivery_v1.cadl` next to `examples/sos_dsl_robot_delivery.cadl`.
+1. Create `my_delivery_v1.cadl` in the root of `cadl_repo` (the bundled example to compare with is `examples/sos_dsl_robot_delivery.cadl`), and run the commands below from that directory.
 2. Declare three actors: `DISPATCHER`, `ROBOT[1..N]`, `CUSTOMER[1..M]`. Choose sensible `autonomy` levels for each.
 3. Declare one contract `DELIVERY_SLA` with `parties: [DISPATCHER, "ROBOT[*]", "CUSTOMER[*]"]`, `assume: ["ROBOT[i].battery > 20"]`, `guarantee: ["delivery_time <= 300s"]`.
 4. Run `cadl check my_delivery_v1.cadl` and confirm it prints `Type check passed: my_delivery_v1.cadl`.
@@ -122,7 +126,7 @@ For Session 1 you will only touch **actors** and **contracts**. `protocols` and 
 3. Decide whether `assume` should include `ROBOT[i].battery > 0` or something stronger.
 4. Re-run `cadl check`.
 
-**Reflection**: When you have *two* contracts on the same actor, which `assume` clauses apply? (Hint: both must hold simultaneously — this is exactly the *interdependency* concern that Dahmann (2014) calls out as SoS pain point #6.)
+**Reflection**: When you have *two* contracts on the same actor, which `assume` clauses apply? (Hint: both must hold simultaneously — this is exactly the *interdependency* concern that Dahmann (2014) calls out as SoS pain point #5.)
 
 #### Exercise 1.3 (★★) — Add a protocol
 
@@ -168,7 +172,7 @@ For Session 1 you will only touch **actors** and **contracts**. `protocols` and 
 ### Prerequisites
 
 - `my_delivery_v1.cadl` from Session 1.
-- 30 min of pre-reading: cadl-spec Appendix E.
+- 30 min of pre-reading: cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md).
 
 ### Concept introduction (~30 min)
 
@@ -190,7 +194,7 @@ stateDiagram-v2
 Two new keys make this explicit:
 
 - `lifecycle:` — defines states, initial / terminal markers, and transitions with `deadline` + `on_violation`.
-- `monitors:` — declarative observers that run periodically or on events, fire violations or transitions when their `rule` matches.
+- `monitors:` — declarative observers that are evaluated periodically or on events. When a monitor's `rule` matches, it records a violation (`on_match.violation`), moves the contract instance to the named target state (`on_match.transition`, e.g. `Violated`), or both.
 
 ### Exercises (~50 min in class + homework)
 
@@ -202,13 +206,13 @@ Two new keys make this explicit:
 
 1. Copy `v1` → `v2`.
 2. Add `lifecycle.states`, `lifecycle.initial`, `lifecycle.terminal`, and 4 transitions (`assign`, `accept`, `start_delivery`, `complete`).
-3. On `accept`, set `deadline: 5s` and `on_violation.transition: Violated`.
+3. On `accept`, set `deadline: 5s` and `on_violation.transition: Violated` (the value is the target state). Also declare `extensions: [sos-dsl: 0.1]` under `sos:`, as in Step 3 of the main textbook.
 4. Run `cadl check` and `cadl sim-ir my_delivery_v2.cadl --format json | head -60`.
 5. Confirm in the IR that `"lifecycle"` is no longer `null`.
 
 #### Exercise 2.2 (★★) — Add an over-speed monitor
 
-**Goal**: Detect a robot that drives faster than 1.5 m/s while delivering and lift the contract to `Violated` with severity `Critical`.
+**Goal**: Detect a robot that drives faster than 1.5 m/s while delivering and move the contract instance to `Violated` with severity `Critical`.
 
 **Procedure**: Add a monitor under `monitors:`:
 
@@ -222,7 +226,7 @@ Two new keys make this explicit:
     severity: Critical
 ```
 
-**Reflection**: You have just added a *new normative rule* without changing a single line of the robot's control code (Unity's `Pilot_CSoS.cs`). What does this say about the separation between the structural code and the normative spec? (See [Maier 1998] criterion (4): emergent behaviour can be *constrained* without redesigning the parts.)
+**Reflection**: You have just added a *new normative rule* without changing a single line of the robot's control code (Unity's `Pilot_CSoS.cs`). What does this say about the separation between the structural code and the normative spec? (Compare [Maier 1998] criterion (4), emergent behaviour: here a norm *constrains* it without redesigning the parts.)
 
 #### Exercise 2.3 (★★) — Add a Cancelled lifecycle state
 
@@ -283,7 +287,7 @@ Software engineers debug code. SoS engineers debug **diagrams** — because the 
 | Dashed box, red fill | terminal state `Violated` |
 | Dashed box, grey fill | other terminal states (e.g., `Terminated`, `Cancelled`) |
 | Solid edge with `Δ 5s` | transition with a `deadline` |
-| Red dashed edge | the `on_violation` lift |
+| Red dashed edge | the forced move to the `on_violation` target state |
 
 ### Exercises (~50 min in class + homework)
 
@@ -357,7 +361,7 @@ The Python runtime in `raspimouse-swarm-simulator/cadl/runtime/` consumes the IR
 | Robot | Scripted outcome | Why it matters |
 | --- | --- | --- |
 | robot-0-1 | `Completed` | sanity check that happy path works |
-| robot-1-1 | `Violated` via `deadline:accept` | demonstrates deadline enforcement |
+| robot-1-1 | `Violated` via `deadline:accept` | demonstrates detection of a missed deadline |
 | robot-2-1 | `Violated` via `monitor:battery_guard` | demonstrates periodic monitor |
 | robot-3-1 | `Violated` via `monitor:deadline_watch` | demonstrates declarative monitor |
 | robot-4-1 | stays `Proposed` | demonstrates "instance never advances" is also a valid trace |
@@ -498,20 +502,6 @@ This is a small but useful *typology of regressions* in normative SoS specs.
 
 ---
 
-## Mapping to the original 5 exercises (1.1–1.5)
-
-| Original | Now in |
-| --- | --- |
-| 1.1 Tighten accept deadline | Exercise 4.2 |
-| 1.2 Over-speed monitor | Exercise 2.2 |
-| 1.3 Cancelled lifecycle state | Exercise 2.3 |
-| 1.4 Reward execution | Exercise 5.3 |
-| 1.5 Violation Trace View | Exercise 3.3 |
-
-The 5 exercises are still all there — they are just placed inside the session that needs them.
-
----
-
 ## Final deliverable summary
 
 By the end of Session 5, every student should have:
@@ -539,6 +529,9 @@ generates the CADL contract from natural-language operating rules**
 **auto-corrected until the draft passes `cadl check`**, with the
 diagnostics fed back on every failure. The essence: the LLM proposes,
 the type checker gatekeeps — no LLM output takes effect until it passes.
+Keep in mind that passing `cadl check` is a syntactic and type-level
+check, not a safety guarantee: it says the draft is well-formed CADL,
+not that its deadlines and rules are the right ones.
 
 **Key points.**
 
@@ -555,29 +548,32 @@ the type checker gatekeeps — no LLM output takes effect until it passes.
 
 - Spelling out the CADL grammar constraints in the system prompt (only
   four SoS types, ASCII identifiers, `deadline: 5s` duration format,
-  ...) changes the first-pass rate dramatically — comparing with and
-  without the constraints makes a good experiment.
+  ...) can be expected to raise the first-pass rate; measuring it with
+  and without the constraints makes a good experiment.
 - `cadl check` can be invoked as a subprocess (inspect the exit code
   and output).
-- Reference implementations live in the `cadl-ai-governance`
-  repository: `e2e_raspimouse/step_a_design.py` (with a deterministic
-  mock) and `measure_step_a.py` (a measurement harness). Watch the loop
-  run with the mock first, then switch to a real LLM.
+- No reference implementation is publicly available at present (the
+  authors' own, `step_a_design.py` and `measure_step_a.py` in the
+  `cadl-ai-governance` repository, is not public), so writing the loop
+  and a small measurement script is part of the exercise. Start with a
+  deterministic mock in place of the LLM (a function that returns a
+  fixed sequence of drafts) to watch the loop run, then switch to a
+  real LLM.
 
 ---
 
-# Part 2 — Modelling a New SoS End-to-End
+# Part 2 — Modelling a New SoS End-to-End (Course C)
 
-(Outline only — content to be expanded once Part 1 is in production.)
+Part 2 is deliberately open-ended. It is given as an outline rather than as step-by-step exercises: you choose the domain, write the specification from a blank page, and decide how to exercise it. Treat it as a small self-directed project.
 
-After Part 1, advanced students pick a different domain — recommended: **food delivery (Collaborative SoS)** as the primary, **emergency response (Virtual SoS)** as the stretch — and walk the same 5-session structure on it. Key difference: Part 2 does not give you a starting `.cadl` file; you write one from a blank page.
+Pick a domain other than robot delivery — recommended: **food delivery (modelled as a Collaborative SoS)**; as a stretch, **disaster response in its first hours, before any incident-command structure has formed (Virtual SoS)** — and take it through the same five stages as Part 1. The key difference: Part 2 does not give you a starting `.cadl` file.
 
-The goal is to **experience the workflow on a fresh domain**:
+1. Identify actors and contracts (no template is provided).
+2. Decide which SoS type (Maier / ISO/IEC/IEEE 21841) the domain belongs to, and justify the `type:` you declare.
+3. Write `lifecycle:` and `monitors:` from scratch, pass `cadl check`, and inspect the result in cadl-explorer.
+4. Exercise the specification with a runtime of your choice. The suggested default is a lightweight Python discrete-event harness (for example SimPy) that replays the lifecycle from the IR JSON; Unity is not required. No harness is provided — writing it is part of the task.
+5. Sweep parameters and write a comparison report (the 3-page format of Exercise 5.4 works well).
 
-1. Identify actors and contracts (no provided template).
-2. Decide which SoS taxonomy class (Maier / ISO 21841) it belongs to.
-3. Write `lifecycle:` and `monitors:` from scratch.
-4. Implement a SimPy harness for the simulation step (no Unity).
-5. Sweep parameters and write a comparison report.
+Part 2 needs only the public repositories (`cadl`, `cadl-explorer`).
 
 For the academic positioning of this Part 2 exercise (Maier criteria, ISO standards, taxonomy), see [`academic-background.md`](academic-background.md).

@@ -10,7 +10,7 @@ title: "Course A — Robot Delivery (Main Textbook)"
 >
 > **Duration**: about 95 minutes — a 5-minute setup plus six 15-minute steps.
 >
-> **What you take home**: A working CADL specification you wrote yourself, a generated Unity C# implementation, and a running 5-robot delivery simulation that visibly enforces deadlines and battery limits.
+> **What you take home**: A working CADL specification you wrote yourself, a generated Unity C# implementation, and a running 5-robot delivery simulation in which missed deadlines and battery-rule violations are detected and the affected contract instances are moved to `Violated`.
 >
 > **First time here?** Read the [Architecture & Code Walkthrough](code-walkthrough.md) first — it shows which part of the system each Step touches.
 
@@ -23,12 +23,12 @@ A **System of Systems (SoS)** is a system whose parts are themselves independent
 Today you will learn three things:
 
 1. **Describe the structure** of an SoS in CADL — who exists, who talks to whom.
-2. **Describe the rules** of an SoS in the SoS-DSL extension (Appendix E) — what each contract instance must do, by when, with what consequences for violations.
-3. **Generate executable code** from a single specification, drop it into a Unity project, and watch the rules enforce themselves on a running simulation.
+2. **Describe the rules** of an SoS in the SoS-DSL extension ([Appendix E](../spec/appendix-e-sos-dsl.md)) — what each contract instance must do, by when, with what consequences for violations.
+3. **Generate executable code** from a single specification, drop it into a Unity project, and watch the runtime detect violations of those rules in a running simulation.
 
 ## What makes a system an SoS?
 
-A useful litmus test before declaring something "an SoS" is **Maier's five criteria** ([Maier, 1998]; codified in **ISO/IEC/IEEE 21841:2019**):
+A useful litmus test before declaring something "an SoS" is **Maier's five criteria** ([Maier, 1998]; the SoS taxonomy itself is standardised in **ISO/IEC/IEEE 21841:2019**):
 
 | # | Criterion | Plain-English check |
 | --- | --- | --- |
@@ -48,7 +48,7 @@ A useful litmus test before declaring something "an SoS" is **Maier's five crite
 - ✓ (4) the collective delivery throughput is something no single robot can produce alone.
 - △ (5) the robot count is fixed in this scenario, but the simulator itself supports changing it.
 
-Because (2) is weak, this hands-on sits closer to a *parallel control problem* than to a textbook SoS. A domain where managerial independence clearly holds (food delivery) is covered in **Part 2 of the exercises booklet**.
+Because (2) is weak, this hands-on sits closer to a *parallel control problem* than to a textbook SoS. The CADL files nevertheless declare it `type: Acknowledged`: each robot is modelled as a constituent system that keeps its own control software and autonomy (`autonomy: high`) while recognising the dispatcher as the SoS-level authority for task assignment. A domain where managerial independence clearly holds (food delivery) is the recommended choice for **Part 2 of the exercises booklet**.
 
 > 📚 For the full standards landscape (ISO/IEC/IEEE 21839 / 21840 / 21841 / 15288 / 42010), the four SoS taxonomy types, related research lines (ADLs, Normative MAS, Runtime Verification), and a curated reading list, see → [`academic-background.md`](academic-background.md).
 
@@ -56,7 +56,7 @@ Because (2) is weak, this hands-on sits closer to a *parallel control problem* t
 
 ## The big picture
 
-You only need to write the leftmost box (a CADL file). Everything to its right is generated automatically.
+You only need to write the leftmost box (a CADL file). Everything to its right is generated from it by the toolchain commands.
 
 ```
    ┌────────────────────────┐
@@ -126,46 +126,52 @@ brew install python@3.11 go nats-server node
 ## Step 0 — Setup (5 min)
 
 ### What you'll learn
-- The four repositories that make up the toolchain.
+- The repositories that make up the toolchain, which of them are public, and which branch of each one to use.
 
 ### Background
 
 The CADL toolchain is split across four repositories so each piece can evolve independently:
 
-| Repository | Role |
-| --- | --- |
-| `cadl-spec`            | the language reference (Docusaurus website) |
-| `cadl`                 | the compiler: parser, IR, code generators |
-| `cadl-explorer`        | a Streamlit visualiser |
-| `raspimouse-swarm-simulator` | Unity scene + Go arbitrator + Python reference runtime |
+| Repository | Role | Public? | Branch to use |
+| --- | --- | --- | --- |
+| `cadl-spec`            | the language reference and this hands-on site (Docusaurus) | yes | `main` (default) |
+| `cadl` (cloned as `cadl_repo`) | the compiler: parser, IR, code generators | yes | `master` (default) |
+| `cadl-explorer`        | a Streamlit visualiser | yes | `feature/sos-dsl` (the Lifecycle View page used in Step 4 is on this branch and not yet on `main`) |
+| `raspimouse-swarm-simulator` | Unity scene + Go arbitrator + Python reference runtime. The Unity project and the arbitrator are git submodules (`raspimouse-unity`, `raspimouse-swarm-arbitrator`) | no | `feature/sos-dsl` |
+
+:::info Repository availability
+`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
+:::
 
 ### Procedure
 
 ```bash
 mkdir -p ~/program && cd ~/program
 
-# 1) Clone all four — note the trailing --recursive on the last one
-#    (it pulls the unity submodule).
+# 1) Public repositories (enough for Steps 1–4).
+#    cadl-spec and cadl stay on their default branches (main / master).
 git clone https://github.com/ertlnagoya/cadl-spec
 git clone https://github.com/ertlnagoya/cadl                         cadl_repo
 git clone https://github.com/ertlnagoya/cadl-explorer
-git clone --recursive https://github.com/ertlnagoya/raspimouse-swarm-simulator
 
-# 2) Switch every repo to the SoS-DSL feature branch.
-for r in cadl-spec cadl_repo cadl-explorer raspimouse-swarm-simulator; do
-  (cd $r && git checkout feature/sos-dsl)
-done
+#    cadl-explorer only: the Lifecycle View page used in Step 4 is on the
+#    feature/sos-dsl branch (it is not on main yet).
+git -C cadl-explorer checkout feature/sos-dsl
 
-# 2') After switching the parent repo's branch, re-sync the submodules to the
-#     commits that branch pins. `clone --recursive` fetches the commits pinned
-#     by the *default* branch, so without this step unity and arbitrator stay
-#     on the old revisions.
-(cd raspimouse-swarm-simulator && git submodule update --init --recursive)
-
-# 3) Install the cadl CLI in editable mode so changes are picked up.
-cd cadl_repo
+# 2) Install the cadl CLI in editable mode so changes are picked up.
+cd ~/program/cadl_repo
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e .
+cd ~/program
+
+# 3) Non-public repository (Steps 5–6 only; requires access).
+#    Skip this block if you have not been granted access.
+git clone https://github.com/ertlnagoya/raspimouse-swarm-simulator
+git -C raspimouse-swarm-simulator checkout feature/sos-dsl
+#    Fetch the submodules *after* switching the branch, so that unity and
+#    arbitrator are at the commits pinned by feature/sos-dsl (a plain
+#    `clone --recursive` would fetch the commits pinned by the default branch).
+git -C raspimouse-swarm-simulator submodule update --init --recursive
 ```
 
 ### Expected output
@@ -190,29 +196,32 @@ positional arguments:
 
 ### Check 0
 
-If `cadl codegen --help` lists `unity-csharp` among the `--target` choices (`{python,solidity,opa,unity-csharp}`), your branch and install are correct.
+If `cadl codegen --help` lists `unity-csharp` among the `--target` choices (`{python,solidity,opa,unity-csharp}`), your install is correct.
 
 ### Recap
 
-After setup you can see that CADL is really four cooperating repositories — the spec site, the compiler, the visualizer, and the simulator. Everything that follows assumes **all of them are on the `feature/sos-dsl` branch with submodules fetched**; the large majority of trouble at this stage comes from a wrong branch or a missing submodule.
+After setup you can see that CADL is really four cooperating repositories — the spec site, the compiler, the visualizer, and the simulator. Everything that follows assumes **each repository is on the branch listed in the table above** (`cadl-spec`: `main`, `cadl_repo`: `master`, `cadl-explorer`: `feature/sos-dsl`, and, for Steps 5–6, `raspimouse-swarm-simulator`: `feature/sos-dsl` with its submodules fetched); most trouble at this stage comes from a wrong branch or a missing submodule.
 
 ### 🛠 Setup troubleshooting
 
-**Check your branch (the most common pitfall).** The SoS-DSL code (including Step 5's `multi_robot_demo`) lives **only on the `feature/sos-dsl` branch**. If you skip the branch switch in step 2, you stay on `main`, and `git pull` will say "Already up to date" even though the content is missing. Verify on every repository:
+**Check your branches (the most common pitfall).** The repositories do not all use the same branch. The Lifecycle View page (Step 4) is only on `feature/sos-dsl` of `cadl-explorer`, and the SoS-DSL runtime of the simulator (including Step 5's `multi_robot_demo`) is only on `feature/sos-dsl` of `raspimouse-swarm-simulator`. If you stay on `main` in those two repositories, `git pull` will say "Already up to date" even though the content is missing. Conversely, keep `cadl-spec` on `main` and `cadl_repo` on `master`: their `feature/sos-dsl` branches are older than the default branches (in `cadl-spec` that branch still carries an outdated textbook and Appendix E). Verify:
 
 ```bash
-for r in cadl-spec cadl_repo cadl-explorer raspimouse-swarm-simulator; do
-  echo "$r: $(git -C ~/program/$r branch --show-current)"   # all should be feature/sos-dsl
-done
+cd ~/program
+echo "cadl-spec:     $(git -C cadl-spec branch --show-current)"       # main
+echo "cadl_repo:     $(git -C cadl_repo branch --show-current)"       # master
+echo "cadl-explorer: $(git -C cadl-explorer branch --show-current)"   # feature/sos-dsl
+# only if you have access to the simulator:
+echo "simulator:     $(git -C raspimouse-swarm-simulator branch --show-current)"   # feature/sos-dsl
 ```
 
-For any repo not on `feature/sos-dsl`, switch with `git -C ~/program/<repo> checkout feature/sos-dsl`.
+For any repository on the wrong branch, switch with `git -C ~/program/<repo> checkout <branch>`.
 
-**If the arbitrator submodule 404s.** `git clone --recursive` may fail to fetch the pinned commit of `raspimouse-swarm-arbitrator` (404 on GitHub). This is usually **not an access-permission problem** but a pinned commit that is no longer reachable on the remote. The arbitrator is needed **only for Step 6 (the live Unity run)**, so Steps 1-5 can proceed. The parent repo is already cloned, so initialize the other submodule only, and contact your instructor when you reach Step 6:
+**If the arbitrator submodule cannot be fetched.** The arbitrator (`raspimouse-swarm-arbitrator`) is a submodule of the non-public simulator and is needed **only for Step 6 (the live Unity run)**. If `git submodule update` fails because the arbitrator commit pinned by the simulator cannot be fetched from the remote, initialise the other submodule only and carry on; before Step 6, ask whoever granted you access to the simulator repository which arbitrator commit is current.
 
 ```bash
 cd ~/program/raspimouse-swarm-simulator
-git submodule update --init unity     # skip arbitrator; proceed to Steps 1-5
+git submodule update --init unity     # skip arbitrator for now
 ```
 
 ---
@@ -230,7 +239,11 @@ A specification language has two jobs in an SoS context:
 1. **Descriptive** — *what exists*. The actors, the connections, the messages they exchange.
 2. **Normative** — *what should happen*. Which obligations, which deadlines, which violations.
 
-CADL covers (1) directly in its main grammar (Appendix A). The SoS-DSL extension (Appendix E) adds (2) on top of (1) — same syntax family, just two new body keys: `lifecycle:` and `monitors:`.
+CADL covers (1) directly in its main grammar (Appendix A). The SoS-DSL extension ([Appendix E](../spec/appendix-e-sos-dsl.md)) adds (2) on top of (1) — same syntax family, just two new body keys: `lifecycle:` and `monitors:`.
+
+:::info Repository availability
+`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
+:::
 
 ### Procedure
 
@@ -247,12 +260,12 @@ Read these chapters in order; the time guide is what we recommend so you stay wi
 | --- | --- | --- |
 | 1. Introduction | What is CADL for? | 2 min |
 | 5. Language Specification | How do I write actors / contracts / protocols? | 5 min |
-| **Appendix E (today's main)** | **How do I write a contract lifecycle and monitors?** | **6 min** |
+| **[Appendix E](../spec/appendix-e-sos-dsl.md) (today's main)** | **How do I write a contract lifecycle and monitors?** | **6 min** |
 | 7. Examples | What does a complete file look like? | 2 min |
 
 ### Expected output
 
-The Docusaurus site renders Appendix E.6 with a code block exactly like this. Read it carefully — Step 3 will ask you to write something very similar.
+Section E.6 of [Appendix E](../spec/appendix-e-sos-dsl.md) shows the robot-delivery example. The block below is an abridged version of it (one transition and one monitor only). Read it carefully — Step 3 will ask you to write something very similar.
 
 ```yaml
 contracts:
@@ -325,9 +338,13 @@ flowchart LR
   R1 -. governed by ........ DELIVERY_SLA[(DELIVERY_SLA<br/>contract)] .-.- D
 ```
 
+:::info Repository availability
+`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
+:::
+
 ### Procedure
 
-Open a new file `my_delivery.cadl` next to the example, and paste the skeleton below. Read the comments — they explain what each block does.
+Create a new file `my_delivery.cadl` in the root of `cadl_repo` (that is, `~/program/cadl_repo/my_delivery.cadl`; the bundled example it resembles is `examples/sos_dsl_robot_delivery.cadl`), and paste the skeleton below. The commands in Steps 2–4 are run from `~/program/cadl_repo`. Read the comments — they explain what each block does.
 
 ```yaml
 # my_delivery.cadl ─── My first SoS specification
@@ -340,7 +357,7 @@ sos:
 
   context:
     environment:
-      grid_size:    30
+      grid_size:    30                         # abstract parameter (not the Unity road graph)
       num_robots:    3
       time_step_ms: 100
 
@@ -450,7 +467,7 @@ These two `null` / `[]` are **the gap we will fill in Step 3** — they are why 
 
 ### Recap
 
-You now have a CADL file that describes the **structure** of your SoS. It compiles, it lowers to IR, and the IR confirms there is exactly one contract called `DELIVERY_SLA`. We are about to make that contract enforceable.
+You now have a CADL file that describes the **structure** of your SoS. It compiles, it lowers to IR, and the IR confirms there is exactly one contract called `DELIVERY_SLA`. Next we add the norms that let a runtime check that contract.
 
 ---
 
@@ -458,7 +475,7 @@ You now have a CADL file that describes the **structure** of your SoS. It compil
 
 ### What you'll learn
 - The seven **lifecycle states** a contract instance can occupy.
-- How to write a `deadline` + `on_violation` to enforce timing.
+- How to write a `deadline` + `on_violation` that puts a time bound on a transition and says where the instance goes when the bound is missed.
 - How to write a periodic `monitor` with a predicate over the world snapshot.
 
 ### Background
@@ -483,9 +500,24 @@ stateDiagram-v2
 
 The **same lifecycle** is reused for every delivery request — only the data (which robot, which customer) differs.
 
+:::info Repository availability
+`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
+:::
+
 ### Procedure
 
-Append the two highlighted blocks below to your `my_delivery.cadl`'s `DELIVERY_SLA` contract. Indentation matters (YAML).
+First declare, near the top of `my_delivery.cadl`, that the file uses the SoS-DSL extension. [Appendix E](../spec/appendix-e-sos-dsl.md) asks for this declaration (SHOULD), and the bundled example has it:
+
+```yaml
+sos:
+  name: "MyDelivery"
+  type: Acknowledged           # central authority + autonomous agents
+  version: "0.1.0"
+  extensions:                  # ← NEW: this file uses the SoS-DSL extension
+    - sos-dsl: 0.1
+```
+
+Then append the two highlighted blocks below to the `DELIVERY_SLA` contract. Indentation matters (YAML).
 
 ```yaml
   contracts:
@@ -590,7 +622,7 @@ monitors[0].id    : battery_guard
 
 ### Check 3
 
-1. The diff between Step 2 and Step 3 is **only the two new blocks**. No actor changed.
+1. The diff between Step 2 and Step 3 is **only the `extensions:` declaration and the two new blocks**. No actor changed.
 2. The IR's `"lifecycle": null` is now a populated object; `"monitors": []` is now a 1-element list.
 
 ### Common mistakes
@@ -613,6 +645,10 @@ The same file now describes both the structure (Step 2) and the rules (Step 3). 
 - How to read the Lifecycle View page of cadl-explorer.
 - How visual conventions (double circle, dashed border, red edge) map to the spec.
 
+:::info Repository availability
+`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
+:::
+
 ### Procedure
 
 ```bash
@@ -622,7 +658,7 @@ streamlit run app.py
 # Browser opens at http://localhost:8501
 ```
 
-In the sidebar, switch from the default page to **SoS_DSL_Lifecycle**.
+In the sidebar, switch from the default page to **SoS_DSL_Lifecycle**. (If the sidebar has no such page, `cadl-explorer` is still on `main`; switch it to `feature/sos-dsl` as in Step 0.)
 
 Two ways to load IR JSON:
 
@@ -679,14 +715,14 @@ Visual conventions:
 | Dashed box, red fill | terminal state `Violated` |
 | Dashed box, grey fill | terminal state `Terminated` |
 | Solid edge, label `Δ 5s` | transition with `deadline_ms = 5000` |
-| **Red dashed edge** with label `violation Major` | the `on_violation` lift |
+| **Red dashed edge** with label `violation Major` | the forced move to the `on_violation` target state |
 
 ### Check 4
 
 Take a screenshot of your lifecycle (or just look carefully) and confirm:
 
 - The **only** double-circle node is `Proposed`.
-- There is exactly one **red dashed edge** going from `Assigned` to `Violated`. That is the deadline lift.
+- There is exactly one **red dashed edge** going from `Assigned` to `Violated`. That is the forced move to `Violated` when the `accept` deadline expires.
 - The monitors table shows `battery_guard` with sampling `periodic(500ms)` and severity `Major`.
 
 ### Recap
@@ -699,7 +735,11 @@ The diagram is generated **directly from the IR JSON** with zero hand-coding. If
 
 ### What you'll learn
 - How a single CLI command turns your CADL into a Unity-ready C# tree.
-- Why we have **two** runtimes (Python + C#) with the **same semantics**.
+- Why there are **two** runtimes with the **same semantics**: a Python reference runtime that interprets the IR, and the generated C#.
+
+:::info Repository availability
+`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
+:::
 
 ### Procedure
 
@@ -712,6 +752,8 @@ cd ~/program/cadl_repo
     --unity ../raspimouse-swarm-simulator/unity
 ```
 
+> Without the simulator repository you can still run the pipeline up to code generation: pass `--unity ""` and the script stops after generating the C# tree under `output/sos_dsl_handson/`.
+>
 > Replace the input with `my_delivery.cadl` if you want to use your own specification — note that your file will need a `lifecycle.transitions[*].on:` matching the bridge's event names, so for the very first run we recommend the bundled example.
 
 ### Expected output
@@ -770,7 +812,7 @@ output/sos_dsl_handson/unity-csharp/
 
 ### Why two runtimes?
 
-The same IR drives both:
+The same IR drives both, in different ways. The Python reference runtime (`cadl/runtime/engine.py` in the simulator repository) is a hand-written **interpreter** that loads the IR JSON when it starts; the C# contract classes are **generated** from the IR by `cadl codegen`:
 
 ```
                              ┌──────────────────────┐
@@ -808,7 +850,7 @@ The Unity run in Step 6 assigns deliveries at different times and gives the robo
 
 > #### 🛠 Troubleshooting: `multi_robot_demo` not found
 >
-> First, **check your branch**. `multi_robot_demo` exists **only on the `feature/sos-dsl` branch** (not on `main`). If you are still on `main`, `git pull` will say "Already up to date" yet the module is missing.
+> First, **check the branch of `raspimouse-swarm-simulator`**. `multi_robot_demo` exists **only on its `feature/sos-dsl` branch** (not on its `main`). If you are still on `main`, `git pull` will say "Already up to date" yet the module is missing.
 >
 > ```bash
 > git -C ~/program/raspimouse-swarm-simulator branch --show-current   # → should be feature/sos-dsl
@@ -845,7 +887,7 @@ These nine tests catch the structural bugs that would prevent Unity from compili
 
 You now have:
 
-- A 245-line Sim-IR JSON.
+- A 245-line Sim-IR JSON (for the bundled example).
 - A 770-line Unity-ready C# tree, dropped into the Unity project.
 - A Python proof-of-concept showing what the C# trace **must** look like once it runs.
 
@@ -905,13 +947,13 @@ If that third line reads `taskArbitration.enabled=true`, the arbitrator has load
 2. First open takes 1–5 minutes (Library reimport).
 3. In the Project pane, double-click `Assets/Scenes/C-SoS.unity`.
 
-You should see a road network (graph) made of **11 nodes and 17 edges**, with **five** robots — Red / Blue / Green / Yellow / Purple — driving on it. The node count, edge count, and robot count are all loaded from `Assets/streamingAssets/cadl_config.json`, so the Console also prints `[GraphDefinition] Loaded from CADL config: 11 nodes, 17 edges`.
+You should see a road network (graph) made of **11 nodes and 17 edges**, with **five** robots — Red / Blue / Green / Yellow / Purple — driving on it. The node count, edge count, and robot count are all loaded from `Assets/streamingAssets/cadl_config.json`, so the Console also prints `[GraphDefinition] Loaded from CADL config: 11 nodes, 17 edges`. (The `grid_size: 30` under `context.environment` in the CADL file is an abstract environment parameter that is carried into the IR; the Unity scene does not read it — its road graph is the one defined in `cadl_config.json`.)
 
 > #### 🛠 Mind the Unity version (do not use the latest / Unity 6)
 >
 > Open this project with **2022.3.27f1 (LTS)**. **Opening it with the latest Editor (Unity 6 / 6000.x) auto-adds/updates packages** such as `com.unity.modules.accessibility`, `com.unity.multiplayer.center`, `com.unity.test-framework 1.6.0`, and `com.unity.ai.navigation 2.x`, causing errors (you would have to remove/downgrade them manually, and behavior is no longer guaranteed). If these appear in the Package Manager, your Editor is too new — reopen with **2022.3.27f1** via Unity Hub. (Note: once you save in Unity 6, the project version is bumped and cannot be cleanly reverted.)
 >
-> Note that the repository records the project version as `2021.3.26f1` (in `ProjectSettings/ProjectVersion.txt`). Opening it with 2022.3.27f1 therefore shows an **upgrade confirmation dialog** on first open, but since this is an update within the same 2022.3 LTS line it is **safe to accept**. This is also why Unity Hub flags the version in its project list.
+> Note that the repository records the project version as `2021.3.26f1` (in `ProjectSettings/ProjectVersion.txt`). Opening it with 2022.3.27f1 therefore shows an **upgrade confirmation dialog** on first open, This is an upgrade across LTS lines (2021.3 → 2022.3); for this hands-on project you can **accept it**. This is also why Unity Hub flags the version in its project list.
 
 ### 6.3 Add ContractRuntimeHost (one per scene)
 
@@ -964,14 +1006,16 @@ In the Console, lines like the following should appear continuously. You can fil
 
 ```
 [lifecycle DELIVERY_SLA/robot-0-1 Proposed -> Assigned     (assign,        event)   @ 1234ms]
-[lifecycle DELIVERY_SLA/robot-0-1 Assigned -> Accepted     (accept,        event)   @ 1234ms]
-[lifecycle DELIVERY_SLA/robot-0-1 Accepted -> Delivering   (start_delivery,event)   @ 1280ms]
+[lifecycle DELIVERY_SLA/robot-0-1 Assigned -> Accepted     (accept,        event)   @ 1934ms]
+[lifecycle DELIVERY_SLA/robot-0-1 Accepted -> Delivering   (start_delivery,event)   @ 1980ms]
 [lifecycle DELIVERY_SLA/robot-0-1 Delivering-> Completed   (complete,      event)   @ 8341ms]
 
 [lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned     (assign,        event)   @ 2050ms]
 [violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard         @ 2150ms]
 [lifecycle DELIVERY_SLA/robot-2-1 Assigned -> Violated     (<jump>,        monitor) @ 2150ms]
 ```
+
+Note the 700 ms between `assign` and `accept` for `robot-0-1`: that is the `Assigned Dwell Ms` set in 6.4.
 
 ### Check 6
 
@@ -999,7 +1043,7 @@ Confirm all of these:
 
 ### Recap
 
-You have just witnessed the **end-to-end story of an SoS contract**: written in CADL, lowered to IR, generated to C#, executed in a real-time simulation, and observed enforcing real timing and battery rules.
+You have just witnessed the **end-to-end story of an SoS contract**: written in CADL, lowered to IR, generated to C#, executed in a real-time simulation, and observed detecting missed deadlines and battery-rule violations and moving the affected contract instances to `Violated`. (The runtime detects and records violations; it does not prevent the robots from misbehaving.)
 
 ---
 
@@ -1007,13 +1051,13 @@ You have just witnessed the **end-to-end story of an SoS contract**: written in 
 
 | Layer | We wrote | We didn't write |
 | --- | --- | --- |
-| Spec | a 70-line CADL file (Steps 2 & 3) | nothing — the spec was the only source |
-| IR | nothing | 245 lines of JSON, generated |
+| Spec | a CADL file of about 100 lines (Steps 2 & 3) | nothing — the spec was the only source |
+| IR | nothing | generated JSON (245 lines for the bundled example) |
 | Visualisation | nothing | the Lifecycle View page |
-| Implementation | nothing | 770 lines of Unity C# |
+| Implementation | nothing | generated Unity C# (770 lines for the bundled example) |
 | Runtime semantics | nothing | a working state machine + monitors + deadline timers |
 
-Why does this matter for SoS? **The same specification powers everything**: the docs, the diagram, the simulation, the code. When the specification changes — say, you tighten the deadline from 5s to 3s — every downstream artefact updates automatically. That property is what makes large SoS designs maintainable.
+Why does this matter for SoS? **The same specification powers everything**: the docs, the diagram, the simulation, the code. When the specification changes — say, you tighten the deadline from 5s to 3s — you edit one file and re-run the generation commands (`cadl sim-ir`, `cadl codegen`, or the e2e script); the IR, the diagram and the generated C# then all follow from that single source, with no second copy of the rule to edit by hand. Keeping one source for all of them helps keep a large SoS design maintainable.
 
 ---
 
@@ -1025,8 +1069,8 @@ The hands-on ends here, but the practice exercises continue in a separate bookle
 
 It has two parts:
 
-- **Part 1 — Extending the robot delivery service**: 5 exercises (★ to ★★★) that modify the system you just built one axis at a time — tighter deadlines, new monitors, new lifecycle states, reward execution, a violation-trace view.
-- **Part 2 — Modelling a new SoS end-to-end**: pick a *different* domain (coffee shop, multi-elevator dispatch, food delivery, …), write its CADL, simulate in SimPy, and compare results across parameter sweeps.
+- **Part 1 — Robot Delivery course**: 5 sessions with 19 exercises in total (graded ★ to ★★★), plus one optional advanced exercise. They rebuild and then modify the system you just built one axis at a time — tighter deadlines, new monitors, new lifecycle states, reward execution, a violation-trace view.
+- **Part 2 — Modelling a new SoS end-to-end (Course C)**: an open-ended, self-directed track given as an outline. Pick a *different* domain (food delivery, smart traffic, data sharing between organisations, …), write its CADL from a blank page, exercise it with a small simulation harness of your choice (a Python discrete-event harness such as SimPy is the suggested default), and compare results across parameter sweeps.
 
 Pick whichever fits your goal: solidifying what you learned (Part 1) or trying the workflow on a fresh problem (Part 2).
 
@@ -1036,7 +1080,7 @@ Pick whichever fits your goal: solidifying what you learned (Part 1) or trying t
 
 | Topic | File |
 | --- | --- |
-| Language reference | `cadl-spec/docs/spec/` (Appendix E for today's content) |
+| Language reference | `cadl-spec/docs/spec/` ([Appendix E](../spec/appendix-e-sos-dsl.md) for today's content) |
 | Parser implementation | `cadl_repo/src/cadl/parser.py` |
 | IR | `cadl_repo/src/cadl/sim/ir.py`, `cadl_repo/src/cadl/sim/lower.py` |
 | Unity C# generator | `cadl_repo/src/cadl/codegen/unity_csharp/` |
@@ -1055,7 +1099,8 @@ Pick whichever fits your goal: solidifying what you learned (Part 1) or trying t
 | **Lifecycle** | The state machine a contract instance progresses through. |
 | **Monitor** | A declarative observation rule attached to a contract. |
 | **Deadline** | A timing constraint expressed as `deadline: <duration>` on a transition. |
-| **`on_violation`** | The lift the runtime performs when a deadline expires. |
+| **`on_violation`** | What the runtime does when a transition's deadline expires. Its `transition:` names the **target state** the instance is moved to (e.g. `Violated`), not a transition `id`. |
+| **`on_match`** | What the runtime does when a monitor's `rule` holds. Its `transition:` likewise names the target state (e.g. `Violated`); `violation:` names a violation to record. |
 | **Severity** | Classification of a violation: Minor / Major / Critical. |
 | **IR** | Intermediate Representation — the JSON between parser and codegen. |
 | **Codegen target** | A code generation backend, e.g. `python`, `solidity`, `unity-csharp`. |

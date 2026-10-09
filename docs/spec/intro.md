@@ -9,7 +9,7 @@ title: "CADL Specification v0.1"
 
 Graduate School of Informatics, Nagoya University — ERTL
 
-March 17, 2026
+October 9, 2026
 
 ---
 
@@ -88,6 +88,10 @@ the order below, but each chapter is also self-contained.
 
 - **[Appendix A — Syntax](./appendix-a-syntax)** — EBNF grammar reference.
 - **[Appendix B — References](./appendix-b-references)** — Cited literature.
+- **[Appendix C — Motivation Extension](./appendix-c-motivation)** — Agent motivation models and profiles.
+- **[Appendix D — Code Generation Targets](./appendix-d-codegen)** — Catalogue of codegen targets.
+- **[Appendix E — SoS-DSL Extension](./appendix-e-sos-dsl)** — Contract lifecycles and runtime monitors.
+- **[Glossary](./glossary)** — Terms used throughout the specification.
 
 ## Suggested Reading Paths
 
@@ -111,4 +115,4 @@ To write and run the language rather than only read about it, see the [hands-on 
 
 This is **Version 0.1 (Draft)**. The language and toolchain are under active
 development; syntax and semantics may change in future revisions. Feedback
-and discussion are welcome through the project channels.
+and discussion are welcome via [GitHub Issues](https://github.com/ertlnagoya/cadl/issues).

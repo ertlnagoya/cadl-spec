@@ -109,10 +109,10 @@ sos:
 
   contracts:
     - id: CHORE_SHARING
-      parties: [PARENT[*], CHILD[*]]
+      parties: ["PARENT[*]", "CHILD[*]"]
       authority:
         decision_holder: PARENT[1]
-        beta: 0.3                    # やや集中的
+        beta: 0.7                    # やや集中的
       incentives:
         lambda: 0.6
         rules:
@@ -130,7 +130,7 @@ sos:
             - PARENT[1] : make_final_decision
 ```
 
-検証レベルの記述例は，7.1節の矛盾検出・検証（目的2）を参照されたい。このように，同一の制度が利用者のニーズに応じて異なる粒度で記述でき，AIが概要レベルから設計・検証レベルへの精緻化を支援する。
+検証レベルの記述例は，[7.1節](./07-examples.md)の矛盾検出・検証（目的2）を参照されたい。このように，同一の制度が利用者のニーズに応じて異なる粒度で記述でき，AIが概要レベルから設計・検証レベルへの精緻化を支援する。
 
 ## 5.2 データモデル
 
@@ -148,7 +148,7 @@ CADLは以下の基本型とユーザ定義型を提供する。
 | Range | 区間型 | latency: \{ min: 0, max: 200 \} |
 | Dist | 確率分布型 | demand: Normal(15, 3) |
 | Enum | 列挙型 | autonomy: low \| medium \| high |
-| Set | 集合型 | parties: \{CENTRAL, TAXI[*]\} |
+| Set | 集合型 | `parties: [CENTRAL, "TAXI[*]"]` |
 | Map | マップ型 | views: \{ CENTRAL: "global", TAXI: "local" \} |
 | Actor | アクター参照型 | decision_holder: CENTRAL |
 | ActorSet | アクター集合型（ワイルドカード対応） | TAXI[*], SENSOR[1..N] |
@@ -188,7 +188,7 @@ actors:
 |---|---|
 | assume | 前提条件。契約が有効であるために環境・他アクターが満たすべき条件。 |
 | guarantee | 保証条件。前提条件が満たされた場合に契約当事者が保証する性質。 |
-| authority | 意思決定のスコープと決定権者。分散度パラメータβを含む。 |
+| authority | 意思決定のスコープと決定権者。集中度パラメータβを含む。 |
 | information | 各当事者の観測範囲と情報共有モード。共有度パラメータαを含む。 |
 | responsibilities | 各当事者の義務・タスクの列挙。 |
 | incentives | 報酬・ペナルティ・評判メカニズムの定義。強度パラメータλを含む。 |
@@ -198,7 +198,7 @@ actors:
 ```yaml
 contracts:
   - id: CENTRALIZED_ROUTING
-    parties: [CENTRAL, TAXI[*]]
+    parties: [CENTRAL, "TAXI[*]"]
 
     assume:
       - "CENTRAL.is_operational == true"
@@ -212,7 +212,7 @@ contracts:
     authority:
       decision_scope: "route_assignment"
       decision_holder: CENTRAL
-      beta: 0.1          # 集中度（0=完全集中, 1=完全分散）
+      beta: 0.9          # 意思決定の集中度（0=完全分散, 1=完全集中）
 
     information:
       alpha: 0.9          # 情報共有度
@@ -220,8 +220,8 @@ contracts:
         CENTRAL: "global_road_graph + all_taxi_positions"
         TAXI[*]: "assigned_route + local_sensors"
       sharing:
-        - TAXI[*] -> CENTRAL : position       # 定期的（1秒周期）
-        - CENTRAL -> TAXI[*] : route          # イベント駆動
+        - "TAXI[*] -> CENTRAL : position"       # 定期的（1秒周期）
+        - "CENTRAL -> TAXI[*] : route"          # イベント駆動
 
     responsibilities:
       CENTRAL:
@@ -302,58 +302,67 @@ protocols:
 
 ## 5.3 構文定義
 
-以下にCADLの主要な構文規則をEBNF（拡張バッカス・ナウア記法）で示す。完全なEBNFは付録Aを参照。
+CADLファイルはYAML文書である。以下にCADLの主要な構文規則をEBNF（拡張バッカス・ナウア記法）で示す。記法は[付録A](./appendix-a-syntax.md)に従う。すなわち，コロンで終わる終端記号はYAMLマッピングのキーであり，マッピングの中の項目は任意の順序で書いてよく，`{ "-" , x }` は `x` を要素とするYAMLシーケンスである。述語の式の構文を含む完全な文法は[付録A](./appendix-a-syntax.md)を参照されたい。具象構文については付録Aが規範的である。
 
-```
+```ebnf
 (* CADL EBNF - 主要規則 *)
 
 cadl_file = "sos:" , sos_definition ;
-sos_definition = "name:" , string ,
+sos_definition = "name:" , text ,
     [ "type:" , sos_type ] ,
-    [ "version:" , version_string ] ,
-    [ context_block ] ,
-    [ actors_block ] ,
-    [ contracts_block ] ,
-    [ protocols_block ] ,
-    [ algorithms_block ] ,
-    [ transitions_block ] ,
-    [ metrics_block ] ;
+    [ "version:" , scalar ] ,
+    [ "description:" , text ] ,
+    [ "context:" , context_block ] ,
+    [ "actors:" , { "-" , actor_def } ] ,
+    [ "contracts:" , { "-" , contract_def } ] ,
+    [ "protocols:" , { "-" , protocol_def } ] ,
+    [ "algorithms:" , { algorithm_def } ] ,
+    [ "transitions:" , { "-" , transition_def } ] ,
+    [ "metrics:" , { "-" , metric_def } ] ,
+    [ "verification:" , { "-" , verify_def } ] ,
+    [ "codegen:" , { "-" , codegen_def } ] ;
 
 sos_type = "Directed" | "Acknowledged" | "Collaborative" | "Virtual" ;
 
-actor_def = "- id:" , actor_id ,
-    "role:" , string ,
-    "autonomy:" , autonomy_level ,
-    [ "capabilities:" , capability_list ] ,
+actor_def = "id:" , actor_ref ,
+    "role:" , text ,
+    [ "autonomy:" , autonomy_level ] ,
+    [ "capabilities:" , { "-" , text } ] ,
     [ "interface:" , interface_def ] ;
 
-actor_id = identifier , [ "[" , ( "*" | range ) , "]" ] ;
-autonomy_level = "low" | "medium" | "high" | float_literal ;
+actor_ref = identifier , [ "[" , ( "*" | range_expr | int_literal | identifier ) , "]" ] ;
+autonomy_level = "low" | "medium" | "high" ;
 
-contract_def = "- id:" , identifier ,
-    "parties:" , actor_ref_list ,
-    [ "assume:" , predicate_list ] ,
-    [ "guarantee:" , predicate_list ] ,
-    "authority:" , authority_block ,
-    "information:" , information_block ,
-    "responsibilities:" , responsibility_block ,
+contract_def = "id:" , identifier ,
+    "parties:" , { "-" , actor_ref } ,
+    [ "assume:" , { "-" , predicate } ] ,
+    [ "guarantee:" , { "-" , predicate } ] ,
+    [ "authority:" , authority_block ] ,
+    [ "information:" , information_block ] ,
+    [ "responsibilities:" , { actor_ref , ":" , { "-" , text } } ] ,
     [ "incentives:" , incentive_block ] ,
     [ "violation:" , violation_block ] ,
-    [ "duration:" , duration_spec ] ;
+    [ "duration:" , scalar ] ;
 
-protocol_def = "- id:" , identifier ,
-    "trigger:" , event_expr ,
-    [ "precondition:" , predicate ] ,
-    "steps:" , step_list ,
-    [ "timing:" , timing_block ] ,
-    [ "fallback:" , fallback_block ] ,
-    [ "postcondition:" , predicate ] ;
+protocol_def = "id:" , identifier ,
+    "trigger:" , text ,
+    [ "precondition:" , text ] ,
+    "steps:" , { "-" , step } ,
+    [ "timing:" , { identifier , ":" , scalar } ] ,
+    [ "fallback:" , { identifier , ":" , text } ] ,
+    [ "rollback:" , rollback_block ] ,
+    [ "postcondition:" , text ] ,
+    [ "safety_invariant:" , text ] ;
 
 step = message_step | compute_step | conditional_step
      | parallel_step | barrier_step ;
-message_step = actor_ref , "->" , actor_ref , ":" , message_expr ;
-compute_step = actor_ref , ":" , computation_expr ;
+message_step = actor_ref , "->" , actor_ref , ":" , step_expr ;
+compute_step = actor_ref , ":" , step_expr ;
 ```
+
+契約で必須なのは `id` と `parties` だけであり，本章の例では不要なブロックを省略している。`autonomy` の既定値は `medium` である。
+
+ファイルはYAMLであるため，`[`，`]`，`*`，`->`，`": "` を含むスカラーは，YAMLが別の意味に解釈する箇所では引用符で囲む必要がある。とくに，フローシーケンスの中の添字付きアクター参照（`parties: [CENTRAL, "TAXI[*]"]`）と，`sharing:` の要素（`- "TAXI[*] -> CENTRAL : position"`）がこれに当たる。
 
 ## 5.4 意味論
 
@@ -361,16 +370,16 @@ compute_step = actor_ref , ":" , computation_expr ;
 
 CADLの契約は，Benvenisteらの契約ベース設計理論およびSaoudらの連続時間assume-guarantee契約に基づく。契約C = (A, G)において，Aは前提条件（assume），Gは保証条件（guarantee）である。
 
-契約の合成: 2つの契約C₁ = (A₁, G₁)とC₂ = (A₂, G₂)の並行合成は C₁ ⊗ C₂ = (A₁ ∧ A₂, G₁ ∧ G₂) で定義される。ただし，循環依存がある場合はSaoudらの手法に従い，最大不動点意味論を適用する。
+契約の合成: 2つの契約C₁ = (A₁, G₁)とC₂ = (A₂, G₂)の並行合成は，飽和形（正準形）の契約に対して C₁ ⊗ C₂ = ((A₁ ∧ A₂) ∨ ¬(G₁ ∧ G₂), G₁ ∧ G₂) で定義される。循環依存がある場合はSaoudらに従い，各構成契約に（弱充足ではなく）強充足を要求する。
 
 ### 5.4.2 制度パラメータの意味論
 
-制度パラメータα（情報共有度），β（意思決定分散度），λ（インセンティブ強度）は[0, 1]の区間値を取る。これらのパラメータは制度の構造的特性を連続的に制御し，モードマップ構築の基礎となる。
+制度パラメータα（情報共有度），β（意思決定集中度），λ（インセンティブ強度）は[0, 1]の区間値を取る。これらのパラメータは制度の構造的特性を連続的に制御し，モードマップ構築の基礎となる。
 
 | **パラメータ** | **名称** | **意味** |
 |---|---|---|
 | α (alpha) | 情報共有度 | 0: 情報非共有（各アクターはローカル情報のみ） / 1: 完全共有（全アクターが全情報を観測可能） |
-| β (beta) | 意思決定分散度 | 0: 完全集中（D-SoS: 単一アクターが全決定） / 1: 完全分散（C-SoS: 各アクターが自律的に決定） |
+| β (beta) | 意思決定集中度 | 0: 完全分散（C-SoS: 各アクターが自律的に決定） / 1: 完全集中（D-SoS: 単一アクターが全決定） |
 | λ (lambda) | インセンティブ強度 | 0: インセンティブなし（指令ベース） / 1: 強いインセンティブ（市場メカニズム） |
 
 ### 5.4.3 プロトコルの操作的意味論

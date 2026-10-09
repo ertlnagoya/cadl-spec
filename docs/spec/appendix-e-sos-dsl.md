@@ -3,20 +3,25 @@ sidebar_position: 15
 title: "Appendix E — SoS-DSL Extension"
 ---
 
-# Appendix E — SoS Contract DSL Extension (v0.1-sos-ext)
+# Appendix E — SoS Contract DSL Extension (sos-dsl 0.1)
 
 This appendix specifies the **SoS Contract DSL extension** to CADL. It
-augments the existing `contracts:` section (Appendix A.4) with two new
-body keys, `lifecycle:` and `monitors:`, that promote contract execution
-state and runtime observation to first-class language constructs.
+augments the `contract_def` production of
+[Appendix A.4](./appendix-a-syntax#a4-contracts-institution-layer)
+with two keys, `lifecycle:` and `monitors:`, that promote contract
+execution state and runtime observation to first-class language
+constructs.
 
 The core language (Chapter 5, Appendix A) does **not** mandate these
 blocks; a conforming CADL processor that does not implement the
 extension SHOULD accept the new keys syntactically and emit an
 *informational* diagnostic rather than rejecting the file.
 
-This extension is versioned independently from the core language. Files
-that rely on it SHOULD declare:
+This extension is versioned independently from the core language. Its
+name is `sos-dsl` and this appendix describes version `0.1` (the same
+revision is labelled `v0.1-sos-ext` in the source of the reference
+implementation). Files that rely on it SHOULD declare it with the
+`extensions:` key of Appendix A.2:
 
 ```yaml
 sos:
@@ -43,11 +48,12 @@ must hold across the SoS, but it is intentionally silent on:
    string-encoded predicate. There is no first-class way to declare
    *what* is being observed and *how often*.
 3. **Norm-bound deadlines.** `protocol.timing.max_response` captures
-   timing on a protocol step; it does not bind a deadline to an
-   individual obligation as a normative constraint.
+   timing on a protocol step; it does not bind a deadline to a step of
+   an individual contract instance as a normative constraint.
 4. **Runtime event emission for visualization.** Without an explicit
-   lifecycle, downstream tools (cadl-explorer, runtimes) cannot subscribe
-   to contract events at the level that operators reason about.
+   lifecycle, downstream tools (CADL Explorer, runtimes) cannot
+   subscribe to contract events at the level that operators reason
+   about.
 
 The SoS-DSL extension addresses these four gaps additively, preserving
 backward compatibility with existing contract definitions.
@@ -56,61 +62,73 @@ backward compatibility with existing contract definitions.
 
 | Layer | Existing CADL | SoS-DSL Extension |
 | --- | --- | --- |
-| Class-level normative spec | `parties` / `assume` / `guarantee` / `authority` / `information` / `incentives` / `violation` | unchanged |
+| Class-level normative spec | `parties` / `assume` / `guarantee` / `authority` / `information` / `responsibilities` / `incentives` / `violation` | unchanged |
 | Per-instance lifecycle | — | **`lifecycle:`** |
 | Declarative observation | one-shot `violation.detect` | **`monitors:`** |
-| Obligation deadlines | implicit via `timing` | **`deadline:` on lifecycle transitions** |
+| Norm-bound deadlines | implicit via `timing` | **`deadline:` on lifecycle transitions** |
 
 The extension does **not** introduce a parallel contract namespace.
-`lifecycle:` and `monitors:` are body keys of the same `contract_decl`
-that already accepts `obligations:` and friends.
+`lifecycle:` and `monitors:` are keys of the same `contract_def` that
+already accepts `assume:`, `guarantee:`, and the other keys of
+Appendix A.4.
 
 ## E.3 Syntax (EBNF additions to A.4)
 
+The grammar uses the notation of Appendix A: a terminal ending in a
+colon is a key of a YAML mapping, `{ "-" , x }` is a YAML sequence, and
+a production marked `(* string *)` describes the content of one YAML
+string scalar. `lifecycle_block` and `monitor_def` are the two
+non-terminals that A.4 refers to.
+
 ```ebnf
-contract_body  =/  "lifecycle:" , INDENT , lifecycle_body , DEDENT
-                |  "monitors:"  , INDENT , { monitor_decl } , DEDENT ;
+lifecycle_block   = "states:"   , state_list ,
+                    "initial:"  , identifier ,
+                    "terminal:" , state_list ,
+                    [ "transitions:" , { "-" , lifecycle_trans } ] ;
+state_list        = { "-" , identifier } ;
 
-lifecycle_body = "states:"     , state_list  , NEWLINE ,
-                 "initial:"    , identifier  , NEWLINE ,
-                 [ "terminal:" , state_list  , NEWLINE ] ,
-                 [ "transitions:" , INDENT , { lifecycle_trans } , DEDENT ] ;
+lifecycle_trans   = "id:"   , identifier ,
+                    "from:" , ( identifier | state_list ) ,
+                    "to:"   , identifier ,
+                    "on:"   , event ,
+                    [ "when:"         , rule ] ,
+                    [ "deadline:"     , duration_lit ] ,
+                    [ "on_violation:" , on_violation_body ] ,
+                    [ "emit:"         , { "-" , text } ] ;
+on_violation_body = "transition:" , identifier ,
+                    [ "severity:" , severity ] ;
+severity          = "Minor" | "Major" | "Critical" ;
 
-state_list     = inline_list | INDENT , { "-" , identifier , NEWLINE } , DEDENT ;
+monitor_def       = "id:"      , identifier ,
+                    "observe:" , ( observation | { "-" , observation } ) ,
+                    [ "sampling:" , sampling_spec ] ,
+                    "rule:"    , rule ,
+                    [ "on_match:" , on_match_body ] ;
+on_match_body     = [ "violation:"  , identifier ] ,
+                    [ "transition:" , identifier ] ,
+                    [ "severity:"   , severity ] ;
 
-lifecycle_trans = "-" , INDENT ,
-                  "id:"      , identifier , NEWLINE ,
-                  "from:"    , ( identifier | inline_list ) , NEWLINE ,
-                  "to:"      , identifier , NEWLINE ,
-                  "on:"      , event_expr , NEWLINE ,
-                  [ "when:"  , predicate  , NEWLINE ] ,
-                  [ "deadline:" , duration_lit , NEWLINE ] ,
-                  [ "on_violation:" , INDENT , on_violation_body , DEDENT ] ,
-                  [ "emit:"  , INDENT , { "-" , string , NEWLINE } , DEDENT ] ,
-                  DEDENT ;
-
-on_violation_body = [ "transition:" , identifier , NEWLINE ] ,
-                    [ "severity:"   , severity_lit , NEWLINE ] ;
-
-severity_lit   = "Minor" | "Major" | "Critical" ;
-
-monitor_decl   = "-" , INDENT ,
-                 "id:"        , identifier , NEWLINE ,
-                 "observe:"   , observe_list , NEWLINE ,
-                 [ "sampling:" , sampling_spec , NEWLINE ] ,
-                 "rule:"      , predicate , NEWLINE ,
-                 [ "on_match:" , INDENT , on_match_body , DEDENT ] ,
-                 DEDENT ;
-
-observe_list   = inline_list | observation ;
-observation    = identifier , { "." , identifier } ;
-sampling_spec  = "event"
-               | "periodic" , "(" , duration_lit , ")" ;
-
-on_match_body  = [ "violation:" , identifier , NEWLINE ] ,
-                 [ "transition:" , identifier , NEWLINE ] ,
-                 [ "severity:"   , severity_lit , NEWLINE ] ;
+event             = message_event | rule ;                  (* string *)
+message_event     = actor_ref , "->" , actor_ref , ":" , step_expr ;
+rule              = predicate ;                             (* string *)
+membership        = arith_expr , "IN" ,
+                    "[" , arith_expr , { "," , arith_expr } , "]" ;
+observation       = member_access | identifier ;            (* string *)
+sampling_spec     = "event"
+                  | "periodic" , "(" , duration_lit , ")" ;  (* string *)
 ```
+
+`identifier`, `actor_ref`, `duration_lit`, `step_expr`, `predicate`,
+`arith_expr`, and `member_access` are defined in Appendix A (A.1, A.5,
+A.10). Inside a `rule`, `membership` is an additional alternative of
+the `comparison` production of A.10, and `IN` is a reserved keyword.
+`sampling:` defaults to `event` and `severity:` to `Major`.
+
+The values of `on:`, `when:`, `rule:`, and of `observe:` entries that
+contain `[`, `->`, or `": "` have to be quoted, as in the example of
+E.6. The key `on` SHOULD be written without quotation marks; a
+processor built on a YAML 1.1 loader, which reads an unquoted `on` as a
+boolean, MUST still recognise it as this key.
 
 ## E.4 Static semantics
 
@@ -120,38 +138,84 @@ A SoS-DSL-aware processor MUST, in addition to existing checks:
   appear in `lifecycle.states`.
 - **L-2.** Every `lifecycle.transitions[*].from` and `.to` MUST appear in
   `lifecycle.states`.
-- **L-3.** A lifecycle MUST have at least one terminal state reachable
-  from the initial state.
+- **L-3.** `lifecycle.terminal` MUST list at least one state, and at
+  least one terminal state MUST be reachable from the initial state.
 - **L-4.** A `deadline:` on a transition implicitly introduces a
   `Timeout` event scoped to that transition's `from` state. Two
   transitions out of the same state MAY have deadlines; their semantics
-  are independent.
-- **M-1.** `monitor.observe` references MUST resolve to declared actor
-  attributes, message names, or the reserved identifiers `time` and
-  `state`.
-- **M-2.** `on_match.violation` references MUST name an obligation /
-  permission / prohibition declared in the same contract.
-- **M-3.** `on_match.transition` references MUST name a lifecycle
-  transition declared in the same contract.
+  are independent. A transition with a `deadline:` SHOULD also have an
+  `on_violation:` block.
+- **L-5.** Every `lifecycle.transitions[*].on_violation.transition`
+  MUST name a state that appears in `lifecycle.states` (the target
+  state of the forced move, e.g. `Violated`).
+- **M-1.** Every `monitor.observe` entry MUST be an attribute of a
+  declared actor (e.g. `ROBOT[i].battery`), a message name, or one of
+  the reserved identifiers `time` and `state`.
+- **M-2.** `on_match.violation` is an identifier that labels the
+  reported violation (the norm that was broken, e.g. `collision`). It
+  need not be declared elsewhere; when it is omitted, the `id` of the
+  monitor is used as the label.
+- **M-3.** `on_match.transition` references MUST name a state that
+  appears in `lifecycle.states` of the same contract. The value is the
+  *target state* of the forced move (e.g. `Violated`), not the `id` of
+  a declared transition.
+
+In both `on_violation:` and `on_match:`, the key `transition:` therefore
+always holds a target state name. This matches the examples in E.6, the
+IR fields `on_violation_transition` / `on_match_transition` (E.7), and
+the reference Unity C# generator, which records such a move as a
+`<jump>` from the current state to the named state.
+
+In a `rule` (and therefore in `when:` and in an `on:` event), three
+identifiers are reserved: `state` is the current lifecycle state of the
+instance, `now` is the current time, and `request` is the request that
+created the instance (e.g. `request.deadline`). A bare identifier that
+names a lifecycle state (e.g. `Assigned`) denotes that state.
+
+The reference implementation at v0.3 parses both blocks and lowers them
+to the IR (E.7) but does not yet check rules L-1 to M-3.
 
 ## E.5 Dynamic semantics (informative)
 
 - A contract instance is created when its initial trigger fires (e.g.,
   a `DeliveryRequest` arrives). It advances through `lifecycle.states`
-  driven by `lifecycle.transitions[*].on` events, deadline timers, and
-  `monitors[*].on_match.transition` actions.
-- An obligation's `deadline:` defines a normative time bound. Failure
-  to fire the obligation's `must` event before the deadline is a
-  *violation* of severity `Major` unless overridden in the
-  `on_violation:` block.
+  driven by `lifecycle.transitions[*].on` events, deadline timers
+  (which move the instance to `on_violation.transition`), and
+  `monitors[*].on_match.transition` actions (which move it to the named
+  state).
+- A transition fires when the instance is in one of its `from` states,
+  its `on:` event occurs, and its `when:` guard, if any, holds. A
+  `message_event` occurs when that message is sent; a `rule` used as an
+  event occurs when it becomes true.
+- A transition's `deadline:` defines a normative time bound, measured
+  from the moment the instance enters one of the transition's `from`
+  states. If the transition has not fired by then, this is a
+  *violation* whose severity is `Major` unless overridden in the
+  `on_violation:` block, and the instance moves to the state named by
+  `on_violation.transition`.
+- `emit:` lists the names of additional events to publish when the
+  transition fires, for consumption by visualization and logging
+  tools. The reference generators carry `emit:` into the IR but do not
+  act on it at v0.3; every transition is published as a lifecycle
+  event regardless.
 - `monitors` evaluate independently of the lifecycle state machine but
-  can read `state` (current lifecycle state) in their `rule:`. On
-  match, they MAY emit a violation, drive a transition, or both.
+  can read `state` (current lifecycle state) in their `rule:`. A
+  monitor with `sampling: event` is evaluated on every event delivered
+  to the instance, one with `periodic(d)` every `d`. On match, a
+  monitor reports a violation labelled by `on_match.violation` and, if
+  `on_match.transition` is given, also moves the instance to that
+  state.
 - `incentives.rules` (existing) and `monitor.on_match` (extension)
   cooperate: rewards/penalties reference the violations and transitions
   that this extension makes addressable.
 
 ## E.6 Robot-delivery example (excerpt)
+
+The contract below is taken from `examples/sos_dsl_robot_delivery.cadl`
+in the [`cadl`](https://github.com/ertlnagoya/cadl) repository. It is
+abridged: the `authority`, `information`, `incentives`, and `violation`
+blocks of the contract and the rest of the file (`actors:`, `metrics:`)
+are omitted.
 
 ```yaml
 contracts:
@@ -161,12 +225,6 @@ contracts:
       - "ROBOT[i].battery > 20"
     guarantee:
       - "delivery_time <= 300s"
-    incentives:
-      type: task_completion
-      lambda: 0.5
-      rules:
-        - "reward(ROBOT[i], 10) when on_time_delivery"
-        - "penalty(ROBOT[i], -5) when path_deviation"
 
     # === SoS-DSL extension: per-instance lifecycle ===
     lifecycle:
@@ -186,7 +244,7 @@ contracts:
           on_violation:
             transition: Violated
             severity:   Major
-        - id: deliver
+        - id: start_delivery
           from: Accepted
           to:   Delivering
           on:   "ROBOT[i].status == InTransit"
@@ -195,6 +253,10 @@ contracts:
           to:   Completed
           on:   "ROBOT[i].status == Delivered"
           when: "now <= request.deadline"
+        - id: late_failure
+          from: [Assigned, Accepted, Delivering]
+          to:   Violated
+          on:   "now > request.deadline"
 
     # === SoS-DSL extension: declarative monitors ===
     monitors:
@@ -205,10 +267,17 @@ contracts:
         on_match:
           transition: Violated
           severity:   Major
+      - id: collision_watch
+        observe: ["ROBOT[i].position", "OBSTACLES.positions"]
+        sampling: periodic(100ms)
+        rule: "min_dist(ROBOT[i].position, OBSTACLES.positions) < 0.05"
+        on_match:
+          violation: collision
+          severity:  Critical
       - id: deadline_watch
         observe: time
         sampling: periodic(1s)
-        rule: "now > request.deadline AND state IN [Assigned, Accepted, Delivering]"
+        rule: "now > request.deadline"
         on_match:
           transition: Violated
           severity:   Critical
@@ -216,8 +285,10 @@ contracts:
 
 ## E.7 Intermediate Representation (IR) addition
 
-The CADL Sim-IR (see `cadl/sim/ir.py`) is extended with a `lifecycle`
-and `monitors` field on each contract IR object. The shape is a
+The CADL simulator IR (module `cadl.sim.ir` of the
+[`cadl`](https://github.com/ertlnagoya/cadl) repository) is extended
+with a `lifecycle` and a `monitors` field on each contract IR object
+under `institution.contracts`. The shape is a
 **direct serialization** of the IR dataclasses (`asdict()`), which
 applies normalizations to the surface syntax and **denormalizes** the
 nested `on_violation` / `on_match` / `sampling` blocks into flat
@@ -226,51 +297,54 @@ generators that read it field-by-field):
 
 ```jsonc
 {
-  "contracts": [
-    {
-      "id": "DELIVERY_SLA",
-      "parties": ["DISPATCHER", "ROBOT[*]", "CUSTOMER[*]"],
-      "assume": [...],
-      "guarantee": [...],
-      "incentives": {...},
-      "lifecycle": {
-        "states":   ["Proposed", "Assigned", "Accepted", "Delivering",
-                     "Completed", "Violated", "Terminated"],
-        "initial":  "Proposed",
-        "terminal": ["Completed", "Violated", "Terminated"],
-        "transitions": [
-          { "id": "assign",
-            "from_states": ["Proposed"],
-            "to_state":    "Assigned",
-            "on":          "DISPATCHER -> ROBOT[i] : route_assignment",
-            "when":        null,
-            "deadline_ms": null,
-            "on_violation_transition": null,
-            "on_violation_severity":   null,
-            "emit":        [] },
-          { "id": "accept",
-            "from_states": ["Assigned"],
-            "to_state":    "Accepted",
-            "on":          "ROBOT[i] -> DISPATCHER : ack(accepted)",
-            "when":        null,
-            "deadline_ms": 5000,
-            "on_violation_transition": "Violated",
-            "on_violation_severity":   "Major",
-            "emit":        [] }
+  "institution": {
+    "actors": [...],
+    "contracts": [
+      {
+        "id": "DELIVERY_SLA",
+        "parties": ["DISPATCHER", "ROBOT[*]", "CUSTOMER[*]"],
+        "assume": [...],
+        "guarantee": [...],
+        "governance": {...},
+        "lifecycle": {
+          "states":   ["Proposed", "Assigned", "Accepted", "Delivering",
+                       "Completed", "Violated", "Terminated"],
+          "initial":  "Proposed",
+          "terminal": ["Completed", "Violated", "Terminated"],
+          "transitions": [
+            { "id": "assign",
+              "from_states": ["Proposed"],
+              "to_state":    "Assigned",
+              "on":          "DISPATCHER -> ROBOT[i] : route_assignment",
+              "when":        null,
+              "deadline_ms": null,
+              "on_violation_transition": null,
+              "on_violation_severity":   null,
+              "emit":        [] },
+            { "id": "accept",
+              "from_states": ["Assigned"],
+              "to_state":    "Accepted",
+              "on":          "ROBOT[i] -> DISPATCHER : ack(accepted)",
+              "when":        null,
+              "deadline_ms": 5000,
+              "on_violation_transition": "Violated",
+              "on_violation_severity":   "Major",
+              "emit":        [] }
+          ]
+        },
+        "monitors": [
+          { "id": "battery_guard",
+            "observe":            ["ROBOT[i].battery"],
+            "sampling_kind":      "periodic",
+            "sampling_period_ms": 500,
+            "rule":               "ROBOT[i].battery < 20 AND state == Assigned",
+            "on_match_violation": null,
+            "on_match_transition": "Violated",
+            "on_match_severity":   "Major" }
         ]
-      },
-      "monitors": [
-        { "id": "battery_guard",
-          "observe":            ["ROBOT[i].battery"],
-          "sampling_kind":      "periodic",
-          "sampling_period_ms": 500,
-          "rule":               "ROBOT[i].battery < 20 AND state == Assigned",
-          "on_match_violation": null,
-          "on_match_transition": "Violated",
-          "on_match_severity":   "Major" }
-      ]
-    }
-  ]
+      }
+    ]
+  }
 }
 ```
 
@@ -287,16 +361,19 @@ Normalizations applied during lowering:
 | `sampling: event` | `"sampling_kind": "event"`, `"sampling_period_ms": null` |
 | `on_match: { violation, transition, severity }` | `"on_match_violation"`, `"on_match_transition"`, `"on_match_severity"` |
 
-The `cadl sim-ir <file> --format json` command emits this exact
-shape; downstream tools (cadl-explorer's Lifecycle View, the
-Python reference runtime in raspimouse-swarm-simulator's
-`cadl/runtime/`, and the Unity C# generator's
-`unity-csharp` target) all consume the same JSON.
+The `cadl sim-ir <file> --format json` command emits this shape
+(abridged above) for downstream tools such as the Lifecycle View of
+CADL Explorer. The Unity C# generator (`cadl codegen --target
+unity-csharp`) works from the same parsed contract. A Python reference
+runtime for the simulator also consumes this JSON, but the simulator
+is not publicly available at present.
 
 ## E.8 Codegen contract (informative)
 
-Targets in `codegen:` MAY emit code from the `lifecycle` and
-`monitors` IR fields. The reference codegen pipeline produces:
+Code generation targets MAY emit code from the `lifecycle` and
+`monitors` blocks. The reference generator for this extension is the
+`unity-csharp` target ([Appendix D](./appendix-d-codegen)). For each
+contract that has a `lifecycle:` or `monitors:` block it produces:
 
 - a state machine class per contract (states from `lifecycle.states`,
   transitions from `lifecycle.transitions`),
@@ -305,6 +382,12 @@ Targets in `codegen:` MAY emit code from the `lifecycle` and
 - a violation log entry per fired `on_violation` or
   `on_match.violation`.
 
+At v0.3 the generated runtime matches an `on:` event by comparing its
+text with the name of the event posted by the host application, and it
+evaluates a `rule` without function calls: a rule that contains one,
+such as `collision_watch` in E.6, never matches. The values of `now`,
+`request`, and the observed attributes are supplied by the host.
+
 Reward / sanction execution is **out of scope** for this revision; the
 runtime SHOULD record reward and sanction events but is not required to
 act on them.
@@ -312,7 +395,7 @@ act on them.
 ## E.9 Backward compatibility
 
 Files written against unmodified CADL v0.1 remain valid. Files that use
-the SoS-DSL extension SHOULD declare `extensions: [sos-dsl: 0.1]` in
-the `sos:` header. Processors that do not implement the extension MUST
+the SoS-DSL extension SHOULD declare `sos-dsl: 0.1` under `extensions:`
+in the `sos:` mapping. Processors that do not implement the extension MUST
 NOT reject such files; they SHOULD emit a single informational
 diagnostic per file.

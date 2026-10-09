@@ -15,24 +15,23 @@ A self-paced 90-minute workshop and a 5-session exercise course that walk throug
 | Course A — Robot Delivery (main textbook) | [main-textbook](https://ertlnagoya.github.io/cadl-spec/docs/handson/main-textbook) | [ja](https://ertlnagoya.github.io/cadl-spec/ja/docs/handson/main-textbook) |
 | Course A — Exercises | [exercises](https://ertlnagoya.github.io/cadl-spec/docs/handson/exercises) | [ja](https://ertlnagoya.github.io/cadl-spec/ja/docs/handson/exercises) |
 | Course B — Urban Mobility (CADL × SUMO) | [mobility-sos-tutorial](https://ertlnagoya.github.io/cadl-spec/docs/handson/mobility-sos-tutorial) | [ja](https://ertlnagoya.github.io/cadl-spec/ja/docs/handson/mobility-sos-tutorial) |
-| PBL Course Design (for instructors) | [pbl-course-design](https://ertlnagoya.github.io/cadl-spec/docs/handson/pbl-course-design) | [ja](https://ertlnagoya.github.io/cadl-spec/ja/docs/handson/pbl-course-design) |
 
 Sources live under [`docs/handson/`](docs/handson/) (English) and [`i18n/ja/docusaurus-plugin-content-docs/current/handson/`](i18n/ja/docusaurus-plugin-content-docs/current/handson/) (Japanese).
 
-The runnable toolchain referenced by the hands-on lives in the companion repositories: [`cadl`](https://github.com/ertlnagoya/cadl) (compiler / CLI), [`cadl-explorer`](https://github.com/ertlnagoya/cadl-explorer) (visualisation), and [`raspimouse-swarm-simulator`](https://github.com/ertlnagoya/raspimouse-swarm-simulator) (Unity scene + arbitrator + Python runtime).
+The runnable toolchain referenced by the hands-on lives in the companion repositories: [`cadl`](https://github.com/ertlnagoya/cadl) (compiler / CLI) and [`cadl-explorer`](https://github.com/ertlnagoya/cadl-explorer) (visualisation). The simulator used in Course A Steps 5–6 (`raspimouse-swarm-simulator`: Unity scene + arbitrator + Python runtime) is not publicly available at present.
 
 ## Development
 
 ### Installation
 
 ```bash
-yarn
+npm install
 ```
 
 ### Local Development
 
 ```bash
-yarn start
+npm run start
 ```
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
@@ -40,13 +39,13 @@ This command starts a local development server and opens up a browser window. Mo
 To preview the Japanese pages locally:
 
 ```bash
-yarn start --locale ja
+npm run start -- --locale ja
 ```
 
 ### Build
 
 ```bash
-yarn build
+npm run build
 ```
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
@@ -56,13 +55,20 @@ This command generates static content into the `build` directory and can be serv
 Using SSH:
 
 ```bash
-USE_SSH=true yarn deploy
+USE_SSH=true npm run deploy
 ```
 
 Not using SSH:
 
 ```bash
-GIT_USER=<Your GitHub username> yarn deploy
+GIT_USER=<Your GitHub username> npm run deploy
 ```
 
 If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+
+## License
+
+- **Documentation** (the text and figures under `docs/` and `i18n/`): [Creative Commons Attribution 4.0 International (CC BY 4.0)](LICENSE-docs).
+- **Code** (the CADL and other code examples embedded in the documentation, and the site source under `src/` and the configuration files): [MIT License](LICENSE).
+
+Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University.

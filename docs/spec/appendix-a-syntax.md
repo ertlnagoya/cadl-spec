@@ -5,201 +5,372 @@ title: "Appendix A: Syntax Reference (EBNF)"
 
 # Appendix A. Syntax Reference (EBNF)
 
-This appendix defines the complete EBNF grammar for CADL v0.1. It is
-normative with respect to the concrete syntax; the informal descriptions
-in Chapter 5 take precedence where the two disagree.
+A CADL file is a **YAML 1.2 document**. This appendix gives the reference
+grammar of CADL v0.1 in two parts: the *structure* of the document
+(A.2–A.9), written as EBNF over YAML mappings and sequences, and the
+*expression sub-language* (A.1, A.10) that is written inside individual
+YAML string scalars.
 
-The grammar uses ISO/IEC 14977 notation. `INDENT` / `DEDENT` / `NEWLINE`
-are produced by the lexer following indentation-sensitive rules similar
-to Python.
+Chapter 5 and this appendix describe the same syntax. This appendix is
+normative for the concrete syntax; Chapter 5 is explanatory. The
+reference implementation ([`cadl`](https://github.com/ertlnagoya/cadl))
+is expected to accept exactly this syntax; known deviations of v0.3 are
+listed in [A.12](#a12-reference-implementation-status-v03).
+
+**Notation.** The grammar uses ISO/IEC 14977 EBNF with the following
+conventions.
+
+- A terminal ending in a colon, such as `"name:"`, is a key of a YAML
+  mapping, followed by its value. The entries of one mapping may appear
+  in any order, each at most once.
+- `{ "-" , x }` is a YAML sequence whose items are `x`. Block style and
+  flow style (`[a, b]`) are equivalent.
+- `k , ":" , v` with a non-terminal `k` is a mapping whose keys are
+  chosen by the author.
+- `text` is any YAML string scalar, `number` any YAML integer or float,
+  and `scalar` any YAML scalar. Their content is not interpreted further.
+- Productions marked `(* string *)` describe the content of a single
+  YAML string scalar.
+
+Indentation, comments, quoting, and the choice between block and flow
+style are governed by YAML and are not shown. A scalar that contains
+`[`, `]`, `*`, `->`, or `": "` — for example an actor reference such as
+`"TAXI[*]"` or a step such as `"A -> B : msg"` — SHOULD be quoted, and
+MUST be quoted inside a flow sequence, where YAML would otherwise read
+it differently.
+
+Keys that this appendix does not define are not part of CADL v0.1. A
+processor MUST NOT reject a file because of them; the reference
+implementation ignores them.
+
+The grammar covers the design and verification levels of Section 5.1.1.
+An overview-level description is informal input for AI-assisted
+refinement and need not conform to it.
 
 ## A.1 Lexical rules
+
+These rules apply inside scalars.
 
 ```ebnf
 letter          = "A" | … | "Z" | "a" | … | "z" ;
 digit           = "0" | … | "9" ;
-identifier      = letter , { letter | digit | "_" } ;
-actor_id        = identifier , [ "[" , ( "*" | range_expr ) , "]" ] ;
+identifier      = ( letter | "_" ) , { letter | digit | "_" } ;
+hyphen_name     = identifier , { "-" , name_part } ;
+name_part       = ( letter | digit | "_" ) , { letter | digit | "_" } ;
+actor_ref       = identifier , [ "[" , index , "]" ] ;   (* string *)
+index           = "*" | range_expr | int_literal | identifier ;
 range_expr      = int_literal , ".." , ( int_literal | identifier ) ;
 string          = '"' , { any_char - '"' } , '"' ;
 int_literal     = digit , { digit } ;
-float_literal   = int_literal , "." , int_literal ;
+float_literal   = int_literal , "." , [ int_literal ] , [ exponent ]
+                | "." , int_literal , [ exponent ]
+                | int_literal , exponent ;
+exponent        = ( "e" | "E" ) , [ "+" | "-" ] , int_literal ;
 bool_literal    = "true" | "false" ;
 duration_lit    = int_literal , ( "ms" | "s" | "min" | "h" ) ;
-version_string  = int_literal , "." , int_literal , "." , int_literal ;
 literal         = string | int_literal | float_literal
                 | bool_literal | duration_lit ;
 ```
 
+`identifier` names actors, contracts, protocols, regimes, and metrics.
+`hyphen_name` is used only for extension names and codegen target names
+(for example `sos-dsl`, `unity-csharp`). Numeric literals are unsigned.
+
 ## A.2 Top-level structure
 
 ```ebnf
-cadl_file   = "sos:" , INDENT , sos_body , DEDENT ;
-sos_body    = "name:"    , string          , NEWLINE ,
-              [ "type:"   , sos_type        , NEWLINE ] ,
-              [ "version:", version_string  , NEWLINE ] ,
-              { section } ;
+cadl_file   = "sos:" , sos_body ;
+sos_body    = "name:" , text ,
+              [ "type:"         , sos_type ] ,
+              [ "version:"      , scalar ] ,
+              [ "description:"  , text ] ,
+              [ "extensions:"   , { "-" , extension_decl } ] ,
+              [ "context:"      , context_block ] ,
+              [ "actors:"       , { "-" , actor_def } ] ,
+              [ "contracts:"    , { "-" , contract_def } ] ,
+              [ "protocols:"    , { "-" , protocol_def } ] ,
+              [ "algorithms:"   , { algorithm_def } ] ,
+              [ "transitions:"  , { "-" , transition_def } ] ,
+              [ "metrics:"      , { "-" , metric_def } ] ,
+              [ "verification:" , { "-" , verify_def } ] ,
+              [ "codegen:"      , { "-" , codegen_def } ] ,
+              [ "motivation:"   , motivation_block ] ;
 sos_type    = "Directed" | "Acknowledged" | "Collaborative" | "Virtual" ;
-section     = context_section
-            | actors_section
-            | contracts_section
-            | protocols_section
-            | algorithms_section
-            | transitions_section
-            | metrics_section
-            | verification_section
-            | codegen_section ;
+extension_decl = hyphen_name , ":" , scalar ;
 ```
+
+One file contains one SoS definition. `version:` is conventionally a
+semantic version string such as `"1.0.0"`.
+
+**Extension points.** `extensions:` declares the language extensions a
+file relies on, each as a name and a version (for example
+`- sos-dsl: 0.1`). Two extensions are defined:
+
+- the SoS-DSL extension ([Appendix E](./appendix-e-sos-dsl.md)), which
+  adds the keys `lifecycle:` and `monitors:` to `contract_def` (A.4);
+- the motivation extension ([Appendix C](./appendix-c-motivation.md)),
+  which defines `motivation_block`.
 
 ## A.3 Context, actors, metrics
 
 ```ebnf
-context_section  = "context:"  , INDENT , { kv_entry } , DEDENT ;
-actors_section   = "actors:"   , INDENT , { actor_decl } , DEDENT ;
-actor_decl       = actor_id , ":" , INDENT , { kv_entry } , DEDENT ;
-metrics_section  = "metrics:"  , INDENT , { metric_decl } , DEDENT ;
-metric_decl      = identifier , ":" , INDENT ,
-                   "aggregation:" , string , NEWLINE ,
-                   [ "unit:"    , string , NEWLINE ] ,
-                   [ "target:"  , expr   , NEWLINE ] ,
-                   DEDENT ;
-kv_entry         = identifier , ":" , ( literal | inline_list
-                                       | INDENT , { kv_entry } , DEDENT ) ,
-                   NEWLINE ;
-inline_list      = "[" , [ literal , { "," , literal } ] , "]" ;
+context_block  = [ "environment:" , { identifier , ":" , scalar } ] ,
+                 [ "assumptions:" , { "-" , text } ] ;
+
+actor_def      = "id:"   , actor_ref ,
+                 "role:" , text ,
+                 [ "autonomy:"     , autonomy_level ] ,
+                 [ "capabilities:" , { "-" , text } ] ,
+                 [ "interface:"    , interface_def ] ;
+autonomy_level = "low" | "medium" | "high" ;
+interface_def  = [ "input:"  , { "-" , text } ] ,
+                 [ "output:" , { "-" , text } ] ;
+
+metric_def     = "id:" , identifier ,
+                 [ "formula:" , predicate ] ,          (* string *)
+                 [ "target:"  , scalar ] ;
 ```
+
+`autonomy:` defaults to `medium`. In `actor_def`, the index of `id:` is
+normally a range (`"ROBOT[1..N]"`) and declares a parameterised set of
+actors. A non-string value in `environment:` is read as a literal
+(A.1); a string value is kept verbatim.
 
 ## A.4 Contracts (Institution layer)
 
 ```ebnf
-contracts_section = "contracts:" , INDENT , { contract_decl } , DEDENT ;
-contract_decl     = identifier , ":" , INDENT , contract_body , DEDENT ;
-contract_body     = { "parties:"       , actor_list         , NEWLINE
-                    | "authority:"     , identifier         , NEWLINE
-                    | "alpha:"         , float_literal      , NEWLINE
-                    | "beta:"          , float_literal      , NEWLINE
-                    | "lambda:"        , float_literal      , NEWLINE
-                    | "obligations:"   , INDENT , { clause } , DEDENT
-                    | "permissions:"   , INDENT , { clause } , DEDENT
-                    | "prohibitions:"  , INDENT , { clause } , DEDENT
-                    | "sanctions:"     , INDENT , { clause } , DEDENT } ;
-clause            = "-" , predicate , NEWLINE ;
-actor_list        = actor_ref , { "," , actor_ref } ;
-actor_ref         = actor_id | "all" | "any" ;
+contract_def      = "id:"      , identifier ,
+                    "parties:" , { "-" , actor_ref } ,
+                    [ "assume:"           , { "-" , predicate } ] ,
+                    [ "guarantee:"        , { "-" , predicate } ] ,
+                    [ "authority:"        , authority_block ] ,
+                    [ "information:"      , information_block ] ,
+                    [ "responsibilities:" , { actor_ref , ":" , { "-" , text } } ] ,
+                    [ "incentives:"       , incentive_block ] ,
+                    [ "violation:"        , violation_block ] ,
+                    [ "duration:"         , scalar ] ,
+                    [ "lifecycle:"        , lifecycle_block ] ,       (* Appendix E *)
+                    [ "monitors:"         , { "-" , monitor_def } ] ; (* Appendix E *)
+
+authority_block   = [ "decision_scope:"  , text ] ,
+                    [ "decision_holder:" , actor_ref ] ,
+                    [ "beta:"            , number ] ,
+                    [ "mode:"            , text ] ;
+
+information_block = [ "alpha:"   , number ] ,
+                    [ "views:"   , { actor_ref , ":" , text } ] ,
+                    [ "sharing:" , { "-" , sharing_entry } ] ;
+sharing_entry     = actor_ref , "->" , actor_ref , ":" , identifier ;  (* string *)
+
+incentive_block   = [ "type:"   , text ] ,
+                    [ "lambda:" , number ] ,
+                    [ "rules:"  , { "-" , text } ] ;
+
+violation_block   = [ "detect:"     , text ] ,
+                    [ "action:"     , text ] ,
+                    [ "escalation:" , text ] ;
 ```
+
+Each item of `assume:` and `guarantee:` is a string holding a
+`predicate` (A.10). `alpha`, `beta`, and `lambda` MUST lie in `[0, 1]`.
+`parties:` MUST name at least one declared actor, and every actor
+reference in a contract MUST refer to an actor declared in `actors:`.
+`duration:` is `indefinite`, a `duration_lit`, or an event description.
 
 ## A.5 Protocols
 
 ```ebnf
-protocols_section = "protocols:" , INDENT , { protocol_decl } , DEDENT ;
-protocol_decl     = identifier , ":" , INDENT , protocol_body , DEDENT ;
-protocol_body     = [ "participants:" , actor_list , NEWLINE ] ,
-                    [ "precondition:" , predicate  , NEWLINE ] ,
-                    [ "postcondition:", predicate  , NEWLINE ] ,
-                    "steps:" , INDENT , step_list , DEDENT ;
-step_list         = { step } ;
-step              = message_step
-                  | compute_step
-                  | conditional_step
-                  | parallel_step
-                  | barrier_step
-                  | loop_step ;
-message_step      = actor_ref , "->" , actor_ref , ":" , message_expr , NEWLINE ;
-compute_step      = actor_ref , ":" , computation_expr , NEWLINE ;
-conditional_step  = "if" , predicate , ":" , INDENT , step_list , DEDENT ,
-                    [ "else:" , INDENT , step_list , DEDENT ] ;
-parallel_step     = "parallel:" , INDENT , step_list , DEDENT ;
-barrier_step      = "barrier:" , predicate , NEWLINE ;
-loop_step         = "loop" , [ "while" , predicate ] , ":" ,
-                    INDENT , step_list , DEDENT ;
-message_expr      = identifier , [ "(" , [ arg_list ] , ")" ] ;
-computation_expr  = identifier , "(" , [ arg_list ] , ")" ;
-arg_list          = expr , { "," , expr } ;
+protocol_def     = "id:"      , identifier ,
+                   "trigger:" , text ,
+                   [ "precondition:"     , text ] ,
+                   "steps:"   , { "-" , step } ,
+                   [ "timing:"           , { identifier , ":" , scalar } ] ,
+                   [ "fallback:"         , { identifier , ":" , text } ] ,
+                   [ "rollback:"         , rollback_block ] ,
+                   [ "postcondition:"    , text ] ,
+                   [ "safety_invariant:" , text ] ;
+rollback_block   = [ "condition:" , text ] ,
+                   [ "action:"    , text ] ;
+
+step             = message_step | compute_step | conditional_step
+                 | parallel_step | barrier_step ;
+message_step     = actor_ref , "->" , actor_ref , ":" , step_expr ;
+compute_step     = actor_ref , ":" , step_expr ;
+conditional_step = "if" , predicate , ":" , { "-" , step } ,
+                   [ "else:" , { "-" , step } ] ;
+parallel_step    = "parallel:" , { "-" , step } ;
+barrier_step     = "barrier:" , predicate ;
+step_expr        = function_call | identifier ;
 ```
+
+A `message_step` or `compute_step` is one sequence item. It may be
+written as a quoted string (`- "A -> B : msg(x)"`, recommended) or
+unquoted, in which case YAML reads it as a one-entry mapping; both forms
+are equivalent. `conditional_step`, `parallel_step`, and `barrier_step`
+are mappings whose key is `if <predicate>`, `parallel`, or `barrier`.
+Typical keys of `timing:` are `max_response`, `max_total`, and
+`checkpoint_interval`; typical keys of `fallback:` are `on_timeout` and
+`on_failure`.
 
 ## A.6 Algorithms
 
 ```ebnf
-algorithms_section = "algorithms:" , INDENT , { algorithm_decl } , DEDENT ;
-algorithm_decl     = identifier , ":" , INDENT , algorithm_body , DEDENT ;
-algorithm_body     = [ "inputs:"  , inline_list , NEWLINE ] ,
-                     [ "outputs:" , inline_list , NEWLINE ] ,
-                     [ "model:"   , string      , NEWLINE ] ,
-                     [ "impl:"    , string      , NEWLINE ] ,
-                     [ "params:"  , INDENT , { kv_entry } , DEDENT ] ;
+algorithm_def = identifier , ":" , algorithm_body ;
+algorithm_body = [ "central:" , text ] ,
+                 [ "local:"   , text ] ;
 ```
+
+`algorithms:` is a mapping from a function name (for example
+`pathfinding`) to the algorithms used centrally and locally.
 
 ## A.7 Transitions
 
 ```ebnf
-transitions_section = "transitions:" , INDENT , { transition_decl } , DEDENT ;
-transition_decl     = identifier , ":" , INDENT ,
-                      "from:"   , identifier , NEWLINE ,
-                      "to:"     , identifier , NEWLINE ,
-                      "trigger:", predicate  , NEWLINE ,
-                      [ "guard:"  , predicate , NEWLINE ] ,
-                      [ "effect:" , action    , NEWLINE ] ,
-                      DEDENT ;
-action              = function_call ;
+transition_def = "from:" , identifier ,
+                 "to:"   , identifier ,
+                 [ "condition:"        , predicate ] ,     (* string *)
+                 [ "protocol:"         , identifier ] ,
+                 [ "safety_invariant:" , predicate ] ;     (* string *)
 ```
+
+`from:` and `to:` name regimes. A regime is introduced by its use in a
+transition; there is no separate declaration. `protocol:` SHOULD name a
+protocol declared in `protocols:`.
 
 ## A.8 Verification block
 
 ```ebnf
-verification_section = "verification:" , INDENT , { verify_decl } , DEDENT ;
-verify_decl          = identifier , ":" , INDENT , verify_body , DEDENT ;
-verify_body          = "property:" , property_kind , NEWLINE ,
-                       "expr:"     , predicate      , NEWLINE ,
-                       [ "method:" , verify_method , NEWLINE ] ,
-                       [ "bound:"  , int_literal   , NEWLINE ] ;
-property_kind        = "safety" | "liveness" | "fairness" | "invariant" ;
-verify_method        = "smt" | "model_check" | "simulation" | "proof" ;
+verify_def    = "id:"   , identifier ,
+                "type:" , text ,
+                [ "target:"   , identifier ] ,
+                [ "property:" , text ] ,
+                [ "method:"   , verify_method ] ,
+                [ "expr:"     , predicate ] ,              (* string *)
+                [ "bound:"    , int_literal ] ;
+verify_method = "smt" | "model_check" | "simulation" | "proof" ;
 ```
+
+`type:` names the kind of property, for example `consistency`,
+`deadlock`, `safety`, or `liveness`. `target:` names the contract,
+protocol, or transition concerned. `method:` defaults to `smt`. A
+processor that does not implement a declared method MUST report the
+entry as `not_supported` rather than skip it silently, and MUST report
+an unknown method as an error.
 
 ## A.9 Codegen block
 
 ```ebnf
-codegen_section = "codegen:" , INDENT , { codegen_target } , DEDENT ;
-codegen_target  = target_name , ":" , INDENT , codegen_body , DEDENT ;
-target_name     = "unity" | "ros2" | "python" | "solidity" | "opa" | identifier ;
-codegen_body    = [ "output:" , string , NEWLINE ] ,
-                  [ "template:", string , NEWLINE ] ,
-                  [ "options:" , INDENT , { kv_entry } , DEDENT ] ;
+codegen_def = [ "target:"   , hyphen_name ] ,
+              [ "output:"   , text ] ,
+              [ "mappings:" , { identifier , ":" , text } ] ;
 ```
+
+`target:` defaults to `python`. The target names are catalogued in
+[Appendix D](./appendix-d-codegen.md). `output:` is the output path and
+`mappings:` passes target-specific name mappings to the generator.
 
 ## A.10 Expressions
 
+A `predicate` is written inside one YAML string scalar.
+
 ```ebnf
-expr             = logical_expr ;
-logical_expr     = comparison , { ( "AND" | "OR" ) , comparison }
-                 | "NOT" , expr ;
-comparison       = arith_expr , [ comp_op , arith_expr ] ;
-comp_op          = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+predicate        = or_expr ;
+or_expr          = and_expr , { "OR" , and_expr } ;
+and_expr         = not_expr , { "AND" , not_expr } ;
+not_expr         = "NOT" , not_expr
+                 | comparison ;
+comparison       = arith_expr , [ comp_op , arith_expr ]
+                 | quantified_expr ;
+comp_op          = "==" | "!=" | "<=" | ">=" | "<" | ">" ;
+quantified_expr  = ( "for all" | "exists" ) , identifier , "in" ,
+                   arith_expr , ":" , predicate ;
 arith_expr       = term , { ( "+" | "-" ) , term } ;
 term             = factor , { ( "*" | "/" ) , factor } ;
-factor           = literal | identifier | function_call
-                 | "(" , expr , ")" ;
+factor           = "(" , predicate , ")"
+                 | function_call
+                 | member_access
+                 | literal
+                 | indexed_ref ;
 function_call    = identifier , "(" , [ arg_list ] , ")" ;
-quantified_expr  = ( "for all" | "exists" ) , identifier , "in" , set_expr ,
-                   ":" , predicate ;
-predicate        = comparison | logical_expr | quantified_expr
-                 | function_call ;
-set_expr         = identifier | inline_list | range_expr ;
-event_expr       = function_call | identifier , "." , identifier ;
+arg_list         = predicate , { "," , predicate } ;
+member_access    = indexed_ref , "." , identifier , { "." , identifier } ;
+indexed_ref      = identifier ,
+                   [ "[" , ( "*" | range_expr | arith_expr ) , "]" ] ;
 ```
+
+Operators bind, from loosest to tightest: `OR`, `AND`, `NOT`, comparison,
+`+` `-`, `*` `/`. Binary operators of equal precedence associate to the
+left. A comparison is not associative (`a < b < c` is not a predicate).
+A quantifier extends as far to the right as possible. White space
+between tokens is ignored.
+
+An item of `assume:` or `guarantee:` that does not conform to this
+grammar is not a syntax error: it is retained as an *opaque predicate*,
+which a processor carries through unchanged and excludes from formal
+verification. This permits natural-language conditions at the design
+level. The same applies to step expressions and conditions in A.5.
 
 ## A.11 Reserved keywords
 
+Keywords of the expression sub-language. They MUST NOT be used as
+identifiers.
+
 ```
-actors      algorithms    AND         any         all
-authority   barrier       beta        codegen     context
-contracts   effect        else        exists      expr
-fairness    for all       from        guard       if
-invariant   lambda        liveness    loop        metrics
-model_check name          NOT         OR          output
-parallel    parties       permissions postcondition precondition
-prohibitions property     protocols   proof       safety
-sanctions   simulation    smt         sos         steps
-target      template      to          transitions trigger
-type        unit          verification version    while
+AND    OR    NOT    true    false    for all    exists    in
 ```
+
+Keys of the structure, by the block in which they are recognised.
+
+| Block | Keys |
+|---|---|
+| file | `sos` |
+| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `metrics` `verification` `codegen` `motivation` |
+| `context` | `environment` `assumptions` |
+| actor | `id` `role` `autonomy` `capabilities` `interface` (`input` `output`) |
+| contract | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` |
+| `authority` | `decision_scope` `decision_holder` `beta` `mode` |
+| `information` | `alpha` `views` `sharing` |
+| `incentives` | `type` `lambda` `rules` |
+| `violation` | `detect` `action` `escalation` |
+| protocol | `id` `trigger` `precondition` `steps` `timing` `fallback` `rollback` (`condition` `action`) `postcondition` `safety_invariant` |
+| step | `if` `else` `parallel` `barrier` |
+| algorithm | `central` `local` |
+| transition | `from` `to` `condition` `protocol` `safety_invariant` |
+| metric | `id` `formula` `target` |
+| verification | `id` `type` `target` `property` `method` `expr` `bound` |
+| codegen | `target` `output` `mappings` |
+
+Enumerated values: `Directed` `Acknowledged` `Collaborative` `Virtual`
+(SoS type); `low` `medium` `high` (autonomy); `smt` `model_check`
+`simulation` `proof` (verification method); `ms` `s` `min` `h`
+(duration units). The keys and values of the extensions are listed in
+Appendices C and E.
+
+## A.12 Reference implementation status (v0.3)
+
+The reference implementation reads the file with a YAML 1.1 loader and
+is lenient: only a missing `sos:` mapping, invalid YAML, and an invalid
+`type:` are rejected by the parser. `cadl check` additionally reports
+duplicate ids, undeclared actors, a contract without parties, and
+governance parameters outside `[0, 1]` as errors. Other missing
+required keys are replaced by an empty value. At v0.3 it deviates from
+this appendix as follows (checked against v0.3.2).
+
+- **Expressions.** Releases before v0.3.2 parsed `OR` more tightly than
+  `AND`, did not accept a `member_access` on an indexed reference
+  (`ROBOT[i].battery`), and mishandled the arithmetic operators
+  `+ - * /`. v0.3.2 follows A.10 in these respects.
+- **Steps.** The `else:` branch of a `conditional_step` and the
+  condition of a `barrier_step` are not retained.
+- **Contracts.** A `sharing:` entry is recognised only when it is
+  written as a quoted string. An unrecognised `autonomy:` value is read
+  as `medium`.
+- **Verification.** Up to v0.3.2, `method:`, `expr:`, and `bound:` are not read from
+  the file, so every entry is handled as `method: smt`. The
+  `not_supported` result is implemented for specifications constructed
+  through the API.
+- **Codegen.** `codegen:` entries are parsed but not acted upon; the
+  target is selected on the command line (Appendix D).
+- **Extensions.** `extensions:` and `motivation:` are ignored.
+  `lifecycle:` and `monitors:` are recognised whether or not
+  `extensions:` declares `sos-dsl`.
