@@ -962,10 +962,11 @@ Inspector ▸ Add Component ▸ "PilotContractBridge"   (CADL.SosDsl.Demo.PilotC
 The Inspector now shows:
 
 ```
-PilotContractBridge (Script)
-├── Robot Battery       [───────●───] 90.0
-├── Request Deadline Ms              300000
-└── Assigned Dwell Ms                700
+Pilot Contract Bridge (Script)
+└── World keys (must match the contract's predicates)
+    ├── Robot Battery       [───────●───] 90
+    ├── Request Deadline Ms              300000
+    └── Assigned Dwell Ms                700
 ```
 
 > `Assigned Dwell Ms` is the minimum time the contract dwells in `Assigned` before accepting. It gives periodic monitors gated on that state (e.g. `battery_guard`, sampled every 500 ms) at least one evaluation window. Leave it at the default 700 ms — setting it below the monitor period would make violations undetectable.
