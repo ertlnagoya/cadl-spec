@@ -27,6 +27,12 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             style={{marginLeft: '1rem'}}
+            to="/docs/handson/">
+            ハンズオンを始める
+          </Link>
+          <Link
+            className="button button--secondary button--lg"
+            style={{marginLeft: '1rem'}}
             href="https://cadl-explorer.streamlit.app/">
             CADL Explorer を試す
           </Link>
@@ -144,6 +150,49 @@ function WhatIsExplorer() {
   );
 }
 
+function WhatIsHandson() {
+  return (
+    <section style={{padding: '3rem 0', background: 'var(--ifm-background-surface-color)'}}>
+      <div className="container">
+        <div className="row" style={{alignItems: 'center', gap: '2rem'}}>
+          <div className="col col--6">
+            <Heading as="h2">ハンズオンで学ぶ</Heading>
+            <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
+              <strong>SoS-DSL ハンズオン</strong>は，ロボット配送の System of Systems を題材に，
+              CADL ツールチェーンの全工程を体験する約95分の自習用ワークショップです（全5回の演習コースとしても使えます）。
+              <em>CADL によるモデリング → SoS-DSL の契約（lifecycle と monitors）→ 可視化 → コード生成 → シミュレーション実行</em>
+              の順に進みます。
+            </p>
+            <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
+              教科書，全5回の演習集，学術的背景（Maier の5条件，ISO/IEC/IEEE 21839・21840・21841）を用意しています。
+            </p>
+            <Link className="button button--primary button--lg" to="/docs/handson/">
+              ハンズオン入口へ →
+            </Link>
+          </div>
+          <div className="col col--5 col--offset-1">
+            <div style={{
+              background: 'var(--ifm-background-color)',
+              border: '1px solid var(--ifm-color-emphasis-200)',
+              borderRadius: '12px',
+              padding: '1.5rem',
+              fontSize: '0.95rem',
+              lineHeight: '1.7',
+            }}>
+              <div style={{fontWeight: '600', marginBottom: '0.75rem'}}>教材の構成</div>
+              <ul style={{paddingLeft: '1.2rem', marginBottom: '0'}}>
+                <li><strong>教科書</strong> — 6ステップ × 15分</li>
+                <li><strong>演習集</strong> — 全5回，ルーブリック付き</li>
+                <li><strong>学術的背景</strong> — Maier の5条件，ISO 21839・21840・21841，参考文献</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Features() {
   const features = [
     {
@@ -152,7 +201,7 @@ function Features() {
     },
     {
       title: '形式的検証',
-      description: 'コントラクト間の矛盾，プロトコルのデッドロック，体制遷移時の安全性違反を自動的に検出します。',
+      description: '契約間の矛盾，プロトコルのデッドロック，モード遷移時の安全性違反を自動的に検出します。',
     },
     {
       title: 'エンドツーエンドパイプライン',
@@ -193,6 +242,7 @@ export default function Home(): ReactNode {
       <main>
         <WhatIsCADL />
         <WhatIsExplorer />
+        <WhatIsHandson />
         <Features />
       </main>
     </Layout>

@@ -13,9 +13,9 @@ title: "Course B — Urban Mobility (CADL × SUMO)"
 >
 > **Time**: 60–90 minutes.
 >
-> **You will leave with**: Your own `mobility_sos.cadl` describing a
-> taxi-fleet SoS, a SUMO simulation that actually runs, and a
-> compliance report against your CADL contract.
+> **You will leave with**: A `mobility_sos.cadl` describing a
+> taxi-fleet SoS that you have read and edited yourself, a SUMO simulation that actually runs, and a
+> report that checks the simulation results against the `guarantee` clauses of your CADL contract.
 
 ---
 
@@ -45,14 +45,16 @@ mobility_sos.cadl
                                   ↓
                           SUMO ─► tripinfo.xml
                                   ↓
-                          analyze_results.py (contract compliance)
+                          analyze_results.py (guarantee check)
                                   ↓
                        Iterate: revise CADL guarantees / deadlines
 ```
 
-The reference implementation lives at
-[`ertlnagoya/mobility-sos-exercise`](https://github.com/ertlnagoya/mobility-sos-exercise)
-(or, for this hands-on, your local `mobility-sos-exercise/` checkout).
+The reference implementation lives in the `mobility-sos-exercise` repository.
+
+:::info Repository availability
+`mobility-sos-exercise` is **not publicly available at present**. The commands below assume you have been given access to it; without it, this page can still be read as a worked example of applying CADL to a mobility SoS.
+:::
 
 ---
 
@@ -62,7 +64,7 @@ Same as the main textbook for `cadl_repo` and `cadl-explorer`.
 The new requirement is **SUMO**:
 
 ```bash
-# Get the exercise repository (skip the clone if it was distributed to you locally)
+# Get the exercise repository (not publicly available at present)
 cd ~/program
 git clone https://github.com/ertlnagoya/mobility-sos-exercise
 
@@ -75,11 +77,16 @@ pip install -r requirements.txt
 # SUMO (pip is the simplest cross-platform way)
 pip install eclipse-sumo
 
-# CADL compiler & cadl-explorer: same as the main textbook.
+# CADL compiler: install the clone from Course A into this venv,
+# so that `cadl` and the exercise scripts run in the same shell
+pip install -e ~/program/cadl_repo
+cadl --version
+
+# cadl-explorer: same as Course A, Step 4 (branch feature/sos-dsl)
 ```
 
-> If `z3-solver` fails to build during `pip install -e .`, fall back
-> to `pip install --no-deps -e .` followed by `pip install lark pyyaml`.
+> If `z3-solver` fails to build during `pip install -e ~/program/cadl_repo`, fall back
+> to `pip install --no-deps -e ~/program/cadl_repo` followed by `pip install lark pyyaml`.
 > This tutorial only needs `cadl check` and `cadl sim-ir`, neither of
 > which uses Z3.
 
@@ -87,7 +94,7 @@ pip install eclipse-sumo
 
 ## 2. Read the structure (5 min)
 
-`cadl/mobility_sos.cadl`:
+Open `cadl/mobility_sos.cadl` and look at the `actors:` inside the `sos:` block (excerpt):
 
 ```yaml
 sos:
@@ -102,27 +109,37 @@ sos:
       autonomy: medium             # service requesters
 ```
 
+How to read it: the platform is the central coordinator and has little freedom to act on its own (`autonomy: low`);
+the taxis are self-interested agents with high autonomy; passengers issue requests and decide whether to board.
+
 The same **Acknowledged** SoS type as the robot-delivery example.
 
-:::tip 🔍 Visualization Checkpoint 0 — Structure layer only
-So far you've only looked at the **structure** (actors and a contract skeleton).
-`cadl check` already passes and `cadl sim-ir` emits an IR, but
-**`institution.contracts[0].lifecycle == null`** — confirm it:
+:::tip 🔍 Visualization Checkpoint 0 — What a structure-only spec gives you
+So far you have read only the **structure** (the actors). Check the file, and print how much of the
+contract's normative part the IR carries:
 
 ```bash
-cd mobility-sos-exercise
+cd ~/program/mobility-sos-exercise
 cadl check  cadl/mobility_sos.cadl        # → Type check passed: cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json \
-   | python3 -c "import sys, json; d=json.load(sys.stdin); print('lifecycle =', d['institution']['contracts'][0]['lifecycle'])"
+   | python3 -c "import sys, json; c=json.load(sys.stdin)['institution']['contracts'][0]; print('lifecycle =', 'present' if c['lifecycle'] else None, '/ monitors =', len(c['monitors']))"
 ```
 
-Upload this IR to cadl-explorer and you'll just see **"No lifecycle defined"**.
-That gap — structure alone cannot express deadlines, violations, or consequences — is what §3 fills.
+The file you are reading is the complete specification: its contract already carries the
+`lifecycle:` and `monitors:` blocks that §3 walks through, so the command should report a lifecycle.
+To see what the **structure alone** would give, make a scratch copy, delete the `lifecycle:` and
+`monitors:` blocks from it, and run the same two commands on the copy: `cadl check` still passes, but
+the IR has `"lifecycle": null` and no monitors, and cadl-explorer shows only a warning that the
+contract does not declare a `lifecycle:` section.
+That gap — structure alone cannot express deadlines, violations, or consequences — is what the blocks you read in §3 fill.
 :::
 
 ---
 
 ## 3. Read the contract (10 min)
+
+The contract in the same file (an excerpt: the `on:` trigger of each transition, the remaining
+transitions and the remaining monitors are omitted and marked `# ...`):
 
 ```yaml
 contracts:
@@ -140,22 +157,28 @@ contracts:
         - id: match
           from: Requested
           to:   Matched
+          # on: ...
           deadline: 30s
           on_violation: { transition: Violated, severity: Major }
         - id: accept
           from: Matched
           to:   Accepted
+          # on: ...
           deadline: 5s
           on_violation: { transition: Violated, severity: Major }
+        # ...
     monitors:
       - id: low_battery_guard
         observe: "TAXI[i].battery"
         sampling: periodic(500ms)
         rule: "TAXI[i].battery < 15 AND state == Accepted"
         on_match: { transition: Violated, severity: Critical }
+      # ...
 ```
 
 ### Exercise 3-1
+
+One lifecycle instance corresponds to one ride request. Answer the following.
 
 1. If the platform fails to dispatch within 31 seconds, what state does the contract enter?
 2. Whose responsibility is the `accept` deadline?
@@ -165,11 +188,11 @@ contracts:
 
 ## 4. Visualize (10 min) — 🔍 Visualization Checkpoint 1 (post-DSL)
 
-In §3 we added `lifecycle:` and `monitors:` to the CADL source.
-Now cadl-explorer renders a **meaningful** picture for the first time.
+In §3 you read the `lifecycle:` and `monitors:` blocks of the CADL source.
+Because the file contains them, cadl-explorer renders a **meaningful** picture.
 
 ```bash
-cd mobility-sos-exercise
+cd ~/program/mobility-sos-exercise
 cadl check  cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json > cadl/mobility_sos.ir.json
 
@@ -189,11 +212,11 @@ You should see something like:
 | Dashed grey = `Delivered`/`Cancelled`/`Terminated` | normal terminals |
 | Dashed pink = `Violated` | violation terminal |
 | Solid edge with `Δ 30s` / `Δ 5s` | deadline-bearing transitions |
-| Red dashed edge with `violation Major` | `on_violation` lift |
+| Red dashed edge with `violation Major` | forced move to the `on_violation` target state |
 
 :::info This pattern repeats throughout the tutorial
 You will run **edit CADL → `cadl sim-ir` → reload cadl-explorer** at every milestone:
-after the structure layer, after the DSL layer, after codegen, after sensitivity edits.
+after reading the structure, after reading the contract, after codegen, after the simulation, after revising the contract.
 The whole point of the tutorial is to internalize that **the picture changes in lockstep with the code**.
 :::
 
@@ -212,15 +235,35 @@ and reload the page. The edge label should update to `Δ 60s`.
 emits SUMO configuration plus a contract-constraints JSON.
 
 ```bash
+cd ~/program/mobility-sos-exercise
 python scripts/cadl_to_sumo.py
+```
+
+Example output (excerpt; the scripts print their progress messages in Japanese):
+
+```text
+[1/4] CADL.environment 検証
+  [OK] grid_size=5 は SUMO ネットワークと一致。
+[2/4] contracts → constraints 抽出
+  - contract RIDE_SLA
+      guarantees: 2
+        waiting_time   <= 300.0s
+        ride_time      <= 1800.0s
+      deadlines : 2
+        match      30.0s (violation→Violated, sev=Major)
+        accept     5.0s (violation→Violated, sev=Major)
+      monitors  : 3
+[3/4] sumocfg 生成 (CADL.time_step_ms / 終端を反映)
+  ✓ step-length = 1.0s
+  ✓ end         = 4920s
 ```
 
 Produces:
 
 - `sumo/config/midtown.cadl.sumocfg` — `step-length` from
   `environment.time_step_ms`, `end` from CSV last depart + `ride_time` guarantee.
-- `sumo/cadl_constraints.json` — `analyze_results.py` reads this for
-  per-trip compliance checking.
+- `sumo/cadl_constraints.json` — the contract conditions (guarantees / deadlines / monitors) that
+  `analyze_results.py` reads.
 
 :::tip 🔍 Visualization Checkpoint 2 — Post-codegen (CADL source is unchanged)
 `cadl_to_sumo.py` only **reads** the IR and **writes** SUMO config files; it never
@@ -237,26 +280,34 @@ target-specific generators consume the spec without mutating it.
 ## 6. Run SUMO (10 min)
 
 ```bash
+# Check the sample demand CSV
 python scripts/prepare_sample_data.py
-netconvert -c sumo/network/midtown.netccfg     # one time
+
+# Build the SUMO network (one time)
+netconvert -c sumo/network/midtown.netccfg
+
+# CSV → route file
 python scripts/generate_sumo_routes.py
-python scripts/run_sumo.py                     # add --gui to visualize
+
+# Run SUMO (picks the CADL-derived sumocfg)
+python scripts/run_sumo.py            # headless
+# python scripts/run_sumo.py --gui    # with visualization
 ```
 
 This populates `results/tripinfo.xml` and `results/summary.xml`.
 
 ---
 
-## 7. Check contract compliance (10 min)
+## 7. Check the results against the contract (10 min)
 
 ```bash
 python scripts/analyze_results.py
 ```
 
-Expected excerpt:
+Example output (excerpt; the header line is printed in Japanese):
 
 ```text
-=== Contract compliance against cadl_constraints.json ===
+=== CADL 契約 (cadl_constraints.json) との遵守チェック ===
 
   contract: RIDE_SLA
     -- guarantees --
@@ -269,7 +320,7 @@ Expected excerpt:
       [SKIP        ] low_battery_guard   (battery not exported by SUMO)
 ```
 
-Observations:
+What is actually checked here is the two `guarantee` clauses only; the deadlines and the monitor are listed but not evaluated:
 
 - **Guarantees** map directly to `tripinfo.duration` / `waitingTime` — evaluated.
 - **Deadlines** for matching/accept events are not modeled in SUMO yet — flagged SKIP.
@@ -299,9 +350,14 @@ This is the punchline. Edit a CADL guarantee, regenerate the IR, and the
 existing simulation result is re-evaluated against the new contract — **without re-running SUMO**.
 
 ```bash
+# Rewrite ride_time 1800s → 100s (for the experiment)
 sed -i.bak 's|ride_time <= 1800s|ride_time <= 100s|' cadl/mobility_sos.cadl
+
+# Regenerate the IR (no need to re-run the simulation)
 cadl sim-ir cadl/mobility_sos.cadl --format json > cadl/mobility_sos.ir.json
 python scripts/cadl_to_sumo.py
+
+# Re-evaluate the existing SUMO results
 python scripts/analyze_results.py | grep -E "OK|VIOLATED"
 ```
 
@@ -332,7 +388,7 @@ correspondence is the whole goal of this tutorial:
         │
         ├── Picture (cadl-explorer)        ← visual understanding
         ├── Execution (SUMO)                ← dynamic behavior
-        └── Verdict (analyze_results.py)    ← compliance check
+        └── Verdict (analyze_results.py)    ← guarantee check
 ```
 
 That round-trip is the **SoS-design feedback loop** CADL is meant to enable.
@@ -364,10 +420,12 @@ python scripts/cadl_to_sumo.py
 
 - Same CADL/SoS-DSL syntax; different domain (mobility vs robot delivery)
   and different runtime (SUMO vs Unity C#).
-- The contract deadlines / guarantees / monitors live in the CADL source
-  and propagate to **all** runtimes via `sim-ir`.
-- Editing a CADL guarantee triggers re-evaluation without re-simulating —
-  the cheap, fast feedback loop that SoS design needs.
+- The contract's deadlines / guarantees / monitors live in one place, the CADL source, and reach each
+  tool through the IR that `cadl sim-ir` emits. How much of them a given runtime can evaluate
+  differs: in this course the SUMO pipeline evaluates the `guarantee` clauses only, and reports the
+  deadlines and monitors as `[SKIP]` because SUMO has no observable for them.
+- Editing a CADL guarantee and re-running the analysis re-evaluates the existing results without
+  re-simulating — a cheap, fast feedback loop for SoS design.
 
 ---
 
@@ -375,5 +433,5 @@ python scripts/cadl_to_sumo.py
 
 - Main textbook (robot delivery): [`main-textbook.md`](main-textbook.md)
 - Exercises: [`exercises.md`](exercises.md)
-- SoS-DSL spec: cadl-spec Appendix E
+- SoS-DSL spec: cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)
 - SUMO project: https://eclipse.dev/sumo/

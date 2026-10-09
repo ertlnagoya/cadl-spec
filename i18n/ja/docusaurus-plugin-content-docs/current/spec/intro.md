@@ -9,7 +9,7 @@ title: "CADL仕様書 v0.1"
 
 名古屋大学大学院情報学研究科 ERTL
 
-2026年3月17日
+2026年10月9日
 
 ---
 
@@ -82,6 +82,10 @@ flowchart LR
 
 - **[付録A — 構文](./appendix-a-syntax)** — EBNF文法リファレンス。
 - **[付録B — 参考文献](./appendix-b-references)** — 参照文献。
+- **[付録C — 動機拡張](./appendix-c-motivation)** — エージェントの動機モデルとプロファイル。
+- **[付録D — コード生成ターゲット](./appendix-d-codegen)** — コード生成ターゲットの一覧。
+- **[付録E — SoS-DSL拡張](./appendix-e-sos-dsl)** — 契約のライフサイクルとランタイムモニター。
+- **[用語集](./glossary)** — 仕様全体で用いる用語。
 
 ## 推奨される読み順
 
@@ -104,4 +108,4 @@ flowchart LR
 
 本書は**Version 0.1（ドラフト）** です。言語およびツールチェーンは開発中であり，
 構文・意味論は今後のリビジョンで変更される可能性があります。
-フィードバックや議論は歓迎します。
+フィードバックや議論は[GitHub Issues](https://github.com/ertlnagoya/cadl/issues)で歓迎します。

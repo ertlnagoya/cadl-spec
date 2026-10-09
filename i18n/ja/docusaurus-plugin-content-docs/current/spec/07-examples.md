@@ -5,7 +5,11 @@ title: "7. 用途別記述例"
 
 # 7. 用途別記述例
 
-本章では，4つの適用領域を通じてCADLの記述例を示す。各例は，第1章で掲げた3つの目的に対応する記述機能を具体的に示している。
+本章では，4つの適用領域を通じてCADLの記述例を示す。各例は，第1章で掲げた3つの目的に対応する記述機能を具体的に例示している。
+
+:::note
+本章の記述例はCADLが意図する設計を例示する概念的なものであり，v0.3リファレンス実装はこのままの形では受理しない。基本構造の記述は，`ROBOT[*]`のようなアクター参照を引用符なしでインラインリスト内に書いており，YAMLベースのパーサはこれを拒否する。`verification:`と`codegen:`の記述は，`sos:`の外に置いた断片である。また，`optimization:`，`policy_codegen:`，`post_generation_verification:`，`calendar_integration:`，`tool:`や，`Monte_Carlo(...)`のような検証手法など，Appendix Aの範囲を超える将来の構成要素も含む。リファレンス実装の検証器が実装する検証手法は`smt`だけである。実行できる例は，[`cadl`リポジトリ](https://github.com/ertlnagoya/cadl)の`examples/`ディレクトリにある。
+:::
 
 | **記述例** | **目的1: 計算機処理** | **目的2: 矛盾検出** | **目的3: 自動変換・コード生成** |
 |---|---|---|---|
@@ -55,7 +59,7 @@ sos:
       authority:
         decision_scope: "chore_assignment"
         decision_holder: PARENT[1]       # 週替わりローテーション
-        beta: 0.3                        # やや集中的
+        beta: 0.7                        # やや集中的
       information:
         sharing_mode: "broadcast"        # 全員がスケジュールを閲覧可能
         alpha: 1.0
@@ -235,7 +239,7 @@ sos:
       authority:
         decision_scope: "order_assignment_and_routing"
         decision_holder: DISPATCHER
-        beta: 0.2
+        beta: 0.8
       information:
         alpha: 0.8
         views:
@@ -451,7 +455,7 @@ sos:
       authority:
         decision_scope: "data_access_control"
         decision_holder: DATA_PROVIDER[i]   # データ所有者が制御
-        beta: 0.8                           # 高度に分散
+        beta: 0.2                           # 高度に分散
       information:
         alpha: 0.4       # 限定的共有（プライバシー保護）
         views:
@@ -660,7 +664,7 @@ sos:
         decision_scope: "regime_selection_and_parameter_tuning"
         decision_holder: AI_ADVISOR       # AIが提案
         approval_required: HUMAN_OPERATOR # 人間が承認
-        beta: 0.4                         # AIが主導するが人間が監督
+        beta: 0.6                         # AIが主導するが人間が監督
       information:
         alpha: 0.7
         views:
@@ -876,4 +880,4 @@ codegen:
       - "}"
 ```
 
-以上の4つの記述例は，CADLが目的1（制度の形式的・計算的表現），目的2（制度矛盾・違反の検出と検証），目的3（制度記述から実行可能コードへの自動変換）を一貫した言語フレームワーク内で実現できることを示している。各例は異なるドメイン（家庭・ロボティクス・IoT・AI）に適用されているが，共通のverificationブロックとcodegenブロックの構造により，ドメイン横断的な検証・生成パイプラインの構築が可能である。
+以上の4つの記述例は，CADLが目的1（制度の形式的・計算的表現），目的2（制度矛盾・違反の検出と検証），目的3（制度記述から実行可能コードへの自動変換）を一貫した言語フレームワーク内でどのように実現しようとしているかを例示している。各例は異なるドメイン（家庭・ロボティクス・IoT・AI）に適用されているが，共通のverificationブロックとcodegenブロックの構造により，ドメイン横断的な検証・生成パイプラインを構築できるようにすることを意図している。

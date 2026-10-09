@@ -35,18 +35,22 @@ flowchart LR
 
 There are only three things to remember.
 
-1. **The only thing a human writes is the `.cadl` file.** Everything else (IR, C#, diagrams) is generated automatically.
-2. From the same IR, **two runtimes — Python and C# — are produced** and behave with the same semantics (one serves as a cross-check).
-3. The robot control code and the contract code are **completely separated**. The contract only "observes" the robots; not a single line of control logic is touched.
+1. **The only contract logic a human writes is the `.cadl` file.** The IR, the C# contract classes and the diagrams are generated from it by the toolchain commands.
+2. **Two runtimes execute the same IR** with the same semantics: the C# contract code is *generated* from the IR, while the Python reference runtime is a hand-written *interpreter* that reads the IR directly (it serves as a cross-check).
+3. The robot control code and the contract code are **separated**. The contract only "observes" the robots: the robot controller `Pilot_CSoS.cs` contains no contract logic, and the only hand-written glue is a thin bridge (`PilotContractBridge.cs`) that turns robot state changes into contract events.
 
 ## 2. Repositories and roles
 
-| Repository | Role | Do you touch it in class? |
-| --- | --- | --- |
-| `cadl-spec` | The language specification and this textbook site | Read only |
-| `cadl_repo` | The compiler (parser, type checker, IR, code generation) | Used as a command |
-| `cadl-explorer` | Streamlit visualization (state machine diagrams) | Used as a command |
-| `raspimouse-swarm-simulator` | Unity scene, Go arbitrator, Python runtime | **Where you mainly work** |
+| Repository | Role | Public? | Do you touch it in the course? |
+| --- | --- | --- | --- |
+| `cadl-spec` | The language specification and this textbook site | Yes | Read only |
+| `cadl` (cloned as `cadl_repo`) | The compiler (parser, type checker, IR, code generation) | Yes | Used as a command |
+| `cadl-explorer` | Streamlit visualization (state machine diagrams) | Yes | Used as a command |
+| `raspimouse-swarm-simulator` | Unity scene, Go arbitrator, Python runtime | No | **Where you mainly work in Steps 5–6** |
+
+These are the four top-level repositories. The simulator additionally pulls in two git submodules, `raspimouse-unity` (the Unity project, checked out as `unity/`) and `raspimouse-swarm-arbitrator` (the Go arbitrator, `arbitrator/`), which are not public either. With the three public repositories you can follow Course A up to Step 4; the files described in Section 4 below belong to the non-public simulator, so without access read that section as a description of how the pieces fit together.
+
+A note on names: the Unity scene (`C-SoS.unity`), the robot controller (`Pilot_CSoS`) and the arbitrator directory (`C-SoS/`) carry the label "C-SoS". That is the simulator's own name for its centralised-arbitrator mode (as opposed to its "D-SoS" mode); it is independent of CADL and does not mean CADL's `Collaborative` type. The CADL file of this course declares `type: Acknowledged`, and that declaration is what the course text means when it classifies the robot-delivery SoS.
 
 ## 3. The road one contract travels — file by file
 
@@ -88,7 +92,7 @@ Using the textbook example `sos_dsl_robot_delivery.cadl` (153 lines), let's foll
 | File | What it contains |
 | --- | --- |
 | `LineTrace/Pilot_CSoS.cs` | The robot's brain. Path following, bidding on deliveries (claim), winning bids, completion. **Knows nothing about contracts** |
-| `arbitrator/C-SoS/main/main.go` | A dispatcher written in Go. Distributes deliveries over NATS and awards them first-come-first-served (FCFS) |
+| `arbitrator/C-SoS/main/main.go` | The arbitrator (task dispatcher) written in Go. Distributes deliveries over NATS and awards them first-come-first-served (FCFS) |
 | `Assets/streamingAssets/cadl_config.json` | The graph (11 nodes / 17 edges), robot count, NATS settings. The source of the `[Config]` lines in the Console |
 
 ### Python reference runtime — `cadl/runtime/` (for cross-checking)
@@ -100,12 +104,12 @@ Using the textbook example `sos_dsl_robot_delivery.cadl` (153 lines), let's foll
 
 ## 5. What to touch to change what
 
-When you feel like modifying things, there is exactly one place per goal (everything else is either auto-generated or agreed to be off-limits).
+When you feel like modifying things, there is one place to touch per goal (everything else is either generated or should not be edited by hand).
 
 | What you want to do | What to touch |
 | --- | --- |
 | Change a deadline, add a monitor, add a state | **The `.cadl` file** (→ regenerate with the e2e script) |
-| Change how robots move | `Pilot_CSoS.cs` (the contract side follows along with no changes) |
+| Change how robots move | `Pilot_CSoS.cs` (the contract side needs no change as long as the events the bridge observes stay the same) |
 | Change the translation into contract events | `PilotContractBridge.cs` |
 | Change the shape of the generated C# | `contract_emitter.py` (advanced) |
 | Change the robot count or the map | `cadl_config.json` |

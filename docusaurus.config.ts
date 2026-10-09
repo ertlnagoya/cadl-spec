@@ -17,11 +17,13 @@ const config: Config = {
   organizationName: 'ertlnagoya',
   projectName: 'cadl-spec',
 
-  onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenLinks: 'throw',
 
   markdown: {
     mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'throw',
+    },
   },
 
   themes: [
@@ -70,7 +72,6 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/cadl-social-card.png',
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -149,12 +150,12 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} ERTL, Nagoya University. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} ERTL, Nagoya University. Documentation licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; code examples under the MIT License. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
-      additionalLanguages: ['python', 'typescript', 'solidity', 'json', 'bash'],
+      additionalLanguages: ['python', 'typescript', 'solidity', 'json', 'bash', 'ebnf'],
     },
   } satisfies Preset.ThemeConfig,
 };

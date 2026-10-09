@@ -7,13 +7,16 @@ title: "Hands-on Index"
 # Hands-on Index
 
 This section gathers all CADL / SoS-DSL hands-on materials.
-The materials fall into **three tracks**. Pick the one that matches your role.
+The materials fall into **two tracks**. Pick the one that matches your role.
 
 | Your role | What you do | Where to start |
 |---|---|---|
 | 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | [Why SoS-DSL?](academic-background.md) → [Course A](main-textbook.md) → B → C |
-| 🧑‍🏫 **Instructor** | Design a PBL-style course | [PBL Course Design](pbl-course-design.md) |
 | 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim [Why SoS-DSL?](academic-background.md) then jump to [Course C](exercises.md) |
+
+:::info Repository availability
+`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
+:::
 
 ## 🗺️ First time here? A three-stage path
 
@@ -23,7 +26,7 @@ never asked to write code cold.
 
 | Stage | What you do | Materials | Rough time |
 |---|---|---|---|
-| **① Understand** | Grasp the overall structure (four repositories; the spec → IR → codegen flow) and what each key program does | [Architecture & Code Walkthrough](code-walkthrough.md), then skim the [Academic Background](academic-background.md) | 0.5–1 day |
+| **① Understand** | Grasp the overall structure (four repositories, three of them public; the spec → IR → codegen flow) and what each key program does | [Architecture & Code Walkthrough](code-walkthrough.md), then skim the [Academic Background](academic-background.md) | 0.5–1 day |
 | **② Practise with templates** | Copy the provided skeletons and fill them in while going once around the loop: write a contract → check → visualise → run the simulation | [Course A (main textbook)](main-textbook.md) Steps 0–6, then the ★ / ★★ exercises of [the exercises booklet](exercises.md) Part 1 | 1–2 weeks |
 | **③ Build from scratch** | Add features with no template: new monitors and states (★★★), model a new domain (Part 2), or the LLM contract-generation loop (advanced exercise) | ★★★ / advanced exercise / Part 2 of [the exercises booklet](exercises.md) | as your interest dictates |
 
@@ -55,7 +58,7 @@ it gives you the vocabulary the courses will rely on.
 → [Course A — Robot Delivery](main-textbook.md)
 
 After finishing, practice with the extra exercises:
-→ [Course A — Exercises](exercises.md) — 5 sessions, graded ★ to ★★★
+→ [Course A — Exercises](exercises.md) — 5 sessions, 19 exercises graded ★ to ★★★ (Part 1 of the exercises booklet)
 
 ### Course B — Urban Mobility (applied)
 
@@ -65,7 +68,7 @@ After finishing, practice with the extra exercises:
 | **Target runtime** | SUMO (traffic simulator) |
 | **Time** | 60–90 min (with 5 visualization checkpoints) |
 | **Prerequisite** | Course A |
-| **You will learn** | Code generation for a different runtime / contract compliance checking / **sensitivity analysis (edit CADL, re-evaluate)** |
+| **You will learn** | Code generation for a different runtime / checking simulation results against the contract's `guarantee` clauses (deadlines and monitors are listed but not evaluated in SUMO) / **sensitivity analysis (edit CADL, re-evaluate)** |
 
 → [Course B — Urban Mobility](mobility-sos-tutorial.md)
 
@@ -76,26 +79,16 @@ After finishing, practice with the extra exercises:
 | Item | Details |
 |---|---|
 | **Domain** | Anything you choose (food delivery, emergency response, power grid…) |
-| **Target runtime** | Your choice |
-| **Time** | A few hours to a few weeks (mini research project) |
+| **Target runtime** | Your choice. The suggested default is a lightweight Python discrete-event harness such as SimPy; Unity is not required |
+| **Time** | A few hours to a few weeks (a self-directed mini-project) |
 | **Prerequisite** | Course A + B |
 | **You will learn** | Designing actors / contracts / lifecycle / monitors **on your own** for a new domain, then choosing your own runtime |
 
-The brief is in **Part 2** of the exercise booklet:
-→ [Course A — Exercises (Part 2)](exercises.md)
+Course C is deliberately open-ended: the brief is an outline, not a step-by-step tutorial. It is **Part 2** of the exercises booklet:
+→ [Exercises booklet — Part 2 (Course C)](exercises.md)
 
 ---
 
-## 🧑‍🏫 For instructors — PBL Course Design
-
-A 5-session syllabus covering learning objectives, common student pitfalls,
-research connections, and extension topics.
-
-→ [PBL Course Design (Instructor)](pbl-course-design.md)
-
-> This is a **syllabus / instructor guide**, not a learner-facing tutorial.
-
----
 
 ## 🚀 60-second smoke test (optional)
 
@@ -106,8 +99,11 @@ cd ~/program/cadl_repo
 ./scripts/sos_dsl_handson_e2e.sh
 ```
 
-This runs the end-to-end pipeline (parse → IR → codegen) on the bundled
-`examples/sos_dsl_robot_delivery.cadl` and prints what to do next.
+This assumes the setup in Step 0 of [Course A](main-textbook.md) is done (the `cadl` repository cloned as
+`~/program/cadl_repo`). The script runs the end-to-end pipeline (parse → IR → codegen) on the bundled
+`examples/sos_dsl_robot_delivery.cadl` and prints what to do next. Its last stage copies the generated C#
+into the Unity project of `raspimouse-swarm-simulator`, which is not publicly available; without that
+repository, run `./scripts/sos_dsl_handson_e2e.sh --unity ""` instead, which stops after code generation.
 
 After that, start with **[Why SoS-DSL?](academic-background.md)** and then **[Course A](main-textbook.md)**.
 
@@ -122,4 +118,3 @@ After that, start with **[Why SoS-DSL?](academic-background.md)** and then **[Co
 | Course A — extra problems | [Exercises](exercises.md) |
 | Course B — mobility tutorial | [Urban Mobility](mobility-sos-tutorial.md) |
 | Course C — your own SoS | [Exercises Part 2](exercises.md) |
-| Instructor's syllabus | [PBL Course Design](pbl-course-design.md) |
