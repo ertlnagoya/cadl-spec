@@ -136,7 +136,7 @@ CADL ツールチェインは、各部分が独立して進化できるよう 4 
 | --- | --- | --- |
 | `cadl-spec`            | 言語仕様書とこのハンズオンサイト（Docusaurus） | `main`（既定） |
 | `cadl`（`cadl_repo` としてクローン） | コンパイラ本体（パーサ・IR・コード生成器） | `master`（既定） |
-| `cadl-explorer`        | Streamlit ベースの可視化 | `feature/sos-dsl`（Step 4 で使う Lifecycle View ページはこのブランチにあり、`main` にはまだありません） |
+| `cadl-explorer`        | Streamlit ベースの可視化 | `main`（既定） |
 | `cadl-raspimouse-simulator` | Step 5〜6 で使うシミュレータ。Unity プロジェクト・Go arbitrator・Python 参照ランタイムを 1 つのリポジトリにまとめたもの | `main`（既定） |
 
 :::info[リポジトリの公開状況]
@@ -155,10 +155,6 @@ git clone https://github.com/ertlnagoya/cadl-spec
 git clone https://github.com/ertlnagoya/cadl                         cadl_repo
 git clone https://github.com/ertlnagoya/cadl-explorer
 git clone https://github.com/ertlnagoya/cadl-raspimouse-simulator
-
-#    cadl-explorer だけは、Step 4 で使う Lifecycle View ページが
-#    feature/sos-dsl ブランチにあるので切り替えます（main にはまだありません）。
-git -C cadl-explorer checkout feature/sos-dsl
 
 # 2) 編集モードで cadl CLI を install。変更が即反映されます。
 cd ~/program/cadl_repo
@@ -193,17 +189,17 @@ positional arguments:
 
 ### おさらい
 
-セットアップを終えて分かるのは、CADL が「仕様サイト・コンパイラ・可視化・シミュレータ」という 4 つのリポジトリが噛み合って動く仕組みだ、ということです。そして以降のすべては、**各リポジトリが上の表のブランチになっている**（`cadl-spec` は `main`、`cadl_repo` は `master`、`cadl-explorer` は `feature/sos-dsl`、`cadl-raspimouse-simulator` は `main`）、という前提の上に成り立ちます。この段階でのつまずきの大半は、ブランチ違いです。
+セットアップを終えて分かるのは、CADL が「仕様サイト・コンパイラ・可視化・シミュレータ」という 4 つのリポジトリが噛み合って動く仕組みだ、ということです。そして以降のすべては、**各リポジトリが上の表のブランチになっている**（すべて `main`。`cadl_repo` だけは `master`）、という前提の上に成り立ちます。この段階でのつまずきの大半は、ブランチ違いです。
 
 ### 🛠 セットアップのトラブルシューティング
 
-**ブランチを確認する（最頻のつまずき）。** 使うブランチはリポジトリごとに異なります。Lifecycle View ページ（Step 4）は `cadl-explorer` の `feature/sos-dsl` にだけあります。`main` のままにしていると、`git pull` しても「Already up to date」と出るのにページが無い、という状態になります。逆に、`cadl-spec` と `cadl-raspimouse-simulator` は `main`、`cadl_repo` は `master` のままにしてください。これらの `feature/sos-dsl` ブランチは既定ブランチより古く、`cadl-spec` では古い版の教材と Appendix E が残っています。次のコマンドで確認できます。
+**ブランチを確認する（最頻のつまずき）。** 4 つのリポジトリは、すべて既定ブランチ（`main`。`cadl_repo` だけは `master`）のまま使います。ここで説明しているページやコマンドが見つからない場合は、まず古いブランチに切り替えていないかを確認してください。次のコマンドで確認できます。
 
 ```bash
 cd ~/program
 echo "cadl-spec:     $(git -C cadl-spec branch --show-current)"       # main
 echo "cadl_repo:     $(git -C cadl_repo branch --show-current)"       # master
-echo "cadl-explorer: $(git -C cadl-explorer branch --show-current)"   # feature/sos-dsl
+echo "cadl-explorer: $(git -C cadl-explorer branch --show-current)"   # main
 echo "simulator:     $(git -C cadl-raspimouse-simulator branch --show-current)"   # main
 ```
 
@@ -316,7 +312,9 @@ flowchart LR
   D  -- route_assignment  --> R1
   R1 -- position_report   --> D
   D  -- delivery_notif    --> C1
-  R1 -. governed by ........ DELIVERY_SLA[(DELIVERY_SLA<br/>契約)] .-.- D
+  SLA[("DELIVERY_SLA<br/>契約")]
+  R1 -. governed by .- SLA
+  SLA -.- D
 ```
 
 ### 手順
@@ -627,16 +625,28 @@ streamlit run app.py
 # ブラウザで http://localhost:8501 が開く
 ```
 
-サイドバーから **SoS_DSL_Lifecycle** ページを選択します（サイドバーにこのページが無い場合は、`cadl-explorer` が `main` のままです。Step 0 のとおり `feature/sos-dsl` に切り替えてください）。
+サイドバーで、既定のページ（**app**）から **SoS DSL Lifecycle** に切り替えます（サイドバーにこのページが無い場合は、`cadl-explorer` のチェックアウトが古くなっています。`main` で `git pull` してください）。
 
 IR JSON のロード方法は 2 通り：
 
-- **(a) アップロード** — `my_delivery.cadl` から生成した IR を File uploader にドラッグ & ドロップ。
+- **(a) アップロード** — 自分のファイルの IR を読み込みます。先に `~/program/cadl_repo` で `cadl sim-ir my_delivery.cadl --format json > my_delivery.ir.json` を実行して保存し、その `my_delivery.ir.json` を File uploader にドラッグ & ドロップします。
 - **(b) 同梱例** — ドロップダウンから `sos_dsl_robot_delivery.ir.json` を選択。
 
 ### 表示されるもの
 
-以下の図は **(a) の `my_delivery.cadl`**（4 遷移・モニター 1 個）を読み込んだ場合です。**(b) の同梱例 `sos_dsl_robot_delivery.cadl`** を読み込むと遷移は 5（`late_failure` を追加）、モニターは 3 個（`battery_guard` / `collision_watch` / `deadline_watch`）になります。
+次のスクリーンショットは、**(b) の同梱例**を読み込んだ画面です。左のサイドバーにアップローダと同梱例の選択欄、中央にライフサイクル図、右にライフサイクルのメタデータが表示されます。
+
+![CADL Explorer — 同梱のロボット配送例を読み込んだ Lifecycle View](/img/handson/explorer-lifecycle-view.jpg)
+
+図の部分を拡大したものです（同梱例なので遷移は 5 本。赤い破線は、`accept` の期限切れで `Violated` へ強制的に移る辺です）。
+
+![Lifecycle View が描く DELIVERY_SLA のライフサイクル](/img/handson/lifecycle-delivery-sla.svg)
+
+図の下には、契約のモニター一覧が表示されます。
+
+![CADL Explorer — 同梱例のモニター一覧](/img/handson/explorer-lifecycle-monitors.jpg)
+
+以下の模式図は **(a) の `my_delivery.cadl`**（4 遷移・モニター 1 個）を読み込んだ場合です。**(b) の同梱例 `sos_dsl_robot_delivery.cadl`** を読み込むと遷移は 5（`late_failure` を追加）、モニターは 3 個（`battery_guard` / `collision_watch` / `deadline_watch`）になります。
 
 ページは 2 列に分かれます：
 

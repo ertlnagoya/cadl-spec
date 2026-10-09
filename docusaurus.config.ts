@@ -11,7 +11,7 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://ertlnagoya.github.io',
+  url: 'https://www.ertl.jp',
   baseUrl: '/cadl-spec/',
 
   organizationName: 'ertlnagoya',

@@ -342,8 +342,9 @@ IRへの変換時に行う正規化は次のとおりである。
 コマンド `cadl sim-ir <file> --format json` は，CADL ExplorerのLifecycle Viewなどの
 下流のツールに向けて，この形（上の例は一部を省略している）を出力する。
 Unity C#ジェネレータ（`cadl codegen --target unity-csharp`）は，構文解析された
-同じ契約をもとに動作する。シミュレータ用のPythonのリファレンスランタイムも
-このJSONを読み込むが，シミュレータは現時点では公開されていない。
+同じ契約をもとに動作する。PythonのリファレンスランタイムもこのJSONを読み込む。このランタイムは，
+[`cadl-raspimouse-simulator`](https://github.com/ertlnagoya/cadl-raspimouse-simulator)
+リポジトリの `cadl/runtime/` で公開している。
 
 ## E.8 コード生成に関する取り決め（参考） {/* #e8-codegen-contract-informative */}
 

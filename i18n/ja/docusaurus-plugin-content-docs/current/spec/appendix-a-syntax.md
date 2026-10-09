@@ -347,7 +347,8 @@ AND    OR    NOT    true    false    for all    exists    in
   認識できない `autonomy:` の値は `medium` として読まれる。
 - **検証。** v0.3.2までは，`method:`，`expr:`，`bound:` がファイルから読み込まれないため，すべての項目が
   `method: smt` として扱われる。`not_supported` の結果は，APIを通じて構築した
-  検証指定に対して実装されている。
+  検証指定に対して実装されている。v0.3.3は3つのキーを読み込み，`smt` 以外の
+  メソッドを `not_supported` として報告する。
 - **コード生成。** `codegen:` の項目は構文解析されるが，それに基づく処理は行われない。
   ターゲットはコマンドラインで選択する（付録D）。
 - **拡張。** `extensions:` と `motivation:` は無視される。`lifecycle:` と `monitors:` は，

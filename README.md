@@ -2,23 +2,23 @@
 
 This repository hosts the specification and teaching materials for **CADL (Contract Architecture Description Language)** and its **SoS-DSL extension**. The site is built with [Docusaurus](https://docusaurus.io/) and published at:
 
-**https://ertlnagoya.github.io/cadl-spec/**
+**https://www.ertl.jp/cadl-spec/**
 
 ## Hands-on
 
-A self-paced 90-minute workshop and a 5-session exercise course that walk through the complete CADL / SoS-DSL toolchain — modelling, contracts (lifecycle + monitors), visualisation, code generation, and live simulation — on a robot-delivery System of Systems.
+A self-paced workshop of about 95 minutes and a 5-session exercise course that walk through the complete CADL / SoS-DSL toolchain — modelling, contracts (lifecycle + monitors), visualisation, code generation, and live simulation — on a robot-delivery System of Systems.
 
 | Material | English | 日本語 |
 | --- | --- | --- |
-| Hands-on index | [docs/handson](https://ertlnagoya.github.io/cadl-spec/docs/handson/) | [ja/docs/handson](https://ertlnagoya.github.io/cadl-spec/ja/docs/handson/) |
-| Why SoS-DSL? (background for learners) | [academic-background](https://ertlnagoya.github.io/cadl-spec/docs/handson/academic-background) | [ja](https://ertlnagoya.github.io/cadl-spec/ja/docs/handson/academic-background) |
-| Course A — Robot Delivery (main textbook) | [main-textbook](https://ertlnagoya.github.io/cadl-spec/docs/handson/main-textbook) | [ja](https://ertlnagoya.github.io/cadl-spec/ja/docs/handson/main-textbook) |
-| Course A — Exercises | [exercises](https://ertlnagoya.github.io/cadl-spec/docs/handson/exercises) | [ja](https://ertlnagoya.github.io/cadl-spec/ja/docs/handson/exercises) |
-| Course B — Urban Mobility (CADL × SUMO) | [mobility-sos-tutorial](https://ertlnagoya.github.io/cadl-spec/docs/handson/mobility-sos-tutorial) | [ja](https://ertlnagoya.github.io/cadl-spec/ja/docs/handson/mobility-sos-tutorial) |
+| Hands-on index | [docs/handson](https://www.ertl.jp/cadl-spec/docs/handson/) | [ja/docs/handson](https://www.ertl.jp/cadl-spec/ja/docs/handson/) |
+| Why SoS-DSL? (background for learners) | [academic-background](https://www.ertl.jp/cadl-spec/docs/handson/academic-background) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/academic-background) |
+| Course A — Robot Delivery (main textbook) | [main-textbook](https://www.ertl.jp/cadl-spec/docs/handson/main-textbook) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/main-textbook) |
+| Course A — Exercises | [exercises](https://www.ertl.jp/cadl-spec/docs/handson/exercises) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/exercises) |
+| Course B — Urban Mobility (CADL × SUMO) | [mobility-sos-tutorial](https://www.ertl.jp/cadl-spec/docs/handson/mobility-sos-tutorial) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/mobility-sos-tutorial) |
 
 Sources live under [`docs/handson/`](docs/handson/) (English) and [`i18n/ja/docusaurus-plugin-content-docs/current/handson/`](i18n/ja/docusaurus-plugin-content-docs/current/handson/) (Japanese).
 
-The runnable toolchain referenced by the hands-on lives in the companion repositories: [`cadl`](https://github.com/ertlnagoya/cadl) (compiler / CLI) and [`cadl-explorer`](https://github.com/ertlnagoya/cadl-explorer) (visualisation). The simulator used in Course A Steps 5–6 (`raspimouse-swarm-simulator`: Unity scene + arbitrator + Python runtime) is not publicly available at present.
+The runnable toolchain referenced by the hands-on lives in the companion repositories: [`cadl`](https://github.com/ertlnagoya/cadl) (compiler / CLI) and [`cadl-explorer`](https://github.com/ertlnagoya/cadl-explorer) (visualisation). The simulator used in Course A Steps 5–6 is [`cadl-raspimouse-simulator`](https://github.com/ertlnagoya/cadl-raspimouse-simulator) (Unity scene + arbitrator + Python runtime).
 
 ## Development
 
