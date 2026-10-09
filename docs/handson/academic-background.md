@@ -53,9 +53,10 @@ Academically, Maier (1998) defines an SoS by five criteria. At minimum (1) and (
 
 > 💡 **Try the test on familiar things**
 > - **Coffee shop** → staff work for that one shop, owner manages all of them. **Not an SoS.**
-> - **Robot delivery** (Course A's domain) → robots act individually, but a single owner controls everything.
->   This is more of a concurrency-control problem than a textbook SoS — yet it's perfect as a training problem
->   for "writing contracts that govern behaviour".
+> - **Robot delivery** (Course A's domain) → each robot acts on its own, but in the simulated scenario one operator owns the whole fleet,
+>   so managerial independence is weak. This is more of a concurrency-control problem than a textbook SoS — yet it works well as a training problem
+>   for "writing contracts that govern behaviour". The CADL files declare it `type: Acknowledged` because each robot is *modelled* as a
+>   constituent system that keeps its own control software and autonomy while recognising the dispatcher as the SoS-level authority for task assignment.
 > - **A large taxi-dispatch platform** (Course B's domain) → drivers work independently, but the platform sets fares, dispatches rides, and enforces terms. That makes it Acknowledged, not Collaborative.
 > - **Food delivery** is structurally similar, but we keep using it as a Collaborative-leaning example to show the contrast: the same real domain can be modelled as a different SoS type depending on whether you treat the platform's authority as central or as an opt-in service. Modelling choices reflect the perspective of the SoS designer.
 > - **The opening hours of a major disaster** — when individual evacuation sites have just been improvised, no command structure has formed yet, and each site is acting on its own — that is a clean example of a Virtual SoS.
@@ -70,11 +71,11 @@ Even within the umbrella term "SoS", systems differ by how strong the central au
 | Type | Central authority | Examples |
 |---|---|---|
 | **Directed** | Strong, top-down | Air-defense network |
-| **Acknowledged** | SoS-level authority recognised, but components keep ownership | International space missions, **Course A's robot delivery**, **Course B's taxi dispatch** |
+| **Acknowledged** | SoS-level authority recognised, but components keep ownership | International space missions, **Course A's robot delivery** (as modelled in its CADL files; see the note above), **Course B's taxi dispatch** |
 | **Collaborative** | No single authority; participants cooperate via shared agreements (protocols, conventions) | The Internet, peer-to-peer-leaning food-delivery cooperatives |
 | **Virtual** | No central management, no agreed common goal; coordination is emergent | The World Wide Web; the first hours of a major disaster, before any incident command has formed |
 
-> 💡 **Course A and B are both Acknowledged; only the domain changes.**
+> 💡 **Course A and B are both declared `type: Acknowledged`; only the domain changes.**
 > Course C asks you to pick your own domain and classify it yourself.
 
 ---
@@ -87,8 +88,8 @@ We've seen that an SoS is "many independent actors". Try writing the rules in pl
 |---|---|---|
 | "Taxi must respond within 5 seconds" | Comments / a Slack agreement | Rules live **outside the code**, so they drift |
 | "If 5 seconds passes, count it as a violation" | An `if` statement somewhere | "Which 5 seconds?" — semantics are context-dependent |
-| "A courier with battery below 20% mustn't accept new orders" | An `if` in every implementation | Rules **scatter** across hundreds of code sites |
-| "Both Unity and SUMO runtimes must enforce the same rules" | Re-implement per language | **Double maintenance**; one inevitably falls behind |
+| "A courier whose vehicle battery is below 20% mustn't accept new orders" | An `if` in every implementation | Rules **scatter** across hundreds of code sites |
+| "Both the Unity and the SUMO runtime must check the same rules" | Re-implement per language | **Double maintenance**; one inevitably falls behind |
 
 In short: ordinary languages can't naturally express both
 "actors are independent" *and* "the whole still has to obey collective rules".
@@ -111,14 +112,14 @@ in a single source file kept separate from any one runtime implementation.
 All of this lives in **one YAML file**. From there:
 
 - **Visualisation** (cadl-explorer) — the state machine renders in a browser
-- **Code generation** (`cadl codegen`, or a conversion script) — Unity C#, SUMO config, Python runtime, ...
-- **Compliance check** (analyze_results) — verify that simulation outputs respect the contract
+- **Code generation** (`cadl codegen`, or a conversion script) — Unity C#, SUMO configuration, ... (the Python reference runtime used in Course A is not generated: it interprets the IR directly)
+- **Result check** (the `analyze_results.py` script of Course B) — check simulation outputs against the contract's `guarantee` clauses
 
 are all **derived from the same CADL source** — the contract becomes the **single source of truth**.
 
 ### What is the SoS-DSL extension?
 
-The `lifecycle:` and `monitors:` features live in a CADL extension called **SoS-DSL** (cadl-spec Appendix E).
+The `lifecycle:` and `monitors:` features live in a CADL extension called **SoS-DSL** (cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)).
 It's an "extension" because they elevate **norms** (rules to obey) to first-class concepts ─
 core CADL alone (actors / contract skeleton) doesn't include them.
 
@@ -133,7 +134,7 @@ Recommended order:
 
 1. **Course A — Robot Delivery** ─ a minimal example covering actors → contracts → lifecycle → monitors → codegen → execution in about 95 minutes.
 2. **Course B — Urban Mobility** ─ keep the same CADL syntax, swap domain and runtime.
-3. **Course C — Your own SoS** ─ apply the concepts to a domain you choose (food delivery, emergency response, power grid…).
+3. **Course C — Your own SoS** ─ apply the concepts to a domain you choose (food delivery, emergency response, power grid…). Course C is Part 2 of the [exercises booklet](exercises.md).
 
 > The material on this page (the five criteria, four types, what CADL adds) is presupposed by every course.
 > Come back here whenever you forget what something means.
@@ -152,11 +153,11 @@ processes the ISO standards prescribe — the standards themselves stop short of
 
 | Standard | Role | Connection to CADL |
 |---|---|---|
-| **ISO/IEC/IEEE 15288:2023** | Generic system life-cycle processes | CADL itself is developed in 15288's spirit |
-| **ISO/IEC/IEEE 21839:2019** | SoS considerations from a constituent system's perspective | CADL `monitors:` ≈ "observation duty"; `lifecycle:` ≈ "compliance duty" |
+| **ISO/IEC/IEEE 15288:2023** | Generic system life-cycle processes | CADL itself is developed in 15288's spirit (no conformance to the standard is claimed) |
+| **ISO/IEC/IEEE 21839:2019** | SoS considerations from a constituent system's perspective | The authors' interpretation (the standard itself does not use these terms): `monitors:` can be read as writing down what a constituent system is expected to let the SoS observe, and `lifecycle:` what it is expected to comply with |
 | **ISO/IEC/IEEE 21840:2019** | Using 15288 in an SoS context | The work an SoS engineer does when authoring CADL |
 | **ISO/IEC/IEEE 21841:2019** | Taxonomy of SoS (the four types) | Source of the four-types table above |
-| **ISO/IEC/IEEE 42010:2022** | Architecture description (AD) | **CADL is an AD language in the 42010 sense** |
+| **ISO/IEC/IEEE 42010:2022** | Architecture description (AD) | CADL is intended as an architecture description language in the 42010 sense (conformance to the standard has not been assessed) |
 
 ### 5.2 Three research traditions CADL draws from
 
@@ -169,16 +170,17 @@ processes the ISO standards prescribe — the standards themselves stop short of
 Ethereum (Buterin 2014) and its smart contract language Solidity were an early "contract as code" approach,
 but **contract = executable code** ties it to a blockchain runtime.
 CADL stays at the **specification level** and generates code per target,
-so the same spec drives Unity, SUMO, and Python alike.
+so the same spec serves as the common source for Unity, SUMO, and the Python reference runtime alike.
 
 ### 5.4 Annotated bibliography
 
 #### A. SoS foundations
 
-- **[Maier 1998]** *Architecting Principles for Systems-of-Systems*. Systems Engineering, 1(4), 267–284. — Source of the five criteria and four types. **Required reading.**
+- **[Maier 1998]** *Architecting Principles for Systems-of-Systems*. Systems Engineering, 1(4), 267–284. — Source of the five criteria and the original three types (Directed / Collaborative / Virtual). **Required reading.**
+- **[Dahmann & Baldwin 2008]** *Understanding the Current State of US Defense Systems of Systems and the Implications for Systems Engineering*. Proc. 2nd Annual IEEE Systems Conference. — Introduced the fourth type, Acknowledged.
 - **[Sage & Cuppan 2001]** *On the Systems Engineering and Management of Systems of Systems*.
 - **[Boardman & Sauser 2006]** *System of Systems — the meaning of "of"*. — Alternative ABCDE framework.
-- **[Dahmann 2014]** *Systems of Systems Pain Points*. — Seven SoS pain points.
+- **[Dahmann 2014]** *System of Systems Pain Points*. INCOSE International Symposium, 24(1), 108–121. — Seven SoS pain points.
 - **[Madni & Sievers 2014]** *System of Systems Integration: Key Considerations and Challenges*.
 
 #### B. ISO standards
@@ -192,7 +194,7 @@ so the same spec drives Unity, SUMO, and Python alike.
 #### C. Architecture description languages
 
 - **[Medvidovic & Taylor 2000]** *A Classification and Comparison Framework for Software Architecture Description Languages*.
-- **[Garlan & Schmerl 2009]** *Architecture-Driven Modelling and Analysis*.
+- **[Garlan & Schmerl 2006]** *Architecture-Driven Modelling and Analysis*.
 
 #### D. Normative multi-agent systems
 
@@ -212,12 +214,12 @@ so the same spec drives Unity, SUMO, and Python alike.
 
 #### G. Simulation methodology (used in Course B / C)
 
-- **[Banks et al. 2014]** *Discrete-Event System Simulation* (5th ed.).
+- **[Banks et al. 2010]** *Discrete-Event System Simulation* (5th ed.). Pearson.
 - **[Matloff 2008]** *Introduction to Discrete-Event Simulation and the SimPy Language*. — Free, web-published SimPy intro.
 
 #### H. SoS-specific simulation examples
 
-- **[Sahin et al. 2007]** *System of Systems Approach to Threat Detection and Integration of Heterogeneous Independently Operable Systems*. — Formal architecture for an emergency-response SoS.
+- **[Sahin et al. 2007]** *System of Systems Approach to Threat Detection and Integration of Heterogeneous Independently Operable Systems*. — An SoS approach to threat detection and to integrating heterogeneous, independently operable systems.
 - **[Acheson et al. 2013]** *Model based systems engineering for system of systems using agent-based modeling*.
 
 ---

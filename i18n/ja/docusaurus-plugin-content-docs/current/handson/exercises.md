@@ -13,7 +13,7 @@ title: "コース A — 演習問題集"
 このブックレットは、SoS-DSL ハンズオンに付属する練習課題をまとめたものです。2 つのパートに分かれています。
 
 - **Part 1 — ロボット配送コース（5 回シリーズ）**。同じロボット配送ドメインを CADL モデリング → DSL 設計 → 可視化 → シミュレーション → 改善の順にたどる、構造化された授業課題。1 セッション 90 分、3〜5 週の授業を想定。**このブックレットの中心。**
-- **Part 2 — 新しい SoS の end-to-end モデリング**。Part 1 を終えた学生が、*別の*ドメイン（フードデリバリー、緊急対応など）を選んで同じ流れを自走する。研究ミニプロジェクトに近い位置付け。
+- **Part 2 — 新しい SoS の end-to-end モデリング（コース C）**。Part 1 を終えたあと、*別の*ドメイン（フードデリバリー、緊急対応など）を選んで同じ流れを自走します。意図的に自由度を高くしてあり、概要だけを示しています。毎週の宿題というより、自走型のミニプロジェクトに近い位置付けです。
 
 ---
 
@@ -30,6 +30,10 @@ title: "コース A — 演習問題集"
 | 5 | **改善** | 観察結果を仕様の磨き込みに活かす | `my_delivery_v3.cadl` + Before/After レポート |
 
 各回 **授業 90 分** + **宿題 3 時間程度**。5 回を通した最終提出物は **3 ページのレポート**（初期モデル / シミュレーション比較 / 振り返り）。
+
+:::info リポジトリの公開状況
+第 1〜3 回は公開リポジトリ（`cadl`、`cadl-explorer`）だけで進められます。第 4〜5 回は `raspimouse-swarm-simulator` にある Python 参照ランタイムを使いますが、このリポジトリは**現時点では非公開**です（[メイン教材](main-textbook.md) の Step 0 を参照してください）。
+:::
 
 ### 縮小 3 回バージョン
 
@@ -76,7 +80,7 @@ title: "コース A — 演習問題集"
 
 ### 前提
 
-- メイン教材の Step 0 と Step 1（リポジトリのクローン、Appendix A の流し読み）を完了。
+- メイン教材の Step 0 と Step 1 を完了（リポジトリのクローンと、Step 1 に挙げた章 — Introduction、Language Specification、Appendix E、Examples — の通読）。
 - 事前読書 30 分：cadl-spec 第 5 章 *Language Specification*。
 
 ### 概念導入（約 30 分）
@@ -104,7 +108,7 @@ flowchart LR
 
 **手順**:
 
-1. `examples/sos_dsl_robot_delivery.cadl` と同じディレクトリに `my_delivery_v1.cadl` を作成。
+1. `cadl_repo` の直下に `my_delivery_v1.cadl` を作成し（見比べる同梱の例は `examples/sos_dsl_robot_delivery.cadl`）、以下のコマンドはそのディレクトリで実行する。
 2. 3 つのアクターを宣言：`DISPATCHER`、`ROBOT[1..N]`、`CUSTOMER[1..M]`。それぞれに妥当な `autonomy` レベルを選ぶ。
 3. 1 つの契約 `DELIVERY_SLA` を宣言：`parties: [DISPATCHER, "ROBOT[*]", "CUSTOMER[*]"]`、`assume: ["ROBOT[i].battery > 20"]`、`guarantee: ["delivery_time <= 300s"]`。
 4. `cadl check my_delivery_v1.cadl` を実行し、`Type check passed: my_delivery_v1.cadl` と表示されることを確認。
@@ -122,7 +126,7 @@ flowchart LR
 3. `assume` に `ROBOT[i].battery > 0` を含めるか、もっと強い条件にするか判断する。
 4. `cadl check` を再実行。
 
-**振り返り**: 同じアクターに *2 つの* 契約があるとき、`assume` 節はどう作用しますか？（ヒント：両方が同時に成り立つ必要がある — これがまさに Dahmann (2014) が SoS pain point #6 として挙げた *相互依存* の問題です。）
+**振り返り**: 同じアクターに *2 つの* 契約があるとき、`assume` 節はどう作用しますか？（ヒント：両方が同時に成り立つ必要がある — これがまさに Dahmann (2014) が SoS pain point #5 として挙げた *相互依存* の問題です。）
 
 #### 演習 1.3 (★★) — プロトコルを追加する
 
@@ -168,7 +172,7 @@ flowchart LR
 ### 前提
 
 - 第 1 回の `my_delivery_v1.cadl`
-- 事前読書 30 分：cadl-spec Appendix E。
+- 事前読書 30 分：cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)。
 
 ### 概念導入（約 30 分）
 
@@ -190,7 +194,7 @@ stateDiagram-v2
 これを明示的に書けるようにするキーが 2 つあります。
 
 - `lifecycle:` — 状態、初期 / 終端マーカー、`deadline` + `on_violation` 付き遷移
-- `monitors:` — 周期的またはイベント駆動で動く宣言的な観測者。`rule` がマッチしたら違反や遷移を発火する
+- `monitors:` — 周期的またはイベント駆動で評価される宣言的な観測者。`rule` が成立すると、違反を記録する（`on_match.violation`）、契約インスタンスを指定した状態（`on_match.transition`、例：`Violated`）へ移す、またはその両方を行う
 
 ### 演習（授業 50 分 + 宿題）
 
@@ -202,7 +206,7 @@ stateDiagram-v2
 
 1. `v1` → `v2` をコピー。
 2. `lifecycle.states`、`lifecycle.initial`、`lifecycle.terminal` と 4 つの遷移（`assign`、`accept`、`start_delivery`、`complete`）を追加。
-3. `accept` に `deadline: 5s` と `on_violation.transition: Violated` を設定。
+3. `accept` に `deadline: 5s` と `on_violation.transition: Violated` を設定（値は移動先の状態名）。あわせて、メイン教材の Step 3 と同じく `sos:` の下に `extensions: [sos-dsl: 0.1]` を宣言する。
 4. `cadl check` と `cadl sim-ir my_delivery_v2.cadl --format json | head -60` を実行。
 5. IR で `"lifecycle"` が `null` でないことを確認。
 
@@ -222,7 +226,7 @@ stateDiagram-v2
     severity: Critical
 ```
 
-**振り返り**: ロボットの制御コード（Unity 側の `Pilot_CSoS.cs`）を 1 行も変えずに *新しい規範ルール* を追加しました。これは構造コードと規範仕様の分離について何を語っていますか？（[Maier 1998] 条件 (4) を参照：創発的振る舞いは構成要素を再設計することなく *制約* できる）
+**振り返り**: ロボットの制御コード（Unity 側の `Pilot_CSoS.cs`）を 1 行も変えずに *新しい規範ルール* を追加しました。これは構造コードと規範仕様の分離について何を語っていますか？（[Maier 1998] の条件 (4)「創発的振る舞い」と比べてみてください。ここでは規範が、構成要素を再設計することなく創発的振る舞いを *制約* しています）
 
 #### 演習 2.3 (★★) — Cancelled 状態を追加
 
@@ -357,7 +361,7 @@ stateDiagram-v2
 | ロボット | 期待する終端 | なぜ大事か |
 | --- | --- | --- |
 | robot-0-1 | `Completed` | 正常系が通ることの確認 |
-| robot-1-1 | `Violated` via `deadline:accept` | deadline 強制のデモ |
+| robot-1-1 | `Violated` via `deadline:accept` | 期限切れの検出のデモ |
 | robot-2-1 | `Violated` via `monitor:battery_guard` | 周期的 monitor のデモ |
 | robot-3-1 | `Violated` via `monitor:deadline_watch` | 宣言的 monitor のデモ |
 | robot-4-1 | `Proposed` のまま | 「インスタンスが進まない」ことも有効なトレース |
@@ -498,20 +502,6 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 
 ---
 
-## 元の 5 課題（1.1〜1.5）との対応
-
-| 元の課題 | 移動先 |
-| --- | --- |
-| 1.1 accept 期限を縮める | 演習 4.2 |
-| 1.2 過速度モニター | 演習 2.2 |
-| 1.3 Cancelled ライフサイクル状態 | 演習 2.3 |
-| 1.4 報酬実行 | 演習 5.3 |
-| 1.5 Violation Trace View | 演習 3.3 |
-
-5 つの課題は全部残っています — それを必要とするセッションの中に配置されただけです。
-
----
-
 ## 最終提出物の総まとめ
 
 第 5 回終了時、すべての学生は以下を持っているはずです：
@@ -532,7 +522,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 
 ## 発展課題（任意・★★★）— LLM による契約生成：生成と検査のループ
 
-**概要**。Part 1 では契約を自分の手で書きました。この発展課題では、「応答は 5 秒以内」「低バッテリ機には割り当てない」といった**自然言語の運行要件から LLM に CADL 契約を生成させ、`cadl check` を通るまで診断メッセージを返して自動修正させるループ**を構築し、評価します。LLM が提案し、型検査が門番をする——LLM の出力は検査を通るまで有効化しない、という構成が本質です。
+**概要**。Part 1 では契約を自分の手で書きました。この発展課題では、「応答は 5 秒以内」「低バッテリ機には割り当てない」といった**自然言語の運行要件から LLM に CADL 契約を生成させ、`cadl check` を通るまで診断メッセージを返して自動修正させるループ**を構築し、評価します。LLM が提案し、型検査が門番をする——LLM の出力は検査を通るまで有効化しない、という構成が本質です。ただし、`cadl check` の合格は構文と型のレベルの検査であり、安全性の保証ではありません。合格が示すのはドラフトが CADL として整っていることだけで、期限や規則の内容が正しいことまでは示しません。
 
 **ポイント**。
 
@@ -542,24 +532,24 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 
 **ヒント**。
 
-- system prompt に CADL の文法制約（SoS type は 4 種のみ、識別子は ASCII、`deadline: 5s` の形式など）を明示すると、初回通過率が大きく変わります。制約の有無で比較するのも良い実験です。
+- system prompt に CADL の文法制約（SoS type は 4 種のみ、識別子は ASCII、`deadline: 5s` の形式など）を明示すると、初回通過率の向上が期待できます。制約の有無で実際に測って比較するのも良い実験です。
 - `cadl check` はサブプロセスとして呼び出せます（終了コードと出力を見る）。
-- 参考実装が `cadl-ai-governance` リポジトリの `e2e_raspimouse/step_a_design.py`（決定的なモック付き）と `measure_step_a.py`（計測ハーネス）にあります。まずモックでループの動きを観察してから実 LLM に切り替えるのが安全です。
+- 現時点で公開されている参考実装はありません（著者らの実装である `cadl-ai-governance` リポジトリの `step_a_design.py` と `measure_step_a.py` は非公開です）。ループ本体と小さな計測スクリプトを書くことも、この課題の一部です。まず LLM の代わりに決定的なモック（決まった順にドラフトを返す関数）でループの動きを観察し、それから実 LLM に切り替えるのが安全です。
 
 ---
 
-# Part 2 — 新しい SoS の end-to-end モデリング
+# Part 2 — 新しい SoS の end-to-end モデリング（コース C）
 
-（概要のみ。Part 1 が運用に乗ったら拡充予定。）
+Part 2 は、意図的に自由度を高くしてあります。手順を細かく示した課題ではなく概要として示しており、ドメインを選ぶのも、白紙から仕様を書くのも、仕様をどう動かすかを決めるのも受講者自身です。小さな自走型プロジェクトとして取り組んでください。
 
-Part 1 を終えた意欲的な学生は、別のドメインを選び、同じ 5 回構成をもう一度たどります（推奨は **フードデリバリー（Collaborative SoS）**、さらに挑戦するなら **緊急対応（Virtual SoS）**）。Part 1 との大きな違いは、Part 2 では出発点となる `.cadl` ファイルが提供されないことです。白紙から書き起こします。
+ロボット配送以外のドメインを選び、Part 1 と同じ 5 段階をたどります。推奨は **フードデリバリー（Collaborative SoS としてモデル化）**、さらに挑戦するなら **大規模災害の発生直後、指揮系統がまだ成立していない段階の災害対応（Virtual SoS）** です。Part 1 との大きな違いは、出発点となる `.cadl` ファイルが提供されないことです。
 
-ねらいは **新しいドメインでワークフローを体験する** ことです：
+1. アクターと契約を同定する（テンプレートはありません）。
+2. SoS の類型（Maier / ISO/IEC/IEEE 21841）のどれに当たるかを判定し、宣言する `type:` の理由を説明する。
+3. `lifecycle:` と `monitors:` をゼロから書き、`cadl check` を通し、cadl-explorer で確認する。
+4. 自分で選んだランタイムで仕様を動かす。標準の選択肢は、IR JSON からライフサイクルを再生する軽量な Python の離散事象ハーネス（例：SimPy）で、Unity は不要です。ハーネスは提供されません。これを書くことも課題の一部です。
+5. パラメータスイープを行い、比較レポートを書く（演習 5.4 の 3 ページ形式がそのまま使えます）。
 
-1. アクターと契約を同定（テンプレートなし）
-2. SoS 分類（Maier / ISO 21841）でどの類型に当たるかを判定
-3. `lifecycle:` と `monitors:` をゼロから書く
-4. シミュレーションは SimPy ハーネスを実装（Unity なし）
-5. パラメータスイープと比較レポート
+Part 2 に必要なのは公開リポジトリ（`cadl`、`cadl-explorer`）だけです。
 
 この Part 2 課題の学術的位置付け（Maier 条件、ISO 規格、分類体系）は [`academic-background.md`](academic-background.md) を参照。

@@ -10,7 +10,7 @@ title: "コース B — 都市モビリティ (CADL × SUMO)"
 
 - 対象：コース A（CADL/SoS-DSL の基礎）を済ませた方
 - 所要時間：60〜90 分
-- 完成すると手元に残るもの：タクシー需要を題材に自分で手を入れた `mobility_sos.cadl`、SUMO で走るシミュレーション、CADL 契約に対する違反検出レポート
+- 完成すると手元に残るもの：タクシー需要を題材に自分で手を入れた `mobility_sos.cadl`、SUMO で走るシミュレーション、シミュレーション結果を CADL 契約の `guarantee` 節に照らして判定したレポート
 
 ---
 
@@ -36,14 +36,16 @@ mobility_sos.cadl
                                     ↓
                               SUMO 実行 ─► tripinfo.xml
                                     ↓
-                            analyze_results.py（契約遵守判定）
+                            analyze_results.py（guarantee の判定）
                                     ↓
-                       CADL に戻り、契約条件・インセンティブを改訂
+                       繰り返し：CADL の guarantee / deadline を改訂
 ```
 
-参考プロトタイプは
-[`ertlnagoya/mobility-sos-exercise`](https://github.com/ertlnagoya/mobility-sos-exercise)
-（あるいは演習用としてローカルに同梱した `mobility-sos-exercise/`）にあります。
+参照実装は `mobility-sos-exercise` リポジトリにあります。
+
+:::info リポジトリの公開状況
+`mobility-sos-exercise` は**現時点では非公開**です。以下のコマンドは、このリポジトリへのアクセス権があることを前提にしています。アクセス権がない場合も、本ページは CADL をモビリティ SoS に適用する事例として読めます。
+:::
 
 ---
 
@@ -53,7 +55,7 @@ mobility_sos.cadl
 コース B で新しく必要になるのは SUMO だけです。
 
 ```bash
-# 演習リポジトリを取得（すでにローカルに配布されている場合は clone は不要）
+# 演習リポジトリを取得（現時点では非公開）
 cd ~/program
 git clone https://github.com/ertlnagoya/mobility-sos-exercise
 
@@ -66,65 +68,64 @@ pip install -r requirements.txt
 # SUMO（どの OS でも pip 経由が手軽）
 pip install eclipse-sumo
 
-# CADL コンパイラ（メイン教材と同じ）
-cd ~/program/cadl_repo
-source .venv/bin/activate     # 既に作成済みなら
+# CADL コンパイラ：コース A でクローンしたものをこの venv にインストールする
+# （`cadl` と演習スクリプトを同じシェルで実行できるようにするため）
+pip install -e ~/program/cadl_repo
 cadl --version
 
-# CADL-Explorer（メイン教材と同じ）
-cd ~/program/cadl-explorer
-source .venv/bin/activate
-streamlit --version
+# cadl-explorer：コース A の Step 4 と同じ（ブランチは feature/sos-dsl）
 ```
 
-> z3-solver のビルドに失敗する場合は、CADL 本体のインストールで
-> `pip install --no-deps -e .` + `pip install lark pyyaml` の順に実行してください。
+> `pip install -e ~/program/cadl_repo` の途中で `z3-solver` のビルドに失敗する場合は、
+> `pip install --no-deps -e ~/program/cadl_repo` のあとに `pip install lark pyyaml` を実行してください。
 > 本ハンズオンで使うのは `cadl check` と `cadl sim-ir` だけなので Z3 は不要です。
 
 ---
 
 ## 2. SoS の構造を読む（5 分）
 
-`cadl/mobility_sos.cadl` の先頭、`sos:` ブロック内の `actors:` を見てみましょう：
+`cadl/mobility_sos.cadl` を開き、`sos:` ブロック内の `actors:` を見てみましょう（抜粋）。
 
 ```yaml
 sos:
   name: "MobilitySoS"
   type: Acknowledged
   actors:
-    - id: PLATFORM                       # 中央マッチングプラットフォーム
-      autonomy: low
-    - id: "TAXI[1..N]"                   # 自律的に動く N 台のタクシー
-      autonomy: high
-    - id: "PASSENGER[1..M]"              # 乗車要求を出す M 人の乗客
-      autonomy: medium
+    - id: PLATFORM
+      autonomy: low                # 中央のマッチング権限
+    - id: "TAXI[1..N]"
+      autonomy: high               # 自己利益で動くタクシー群
+    - id: "PASSENGER[1..M]"
+      autonomy: medium             # サービスの要求者
 ```
 
-読み方は次の通りです。プラットフォームは中央の調整役で、自分の判断で勝手に動く度合い（autonomy）は低い。
-タクシーは自分の利益を最大化しようとする、自律性の高いエージェント。
-乗客は需要を出して乗降を判断する程度の自律性、というイメージです。
+読み方は次の通りです。プラットフォームは中央の調整役で、自分の判断で動く余地は小さい（`autonomy: low`）。
+タクシーは自分の利益で動く、自律性の高いエージェントです。
+乗客は要求を出し、乗るかどうかを判断します。
 
 コース A のロボット配送と同じ Acknowledged 型 SoS です。
 
-:::tip 🔍 可視化チェックポイント 0 — 構造だけで型検査が通ることを確認
-ここまでで読んだのは CADL の構造（actors と contracts のスケルトン）だけです。
-この段階でも `cadl check` は通り、`cadl sim-ir` は IR を出します。
-ただし `institution.contracts[0].lifecycle == null` のはずです。
+:::tip 🔍 可視化チェックポイント 0 — 構造だけの仕様で何が得られるか
+ここまでで読んだのは CADL の**構造**（actors）だけです。
+ファイルを検査し、契約の規範部分が IR にどれだけ入っているかを表示してみます。
 
 ```bash
-cd mobility-sos-exercise
+cd ~/program/mobility-sos-exercise
 cadl check  cadl/mobility_sos.cadl        # → Type check passed: cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json \
-   | python3 -c "import sys, json; d=json.load(sys.stdin); print('lifecycle =', d['institution']['contracts'][0]['lifecycle'])"
+   | python3 -c "import sys, json; c=json.load(sys.stdin)['institution']['contracts'][0]; print('lifecycle =', 'present' if c['lifecycle'] else None, '/ monitors =', len(c['monitors']))"
 ```
 
-この IR を cadl-explorer にアップロードしても "No lifecycle defined" としか表示されません。
-構造だけでは「期限」「違反」「帰結」を書けない、というこのギャップを §3 で埋めていきます。
+いま読んでいるファイルは完成した仕様で、契約には §3 で読む `lifecycle:` と `monitors:` がすでに書かれています。そのため、上のコマンドは lifecycle がある、と表示するはずです。
+**構造だけ**だとどうなるかを見るには、作業用のコピーを作り、そこから `lifecycle:` と `monitors:` のブロックを削除して、同じ 2 つのコマンドを実行してください。`cadl check` は通りますが、IR では `"lifecycle": null`、monitors は 0 個になり、cadl-explorer には「契約が `lifecycle:` を宣言していない」という警告だけが表示されます。
+構造だけでは「期限」「違反」「帰結」を書けない、というこのギャップを埋めているのが、§3 で読む 2 つのブロックです。
 :::
 
 ---
 
 ## 3. 契約 (lifecycle + monitors) を読む（10 分）
+
+同じファイルの契約部分です（抜粋。各遷移の `on:` トリガ、残りの遷移、残りの monitor は省略し、`# ...` で示しています）。
 
 ```yaml
 contracts:
@@ -142,11 +143,13 @@ contracts:
         - id: match
           from: Requested
           to:   Matched
+          # on: ...
           deadline: 30s
           on_violation: { transition: Violated, severity: Major }
         - id: accept
           from: Matched
           to:   Accepted
+          # on: ...
           deadline: 5s
           on_violation: { transition: Violated, severity: Major }
         # ...
@@ -156,6 +159,7 @@ contracts:
         sampling: periodic(500ms)
         rule: "TAXI[i].battery < 15 AND state == Accepted"
         on_match: { transition: Violated, severity: Critical }
+      # ...
 ```
 
 ### 演習 3-1
@@ -164,26 +168,25 @@ contracts:
 以下に答えてみてください。
 
 1. プラットフォームが 31 秒経っても割り当てを出さなかった場合、状態は何になりますか？
-2. タクシーが accept イベントを返さなかったときに違反したのは、どの主体ですか？
+2. `accept` の期限を守る責任があるのは、どの主体ですか？
 3. `low_battery_guard` が発火する条件を 1 文で説明してください。
 
 ---
 
 ## 4. 可視化する（10 分）— 🔍 可視化チェックポイント 1（DSL 後）
 
-§3 で `lifecycle:` と `monitors:` を読み終わりました。
-これで cadl-explorer に意味のある図が出るようになります。
+§3 で CADL ソースの `lifecycle:` と `monitors:` を読みました。
+ファイルにこの 2 つのブロックがあるので、cadl-explorer に意味のある図が出ます。
 
 ```bash
-cd mobility-sos-exercise
+cd ~/program/mobility-sos-exercise
 cadl check  cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json > cadl/mobility_sos.ir.json
 
 cd ~/program/cadl-explorer
 streamlit run app.py
-# → http://localhost:8501 が開く
-# → サイドバー "SoS_DSL_Lifecycle" を選び、
-#    File uploader に上で生成した mobility_sos.ir.json をドラッグ
+# ブラウザで http://localhost:8501 が開く
+# サイドバー → "SoS_DSL_Lifecycle" → mobility_sos.ir.json をアップローダにドラッグ
 ```
 
 以下のような図がブラウザに描画されます：
@@ -199,7 +202,7 @@ streamlit run app.py
 | 赤の破線エッジ + `violation Major` | `on_violation` による強制遷移 |
 
 :::info このパターンは何度も出てきます
-このコースでは「CADL を編集 → `cadl sim-ir` で IR を再生成 → cadl-explorer をリロード」という 3 ステップを、実装の節目（構造を書いた後、契約を書いた後、コード生成後、シミュレーション後、契約改訂後）でそのつど繰り返します。
+このコースでは「CADL を編集 → `cadl sim-ir` で IR を再生成 → cadl-explorer をリロード」という 3 ステップを、節目（構造を読んだ後、契約を読んだ後、コード生成後、シミュレーション後、契約改訂後）でそのつど繰り返します。
 コードと図が連動して動く感触をつかむのが、このコースの主目的です。
 :::
 
@@ -217,10 +220,11 @@ streamlit run app.py
 コース A の `cadl codegen --target unity-csharp` に相当する、SUMO 向けのコード生成ステップです。
 
 ```bash
+cd ~/program/mobility-sos-exercise
 python scripts/cadl_to_sumo.py
 ```
 
-期待される出力（抜粋）：
+出力例（抜粋。スクリプトの進行メッセージは日本語で出力されます）：
 
 ```text
 [1/4] CADL.environment 検証
@@ -243,7 +247,7 @@ python scripts/cadl_to_sumo.py
 
 - `sumo/config/midtown.cadl.sumocfg` — `step-length` が CADL の `time_step_ms` から、
   `end` が CSV 最終 depart + ride_time guarantee から決まる
-- `sumo/cadl_constraints.json` — `analyze_results.py` が読む契約条件 (deadlines / monitors / guarantees)
+- `sumo/cadl_constraints.json` — `analyze_results.py` が読む契約条件（guarantees / deadlines / monitors）
 
 :::tip 🔍 可視化チェックポイント 2 — コード生成しても CADL ソースは変わらない
 `cadl_to_sumo.py` は IR を読んで SUMO の設定ファイルを書き出すだけで、`cadl/mobility_sos.cadl` の `lifecycle:` / `monitors:` には触れません。
@@ -275,13 +279,13 @@ python scripts/run_sumo.py            # ヘッドレス
 
 ---
 
-## 7. 契約遵守を判定する（10 分）
+## 7. 結果を契約に照らして判定する（10 分）
 
 ```bash
 python scripts/analyze_results.py
 ```
 
-期待される表示の抜粋：
+出力例（抜粋。見出し行は日本語で出力されます）：
 
 ```text
 === CADL 契約 (cadl_constraints.json) との遵守チェック ===
@@ -297,7 +301,7 @@ python scripts/analyze_results.py
       [SKIP        ] low_battery_guard   (battery not exported by SUMO)
 ```
 
-出力で押さえておきたいのは次の 3 点です。
+ここで実際に判定されるのは 2 つの `guarantee` 節だけです。deadline と monitor は一覧に出ますが、評価はされません。
 
 - `guarantees` は SUMO の `tripinfo.duration` / `waitingTime` に直接対応するので評価できる。
 - `deadlines`（matching/accept）は SUMO 上に対応するイベントがないので未評価。
@@ -359,7 +363,7 @@ python scripts/analyze_results.py | grep -E "OK|VIOLATED"
         │
         ├── 図 (cadl-explorer)        ← 仕様を眺める
         ├── 実行 (SUMO)                ← 仕様が動いた結果
-        └── 判定 (analyze_results.py) ← 仕様への適合判定
+        └── 判定 (analyze_results.py) ← guarantee の判定
 ```
 
 この往復が、CADL を起点にした SoS 設計のフィードバックループです。
@@ -391,8 +395,8 @@ python scripts/cadl_to_sumo.py
 
 コース A では CADL → Unity C# を、コース B では CADL → SUMO を扱いました。
 同じ CADL/SoS-DSL の文法のまま、対象ドメインとランタイムを差し替えられることが体感できたはずです。
-契約の deadline / guarantee / monitor を CADL で書き換えるだけで、再シミュレーションなしに評価結果が変わります。
-構造と規範を 1 箇所に書き、それを各ランタイムに伝搬させる ── ここが CADL の中核です。
+契約の deadline / guarantee / monitor は CADL ソースの 1 箇所に書かれ、`cadl sim-ir` が出力する IR を通じて各ツールに届きます。ただし、そのうちどこまでを評価できるかはランタイムによって異なります。このコースの SUMO パイプラインが評価するのは `guarantee` 節だけで、deadline と monitor は、対応する観測量が SUMO に無いため `[SKIP]` と報告されます。
+CADL の guarantee を書き換えて解析をやり直せば、再シミュレーションなしに既存の結果を再評価できます。SoS 設計に向いた、安くて速いフィードバックループです。
 
 ---
 
@@ -400,5 +404,5 @@ python scripts/cadl_to_sumo.py
 
 - コース A（ロボット配送）: [main-textbook.md](main-textbook.md)
 - 演習問題集: [exercises.md](exercises.md)
-- SoS-DSL 仕様: cadl-spec Appendix E
+- SoS-DSL 仕様: cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)
 - SUMO 公式: https://eclipse.dev/sumo/

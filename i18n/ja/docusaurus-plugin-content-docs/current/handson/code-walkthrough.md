@@ -14,15 +14,15 @@ title: "全体構造とコード解説（初学者向け）"
 
 ```mermaid
 flowchart LR
-  subgraph 書く側
+  subgraph A["書く側"]
     CADL[".cadl ファイル<br/>（人が書く唯一のもの）"]
   end
-  subgraph コンパイラ_cadl_repo
+  subgraph B["コンパイラ（cadl_repo）"]
     CHECK[cadl check<br/>型検査]
     IR["Sim-IR JSON<br/>中間表現"]
     GEN[cadl codegen<br/>C# 生成]
   end
-  subgraph 動く側_raspimouse_swarm_simulator
+  subgraph C["動く側（raspimouse-swarm-simulator）"]
     PY["Python 参照ランタイム<br/>engine.py"]
     UN["Unity C# ランタイム<br/>SoSDsl/"]
     SIM["ロボット群シミュレーション<br/>Pilot_CSoS + arbitrator + NATS"]
@@ -35,18 +35,22 @@ flowchart LR
 
 覚えることは 3 つだけです。
 
-1. **人間が書くのは `.cadl` ファイルだけ**。それ以外（IR・C#・図）はすべて自動生成される。
-2. 同じ IR から **Python と C# の 2 つのランタイム**が作られ、同じ意味で動く（片方は答え合わせ用）。
-3. ロボットの制御コードと契約のコードは**完全に分離**されている。契約はロボットを「観測」するだけで、制御ロジックには 1 行も手を入れない。
+1. **契約のロジックとして人間が書くのは `.cadl` ファイルだけ**です。IR、C# の契約クラス、図は、ツールチェインのコマンドがそこから生成します。
+2. **同じ IR を 2 つのランタイムが同じ意味論で実行**します。C# の契約コードは IR から*生成*されるのに対し、Python 参照ランタイムは IR を直接読み込む手書きの*インタプリタ*です（答え合わせ用）。
+3. ロボットの制御コードと契約のコードは**分離**されています。契約はロボットを「観測」するだけです。ロボットの制御コード `Pilot_CSoS.cs` に契約のロジックは入っておらず、手書きの橋渡しは、ロボットの状態変化を契約イベントに変換する薄いブリッジ（`PilotContractBridge.cs`）だけです。
 
 ## 2. リポジトリと役割
 
-| リポジトリ | 役割 | 授業で触るか |
-| --- | --- | --- |
-| `cadl-spec` | 言語仕様書とこの教材サイト | 読むだけ |
-| `cadl_repo` | コンパイラ（パーサ・型検査・IR・コード生成） | コマンドとして使う |
-| `cadl-explorer` | Streamlit の可視化（状態機械図） | コマンドとして使う |
-| `raspimouse-swarm-simulator` | Unity シーン・Go アービトレータ・Python ランタイム | **主に触る場所** |
+| リポジトリ | 役割 | 公開 | コースで触るか |
+| --- | --- | --- | --- |
+| `cadl-spec` | 言語仕様書とこの教材サイト | 公開 | 読むだけ |
+| `cadl`（`cadl_repo` としてクローン） | コンパイラ（パーサ・型検査・IR・コード生成） | 公開 | コマンドとして使う |
+| `cadl-explorer` | Streamlit の可視化（状態機械図） | 公開 | コマンドとして使う |
+| `raspimouse-swarm-simulator` | Unity シーン・Go アービトレータ・Python ランタイム | 非公開 | **Step 5〜6 で主に触る場所** |
+
+トップレベルのリポジトリはこの 4 つです。シミュレータはさらに 2 つの git submodule、`raspimouse-unity`（Unity プロジェクト。`unity/` に展開）と `raspimouse-swarm-arbitrator`（Go アービトレータ。`arbitrator/` に展開）を取り込みますが、これらも非公開です。公開されている 3 つのリポジトリだけで、コース A の Step 4 まで進められます。下の第 4 節で説明するファイルは非公開のシミュレータに属するので、アクセス権がない場合は、部品どうしのつながりの説明として読んでください。
+
+名前についての補足です。Unity シーン（`C-SoS.unity`）、ロボットの制御コード（`Pilot_CSoS`）、アービトレータのディレクトリ（`C-SoS/`）に付いている「C-SoS」は、シミュレータ側が中央アービトレータ方式のモード（「D-SoS」モードと対になるもの）に付けた名前です。CADL とは独立で、CADL の `Collaborative` 型を意味するものではありません。このコースの CADL ファイルは `type: Acknowledged` と宣言しており、教材がロボット配送 SoS の類型を述べるときは、この宣言を指しています。
 
 ## 3. 1 つの契約が通る道 — ファイル単位で追う
 
@@ -88,7 +92,7 @@ flowchart LR
 | ファイル | 中身 |
 | --- | --- |
 | `LineTrace/Pilot_CSoS.cs` | ロボットの頭脳。経路追従・配送の入札（claim）・落札・完了。**契約のことは何も知らない** |
-| `arbitrator/C-SoS/main/main.go` | Go 製の配車係。NATS で配送を配り、早い者勝ち（FCFS）で落札を決める |
+| `arbitrator/C-SoS/main/main.go` | Go 製のアービトレータ（配送の割当係）。NATS で配送を配り、早い者勝ち（FCFS）で落札を決める |
 | `Assets/streamingAssets/cadl_config.json` | グラフ（11 ノード・17 エッジ）・ロボット台数・NATS 設定。Console の `[Config]` 行の出どころ |
 
 ### Python 参照ランタイム — `cadl/runtime/`（答え合わせ用）
@@ -100,12 +104,12 @@ flowchart LR
 
 ## 5. どこを触ると何が変わるか
 
-改造したくなったとき、触るべき場所は次の 1 か所だけです（他は自動生成か、触らない約束の場所）。
+改造したくなったとき、目的ごとに触るべき場所は 1 か所です（他は生成物か、手で編集しない場所です）。
 
 | やりたいこと | 触る場所 |
 | --- | --- |
 | 期限を変える・監視を増やす・状態を足す | **`.cadl` ファイル**（→ e2e スクリプトで再生成） |
-| ロボットの動き方を変える | `Pilot_CSoS.cs`（ただし契約側は無変更で追従する） |
+| ロボットの動き方を変える | `Pilot_CSoS.cs`（ブリッジが観測するイベントが変わらない限り、契約側の変更は不要） |
 | 契約イベントへの翻訳を変える | `PilotContractBridge.cs` |
 | 生成される C# の形を変える | `contract_emitter.py`（上級者向け） |
 | ロボット台数・地図を変える | `cadl_config.json` |
