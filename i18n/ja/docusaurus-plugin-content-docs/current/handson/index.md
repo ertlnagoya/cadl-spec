@@ -14,7 +14,7 @@ CADL と SoS-DSL のハンズオン教材は、目的別に 2 つのトラック
 | 🧑‍🎓 学習者 | 自分で CADL を書いて動かす | [なぜ SoS-DSL なのか？](academic-background.md) → [コース A](main-textbook.md) → B → C |
 | 🧑‍🔬 研究者 | 教材を自分の SoS の試作に流用する | [なぜ SoS-DSL なのか？](academic-background.md)を流し読み → [コース C](exercises.md) |
 
-:::info リポジトリの公開状況
+:::info[リポジトリの公開状況]
 `cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
 :::
 

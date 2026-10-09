@@ -31,7 +31,7 @@ This booklet collects the practice exercises that go with the SoS-DSL hands-on. 
 
 Each session is **~90 minutes in class** plus **~3 hours of homework**. The final deliverable across all five sessions is a **3-page report** (initial model / simulation comparison / reflection).
 
-:::info Repository availability
+:::info[Repository availability]
 Sessions 1–3 need only the public repositories (`cadl`, `cadl-explorer`). Sessions 4–5 run the Python reference runtime that lives in `raspimouse-swarm-simulator`, which is **not publicly available at present** (see Step 0 of the [main textbook](main-textbook.md)).
 :::
 

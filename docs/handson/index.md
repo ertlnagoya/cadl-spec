@@ -14,7 +14,7 @@ The materials fall into **two tracks**. Pick the one that matches your role.
 | 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | [Why SoS-DSL?](academic-background.md) → [Course A](main-textbook.md) → B → C |
 | 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim [Why SoS-DSL?](academic-background.md) then jump to [Course C](exercises.md) |
 
-:::info Repository availability
+:::info[Repository availability]
 `cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
 :::
 
