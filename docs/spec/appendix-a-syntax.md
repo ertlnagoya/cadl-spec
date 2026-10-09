@@ -255,7 +255,8 @@ verify_method = "smt" | "model_check" | "simulation" | "proof" ;
 protocol, or transition concerned. `method:` defaults to `smt`. A
 processor that does not implement a declared method MUST report the
 entry as `not_supported` rather than skip it silently, and MUST report
-an unknown method as an error.
+an unknown method as an error. A `target:` that names nothing declared
+SHOULD be reported as an error.
 
 ## A.9 Codegen block
 
@@ -292,7 +293,10 @@ factor           = "(" , predicate , ")"
                  | literal
                  | indexed_ref ;
 function_call    = identifier , "(" , [ arg_list ] , ")" ;
-arg_list         = predicate , { "," , predicate } ;
+arg_list         = arg , { "," , arg } ;
+arg              = predicate | comprehension ;
+comprehension    = predicate , "for" , identifier , "in" ,
+                   ( range_expr | arith_expr ) ;
 member_access    = indexed_ref , "." , identifier , { "." , identifier } ;
 indexed_ref      = identifier ,
                    [ "[" , ( "*" | range_expr | arith_expr ) , "]" ] ;
@@ -303,6 +307,11 @@ Operators bind, from loosest to tightest: `OR`, `AND`, `NOT`, comparison,
 left. A comparison is not associative (`a < b < c` is not a predicate).
 A quantifier extends as far to the right as possible. White space
 between tokens is ignored.
+
+A `comprehension` is the argument of an aggregate function and
+evaluates its `predicate` once for each value of the bound identifier,
+for example `sum(ROBOT[i].goal_count for i in 1..N)` or
+`sum(r.load for r in ROBOT[*])`.
 
 An item of `assume:` or `guarantee:` that does not conform to this
 grammar is not a syntax error: it is retained as an *opaque predicate*,
@@ -352,14 +361,29 @@ The reference implementation reads the file with a YAML 1.1 loader and
 is lenient: only a missing `sos:` mapping, invalid YAML, and an invalid
 `type:` are rejected by the parser. `cadl check` additionally reports
 duplicate ids, undeclared actors, a contract without parties, and
-governance parameters outside `[0, 1]` as errors. Other missing
-required keys are replaced by an empty value. At v0.3 it deviates from
-this appendix as follows (checked against v0.3.2).
+governance parameters outside `[0, 1]` as errors. In a predicate, a
+name counts as an actor reference, and must be declared, when it is
+indexed (`ROBOT[i]`) or is the object of a member access
+(`ROBOT.battery`); a name standing alone is taken as a state variable
+and is not checked. Other missing required keys are replaced by an
+empty value. At v0.3 it deviates from this appendix as follows (checked
+against v0.3.4).
 
 - **Expressions.** Releases before v0.3.2 parsed `OR` more tightly than
   `AND`, did not accept a `member_access` on an indexed reference
   (`ROBOT[i].battery`), and mishandled the arithmetic operators
-  `+ - * /`. v0.3.2 follows A.10 in these respects.
+  `+ - * /`. v0.3.2 follows A.10 in these respects. Up to v0.3.3 a
+  quantifier was accepted only at the start of a predicate or inside
+  parentheses, and `in` and `exists` were accepted as identifiers;
+  v0.3.4 follows A.10 and A.11.
+- **Types.** The types of Section 5.2.1 are not checked. A value
+  written with a type constructor (for example `Range(1, 4)`) is kept
+  as text.
+- **Lenient forms.** The parser also accepts `parties:` written as one
+  string (`"[A, B]"`), a numeric `deadline:` (read as seconds),
+  `sampling:` written as a mapping with `kind` and `period_ms`, and a
+  `method:` in any letter case. These forms are not part of this
+  appendix.
 - **Steps.** The `else:` branch of a `conditional_step` and the
   condition of a `barrier_step` are not retained.
 - **Contracts.** A `sharing:` entry is recognised only when it is
@@ -369,7 +393,11 @@ this appendix as follows (checked against v0.3.2).
   the file, so every entry is handled as `method: smt`. The
   `not_supported` result is implemented for specifications constructed
   through the API. v0.3.3 reads the three keys and reports methods other
-  than `smt` as `not_supported`.
+  than `smt` as `not_supported`. For an `smt` entry, v0.3.4 reports an
+  error when `target:` names nothing declared or when `expr:` is
+  unsatisfiable; it does not prove `expr` against the model. The
+  contract and transition checks of Section 6.3 run whether or not
+  entries are present.
 - **Codegen.** `codegen:` entries are parsed but not acted upon; the
   target is selected on the command line (Appendix D).
 - **Extensions.** `extensions:` and `motivation:` are ignored.

@@ -109,7 +109,7 @@ flowchart LR
 
 | ツール | バージョン | 用途 |
 | --- | --- | --- |
-| Python | 3.10 以上 | `cadl` CLI を実行 |
+| Python | 3.9 以上 | `cadl` CLI を実行 |
 | Unity | 6000.2.9f1 (Unity 6.2) | シミュレーションを実行 |
 | Go | 1.21 以上 | arbitrator をビルド |
 | NATS Server | 最新版 | ロボットと arbitrator のメッセージバス |
@@ -757,16 +757,19 @@ $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
   total lines : 770
 
 == Step 4/4 — drop into ../cadl-raspimouse-simulator/unity/Assets/Scripts/SoSDsl/ ==
-  installed : .../Runtime, .../Generated
-  preserved : .../Demo (if it existed)
+  installed: .../Runtime, .../Generated
+  preserved: .../Demo (if it existed)
 
 == DONE ==
 Next steps for the student:
   1. Open the Unity project at .../unity in Unity 6 (6000.2)
   2. Open Assets/Scenes/C-SoS.unity
-  3. Add a ContractRuntimeHost GameObject
+  3. Add a ContractRuntimeHost GameObject (Demo/ContractRuntimeHost)
   4. Attach PilotContractBridge to each robot that has Pilot_CSoS
-  5. Press Play and watch the Console
+  5. Press Play and watch the Console for [lifecycle ...] / [violation ...]
+
+See the hands-on textbook for the full walkthrough:
+  https://www.ertl.jp/cadl-spec/docs/handson/main-textbook
 ```
 
 生成されたツリーを確認：
@@ -849,6 +852,7 @@ Step 6 の Unity 実行では、割当のタイミングも各ロボットのバ
 
 ```bash
 cd ~/program/cadl_repo
+pip install pytest          # 初回のみ。Step 0 ではインストールされません
 PYTHONPATH=src python3 -m pytest tests/test_unity_csharp_structural.py -q
 # 9 passed
 ```
@@ -895,7 +899,7 @@ go run main.go
 ```
 [Config] Loaded from ../../../unity/Assets/streamingAssets/cadl_config.json: nats_url=nats://localhost:4222 numAgents=5
 [Config]   init=init next=next ret=ret fin=fin disp=disp resource=resource
-[Config]   taskArbitration.enabled=true protocol=fcfs intervalSec=1.0
+[Config]   taskArbitration.enabled=true protocol=fcfs intervalSec=5.0
 ```
 
 この 3 行目 `taskArbitration.enabled=true` が出ていれば、arbitrator が設定を読めていて配送を配り始められる状態です。ここが `false` だったり `[Config]` 行自体が出ない場合は、設定ファイルを読めていません（下の注記の `-config` で絶対パスを渡してください）。

@@ -89,9 +89,9 @@ the last column shows what v0.3 provides for each technique.
 
 | **Verification Technique** | **Verification Target** | **Tool Foundation (design)** | **v0.3 reference implementation** |
 |---|---|---|---|
-| SMT-Based Verification | Consistency between contracts. Logical consistency of guarantees. | Z3, CVC5 | Available with Z3: consistency within and between contracts, entailment of guarantees from assumptions, exclusivity of transition conditions. CVC5 is not integrated. |
-| Model Checking | Deadlock and livelock detection in protocols. Exhaustive search of reachable states. | UPPAAL, NuSMV | Not integrated. Deadlock detection is done by structural analysis instead (circular message dependencies, barrier reachability, circular fallback chains). Livelock detection is planned. |
-| Reachability Analysis | Preservation of safety invariants during institutional transitions. Hamilton-Jacobi reachability analysis. | hj_reachability | Not integrated. Available instead: reachability, dead-state, and cycle analysis on the regime transition graph, and a satisfiability check of each safety invariant with Z3. |
+| SMT-Based Verification | Consistency between contracts. Logical consistency of guarantees. | Z3, CVC5 | Available with Z3: consistency within each contract and between contracts that share a party, satisfiability of the assumptions of each contract, exclusivity of transition conditions. Whether the guarantees follow from the assumptions is reported as information only. CVC5 is not integrated. |
+| Model Checking | Deadlock and livelock detection in protocols. Exhaustive search of reachable states. | UPPAAL, NuSMV | Not integrated. Deadlock detection is done by structural analysis instead (mutual sends between the branches of a `parallel` block, barrier reachability, circular fallback chains). Steps written in sequence are ordered and are not treated as circular waits. Livelock detection is planned. |
+| Reachability Analysis | Preservation of safety invariants during institutional transitions. Hamilton-Jacobi reachability analysis. | hj_reachability | Not integrated. Available instead: reachability, dead-state, and cycle analysis on the regime transition graph, and a satisfiability check of each safety invariant with Z3. The initial regime is inferred from the transitions, and a regime with no outgoing transition is reported as a failure. |
 | Compositional Verification | Differential verification when actors join/leave. Impact analysis on existing contracts. | Custom implementation | Planned. |
 
 ## 6.4 Runtime System

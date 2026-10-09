@@ -20,13 +20,12 @@ introduced in depth.
   `information`, `responsibilities`, `incentives`, and `violation`, and
   carries the governance parameters α, β, λ.
 - **Protocol layer** — Coordination procedures: message passing, compute
-  steps, conditionals, parallel blocks, barriers, and loops between
-  actors.
+  steps, conditionals, parallel blocks, and barriers between actors.
 - **Algorithm layer** — Reference to central or local algorithms
-  consumed by the protocol steps (inputs, outputs, implementation
-  handle, parameters).
+  consumed by the protocol steps (a `central` and a `local` entry per
+  algorithm).
 - **Actor** — A constituent system, agent, or role participating in the
-  SoS. Identified by `actor_id`, possibly parameterised by a range.
+  SoS. Identified by its `id`, possibly parameterised by a range.
 - **Contract** — Assume-guarantee constraint attached to a set of
   parties and an authority. The formal unit of institutional design.
 - **Transition** — A switch between regimes, declared with `from`, `to`,
@@ -141,9 +140,10 @@ Terms of the SoS Contract DSL extension; see
   the toolchain builds from a CADL source file. Consumed by the
   simulator config generators.
 - **Codegen target** — An output format named in the catalog of
-  [Appendix D](./appendix-d-codegen.md): `unity` (simulation config),
-  `ros2` (runtime nodes), `python`, `solidity` (smart contracts),
-  `opa` (Rego policies), or a user-defined target.
+  [Appendix D](./appendix-d-codegen.md): `unity` and `go` (simulation
+  config), `ros2` (runtime nodes), `python`, `solidity` (smart
+  contracts), `opa` (Rego policies), `unity-csharp` (contract runtime
+  for Unity), or a user-defined target.
 - **Simulator config** — Environment + actor + governance settings
   passed to the downstream simulator (e.g. Unity).
 - **Pipeline** — `CADL → IR → Simulator config → Experiment → Evaluation`.
