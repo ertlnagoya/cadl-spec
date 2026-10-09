@@ -75,6 +75,18 @@ const config: Config = {
     ],
   ],
 
+  plugins: [
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        // /docs/ and /docs/spec/ have no page of their own.
+        redirects: [
+          {from: ['/docs', '/docs/spec'], to: '/docs/spec/intro'},
+        ],
+      },
+    ],
+  ],
+
   themeConfig: {
     colorMode: {
       respectPrefersColorScheme: true,

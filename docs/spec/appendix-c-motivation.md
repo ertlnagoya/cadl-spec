@@ -92,7 +92,20 @@ For `N` actors:
 |---------|--------|
 | `none` | Baseline — motivation is ignored (equivalent to ρ = 0). |
 | `commitment_budget` | Actor i gets the commitment budget `B_i = budget_base + κ · m_i`. An actor that exceeds its budget is throttled by an extra wait of `⌊ρ · overshoot · wait_scale⌋`. |
-| `hybrid` | Budget constraint as above **plus** preference-sensitive routing priority; ρ governs both. |
+| `hybrid` | Budget constraint as above **plus** preference-sensitive routing priority; ρ governs both. The priority rule is **undefined** in v0.1-ext (see below). |
+
+The quantities in the table are defined as follows.
+
+- `used_i` is the cumulative number of goals (commitments) actor i has
+  taken on since the start of the run.
+- `overshoot = max(0, used_i − B_i)` is the amount by which actor i
+  exceeds its budget; it is 0 while the actor is within budget.
+- The extra wait `⌊ρ · overshoot · wait_scale⌋` is counted in retry
+  ticks of the runtime's dispatcher and is added to the wait the actor
+  would have anyway before its next routing attempt.
+- "Preference-sensitive routing priority" (`hybrid`) is **undefined** in
+  v0.1-ext: no formula is given, and the reference simulator applies
+  only the budget constraint, so `hybrid` behaves as `commitment_budget`.
 
 Effective sensitivity is `ρ · 𝟙[model ≠ "none"]`; when `model = "none"`
 the runtime MUST ignore `rho`.

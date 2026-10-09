@@ -6,7 +6,7 @@ description: "CADL v0.1の参照文法をEBNFで示す。文書の構造，式�
 
 # 付録A. 構文リファレンス（EBNF）
 
-CADLファイルは**YAML 1.2文書**である。本付録は CADL v0.1 の参照文法を
+CADLファイルは**YAML 1.2文書** [[Ben-Kiki+, 2021]](./appendix-b-references.md) である。本付録は CADL v0.1 の参照文法を
 2つの部分に分けて示す。文書の*構造*（A.2〜A.9）は，YAMLのマッピングと
 シーケンスの上のEBNFとして記述する。*式の部分言語*（A.1，A.10）は，
 個々のYAML文字列スカラーの中に書かれる。
@@ -21,7 +21,7 @@ CADLファイルは**YAML 1.2文書**である。本付録は CADL v0.1 の参�
 `cadl parse` または `cadl check` を実行する。実行できるファイルは，
 [cadlリポジトリ](https://github.com/ertlnagoya/cadl)の `examples/` ディレクトリにある。
 
-**記法。** 文法にはISO/IEC 14977のEBNFを用い，次の規約を置く。
+**記法。** 文法にはISO/IEC 14977のEBNF [[ISO/IEC 14977:1996]](./appendix-b-references.md) を用い，次の規約を置く。
 
 - `"name:"` のようにコロンで終わる終端記号は，YAMLマッピングのキーであり，
   その後に値が続く。1つのマッピングの中の項目は任意の順序で書いてよく，

@@ -71,7 +71,7 @@ identifiers only, so NFR-7 is not yet met.
 | NFR-2 | Graduated Participation | Provide three graduated description levels (overview, design, verification) matching user expertise, enabling non-experts to participate from overview level and experts up to verification level, each according to their abilities. |
 | NFR-3 | Scalability | Be able to process SoS descriptions including 100 or more actors and 50 or more contracts within practical timeframes (verification: within minutes). |
 | NFR-4 | Extensibility | Have a plugin mechanism to add domain-specific vocabulary and constraints as libraries. |
-| NFR-5 | Interoperability | Support code generation to SysMLv2, AADL, and smart contracts (Solidity). |
+| NFR-5 | Interoperability | Support code generation to SysMLv2 [[OMG, 2025]](./appendix-b-references.md), AADL [[Feiler & Gluch, 2012]](./appendix-b-references.md), and smart contracts (Solidity [[Solidity Documentation]](./appendix-b-references.md)). |
 | NFR-6 | AI Affinity | Ensure syntax is regular and has little ambiguity so LLMs can generate, modify, and explain CADL descriptions from natural language. Designed with AI-assisted barrier reduction (NL→CADL conversion, natural language explanation generation) in mind. |
 | NFR-7 | Internationalization | Be able to use Unicode characters (Japanese, etc.) in identifiers, with multilingual comment support. |
 | NFR-8 | Visualization | Automatically generate diagrams such as authority structure diagrams, protocol sequence diagrams, and regime maps from CADL descriptions, enabling non-technical users to visually grasp the overall institutional picture. |
@@ -80,7 +80,7 @@ identifiers only, so NFR-7 is not yet met.
 
 | **ID** | **Description** |
 | --- | --- |
-| C-1 | Be able to map to the five-layer framework. |
-| C-2 | Be able to describe SoS classifications (D/A/C/V-SoS) from ISO/IEC/IEEE 21841:2019. |
-| C-3 | Be able to integrate with IEC 62853 process views (consensus-building, accountability, fault response, change management). |
+| C-1 | Be able to map to the five-layer framework [[Shimoyama & Matsubara, 2026]](./appendix-b-references.md); the mapping is given in [Section 2.2](./02-objectives.md). |
+| C-2 | Be able to describe SoS classifications (D/A/C/V-SoS) from [ISO/IEC/IEEE 21841:2019](./appendix-b-references.md). |
+| C-3 | Be able to integrate with IEC 62853 [[IEC 62853:2018]](./appendix-b-references.md) process views (consensus-building, accountability, fault response, change management). |
 | C-4 | Have a formal foundation based on assume-guarantee contract semantics. |

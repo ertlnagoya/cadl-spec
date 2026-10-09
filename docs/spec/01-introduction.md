@@ -23,7 +23,7 @@ and [Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-sta
 ## 1.2 Background: Challenges of Institutional Design in SoS
 An SoS is a system configuration in which multiple independently
 operated systems cooperate to achieve capabilities that no single system
-can achieve alone. ISO/IEC/IEEE 21841:2019 classifies SoS into four
+can achieve alone [[Maier, 1998]](./appendix-b-references.md). [ISO/IEC/IEEE 21841:2019](./appendix-b-references.md) classifies SoS into four
 types: Directed, Acknowledged, Collaborative, and Virtual.
 
 Traditional SoS research has focused on control/coordination algorithms
@@ -289,5 +289,5 @@ types.
 | A-SoS<br />(Acknowledged SoS) | A central authority exists, but each constituent system has some degree of autonomy. Operated through consultation between the authority and constituent systems. | Robot delivery system. The dispatcher manages overall, but each robot autonomously handles local obstacle avoidance. |
 | C-SoS<br />(Collaborative SoS) | No central authority; constituent systems of equal standing voluntarily cooperate. Decision-making through consensus building. | Family rule-making. Decided through family meetings. Condominium management association operations. |
 | V-SoS<br />(Virtual SoS) | An SoS with no clear management structure where constituent systems cooperate incidentally. Overall objectives may not be explicitly stated. | The Internet as a whole. Individual services operate independently but collectively form a massive ecosystem. |
-| Five-Layer Framework | A framework that structures SoS design into five layers (Policy / Governance / Control / Execution / Environment). CADL primarily describes the Governance and Control layers. | Policy: "Safety first" -> Governance: "Collision avoidance rules" -> Control: "Route planning" -> Execution: "Motor control" |
-| IEC 62853 | International standard for Open Systems Dependability. Defines processes for consensus building, accountability, and change response to continuously ensure system dependability. CADL considers integration with this standard. | Describing consensus-building processes during institutional changes and accountability mechanisms during fault response in CADL. |
+| Five-Layer Framework | A classification of SoS design into five layers [[Shimoyama & Matsubara, 2026]](./appendix-b-references.md): (1) Objective (policy), (2) Institutional and Governance, (3) Control and Coordination, (4) Execution and Operation, (5) Environment and Disturbance. CADL primarily describes layers 2 and 3; the correspondence with CADL's own three layers is given in [Section 2.2](./02-objectives.md). | Policy: "Safety first" -> Governance: "Collision avoidance rules" -> Control: "Route planning" -> Execution: "Motor control" |
+| IEC 62853 | International standard for Open Systems Dependability [[IEC 62853:2018]](./appendix-b-references.md). Defines processes for consensus building, accountability, and change response to continuously ensure system dependability. CADL considers integration with this standard. | Describing consensus-building processes during institutional changes and accountability mechanisms during fault response in CADL. |

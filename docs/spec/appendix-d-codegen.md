@@ -19,13 +19,13 @@ pairs each target name with its **category**, **intended artifact**, and
 | Target name | Category | Emitted artifact | Reference-impl module | Command |
 |-------------|----------|------------------|-----------------------|---------|
 | `python` | Runtime code | Python package (actors, contract monitors, protocols, regime controller, metrics, runtime) | `cadl.codegen` | `cadl codegen -t python` |
-| `solidity` | Institutional contract | Solidity smart contracts, one per contract | `cadl.codegen.solidity` | `cadl codegen -t solidity` |
-| `opa` | Institutional policy | Rego / OPA policies, one per contract | `cadl.codegen.opa` | `cadl codegen -t opa` |
+| `solidity` | Institutional contract | Solidity [[Solidity Documentation]](./appendix-b-references.md) smart contracts, one per contract | `cadl.codegen.solidity` | `cadl codegen -t solidity` |
+| `opa` | Institutional policy | Rego / OPA [[Open Policy Agent]](./appendix-b-references.md) policies, one per contract | `cadl.codegen.opa` | `cadl codegen -t opa` |
 | `unity-csharp` | Runtime code | Unity C# classes for the lifecycles and monitors of [Appendix E](./appendix-e-sos-dsl.md) | `cadl.codegen.unity_csharp` | `cadl codegen -t unity-csharp` |
 | `unity` | Simulator config | JSON for a Unity-based simulator | `cadl.sim.gen_unity` | `cadl sim-gen -t unity` |
 | `go` | Simulator config | JSON for a Go-based simulator | `cadl.sim.gen_go` | `cadl sim-gen -t go` |
 | `python` (simulator) | Simulator config | YAML for a Python-based simulator | `cadl.sim.gen_python` | `cadl sim-gen -t python` |
-| `ros2` | Runtime node | ROS 2 node scaffolds | not implemented at v0.3 | — |
+| `ros2` | Runtime node | ROS 2 [[Macenski+, 2022]](./appendix-b-references.md) node scaffolds | not implemented at v0.3 | — |
 | other name (user-defined) | Plugin | Whatever the user plugin emits | no plugin mechanism exists at v0.3; other target names are rejected by the CLI | — |
 
 The name `python` denotes the runtime-code target in a `codegen:` entry;

@@ -61,3 +61,51 @@ description: "References cited in the CADL specification."
 [28] K. Lyytinen, B. Weber, M. C. Becker, and B. T. Pentland, "Digital twins of organization: implications for organization design," Journal of Organization Design, vol. 13, no. 3, pp. 77-93, 2024.
 
 [29] OECD, "Innovative public participation," https://www.oecd.org/en/topics/sub-issues/open-government-and-citizen-participation/innovative-public-participation.html (accessed Oct. 2026).
+
+[30] Object Management Group, "OMG Systems Modeling Language (SysML), Version 2.0," 2025, https://www.omg.org/spec/SysML/2.0.
+
+[31] P. H. Feiler and D. P. Gluch, Model-Based Engineering with AADL: An Introduction to the SAE Architecture Analysis & Design Language, Addison-Wesley, 2012.
+
+[32] J. Hatcliff, J. Belt, Robby, and T. Carpenter, "HAMR: An AADL Multi-platform Code Generation Toolset," in Proc. ISoLA, LNCS 13036, pp. 274-295, 2021.
+
+[33] E. Ostrom, Understanding Institutional Diversity, Princeton University Press, 2005.
+
+[34] OpenStad, "OpenStad: open source platform for digital participation," initiated by the City of Amsterdam, https://openstad.org/ (accessed Oct. 2026).
+
+[35] HL7 International, "HL7 FHIR Release 5," 2023, https://hl7.org/fhir/R5/.
+
+[36] ISO/IEC 14977:1996, Information technology - Syntactic metalanguage - Extended BNF, 1996.
+
+[37] O. Ben-Kiki, C. Evans, and I. döt Net, "YAML Ain't Markup Language (YAML) Version 1.2," Revision 1.2.2, 2021, https://yaml.org/spec/1.2.2/.
+
+[38] K. G. Larsen, P. Pettersson, and W. Yi, "UPPAAL in a Nutshell," Int. J. Software Tools for Technology Transfer, vol. 1, no. 1-2, pp. 134-152, 1997.
+
+[39] A. Cimatti et al., "NuSMV 2: An OpenSource Tool for Symbolic Model Checking," in Proc. CAV, LNCS 2404, pp. 359-364, 2002.
+
+[40] L. de Moura and N. Bjørner, "Z3: An Efficient SMT Solver," in Proc. TACAS, LNCS 4963, pp. 337-340, 2008.
+
+[41] H. Barbosa et al., "cvc5: A Versatile and Industrial-Strength SMT Solver," in Proc. TACAS, LNCS 13243, pp. 415-442, 2022.
+
+[42] Stanford Autonomous Systems Lab, "hj_reachability: Hamilton-Jacobi reachability analysis in JAX," https://github.com/StanfordASL/hj_reachability (accessed Oct. 2026).
+
+[43] J. Feist, G. Grieco, and A. Groce, "Slither: A Static Analysis Framework for Smart Contracts," in Proc. IEEE/ACM WETSEB, pp. 8-15, 2019.
+
+[44] E. Clarke, O. Grumberg, S. Jha, Y. Lu, and H. Veith, "Counterexample-Guided Abstraction Refinement," in Proc. CAV, LNCS 1855, pp. 154-169, 2000.
+
+[45] N. Piterman, A. Pnueli, and Y. Sa'ar, "Synthesis of Reactive(1) Designs," in Proc. VMCAI, LNCS 3855, pp. 364-380, 2006.
+
+[46] European Parliament and Council of the European Union, "Regulation (EU) 2016/679 of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data, and repealing Directive 95/46/EC (General Data Protection Regulation)," Official Journal of the European Union, L 119, pp. 1-88, 4 May 2016.
+
+[47] Japan, Act on the Protection of Personal Information (Act No. 57 of 2003).
+
+[48] G. Sartoretti, J. Kerr, Y. Shi, G. Wagner, T. K. S. Kumar, S. Koenig, and H. Choset, "PRIMAL: Pathfinding via Reinforcement and Imitation Multi-Agent Learning," IEEE Robotics and Automation Letters, vol. 4, no. 3, pp. 2378-2385, 2019.
+
+[49] N. Boysen, S. Fedtke, and S. Schwerdfeger, "Last-mile delivery concepts: a survey from an operational research perspective," OR Spectrum, vol. 43, no. 1, pp. 1-58, 2021.
+
+[50] The Solidity Authors, "Solidity Documentation," https://docs.soliditylang.org/ (accessed Oct. 2026).
+
+[51] S. Macenski, T. Foote, B. Gerkey, C. Lalancette, and W. Woodall, "Robot Operating System 2: Design, architecture, and uses in the wild," Science Robotics, vol. 7, no. 66, eabm6074, 2022.
+
+[52] E. Shinan et al., "Lark: a parsing toolkit for Python," https://github.com/lark-parser/lark (accessed Oct. 2026).
+
+[53] S. Bansal, M. Chen, S. Herbert, and C. J. Tomlin, "Hamilton-Jacobi Reachability: A Brief Overview and Recent Advances," in Proc. IEEE CDC, pp. 2242-2253, 2017.

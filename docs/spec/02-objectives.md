@@ -43,8 +43,19 @@ while the toolchain determines how. Designers are freed from
 implementation details.
 
 **Hierarchical composition:** Adopt a hierarchical description structure
-corresponding to the five-layer framework (Policy / Governance / Control
-/ Execution / Environment).
+corresponding to the five-layer classification of SoS design
+[[Shimoyama & Matsubara, 2026]](./appendix-b-references.md): (1) Objective (policy), (2) Institutional and Governance,
+(3) Control and Coordination, (4) Execution and Operation, and
+(5) Environment and Disturbance. CADL's own three layers sit inside this
+classification as follows.
+
+| **Five-layer classification** | **Where it appears in CADL** |
+| --- | --- |
+| 1. Objective (policy) | Not a layer of CADL. The evaluation criteria that follow from the objectives are written in `metrics:`. |
+| 2. Institutional and Governance | **Institution layer**: `contracts:` (authority, information, responsibilities, incentives) and `transitions:`. |
+| 3. Control and Coordination | **Protocol layer** (`protocols:`, the coordination procedure) and **Algorithm layer** (`algorithms:`, which names the central and local algorithms without describing their internals). |
+| 4. Execution and Operation | Outside the language. It is reached through code generation and simulator configs ([Appendix D](./appendix-d-codegen.md)). |
+| 5. Environment and Disturbance | Not a layer of CADL. Assumptions about the environment are written in `context:`. |
 
 **Parametric institutional design:** Make institutional parameters such
 as information sharing degree (α), decision centralization degree (β),

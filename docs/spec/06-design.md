@@ -19,16 +19,16 @@ actor reference resolution, contract party consistency, and parameter
 ranges. Available in v0.3.
 
 **Verification Engine (Verifier):** Performs formal verification on AST.
-v0.3 provides consistency verification with an SMT solver (Z3), protocol
+v0.3 provides consistency verification with an SMT solver (Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md)), protocol
 deadlock detection, and graph analysis of regime transitions. Model
 checking and reachability analysis of continuous dynamics are planned.
 
 **Code Generator:** Generates code from CADL descriptions. v0.3 targets
-Python (runtime), Solidity, OPA/Rego, and Unity C# (for the SoS-DSL
+Python (runtime), Solidity [[Solidity Documentation]](./appendix-b-references.md), OPA/Rego [[Open Policy Agent]](./appendix-b-references.md), and Unity C# (for the SoS-DSL
 extension, [Appendix E](./appendix-e-sos-dsl.md)), and also emits
 simulator configurations; the targets are listed in
 [Appendix D](./appendix-d-codegen.md). TypeScript
-generation and conversion to SysMLv2 and AADL are planned.
+generation and conversion to SysMLv2 [[OMG, 2025]](./appendix-b-references.md) and AADL [[Feiler & Gluch, 2012]](./appendix-b-references.md) are planned.
 
 **Runtime Monitor:** Monitors execution of deployed institutions,
 detects contract violations, executes institutional transitions, and
@@ -74,7 +74,7 @@ be run separately before generating code.
 
 Parses YAML-based syntax and additionally parses CADL-specific
 constraint expressions and protocol steps. In v0.3 a YAML loader reads
-the document structure and a Lark grammar parses the expression
+the document structure and a Lark [[Shinan+]](./appendix-b-references.md) grammar parses the expression
 sub-language; parse results are output as typed AST. Parsing stops at
 the first error, and keys the parser does not know are skipped without a
 diagnostic. A PEG-based parser with error recovery is design intent and
@@ -113,9 +113,9 @@ the last column shows what v0.3 provides for each technique.
 
 | **Verification Technique** | **Verification Target** | **Tool Foundation (design)** | **v0.3 reference implementation** |
 |---|---|---|---|
-| SMT-Based Verification | Consistency between contracts. Logical consistency of guarantees. | Z3, CVC5 | Available with Z3: consistency within each contract and between contracts that share a party, satisfiability of the assumptions of each contract, exclusivity of transition conditions. Whether the guarantees follow from the assumptions is reported as information only. CVC5 is not integrated. |
-| Model Checking | Deadlock and livelock detection in protocols. Exhaustive search of reachable states. | UPPAAL, NuSMV | Not integrated. Deadlock detection is done by structural analysis instead (mutual sends between the branches of a `parallel` block, barrier reachability, circular fallback chains). Steps written in sequence are ordered and are not treated as circular waits. Livelock detection is planned. |
-| Reachability Analysis | Preservation of safety invariants during institutional transitions. Hamilton-Jacobi reachability analysis. | hj_reachability | Not integrated. Available instead: reachability, dead-state, and cycle analysis on the regime transition graph, and a satisfiability check of each safety invariant with Z3. The initial regime is inferred from the transitions, and a regime with no outgoing transition is reported as a failure. |
+| SMT-Based Verification | Consistency between contracts. Logical consistency of guarantees. | Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), CVC5 [[Barbosa+, 2022]](./appendix-b-references.md) | Available with Z3: consistency within each contract and between contracts that share a party, satisfiability of the assumptions of each contract, exclusivity of transition conditions. Whether the guarantees follow from the assumptions is reported as information only. CVC5 is not integrated. |
+| Model Checking | Deadlock and livelock detection in protocols. Exhaustive search of reachable states. | UPPAAL [[Larsen+, 1997]](./appendix-b-references.md), NuSMV [[Cimatti+, 2002]](./appendix-b-references.md) | Not integrated. Deadlock detection is done by structural analysis instead (mutual sends between the branches of a `parallel` block, barrier reachability, circular fallback chains). Steps written in sequence are ordered and are not treated as circular waits. Livelock detection is planned. |
+| Reachability Analysis | Preservation of safety invariants during institutional transitions. Hamilton-Jacobi reachability analysis [[Bansal+, 2017]](./appendix-b-references.md). | hj_reachability [[Stanford ASL]](./appendix-b-references.md) | Not integrated. Available instead: reachability, dead-state, and cycle analysis on the regime transition graph, and a satisfiability check of each safety invariant with Z3. The initial regime is inferred from the transitions, and a regime with no outgoing transition is reported as a failure. |
 | Compositional Verification | Differential verification when actors join/leave. Impact analysis on existing contracts. | Custom implementation | Planned. |
 
 ## 6.4 Runtime System
@@ -144,5 +144,5 @@ and checks targets; a dashboard is not provided.
 violations, and institutional transitions with timestamps, supporting
 post-analysis and accountability. The v0.3 runtime keeps a timestamped
 in-memory log of protocol executions, violations, and regime
-transitions. Integration with IEC 62853
+transitions. Integration with IEC 62853 [[IEC 62853:2018]](./appendix-b-references.md)
 agreement description databases is planned.

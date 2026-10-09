@@ -6,7 +6,7 @@ description: "Reference grammar of CADL v0.1 in EBNF: document structure, expres
 
 # Appendix A. Syntax Reference (EBNF)
 
-A CADL file is a **YAML 1.2 document**. This appendix gives the reference
+A CADL file is a **YAML 1.2 document** [[Ben-Kiki+, 2021]](./appendix-b-references.md). This appendix gives the reference
 grammar of CADL v0.1 in two parts: the *structure* of the document
 (A.2–A.9), written as EBNF over YAML mappings and sequences, and the
 *expression sub-language* (A.1, A.10) that is written inside individual
@@ -24,7 +24,7 @@ To try the grammar, install the reference implementation
 files are in the `examples/` directory of the
 [cadl repository](https://github.com/ertlnagoya/cadl).
 
-**Notation.** The grammar uses ISO/IEC 14977 EBNF with the following
+**Notation.** The grammar uses ISO/IEC 14977 EBNF [[ISO/IEC 14977:1996]](./appendix-b-references.md) with the following
 conventions.
 
 - A terminal ending in a colon, such as `"name:"`, is a key of a YAML
