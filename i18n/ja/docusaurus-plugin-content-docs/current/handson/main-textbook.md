@@ -139,7 +139,7 @@ CADL ツールチェインは、各部分が独立して進化できるよう 4 
 | `cadl-explorer`        | Streamlit ベースの可視化 | 公開 | `feature/sos-dsl`（Step 4 で使う Lifecycle View ページはこのブランチにあり、`main` にはまだありません） |
 | `raspimouse-swarm-simulator` | Unity シーン + Go arbitrator + Python 参照ランタイム。Unity プロジェクトと arbitrator は git submodule（`raspimouse-unity`、`raspimouse-swarm-arbitrator`）です | 非公開 | `feature/sos-dsl` |
 
-:::info リポジトリの公開状況
+:::info[リポジトリの公開状況]
 `cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
 :::
 
@@ -241,10 +241,6 @@ SoS の文脈では、仕様言語が果たすべき仕事は 2 つあります�
 
 CADL は (1) を本体文法（Appendix A）でカバーします。SoS-DSL 拡張（[Appendix E](../spec/appendix-e-sos-dsl.md)）は (1) の上に (2) を加えます — 同じ構文ファミリーで、新しい body キーは `lifecycle:` と `monitors:` の 2 つだけです。
 
-:::info リポジトリの公開状況
-`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
-:::
-
 ### 手順
 
 ```bash
@@ -337,10 +333,6 @@ flowchart LR
   D  -- delivery_notif    --> C1
   R1 -. governed by ........ DELIVERY_SLA[(DELIVERY_SLA<br/>契約)] .-.- D
 ```
-
-:::info リポジトリの公開状況
-`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
-:::
 
 ### 手順
 
@@ -500,10 +492,6 @@ stateDiagram-v2
 
 **同じライフサイクル** が全配送要求に再利用され、データ（どのロボット、どの顧客）だけが異なります。
 
-:::info リポジトリの公開状況
-`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
-:::
-
 ### 手順
 
 まず `my_delivery.cadl` の先頭付近で、このファイルが SoS-DSL 拡張を使うことを宣言します。[Appendix E](../spec/appendix-e-sos-dsl.md) はこの宣言を求めており（SHOULD）、同梱の例にも入っています。
@@ -645,10 +633,6 @@ monitors[0].id    : battery_guard
 - cadl-explorer の Lifecycle View ページの読み方。
 - 視覚的な慣習（二重円、破線枠、赤エッジ）が仕様のどこに対応するか。
 
-:::info リポジトリの公開状況
-`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
-:::
-
 ### 手順
 
 ```bash
@@ -736,10 +720,6 @@ IR JSON のロード方法は 2 通り：
 ### 学ぶこと
 - 1 つの CLI コマンドで CADL が Unity に貼れる C# ツリーに変わる仕組み。
 - なぜ **同じ意味論**のランタイムが **2 つ**あるのか（IR を解釈実行する Python 参照ランタイムと、生成される C#）。
-
-:::info リポジトリの公開状況
-`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）は公開しています。`raspimouse-swarm-simulator`（submodule を含む）と `mobility-sos-exercise` は**現時点では非公開**です。公開リポジトリだけで、コース A の Step 1〜4（仕様を読む、CADL を書く、契約を追加する、可視化する）まで進められます。Step 5〜6（シミュレータへの Unity C# 生成と Unity でのライブ実行）とコース B には、非公開リポジトリが必要です。
-:::
 
 ### 手順
 

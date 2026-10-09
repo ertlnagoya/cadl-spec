@@ -139,7 +139,7 @@ The CADL toolchain is split across four repositories so each piece can evolve in
 | `cadl-explorer`        | a Streamlit visualiser | yes | `feature/sos-dsl` (the Lifecycle View page used in Step 4 is on this branch and not yet on `main`) |
 | `raspimouse-swarm-simulator` | Unity scene + Go arbitrator + Python reference runtime. The Unity project and the arbitrator are git submodules (`raspimouse-unity`, `raspimouse-swarm-arbitrator`) | no | `feature/sos-dsl` |
 
-:::info Repository availability
+:::info[Repository availability]
 `cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
 :::
 
@@ -241,10 +241,6 @@ A specification language has two jobs in an SoS context:
 
 CADL covers (1) directly in its main grammar (Appendix A). The SoS-DSL extension ([Appendix E](../spec/appendix-e-sos-dsl.md)) adds (2) on top of (1) — same syntax family, just two new body keys: `lifecycle:` and `monitors:`.
 
-:::info Repository availability
-`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
-:::
-
 ### Procedure
 
 ```bash
@@ -337,10 +333,6 @@ flowchart LR
   D  -- delivery_notif    --> C1
   R1 -. governed by ........ DELIVERY_SLA[(DELIVERY_SLA<br/>contract)] .-.- D
 ```
-
-:::info Repository availability
-`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
-:::
 
 ### Procedure
 
@@ -500,10 +492,6 @@ stateDiagram-v2
 
 The **same lifecycle** is reused for every delivery request — only the data (which robot, which customer) differs.
 
-:::info Repository availability
-`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
-:::
-
 ### Procedure
 
 First declare, near the top of `my_delivery.cadl`, that the file uses the SoS-DSL extension. [Appendix E](../spec/appendix-e-sos-dsl.md) asks for this declaration (SHOULD), and the bundled example has it:
@@ -645,10 +633,6 @@ The same file now describes both the structure (Step 2) and the rules (Step 3). 
 - How to read the Lifecycle View page of cadl-explorer.
 - How visual conventions (double circle, dashed border, red edge) map to the spec.
 
-:::info Repository availability
-`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
-:::
-
 ### Procedure
 
 ```bash
@@ -736,10 +720,6 @@ The diagram is generated **directly from the IR JSON** with zero hand-coding. If
 ### What you'll learn
 - How a single CLI command turns your CADL into a Unity-ready C# tree.
 - Why there are **two** runtimes with the **same semantics**: a Python reference runtime that interprets the IR, and the generated C#.
-
-:::info Repository availability
-`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI) and `cadl-explorer` (visualisation) are public. `raspimouse-swarm-simulator` (with its submodules) and `mobility-sos-exercise` are **not publicly available at present**. With the public repositories you can follow Course A Steps 1–4 (read the spec, write CADL, add contracts, visualise). Steps 5–6 (Unity C# generation into the simulator and the live Unity run) and Course B require the non-public repositories.
-:::
 
 ### Procedure
 
