@@ -923,7 +923,7 @@ go run main.go
 
 ![C-SoS.unity を開いた直後の Unity エディタ。Scene ビューに、番号の付いたノードを持つ経路網と 5 台のロボットが表示されている](/img/handson/unity-scene-opened.jpg)
 
-Scene ビューで経路網が小さく見える場合は、Hierarchy で `road` を選び、マウスを Scene ビューの上に置いて `F` キーを押すと、経路網が画面いっぱいに表示されます。ロボットの動きは **Scene** ビューで見てください。このプロジェクトでは、**Game** ビューのカメラは経路網のほうを向いていません。
+Scene ビューで経路網が小さく見える場合は、Hierarchy で `road` を選び、マウスを Scene ビューの上に置いて `F` キーを押すと、経路網が画面いっぱいに表示されます。Play 中の **Game** ビューは 1 台のロボット（`m1`）を追いかけ、その周りの経路網を映します。右下には、そのロボット自身のカメラの映像が出ます。経路網全体を一度に見たいときは **Scene** ビューを使います。
 
 > #### 🛠 Unity のバージョンに注意
 >
@@ -994,6 +994,10 @@ Console に以下のような行が連続的に出ます。Console の検索欄�
 同じ実行中の経路網を拡大したものです。5 台のロボットが走行しています。
 
 ![Play 中の C-SoS の経路網と 5 台のロボット](/img/handson/unity-road-network.jpg)
+
+Play 中の Game ビューです。カメラがロボット `m1` を追いかけており、右下の小さな映像はそのロボットのカメラから見た景色です。
+
+![Play 中の Game ビュー。カメラが経路網上のロボットを追いかけ、右下にロボット自身のカメラの映像が出ている](/img/handson/unity-game-view.jpg)
 
 ```
 [lifecycle DELIVERY_SLA/robot-0-1 Proposed -> Assigned     (assign,        event)   @ 1234ms]

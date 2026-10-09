@@ -923,7 +923,7 @@ You should see a road network (graph) made of **11 nodes and 17 edges**, with **
 
 ![Unity Editor right after opening C-SoS.unity: the road network with numbered nodes and the five robots in the Scene view](/img/handson/unity-scene-opened.jpg)
 
-If the road looks small in the Scene view, select `road` in the Hierarchy, move the mouse over the Scene view and press `F` to frame it. Watch the robots in the **Scene** view: in this project the camera of the **Game** view does not point at the road.
+If the road looks small in the Scene view, select `road` in the Hierarchy, move the mouse over the Scene view and press `F` to frame it. During Play, the **Game** view follows one robot (`m1`) and shows the road around it, with that robot's own camera in the lower-right corner; the **Scene** view is where you can look at the whole road at once.
 
 > #### 🛠 Mind the Unity version
 >
@@ -994,6 +994,10 @@ The screenshot was taken a few seconds into Play, with `DELIVERY_SLA` typed in t
 A closer look at the road during the same run, with the five robots on their way:
 
 ![The C-SoS road network during Play, with the five robots](/img/handson/unity-road-network.jpg)
+
+The Game view during Play: the camera follows robot `m1`, and the small picture in the corner is what that robot's camera sees.
+
+![The Game view during Play: the camera follows a robot on the road, with the robot's own camera view in the lower-right corner](/img/handson/unity-game-view.jpg)
 
 ```
 [lifecycle DELIVERY_SLA/robot-0-1 Proposed -> Assigned     (assign,        event)   @ 1234ms]
