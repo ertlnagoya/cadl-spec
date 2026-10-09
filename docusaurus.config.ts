@@ -150,7 +150,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} ERTL, Nagoya University. Documentation licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; code examples under the MIT License. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} ERTL, Nagoya University. Documentation licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; code examples under the Apache License 2.0. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

@@ -69,6 +69,6 @@ If you are using GitHub pages for hosting, this command is a convenient way to b
 ## License
 
 - **Documentation** (the text and figures under `docs/` and `i18n/`): [Creative Commons Attribution 4.0 International (CC BY 4.0)](LICENSE-docs).
-- **Code** (the CADL and other code examples embedded in the documentation, and the site source under `src/` and the configuration files): [MIT License](LICENSE).
+- **Code** (the CADL and other code examples embedded in the documentation, and the site source under `src/` and the configuration files): [Apache License 2.0](LICENSE).
 
 Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University.
