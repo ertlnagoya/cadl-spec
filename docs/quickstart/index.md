@@ -3,14 +3,25 @@ sidebar_position: 0
 title: "Quick Start"
 ---
 
-# CADL Quick Start (5 minutes)
 
-This page walks through the shortest possible path from a CADL specification
-to a simulation result and governance evaluation. No installation is required
-if you use **[CADL Explorer](https://cadl-explorer.streamlit.app/)**.
+There are two ways to start. Pick the one that matches what you want to do;
+each takes about five minutes.
+
+| Path | What you do | You need |
+|---|---|---|
+| [**A. Try it in the browser**](#path-a) | Compare two governance designs in **CADL Explorer** and see how the result changes. You do not write CADL. | A web browser |
+| [**B. Write and check with the CLI**](#path-b) | Install the `cadl` command, check and verify an example, then break it and watch the verifier find the contradiction. | Python 3.9 or later, git |
+
+Path A shows what governance design changes; Path B shows the language and
+the tool. They are independent, so either can come first.
+
+## Path A — Try it in the browser (CADL Explorer) {/* #path-a */}
+
+No installation is required if you use
+**[CADL Explorer](https://cadl-explorer.streamlit.app/)**.
 The steps below describe CADL Explorer v0.5.0.
 
-## 1. Open CADL Explorer
+### A-1. Open CADL Explorer
 
 Go to [cadl-explorer.streamlit.app](https://cadl-explorer.streamlit.app/).
 If the hosted app asks you to sign in or is unavailable, run it locally
@@ -37,7 +48,7 @@ baseline) and **B** (the design under study), and shows the whole
 **CADL → IR → Config → Result** chain for both. There is no run button: the
 page recalculates whenever you change a setting.
 
-## 2. Pick a governance template
+### A-2. Pick a governance template
 
 Under **B — design under study** in the sidebar, choose one of:
 
@@ -62,7 +73,7 @@ from older versions still open the same designs.
 To change what B is compared against, open **A — baseline** and choose in
 the same way. The baseline starts as D-SoS, `uniform`, ρ=0.
 
-## 3. Set a motivation profile and ρ
+### A-3. Set a motivation profile and ρ
 
 - **Motivation profile** — how motivation is distributed across agents
   (`uniform`, `linear`, `polarized`).
@@ -75,7 +86,7 @@ If you would rather start from a ready-made comparison, open
 **Getting started** at the top of the page (or **Examples** in the sidebar)
 and load one with a button.
 
-## 4. Read the result
+### A-4. Read the result
 
 The page is divided into four numbered sections:
 
@@ -97,7 +108,7 @@ settings, so copying it shares the comparison.
 
 ![CADL Explorer comparing D-SoS (A) with C-SoS (B): sidebar controls on the left, the Outcome and causal-chain sections on the right](/img/handson/explorer-compare.jpg)
 
-## 5. Optional — paste your own CADL
+### A-5. Optional — paste your own CADL
 
 Expand **Custom CADL** in the sidebar and paste a `CADLMotivationConfig`
 YAML into **Design B** (or **Design A (baseline)**) to use it instead of
@@ -126,6 +137,110 @@ the generated IR and config but do not change the results.
 This YAML is the Explorer's own configuration format, not a full CADL
 model. To write and check a full CADL model (actors, contracts,
 lifecycles, monitors), use the **Designer** page.
+
+## Path B — Write and check with the CLI {/* #path-b */}
+
+The reference implementation is the `cadl` command-line tool, distributed
+on PyPI as `cadl-lang`. The output below is from cadl 0.3.8.
+
+### B-1. Install
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install cadl-lang
+cadl --version
+```
+
+### B-2. Get the examples
+
+The examples are in the cadl repository, not in the PyPI package:
+
+```bash
+git clone https://github.com/ertlnagoya/cadl.git
+```
+
+### B-3. Check an example
+
+`cadl check` parses the file and runs the type checker (declared actors,
+references, parameter ranges):
+
+```bash
+cadl check cadl/examples/robot_delivery.cadl
+```
+
+```text
+Type check passed: cadl/examples/robot_delivery.cadl
+```
+
+### B-4. Verify it
+
+`cadl verify` adds the consistency checks: whether each contract's
+assumptions and guarantees can hold together (SMT solver), whether every
+regime is reachable, and whether a protocol can deadlock.
+
+```bash
+cadl verify cadl/examples/robot_delivery.cadl
+```
+
+```text
+Verifying: cadl/examples/robot_delivery.cadl
+  SoS: RobotDeliverySystem
+
+--- Type Check ---
+  [PASS] Type check passed
+
+--- SMT Verification ---
+  [PASS] Contract 'DELIVERY_SLA' consistency: Assumes and guarantees are jointly satisfiable
+  [PASS] Contract 'DELIVERY_SLA' assumptions: Assumptions are satisfiable
+  [INFO] Contract 'DELIVERY_SLA' entailment: Guarantees do not follow from the assumptions alone; they are obligations the parties must meet
+  ...
+--- Deadlock Detection ---
+  [PASS] Protocol 'FAILURE_REPLAN' deadlock: No circular dependencies found
+
+Verification PASSED: 8/8 checks passed
+```
+
+`[INFO]` lines are not failures. The entailment line says that the
+guarantees are obligations of the parties, not consequences of the
+assumptions.
+
+### B-5. Break it and see the verifier object
+
+Copy the example and add an assumption that contradicts an existing one:
+
+```bash
+cp cadl/examples/robot_delivery.cadl my_delivery.cadl
+```
+
+In `my_delivery.cadl`, under the contract `DELIVERY_SLA`:
+
+```yaml
+      assume:
+        - "DISPATCHER.is_operational == true"
+        - "network_latency <= 200ms"
+        - "network_latency > 500ms"      # added: contradicts the line above
+```
+
+```bash
+cadl verify my_delivery.cadl
+```
+
+```text
+  [FAIL] Contract 'DELIVERY_SLA' consistency: Assumes and guarantees are contradictory (unsatisfiable together)
+  [FAIL] Contract 'DELIVERY_SLA' assumptions: Assumptions contradict each other; the contract can never apply
+
+Verification FAILED: 7/9 checks passed
+```
+
+The file still passes `cadl check`: it is well formed, but the contract
+can never apply. Finding this kind of contradiction before deployment is
+what the verifier is for. Remove the added line and the file verifies
+again.
+
+From here, `cadl codegen` and `cadl sim-gen` generate code and simulator
+configs from the same file; all commands are listed in the
+[README of the cadl repository](https://github.com/ertlnagoya/cadl#readme).
 
 ## Next steps
 
