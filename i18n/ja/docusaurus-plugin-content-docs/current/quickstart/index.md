@@ -59,6 +59,8 @@ streamlit run app.py
 5. **Results & Evaluation** — 散布図，ρの効果，ロボット別，サマリ。
 6. **Run History** — 複数実行の比較（セッション内）。
 
+![パイプライン実行後の CADL Explorer：左にサイドバーの設定，右に Causal Chain タブ](/img/handson/explorer-pipeline-demo.jpg)
+
 ## 5. オプション — 自作CADLを貼り付ける
 
 サイドバーの **Advanced: Custom CADL YAML** を開き，

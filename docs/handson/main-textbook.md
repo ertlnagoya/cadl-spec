@@ -136,7 +136,7 @@ The CADL toolchain is split across four repositories so each piece can evolve in
 | --- | --- | --- |
 | `cadl-spec`            | the language reference and this hands-on site (Docusaurus) | `main` (default) |
 | `cadl` (cloned as `cadl_repo`) | the compiler: parser, IR, code generators | `master` (default) |
-| `cadl-explorer`        | a Streamlit visualiser | `feature/sos-dsl` (the Lifecycle View page used in Step 4 is on this branch and not yet on `main`) |
+| `cadl-explorer`        | a Streamlit visualiser | `main` (default) |
 | `cadl-raspimouse-simulator` | the simulator used in Steps 5–6: Unity project, Go arbitrator and Python reference runtime in one repository | `main` (default) |
 
 :::info[Repository availability]
@@ -155,10 +155,6 @@ git clone https://github.com/ertlnagoya/cadl-spec
 git clone https://github.com/ertlnagoya/cadl                         cadl_repo
 git clone https://github.com/ertlnagoya/cadl-explorer
 git clone https://github.com/ertlnagoya/cadl-raspimouse-simulator
-
-#    cadl-explorer only: the Lifecycle View page used in Step 4 is on the
-#    feature/sos-dsl branch (it is not on main yet).
-git -C cadl-explorer checkout feature/sos-dsl
 
 # 2) Install the cadl CLI in editable mode so changes are picked up.
 cd ~/program/cadl_repo
@@ -193,17 +189,17 @@ If `cadl codegen --help` lists `unity-csharp` among the `--target` choices (`{py
 
 ### Recap
 
-After setup you can see that CADL is really four cooperating repositories — the spec site, the compiler, the visualizer, and the simulator. Everything that follows assumes **each repository is on the branch listed in the table above** (`cadl-spec`: `main`, `cadl_repo`: `master`, `cadl-explorer`: `feature/sos-dsl`, `cadl-raspimouse-simulator`: `main`); most trouble at this stage comes from a wrong branch.
+After setup you can see that CADL is really four cooperating repositories — the spec site, the compiler, the visualizer, and the simulator. Everything that follows assumes **each repository is on the branch listed in the table above** (`main` everywhere, and `master` for `cadl_repo`); most trouble at this stage comes from a wrong branch.
 
 ### 🛠 Setup troubleshooting
 
-**Check your branches (the most common pitfall).** The repositories do not all use the same branch. The Lifecycle View page (Step 4) is only on `feature/sos-dsl` of `cadl-explorer`. If you stay on `main` there, `git pull` will say "Already up to date" even though the page is missing. Conversely, keep `cadl-spec` and `cadl-raspimouse-simulator` on `main` and `cadl_repo` on `master`: their `feature/sos-dsl` branches are older than the default branches (in `cadl-spec` that branch still carries an outdated textbook and Appendix E). Verify:
+**Check your branches (the most common pitfall).** All four repositories are used on their default branches: `main`, and `master` for `cadl_repo`. If a page or a command described here is missing, first check that you have not switched to an older branch. Verify:
 
 ```bash
 cd ~/program
 echo "cadl-spec:     $(git -C cadl-spec branch --show-current)"       # main
 echo "cadl_repo:     $(git -C cadl_repo branch --show-current)"       # master
-echo "cadl-explorer: $(git -C cadl-explorer branch --show-current)"   # feature/sos-dsl
+echo "cadl-explorer: $(git -C cadl-explorer branch --show-current)"   # main
 echo "simulator:     $(git -C cadl-raspimouse-simulator branch --show-current)"   # main
 ```
 
@@ -316,7 +312,9 @@ flowchart LR
   D  -- route_assignment  --> R1
   R1 -- position_report   --> D
   D  -- delivery_notif    --> C1
-  R1 -. governed by ........ DELIVERY_SLA[(DELIVERY_SLA<br/>contract)] .-.- D
+  SLA[("DELIVERY_SLA<br/>contract")]
+  R1 -. governed by .- SLA
+  SLA -.- D
 ```
 
 ### Procedure
@@ -627,16 +625,28 @@ streamlit run app.py
 # Browser opens at http://localhost:8501
 ```
 
-In the sidebar, switch from the default page to **SoS_DSL_Lifecycle**. (If the sidebar has no such page, `cadl-explorer` is still on `main`; switch it to `feature/sos-dsl` as in Step 0.)
+In the sidebar, switch from the default page (**app**) to **SoS DSL Lifecycle**. (If the sidebar has no such page, your checkout of `cadl-explorer` is out of date; run `git pull` on `main`.)
 
 Two ways to load IR JSON:
 
-- **(a) Upload** the file you just generated from `my_delivery.cadl` (drag-and-drop into the file uploader).
+- **(a) Upload** the IR of your own file. Save it first with `cadl sim-ir my_delivery.cadl --format json > my_delivery.ir.json` (run in `~/program/cadl_repo`), then drag-and-drop `my_delivery.ir.json` into the file uploader.
 - **(b) Pick the bundled example** `sos_dsl_robot_delivery.ir.json` from the dropdown.
 
 ### What you should see
 
-The figure below reflects **(a), `my_delivery.cadl`** (4 transitions, 1 monitor). If you instead load **(b), the bundled example `sos_dsl_robot_delivery.cadl`**, you'll see 5 transitions (it adds `late_failure`) and 3 monitors (`battery_guard` / `collision_watch` / `deadline_watch`).
+The screenshot below shows the page with **(b), the bundled example**: the sidebar with the uploader and the example selector on the left, the lifecycle diagram in the middle, and the lifecycle metadata on the right.
+
+![CADL Explorer — Lifecycle View with the bundled robot-delivery example](/img/handson/explorer-lifecycle-view.jpg)
+
+The diagram itself, enlarged (bundled example: 5 transitions; the red dashed edge is the forced move to `Violated` when the `accept` deadline expires):
+
+![Lifecycle of DELIVERY_SLA as drawn by the Lifecycle View](/img/handson/lifecycle-delivery-sla.svg)
+
+Below the diagram, the page lists the monitors of the contract:
+
+![CADL Explorer — monitors table of the bundled example](/img/handson/explorer-lifecycle-monitors.jpg)
+
+The sketch below reflects **(a), `my_delivery.cadl`** (4 transitions, 1 monitor). If you instead load **(b), the bundled example `sos_dsl_robot_delivery.cadl`**, you'll see 5 transitions (it adds `late_failure`) and 3 monitors (`battery_guard` / `collision_watch` / `deadline_watch`).
 
 The page is split into two columns:
 
