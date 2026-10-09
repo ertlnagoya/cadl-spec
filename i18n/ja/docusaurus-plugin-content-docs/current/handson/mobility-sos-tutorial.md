@@ -43,7 +43,7 @@ mobility_sos.cadl
 
 参照実装は `mobility-sos-exercise` リポジトリにあります。
 
-:::info リポジトリの公開状況
+:::info[リポジトリの公開状況]
 `mobility-sos-exercise` は**現時点では非公開**です。以下のコマンドは、このリポジトリへのアクセス権があることを前提にしています。アクセス権がない場合も、本ページは CADL をモビリティ SoS に適用する事例として読めます。
 :::
 
@@ -105,7 +105,7 @@ sos:
 
 コース A のロボット配送と同じ Acknowledged 型 SoS です。
 
-:::tip 🔍 可視化チェックポイント 0 — 構造だけの仕様で何が得られるか
+:::tip[🔍 可視化チェックポイント 0 — 構造だけの仕様で何が得られるか]
 ここまでで読んだのは CADL の**構造**（actors）だけです。
 ファイルを検査し、契約の規範部分が IR にどれだけ入っているかを表示してみます。
 
@@ -201,7 +201,7 @@ streamlit run app.py
 | 実線エッジ + `Δ 30s` / `Δ 5s` | deadline 付き遷移 |
 | 赤の破線エッジ + `violation Major` | `on_violation` による強制遷移 |
 
-:::info このパターンは何度も出てきます
+:::info[このパターンは何度も出てきます]
 このコースでは「CADL を編集 → `cadl sim-ir` で IR を再生成 → cadl-explorer をリロード」という 3 ステップを、節目（構造を読んだ後、契約を読んだ後、コード生成後、シミュレーション後、契約改訂後）でそのつど繰り返します。
 コードと図が連動して動く感触をつかむのが、このコースの主目的です。
 :::
@@ -249,7 +249,7 @@ python scripts/cadl_to_sumo.py
   `end` が CSV 最終 depart + ride_time guarantee から決まる
 - `sumo/cadl_constraints.json` — `analyze_results.py` が読む契約条件（guarantees / deadlines / monitors）
 
-:::tip 🔍 可視化チェックポイント 2 — コード生成しても CADL ソースは変わらない
+:::tip[🔍 可視化チェックポイント 2 — コード生成しても CADL ソースは変わらない]
 `cadl_to_sumo.py` は IR を読んで SUMO の設定ファイルを書き出すだけで、`cadl/mobility_sos.cadl` の `lifecycle:` / `monitors:` には触れません。
 ここで cadl-explorer をリロードしても、§4 と同じ図が出るだけのはずです。
 
@@ -307,7 +307,7 @@ python scripts/analyze_results.py
 - `deadlines`（matching/accept）は SUMO 上に対応するイベントがないので未評価。
 - `monitors` は battery や route_deviation など、SUMO の標準出力にない属性を見ているので未評価。
 
-:::tip 🔍 可視化チェックポイント 3 — 仕様と実装の対応を確認
+:::tip[🔍 可視化チェックポイント 3 — 仕様と実装の対応を確認]
 `analyze_results.py` の `[OK]` / `[SKIP]` の各行と cadl-explorer の図は、同じ CADL から派生したものです。
 ブラウザで cadl-explorer を開きながら、次の対応関係を眺めてみてください。
 
@@ -348,7 +348,7 @@ python scripts/analyze_results.py | grep -E "OK|VIOLATED"
 [VIOLATED (13)] ride_time <= 100s  (tripinfo.duration  e.g. ['taxi_8', 'taxi_9', ...])
 ```
 
-:::tip 🔍 可視化チェックポイント 4 — 改訂後（このコースの山場）
+:::tip[🔍 可視化チェックポイント 4 — 改訂後（このコースの山場）]
 `analyze_results.py` を実行する前に、cadl-explorer をリロードしてみてください。
 
 今回書き換えたのは guarantee の値（`ride_time <= 1800s` から `100s`）だけで、`lifecycle:` や `monitors:` には触れていません。
