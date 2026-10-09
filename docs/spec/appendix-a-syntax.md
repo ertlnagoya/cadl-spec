@@ -373,7 +373,7 @@ standing alone is taken as a state variable and is not checked. The
 predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
 and monitor `rule:` are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. At v0.3 it
-deviates from this appendix as follows (checked against v0.3.7).
+deviates from this appendix as follows (checked against v0.3.8).
 
 - **Expressions.** Releases before v0.3.2 parsed `OR` more tightly than
   `AND`, did not accept a `member_access` on an indexed reference
