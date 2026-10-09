@@ -110,6 +110,9 @@ sos:
     - id: CHILD[1..2]
       role: "child"
       autonomy: medium
+    - id: AI_ASSISTANT
+      role: "mediator"
+      autonomy: low
 
   contracts:
     - id: CHORE_SHARING
@@ -127,7 +130,8 @@ sos:
       trigger: "resource_conflict_detected"
       steps:
         - AI_ASSISTANT : propose_alternatives(all_parties)
-        - conflicting_parties : vote(preferred_alternative)
+        - PARENT[*] : vote(preferred_alternative)
+        - CHILD[*] : vote(preferred_alternative)
         - if consensus_reached:
             - AI_ASSISTANT : update_schedule
           else:
@@ -144,7 +148,9 @@ and verification levels.
 ## 5.2 Data Model
 ### 5.2.1 Type System
 
-CADL provides the following basic and user-defined types.
+CADL provides the following basic and user-defined types. They are
+part of the language design; the reference implementation at v0.3 does
+not check them (Appendix A, A.12).
 
 | **Type Name** | **Description** | **Example** |
 |---|---|---|
@@ -241,7 +247,7 @@ contracts:
         - update_routes_on_failure
       TAXI[*]:
         - follow_route
-        - report_position(period: 1s)
+        - "report_position(period: 1s)"
         - report_detected_failures
 
     incentives:

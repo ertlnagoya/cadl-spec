@@ -173,7 +173,13 @@ created the instance (e.g. `request.deadline`). A bare identifier that
 names a lifecycle state (e.g. `Assigned`) denotes that state.
 
 The reference implementation at v0.3 parses both blocks and lowers them
-to the IR (E.7) but does not yet check rules L-1 to M-3.
+to the IR (E.7) but does not yet check rules L-1 to M-3. It does not
+validate `severity:`, `sampling:`, or `deadline:` values either: an
+unrecognised `sampling:` is read as `event`, a `deadline:` it cannot
+read is dropped, and a `severity:` is carried as written. The example
+in E.6 accordingly passes although `collision_watch` observes
+`OBSTACLES.positions`, an environment quantity that is not an attribute
+of a declared actor as M-1 requires.
 
 ## E.5 Dynamic semantics (informative)
 
@@ -386,7 +392,9 @@ contract that has a `lifecycle:` or `monitors:` block it produces:
 At v0.3 the generated runtime matches an `on:` event by comparing its
 text with the name of the event posted by the host application, and it
 evaluates a `rule` without function calls: a rule that contains one,
-such as `collision_watch` in E.6, never matches. The values of `now`,
+such as `collision_watch` in E.6, never matches. The generated
+evaluator does not support the arithmetic operators `+ - * /` or
+duration literals (`5s`) in a `rule` either. The values of `now`,
 `request`, and the observed attributes are supplied by the host.
 
 Reward / sanction execution is **out of scope** for this revision; the

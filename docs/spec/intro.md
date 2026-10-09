@@ -32,24 +32,25 @@ flowchart LR
     SRC["CADL source (.cadl)<br/>Institution / Protocol / Algorithm"]
     IR["Three-layer IR<br/>(cadl-sim)"]
     VER["Verifier<br/>SMT / model check / proof"]
-    CFG["Simulator config<br/>(Unity / ROS2 / Python)"]
-    CODE["Codegen<br/>Solidity / OPA / Rego"]
+    CFG["Simulator config<br/>(Unity / Go / Python)"]
+    CODE["Codegen<br/>Python / Solidity / OPA-Rego / Unity C#"]
     EXP["Experiment runner<br/>seeds × regimes"]
     EVAL["Evaluation<br/>throughput / autonomy / fairness"]
 
+    SRC --> VER
+    SRC --> CODE
     SRC --> IR
-    IR --> VER
     IR --> CFG
-    IR --> CODE
     CFG --> EXP
     EXP --> EVAL
     VER -. feedback .-> SRC
     EVAL -. feedback .-> SRC
 ```
 
-The same IR drives three outputs in parallel: formal verification,
-runtime simulator configs, and institutional-constraint code
-(smart contracts / policy). Experiment results feed back into the
+One source drives three outputs: formal verification and
+institutional-constraint code (smart contracts / policy / runtime
+classes) are produced from the parsed definition, and runtime simulator
+configs from the three-layer IR. Experiment results feed back into the
 CADL source so governance parameters (α, β, λ, ρ) can be tuned.
 
 ## How to Read This Specification

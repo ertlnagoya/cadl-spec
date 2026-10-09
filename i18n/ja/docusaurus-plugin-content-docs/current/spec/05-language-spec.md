@@ -106,6 +106,9 @@ sos:
     - id: CHILD[1..2]
       role: "child"
       autonomy: medium
+    - id: AI_ASSISTANT
+      role: "mediator"
+      autonomy: low
 
   contracts:
     - id: CHORE_SHARING
@@ -123,7 +126,8 @@ sos:
       trigger: "resource_conflict_detected"
       steps:
         - AI_ASSISTANT : propose_alternatives(all_parties)
-        - conflicting_parties : vote(preferred_alternative)
+        - PARENT[*] : vote(preferred_alternative)
+        - CHILD[*] : vote(preferred_alternative)
         - if consensus_reached:
             - AI_ASSISTANT : update_schedule
           else:
@@ -136,7 +140,7 @@ sos:
 
 ### 5.2.1 型システム
 
-CADLは以下の基本型とユーザ定義型を提供する。
+CADLは以下の基本型とユーザ定義型を提供する。これらは言語設計の一部であり，v0.3のリファレンス実装はこれらを検査しない（付録A，A.12）。
 
 | **型名** | **説明** | **記述例** |
 |---|---|---|
@@ -229,7 +233,7 @@ contracts:
         - update_routes_on_failure
       TAXI[*]:
         - follow_route
-        - report_position(period: 1s)
+        - "report_position(period: 1s)"
         - report_detected_failures
 
     incentives:

@@ -109,7 +109,7 @@ flowchart LR
 
 | Tool | Version | Why |
 | --- | --- | --- |
-| Python | 3.10+ | runs the `cadl` CLI |
+| Python | 3.9+ | runs the `cadl` CLI |
 | Unity | 6000.2.9f1 (Unity 6.2) | runs the simulation |
 | Go | 1.21+ | builds the arbitrator |
 | NATS Server | latest | message bus between robots ⇄ arbitrator |
@@ -757,16 +757,19 @@ $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
   total lines : 770
 
 == Step 4/4 — drop into ../cadl-raspimouse-simulator/unity/Assets/Scripts/SoSDsl/ ==
-  installed : .../Runtime, .../Generated
-  preserved : .../Demo (if it existed)
+  installed: .../Runtime, .../Generated
+  preserved: .../Demo (if it existed)
 
 == DONE ==
 Next steps for the student:
   1. Open the Unity project at .../unity in Unity 6 (6000.2)
   2. Open Assets/Scenes/C-SoS.unity
-  3. Add a ContractRuntimeHost GameObject
+  3. Add a ContractRuntimeHost GameObject (Demo/ContractRuntimeHost)
   4. Attach PilotContractBridge to each robot that has Pilot_CSoS
-  5. Press Play and watch the Console
+  5. Press Play and watch the Console for [lifecycle ...] / [violation ...]
+
+See the hands-on textbook for the full walkthrough:
+  https://www.ertl.jp/cadl-spec/docs/handson/main-textbook
 ```
 
 Look at the generated tree:
@@ -849,6 +852,7 @@ The Unity run in Step 6 assigns deliveries at different times and gives the robo
 
 ```bash
 cd ~/program/cadl_repo
+pip install pytest          # once; Step 0 does not install it
 PYTHONPATH=src python3 -m pytest tests/test_unity_csharp_structural.py -q
 # 9 passed
 ```
@@ -895,7 +899,7 @@ go run main.go
 ```
 [Config] Loaded from ../../../unity/Assets/streamingAssets/cadl_config.json: nats_url=nats://localhost:4222 numAgents=5
 [Config]   init=init next=next ret=ret fin=fin disp=disp resource=resource
-[Config]   taskArbitration.enabled=true protocol=fcfs intervalSec=1.0
+[Config]   taskArbitration.enabled=true protocol=fcfs intervalSec=5.0
 ```
 
 If that third line reads `taskArbitration.enabled=true`, the arbitrator has loaded its configuration and is ready to start handing out deliveries. If it says `false`, or the `[Config]` lines do not appear at all, the config file was not read — pass its absolute path with `-config` as shown in the note below.

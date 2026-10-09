@@ -43,7 +43,7 @@ needed for SoS institutional design. Legend: ◎=Core feature, ○=Partial
 support, △=Limited, ×=Out of scope. The ratings reflect the authors'
 reading of the literature listed in Appendix B. The CADL column shows
 the intended scope of the language design; it does not mean that the
-v0.1 toolchain already implements every item.
+current reference implementation already provides every item.
 
 | **Requirement** | **MOISE+** | **OperA** | **Symboleo** | **AADL Ext.** | **SysMLv2** | **Smart<br />Contracts** | **CADL<br />(This Language)** |
 | --- | --- | --- | --- | --- | --- | --- | --- |

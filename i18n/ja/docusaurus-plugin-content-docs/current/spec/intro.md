@@ -32,23 +32,24 @@ flowchart LR
     SRC["CADL ソース (.cadl)<br/>Institution / Protocol / Algorithm"]
     IR["三層 IR<br/>(cadl-sim)"]
     VER["検証器<br/>SMT / モデル検査 / 証明"]
-    CFG["シミュレータ設定<br/>(Unity / ROS2 / Python)"]
-    CODE["コード生成<br/>Solidity / OPA / Rego"]
+    CFG["シミュレータ設定<br/>(Unity / Go / Python)"]
+    CODE["コード生成<br/>Python / Solidity / OPA-Rego / Unity C#"]
     EXP["実験ランナー<br/>seed × モード"]
     EVAL["評価<br/>スループット / 自律性 / 公平性"]
 
+    SRC --> VER
+    SRC --> CODE
     SRC --> IR
-    IR --> VER
     IR --> CFG
-    IR --> CODE
     CFG --> EXP
     EXP --> EVAL
     VER -. フィードバック .-> SRC
     EVAL -. フィードバック .-> SRC
 ```
 
-同じ IR から，形式検証・ランタイムシミュレータ設定・制度制約コード
-（スマートコントラクト／ポリシー）が並行して生成されます。
+1つのソースから3種類の出力が生成されます。形式検証と制度制約コード
+（スマートコントラクト／ポリシー／ランタイムクラス）は構文解析された定義から，
+ランタイムシミュレータ設定は三層 IR から生成されます。
 実験結果は CADL ソースへフィードバックされ，ガバナンスパラメータ
 （α, β, λ, ρ）の調整に利用されます。
 
