@@ -173,10 +173,11 @@ created the instance (e.g. `request.deadline`). A bare identifier that
 names a lifecycle state (e.g. `Assigned`) denotes that state.
 
 The reference implementation at v0.3 parses both blocks and lowers them
-to the IR (E.7) but does not yet check rules L-1 to M-3. It does not
-validate `severity:`, `sampling:`, or `deadline:` values either: an
-unrecognised `sampling:` is read as `event`, a `deadline:` it cannot
-read is dropped, and a `severity:` is carried as written. The example
+to the IR (E.7) but does not yet check rules L-1 to M-3. From v0.3.7
+`cadl check` reports a `severity:` other than `Minor`, `Major`, or
+`Critical` as an error. `sampling:` and `deadline:` values are not
+validated: an unrecognised `sampling:` is read as `event`, and a
+`deadline:` it cannot read is dropped. The example
 in E.6 accordingly passes although `collision_watch` observes
 `OBSTACLES.positions`, an environment quantity that is not an attribute
 of a declared actor as M-1 requires.
@@ -384,7 +385,9 @@ contract that has a `lifecycle:` or `monitors:` block it produces:
 
 - a state machine class per contract (states from `lifecycle.states`,
   transitions from `lifecycle.transitions`),
-- a deadline timer per transition with a `deadline_ms`,
+- a deadline timer per transition with a `deadline_ms` (at v0.3 only
+  when the transition also names a state in `on_violation.transition`;
+  a deadline without one is not enforced by the generated code),
 - a periodic / event-driven monitor task per `monitor`,
 - a violation log entry per fired `on_violation` or
   `on_match.violation`.
