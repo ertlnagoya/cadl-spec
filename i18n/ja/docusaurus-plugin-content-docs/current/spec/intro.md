@@ -31,7 +31,7 @@ CADL仕様からシミュレータ設定の自動生成や設計整合性の検�
 flowchart LR
     SRC["CADL ソース (.cadl)<br/>Institution / Protocol / Algorithm"]
     IR["三層 IR<br/>(cadl-sim)"]
-    VER["検証器<br/>SMT（モデル検査・証明は計画中）"]
+    VER["検証器<br/>型検査 / SMT 整合性 /<br/>デッドロック検出"]
     CFG["シミュレータ設定<br/>(Unity / Go / Python)"]
     CODE["コード生成<br/>Python / Solidity / OPA-Rego / Unity C#"]
     EXP["実験ランナー<br/>seed × モード"]

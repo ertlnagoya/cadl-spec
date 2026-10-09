@@ -74,15 +74,15 @@ function WhatIsCADL() {
               lineHeight: '1.6',
               color: '#cdd6f4',
             }}>
-              <div style={{color: '#6c7086', marginBottom: '0.5rem'}}># CADL — 制度層の記述例</div>
-              <div><span style={{color: '#cba6f7'}}>institution</span> <span style={{color: '#89b4fa'}}>DeliveryGovernance</span> {'{'}</div>
-              <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>sos_type</span><span style={{color: '#cdd6f4'}}> = </span><span style={{color: '#f38ba8'}}>"directed"</span></div>
-              <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>alpha</span><span style={{color: '#cdd6f4'}}> = </span><span style={{color: '#fab387'}}>0.3</span></div>
-              <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>motivation</span>{'{'}</div>
-              <div style={{paddingLeft: '3rem'}}><span style={{color: '#a6e3a1'}}>model</span><span style={{color: '#cdd6f4'}}> = </span><span style={{color: '#f38ba8'}}>"hybrid"</span></div>
-              <div style={{paddingLeft: '3rem'}}><span style={{color: '#a6e3a1'}}>rho</span><span style={{color: '#cdd6f4'}}> = </span><span style={{color: '#fab387'}}>0.5</span></div>
-              <div style={{paddingLeft: '1.5rem'}}>{'}'}</div>
-              <div>{'}'}</div>
+              <div style={{color: '#6c7086', marginBottom: '0.5rem'}}># CADL — a contract between a dispatcher and its robots</div>
+              <div style={{paddingLeft: '0rem'}}><span style={{color: '#a6e3a1'}}>sos</span>:</div>
+              <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>name</span>: <span style={{color: '#f38ba8'}}>"RobotDelivery"</span></div>
+              <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>type</span>: <span style={{color: '#cdd6f4'}}>Acknowledged</span></div>
+              <div style={{paddingLeft: '1.5rem'}}><span style={{color: '#a6e3a1'}}>contracts</span>:</div>
+              <div style={{paddingLeft: '3rem'}}><span style={{color: '#a6e3a1'}}>- id</span>: <span style={{color: '#cdd6f4'}}>DELIVERY_SLA</span></div>
+              <div style={{paddingLeft: '4rem'}}><span style={{color: '#a6e3a1'}}>parties</span>: <span style={{color: '#cdd6f4'}}>[DISPATCHER, "ROBOT[*]"]</span></div>
+              <div style={{paddingLeft: '4rem'}}><span style={{color: '#a6e3a1'}}>assume</span>: <span style={{color: '#f38ba8'}}>["ROBOT[i].battery &gt; 20"]</span></div>
+              <div style={{paddingLeft: '4rem'}}><span style={{color: '#a6e3a1'}}>guarantee</span>: <span style={{color: '#f38ba8'}}>["delivery_time &lt;= 300s"]</span></div>
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@ function Features() {
     },
     {
       title: '形式的検証',
-      description: '契約間の矛盾，プロトコルのデッドロック，モード遷移時の安全性違反を自動的に検出します。',
+      description: '各契約の前提と保証の矛盾を SMT ソルバで検査し，プロトコルのデッドロックを検出します。',
     },
     {
       title: 'エンドツーエンドパイプライン',
