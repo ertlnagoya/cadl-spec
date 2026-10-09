@@ -36,7 +36,7 @@
     "description": "The label of footer link with label=Nagoya University linking to https://www.nagoya-u.ac.jp/"
   },
   "copyright": {
-    "message": "Copyright © 2026 ERTL, Nagoya University. 文書は <a href=\"https://creativecommons.org/licenses/by/4.0/deed.ja\">CC BY 4.0</a>，コード例は MIT License で提供します。Built with Docusaurus.",
+    "message": "Copyright © 2026 ERTL, Nagoya University. 文書は <a href=\"https://creativecommons.org/licenses/by/4.0/deed.ja\">CC BY 4.0</a>，コード例は Apache License 2.0 で提供します。Built with Docusaurus.",
     "description": "The footer copyright"
   }
 }
