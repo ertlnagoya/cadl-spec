@@ -18,13 +18,13 @@ description: "CADL v0.1のコード生成ターゲットの一覧。各ターゲ
 | ターゲット名 | カテゴリ | 生成物 | リファレンス実装モジュール | コマンド |
 |-------------|---------|--------|-------------------|---------|
 | `python` | ランタイムコード | Python パッケージ（アクター、契約モニター、プロトコル、レジームコントローラ、メトリクス、ランタイム） | `cadl.codegen` | `cadl codegen -t python` |
-| `solidity` | 制度契約 | Solidity スマートコントラクト（契約ごとに 1 つ） | `cadl.codegen.solidity` | `cadl codegen -t solidity` |
-| `opa` | 制度ポリシー | Rego / OPA ポリシー（契約ごとに 1 つ） | `cadl.codegen.opa` | `cadl codegen -t opa` |
+| `solidity` | 制度契約 | Solidity [[Solidity Documentation]](./appendix-b-references.md) スマートコントラクト（契約ごとに 1 つ） | `cadl.codegen.solidity` | `cadl codegen -t solidity` |
+| `opa` | 制度ポリシー | Rego / OPA [[Open Policy Agent]](./appendix-b-references.md) ポリシー（契約ごとに 1 つ） | `cadl.codegen.opa` | `cadl codegen -t opa` |
 | `unity-csharp` | ランタイムコード | [付録E](./appendix-e-sos-dsl.md) のライフサイクルとモニターを実行する Unity C# クラス | `cadl.codegen.unity_csharp` | `cadl codegen -t unity-csharp` |
 | `unity` | シミュレータ設定 | Unity ベースのシミュレータ用 JSON | `cadl.sim.gen_unity` | `cadl sim-gen -t unity` |
 | `go` | シミュレータ設定 | Go ベースのシミュレータ用 JSON | `cadl.sim.gen_go` | `cadl sim-gen -t go` |
 | `python`（シミュレータ） | シミュレータ設定 | Python ベースのシミュレータ用 YAML | `cadl.sim.gen_python` | `cadl sim-gen -t python` |
-| `ros2` | ランタイムノード | ROS 2 ノードの雛形 | v0.3 では未実装 | — |
+| `ros2` | ランタイムノード | ROS 2 [[Macenski+, 2022]](./appendix-b-references.md) ノードの雛形 | v0.3 では未実装 | — |
 | その他の名前（ユーザ定義） | プラグイン | プラグインが出力するもの | v0.3 にはプラグイン機構がなく、その他のターゲット名は CLI が拒否する | — |
 
 `codegen:` の項目では、名前 `python` はランタイムコードのターゲットを指す。

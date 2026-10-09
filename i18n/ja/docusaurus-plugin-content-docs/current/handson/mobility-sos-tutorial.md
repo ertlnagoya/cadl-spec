@@ -55,9 +55,9 @@ mobility_sos.cadl
 コース B で新しく必要になるのは SUMO だけです。
 
 ```bash
-# 演習リポジトリを取得（現時点では非公開）
+# 演習リポジトリは現時点では非公開です。
+# 提供されたコピーを ~/program/mobility-sos-exercise に置いてください。
 cd ~/program
-git clone https://github.com/ertlnagoya/mobility-sos-exercise
 
 # 演習用 venv
 cd mobility-sos-exercise

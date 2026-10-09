@@ -149,7 +149,7 @@ The checks of the reference verifier are described in
 - **Fairness property** — A scheduling or resource-allocation
   constraint: no participant is indefinitely starved.
 - **Invariant** — A predicate that must hold in every reachable state.
-- **Verification methods** — `smt` (SMT solving, e.g. Z3),
+- **Verification methods** — `smt` (SMT solving, e.g. Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md)),
   `model_check`, `simulation`, `proof`. The reference implementation
   implements `smt` only.
 - **Deadlock** — A global state where no protocol step is enabled.
@@ -187,17 +187,17 @@ The checks of the reference verifier are described in
 
 ## Related standards and acronyms
 
-- **IEC 62853** — Open Systems Dependability standard. CADL's framing of
+- **IEC 62853** — Open Systems Dependability standard [[IEC 62853:2018]](./appendix-b-references.md). CADL's framing of
   the system life cycle, consensus building, and accountability draws on
   open systems dependability; CADL does not claim conformance to the
   standard.
 - **ISO/IEC/IEEE 21841** — Taxonomy of Systems of Systems
-  (Directed / Acknowledged / Collaborative / Virtual).
-- **EBNF** — Extended Backus–Naur Form. Used in Appendix A to define
+  (Directed / Acknowledged / Collaborative / Virtual) [[ISO/IEC/IEEE 21841:2019]](./appendix-b-references.md).
+- **EBNF** — Extended Backus–Naur Form [[ISO/IEC 14977:1996]](./appendix-b-references.md). Used in Appendix A to define
   CADL's concrete syntax.
 - **SMT** — Satisfiability Modulo Theories. The backbone of CADL's
   `method: smt` verification.
-- **OPA / Rego** — Open Policy Agent and its policy language; a codegen
+- **OPA / Rego** — Open Policy Agent [[Open Policy Agent]](./appendix-b-references.md) and its policy language; a codegen
   target for institutional constraints.
 
 ## See also

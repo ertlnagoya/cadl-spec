@@ -489,7 +489,7 @@ Each step of a protocol is interpreted as a labeled transition system
 (LTS). Message transmission A -> B : m is defined as synchronized
 composition of A's send action and B's receive action. Timing
 constraints are encoded as invariants of timed automata; verification
-by model checkers such as UPPAAL is the design intent. Model checking is
+by model checkers such as UPPAAL [[Larsen+, 1997]](./appendix-b-references.md) is the design intent. Model checking is
 not integrated in v0.3; deadlock detection is done by structural
 analysis ([Section 6.3](./06-design.md)).
 

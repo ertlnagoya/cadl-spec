@@ -17,7 +17,7 @@ This booklet collects the practice exercises that go with the SoS-DSL hands-on. 
 
 ---
 
-# Part 1 — Robot Delivery Course (5 sessions)
+## Part 1 — Robot Delivery Course (5 sessions)
 
 ## Course at a glance
 
@@ -562,7 +562,7 @@ not that its deadlines and rules are the right ones.
 
 ---
 
-# Part 2 — Modelling a New SoS End-to-End (Course C)
+## Part 2 — Modelling a New SoS End-to-End (Course C) {/* #course-c */}
 
 Part 2 is deliberately open-ended. It is given as an outline rather than as step-by-step exercises: you choose the domain, write the specification from a blank page, and decide how to exercise it. Treat it as a small self-directed project.
 

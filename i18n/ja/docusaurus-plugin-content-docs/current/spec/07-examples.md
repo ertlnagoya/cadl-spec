@@ -565,7 +565,7 @@ verification:
 
 ### 7.3.2 コード生成・自動変換（目的3）
 
-データ共有契約からデータパイプラインのスケルトンコード，SLA監視器，課金ロジックを自動生成する。スマートコントラクト（Solidity）への変換も示す。
+データ共有契約からデータパイプラインのスケルトンコード，SLA監視器，課金ロジックを自動生成する。スマートコントラクト（Solidity [[Solidity Documentation]](./appendix-b-references.md)）への変換も示す。生成したコントラクトの検査には，静的解析ツールSlither [[Feist+, 2019]](./appendix-b-references.md) を指定している。
 
 ```yaml
 # === 目的3: コード生成・自動変換 ===
@@ -683,6 +683,7 @@ sos:
           - compute_regime_recommendation(method: POMDP)
           - generate_cadl_from_natural_language(user_input)
           - explain_recommendation(format: natural_language)
+          - protect_training_data
         HUMAN_OPERATOR:
           - review_ai_recommendations
           - approve_or_reject_transitions
@@ -723,7 +724,7 @@ sos:
         - HUMAN_OPERATOR : review
         - if approved:
             - HUMAN_OPERATOR -> AI_ADVISOR : approve
-            - AI_ADVISOR : initiate_transition(protocol: REGIME_TRANSITION)   # REGIME_TRANSITION: 定義は省略
+            - AI_ADVISOR : initiate_transition(protocol: REGIME_TRANSITION)
           else:
             - HUMAN_OPERATOR -> AI_ADVISOR : reject(reason)
             - AI_ADVISOR : learn_from_rejection(reason)
@@ -732,6 +733,13 @@ sos:
         human_review_timeout: 30min
       fallback:
         on_timeout: "maintain_current_regime"
+
+    - id: REGIME_TRANSITION
+      trigger: "AI_REGIME_RECOMMENDATION.approved"
+      steps:
+        - AI_ADVISOR -> AI_AGENT[*] : announce_transition(proposed_regime)
+        - AI_AGENT[*] -> AI_ADVISOR : ack
+        - AI_ADVISOR -> HUMAN_OPERATOR : transition_report
 
     - id: NL_TO_CADL_WORKFLOW
       trigger: "HUMAN_OPERATOR.submit_natural_language_spec"
@@ -799,7 +807,6 @@ verification:
   # 義務論理: AI_ADVISORの義務が矛盾しないか
   - id: AI_DEONTIC_CONSISTENCY
     type: deontic_logic
-    # protect_training_data: 定義はこの記述例では省略
     check: >
       # "explainability"義務と"confidentiality"義務が矛盾しないか
       compatible(
@@ -835,7 +842,7 @@ codegen:
       synthesis:
         method: "reactive_synthesis"      # GR(1) realizability
         environment: "AI_AGENT[*].actions"
-        system: "SAFETY_CONTROLLER.decisions"   # SAFETY_CONTROLLER: 定義は省略
+        system: "AI_SAFETY_CONTROLLER.decisions"
         specification: >
           # 環境仮定: AIは契約範囲内で行動
           assume G(ai_action IN permitted_range)

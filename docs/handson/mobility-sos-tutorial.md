@@ -64,9 +64,9 @@ Same as the main textbook for `cadl_repo` and `cadl-explorer`.
 The new requirement is **SUMO**:
 
 ```bash
-# Get the exercise repository (not publicly available at present)
+# The exercise repository is not publicly available at present.
+# Place the copy you were given at ~/program/mobility-sos-exercise.
 cd ~/program
-git clone https://github.com/ertlnagoya/mobility-sos-exercise
 
 # Exercise venv
 cd mobility-sos-exercise

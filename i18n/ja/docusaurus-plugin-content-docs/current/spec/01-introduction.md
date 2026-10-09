@@ -16,7 +16,7 @@ CADL（Contract Architecture Description Language）は，System of Systems（So
 
 ## 1.2 背景: SoSにおける制度設計の課題
 
-SoSは，独立に運用される複数のシステムが相互に連携し，単独のシステムでは実現できない能力を発現するシステム構成である。ISO/IEC/IEEE 21841:2019では，SoSをDirected（統率型），Acknowledged（認知型），Collaborative（協調型），Virtual（仮想型）の4種に分類している。
+SoSは，独立に運用される複数のシステムが相互に連携し，単独のシステムでは実現できない能力を発現するシステム構成である [[Maier, 1998]](./appendix-b-references.md)。[ISO/IEC/IEEE 21841:2019](./appendix-b-references.md) では，SoSをDirected（統率型），Acknowledged（認知型），Collaborative（協調型），Virtual（仮想型）の4種に分類している。
 
 従来のSoS研究は制御・協調アルゴリズムや技術的最適化に焦点を当ててきたが，ガバナンス・制度設計がシステム全体の振る舞いを構造的に規定する上位層の設計変数として注目されている。しかし，現在のSoS制度設計は自然言語の契約・合意書に依存しており，以下の課題が存在する。
 
@@ -141,5 +141,5 @@ ISO/IEC/IEEE 21841:2019では，SoSを管理構造の違いにより以下の4�
 | A-SoS（Acknowledged SoS / 認知型） | 中央の管理者は存在するが，各構成システムにもある程度の自律性がある。管理者と構成システムが協議しながら運用する。 | ロボット配送システム。配車係が全体を管理するが，各ロボットも局所的な障害回避は自律的に行う。 |
 | C-SoS（Collaborative SoS / 協調型） | 中央の管理者はおらず，対等な立場の構成システムが自発的に協力する。合意形成で意思決定する。 | 家族のルール作り。家族会議で話し合って決める。マンション管理組合の運営。 |
 | V-SoS（Virtual SoS / 仮想型） | 明確な管理構造がなく，構成システムが偶発的に連携するSoS。全体としての目的が明示されていないこともある。 | インターネット全体。個々のサービスは独立に運営されるが，結果として巨大なエコシステムを形成。 |
-| 五層フレームワーク | SoS設計を5つの階層（Policy: 政策 / Governance: 統治 / Control: 制御 / Execution: 実行 / Environment: 環境）で構造化する枠組み。CADLは主にGovernance層とControl層を記述する。 | Policy: 「安全最優先」 → Governance: 「衝突回避ルール」 → Control: 「経路計画」 → Execution: 「モーター制御」 |
-| IEC 62853 | オープンシステムディペンダビリティの国際規格。システムの信頼性を継続的に確保するための合意形成・説明責任・変化対応のプロセスを定義する。CADLはこの規格との連携を考慮している。 | 制度変更時の合意形成プロセスや，障害対応時の説明責任の仕組みをCADLで記述する。 |
+| 五層フレームワーク | SoS設計を5つの階層に分類する枠組み[[Shimoyama & Matsubara, 2026]](./appendix-b-references.md)。(1) 目的（Policy），(2) 制度・ガバナンス（Governance），(3) 制御・協調（Control），(4) 実行・運用（Execution），(5) 環境・外乱（Environment）からなる。CADLは主に第2層と第3層を記述する。CADL自身の3層との対応は[2.2節](./02-objectives.md)に示す。 | Policy: 「安全最優先」 → Governance: 「衝突回避ルール」 → Control: 「経路計画」 → Execution: 「モーター制御」 |
+| IEC 62853 | オープンシステムディペンダビリティの国際規格 [[IEC 62853:2018]](./appendix-b-references.md)。システムの信頼性を継続的に確保するための合意形成・説明責任・変化対応のプロセスを定義する。CADLはこの規格との連携を考慮している。 | 制度変更時の合意形成プロセスや，障害対応時の説明責任の仕組みをCADLで記述する。 |

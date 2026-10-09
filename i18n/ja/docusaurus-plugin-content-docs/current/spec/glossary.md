@@ -143,7 +143,7 @@ SoS Contract DSL 拡張の用語である。
 - **公平性（Fairness）** — スケジューリング／資源配分の制約。
   いずれの参加者も無期限に飢餓しない。
 - **不変条件（Invariant）** — 到達可能な全状態で成立すべき述語。
-- **検証手法** — `smt`（例: Z3），`model_check`，`simulation`，
+- **検証手法** — `smt`（例: Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md)），`model_check`，`simulation`，
   `proof`。リファレンス実装が実装するのは `smt` だけである。
 - **デッドロック** — いずれのプロトコルステップも発火不能な大域
   状態。
@@ -183,17 +183,17 @@ SoS Contract DSL 拡張の用語である。
 
 ## 関連規格・略語
 
-- **IEC 62853** — Open Systems Dependability 規格。CADL における
+- **IEC 62853** — Open Systems Dependability 規格 [[IEC 62853:2018]](./appendix-b-references.md)。CADL における
   システムライフサイクル，合意形成，説明責任の捉え方は，オープン
   システムディペンダビリティの考え方を参照している。CADL はこの規格
   への適合を主張するものではない。
 - **ISO/IEC/IEEE 21841** — SoS 分類
-  （Directed / Acknowledged / Collaborative / Virtual）。
-- **EBNF** — Extended Backus–Naur Form。Appendix A で CADL の
+  （Directed / Acknowledged / Collaborative / Virtual） [[ISO/IEC/IEEE 21841:2019]](./appendix-b-references.md)。
+- **EBNF** — Extended Backus–Naur Form [[ISO/IEC 14977:1996]](./appendix-b-references.md)。Appendix A で CADL の
   具象構文を定義するのに使用する。
 - **SMT** — Satisfiability Modulo Theories。CADL の
   `method: smt` 検証の基盤である。
-- **OPA / Rego** — Open Policy Agent とそのポリシー言語。制度制約の
+- **OPA / Rego** — Open Policy Agent [[Open Policy Agent]](./appendix-b-references.md) とそのポリシー言語。制度制約の
   codegen ターゲットの一つである。
 
 ## 関連項目

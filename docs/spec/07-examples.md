@@ -609,7 +609,8 @@ verification:
 
 From data-sharing contracts, we automatically generate skeleton code for
 data pipelines, SLA monitors, and billing logic. We also demonstrate
-conversion to smart contracts (Solidity).
+conversion to smart contracts (Solidity [[Solidity Documentation]](./appendix-b-references.md)); the
+example names the static analyzer Slither [[Feist+, 2019]](./appendix-b-references.md) for checking the generated contract.
 
 ```yaml
 # === Objective 3: Code Generation and Auto-Conversion ===
@@ -730,6 +731,7 @@ sos:
           - compute_regime_recommendation(method: POMDP)
           - generate_cadl_from_natural_language(user_input)
           - explain_recommendation(format: natural_language)
+          - protect_training_data
         HUMAN_OPERATOR:
           - review_ai_recommendations
           - approve_or_reject_transitions
@@ -770,7 +772,7 @@ sos:
         - HUMAN_OPERATOR : review
         - if approved:
             - HUMAN_OPERATOR -> AI_ADVISOR : approve
-            - AI_ADVISOR : initiate_transition(protocol: REGIME_TRANSITION)   # REGIME_TRANSITION: definition omitted
+            - AI_ADVISOR : initiate_transition(protocol: REGIME_TRANSITION)
           else:
             - HUMAN_OPERATOR -> AI_ADVISOR : reject(reason)
             - AI_ADVISOR : learn_from_rejection(reason)
@@ -779,6 +781,13 @@ sos:
         human_review_timeout: 30min
       fallback:
         on_timeout: "maintain_current_regime"
+
+    - id: REGIME_TRANSITION
+      trigger: "AI_REGIME_RECOMMENDATION.approved"
+      steps:
+        - AI_ADVISOR -> AI_AGENT[*] : announce_transition(proposed_regime)
+        - AI_AGENT[*] -> AI_ADVISOR : ack
+        - AI_ADVISOR -> HUMAN_OPERATOR : transition_report
 
     - id: NL_TO_CADL_WORKFLOW
       trigger: "HUMAN_OPERATOR.submit_natural_language_spec"
@@ -849,7 +858,6 @@ verification:
   # Deontic logic: Do AI_ADVISOR obligations conflict?
   - id: AI_DEONTIC_CONSISTENCY
     type: deontic_logic
-    # protect_training_data: definition omitted from this listing
     check: >
       # Do "explainability" and "confidentiality" obligations conflict?
       compatible(
@@ -888,7 +896,7 @@ codegen:
       synthesis:
         method: "reactive_synthesis"      # GR(1) realizability
         environment: "AI_AGENT[*].actions"
-        system: "SAFETY_CONTROLLER.decisions"   # SAFETY_CONTROLLER: definition omitted
+        system: "AI_SAFETY_CONTROLLER.decisions"
         specification: >
           # Environment assumption: AI acts within contract scope
           assume G(ai_action IN permitted_range)
