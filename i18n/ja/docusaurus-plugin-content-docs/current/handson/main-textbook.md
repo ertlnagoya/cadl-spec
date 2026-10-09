@@ -962,10 +962,11 @@ Inspector ▸ Add Component ▸ "PilotContractBridge"   (CADL.SosDsl.Demo.PilotC
 Inspector に：
 
 ```
-PilotContractBridge (Script)
-├── Robot Battery       [───────●───] 90.0
-├── Request Deadline Ms              300000
-└── Assigned Dwell Ms                700
+Pilot Contract Bridge (Script)
+└── World keys (must match the contract's predicates)
+    ├── Robot Battery       [───────●───] 90
+    ├── Request Deadline Ms              300000
+    └── Assigned Dwell Ms                700
 ```
 
 > `Assigned Dwell Ms` は「`Assigned` 状態に最低どれだけ留まってから accept するか」です。`battery_guard` のような周期モニター（500ms 間隔）が `Assigned` 中に最低 1 回評価される猶予を作るためのもので、既定の 700ms のまま触らないでください（モニター周期より短くすると違反が検出されなくなります）。
