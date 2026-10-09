@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1185pt" height="185pt" viewBox="0.00 0.00 1185.36 184.71">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 180.71)">
+<title>DELIVERY_SLA_lifecycle</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-180.71 1181.36,-180.71 1181.36,4 -4,4"></polygon>
+<!-- Proposed -->
+<g id="node1" class="node">
+<title>Proposed</title>
+<ellipse fill="#e0ecff" stroke="black" stroke-width="2" cx="43.03" cy="-43.03" rx="39.03" ry="39.03"></ellipse>
+<ellipse fill="none" stroke="black" stroke-width="2" cx="43.03" cy="-43.03" rx="43.03" ry="43.03"></ellipse>
+<text text-anchor="middle" x="43.03" y="-39.73" font-family="Helvetica,sans-Serif" font-size="11.00">Proposed</text>
+</g>
+<!-- Assigned -->
+<g id="node2" class="node">
+<title>Assigned</title>
+<path fill="#ffffff" stroke="black" d="M367.76,-61.03C367.76,-61.03 330.5,-61.03 330.5,-61.03 324.5,-61.03 318.5,-55.03 318.5,-49.03 318.5,-49.03 318.5,-37.03 318.5,-37.03 318.5,-31.03 324.5,-25.03 330.5,-25.03 330.5,-25.03 367.76,-25.03 367.76,-25.03 373.76,-25.03 379.76,-31.03 379.76,-37.03 379.76,-37.03 379.76,-49.03 379.76,-49.03 379.76,-55.03 373.76,-61.03 367.76,-61.03"></path>
+<text text-anchor="middle" x="349.13" y="-39.73" font-family="Helvetica,sans-Serif" font-size="11.00">Assigned</text>
+</g>
+<!-- Proposed&#45;&gt;Assigned -->
+<g id="edge1" class="edge">
+<title>Proposed-&gt;Assigned</title>
+<path fill="none" stroke="black" d="M86.31,-43.03C144.64,-43.03 249.1,-43.03 306.88,-43.03"></path>
+<polygon fill="black" stroke="black" points="306.61,-46.53 316.61,-43.03 306.61,-39.53 306.61,-46.53"></polygon>
+<text text-anchor="middle" x="202.28" y="-46.03" font-family="Helvetica,sans-Serif" font-size="10.00">DISPATCHER -&gt; ROBOT[i] : route_assign…</text>
+</g>
+<!-- Accepted -->
+<g id="node3" class="node">
+<title>Accepted</title>
+<path fill="#ffffff" stroke="black" d="M659.28,-107.03C659.28,-107.03 621.41,-107.03 621.41,-107.03 615.41,-107.03 609.41,-101.03 609.41,-95.03 609.41,-95.03 609.41,-83.03 609.41,-83.03 609.41,-77.03 615.41,-71.03 621.41,-71.03 621.41,-71.03 659.28,-71.03 659.28,-71.03 665.28,-71.03 671.28,-77.03 671.28,-83.03 671.28,-83.03 671.28,-95.03 671.28,-95.03 671.28,-101.03 665.28,-107.03 659.28,-107.03"></path>
+<text text-anchor="middle" x="640.34" y="-85.73" font-family="Helvetica,sans-Serif" font-size="11.00">Accepted</text>
+</g>
+<!-- Assigned&#45;&gt;Accepted -->
+<g id="edge2" class="edge">
+<title>Assigned-&gt;Accepted</title>
+<path fill="none" stroke="black" d="M380.18,-52.63C385.97,-54.26 392.02,-55.81 397.76,-57.03 467.16,-71.73 549.29,-80.9 597.7,-85.48"></path>
+<polygon fill="black" stroke="black" points="597.17,-88.95 607.45,-86.38 597.82,-81.98 597.17,-88.95"></polygon>
+<text text-anchor="middle" x="494.58" y="-99.71" font-family="Helvetica,sans-Serif" font-size="10.00">ROBOT[i] -&gt; DISPATCHER : ack(accepted)</text>
+<text text-anchor="middle" x="494.58" y="-87.71" font-family="Helvetica,sans-Serif" font-size="10.00">Δ 5s</text>
+</g>
+<!-- Violated -->
+<g id="node6" class="node">
+<title>Violated</title>
+<path fill="#fde0e0" stroke="black" stroke-dasharray="5,2" d="M1158.64,-84.03C1158.64,-84.03 1126.89,-84.03 1126.89,-84.03 1120.89,-84.03 1114.89,-78.03 1114.89,-72.03 1114.89,-72.03 1114.89,-60.03 1114.89,-60.03 1114.89,-54.03 1120.89,-48.03 1126.89,-48.03 1126.89,-48.03 1158.64,-48.03 1158.64,-48.03 1164.64,-48.03 1170.64,-54.03 1170.64,-60.03 1170.64,-60.03 1170.64,-72.03 1170.64,-72.03 1170.64,-78.03 1164.64,-84.03 1158.64,-84.03"></path>
+<text text-anchor="middle" x="1142.76" y="-62.73" font-family="Helvetica,sans-Serif" font-size="11.00">Violated</text>
+</g>
+<!-- Assigned&#45;&gt;Violated -->
+<g id="edge3" class="edge">
+<title>Assigned-&gt;Violated</title>
+<path fill="none" stroke="red" stroke-dasharray="5,2" d="M380.25,-43.48C454.62,-44.62 652.88,-47.94 818.21,-53.03 921.2,-56.2 1042.56,-61.49 1103.2,-64.25"></path>
+<polygon fill="red" stroke="red" points="1102.84,-67.73 1112.99,-64.69 1103.16,-60.74 1102.84,-67.73"></polygon>
+<text text-anchor="middle" x="753.74" y="-68.03" font-family="Helvetica,sans-Serif" font-size="10.00" fill="red">violation</text>
+<text text-anchor="middle" x="753.74" y="-56.03" font-family="Helvetica,sans-Serif" font-size="10.00" fill="red">Major</text>
+</g>
+<!-- Assigned&#45;&gt;Violated -->
+<g id="edge6" class="edge">
+<title>Assigned-&gt;Violated</title>
+<path fill="none" stroke="black" d="M379.98,-40.59C480.71,-32.96 817.05,-12.48 1090.16,-54.03 1094.54,-54.7 1099.09,-55.53 1103.6,-56.46"></path>
+<polygon fill="black" stroke="black" points="1102.6,-59.82 1113.12,-58.56 1104.11,-52.99 1102.6,-59.82"></polygon>
+<text text-anchor="middle" x="753.74" y="-33.73" font-family="Helvetica,sans-Serif" font-size="10.00">now &gt; request.deadline</text>
+</g>
+<!-- Delivering -->
+<g id="node4" class="node">
+<title>Delivering</title>
+<path fill="#ffffff" stroke="black" d="M908.51,-155.03C908.51,-155.03 867.6,-155.03 867.6,-155.03 861.6,-155.03 855.6,-149.03 855.6,-143.03 855.6,-143.03 855.6,-131.03 855.6,-131.03 855.6,-125.03 861.6,-119.03 867.6,-119.03 867.6,-119.03 908.51,-119.03 908.51,-119.03 914.51,-119.03 920.51,-125.03 920.51,-131.03 920.51,-131.03 920.51,-143.03 920.51,-143.03 920.51,-149.03 914.51,-155.03 908.51,-155.03"></path>
+<text text-anchor="middle" x="888.05" y="-133.73" font-family="Helvetica,sans-Serif" font-size="11.00">Delivering</text>
+</g>
+<!-- Accepted&#45;&gt;Delivering -->
+<g id="edge4" class="edge">
+<title>Accepted-&gt;Delivering</title>
+<path fill="none" stroke="black" d="M671.64,-98.44C677.46,-100.09 683.53,-101.7 689.28,-103.03 742.11,-115.24 803.8,-125.17 844.05,-131.08"></path>
+<polygon fill="black" stroke="black" points="843.42,-134.53 853.82,-132.5 844.42,-127.6 843.42,-134.53"></polygon>
+<text text-anchor="middle" x="753.74" y="-129.83" font-family="Helvetica,sans-Serif" font-size="10.00">ROBOT[i].status == InTransit</text>
+</g>
+<!-- Accepted&#45;&gt;Violated -->
+<g id="edge7" class="edge">
+<title>Accepted-&gt;Violated</title>
+<path fill="none" stroke="black" d="M671.52,-87.64C758.05,-83.67 1006.96,-72.23 1103.16,-67.8"></path>
+<polygon fill="black" stroke="black" points="1103.3,-71.3 1113.13,-67.35 1102.98,-64.31 1103.3,-71.3"></polygon>
+<text text-anchor="middle" x="888.05" y="-82.82" font-family="Helvetica,sans-Serif" font-size="10.00">now &gt; request.deadline</text>
+</g>
+<!-- Completed -->
+<g id="node5" class="node">
+<title>Completed</title>
+<path fill="#d4f5d4" stroke="black" stroke-dasharray="5,2" d="M1165.36,-175.03C1165.36,-175.03 1120.16,-175.03 1120.16,-175.03 1114.16,-175.03 1108.16,-169.03 1108.16,-163.03 1108.16,-163.03 1108.16,-151.03 1108.16,-151.03 1108.16,-145.03 1114.16,-139.03 1120.16,-139.03 1120.16,-139.03 1165.36,-139.03 1165.36,-139.03 1171.36,-139.03 1177.36,-145.03 1177.36,-151.03 1177.36,-151.03 1177.36,-163.03 1177.36,-163.03 1177.36,-169.03 1171.36,-175.03 1165.36,-175.03"></path>
+<text text-anchor="middle" x="1142.76" y="-153.73" font-family="Helvetica,sans-Serif" font-size="11.00">Completed</text>
+</g>
+<!-- Delivering&#45;&gt;Completed -->
+<g id="edge5" class="edge">
+<title>Delivering-&gt;Completed</title>
+<path fill="none" stroke="black" d="M920.8,-139.54C965.2,-143.06 1046.06,-149.46 1096.68,-153.46"></path>
+<polygon fill="black" stroke="black" points="1096.17,-156.93 1106.42,-154.23 1096.73,-149.95 1096.17,-156.93"></polygon>
+<text text-anchor="middle" x="1024.03" y="-167.71" font-family="Helvetica,sans-Serif" font-size="10.00">ROBOT[i].status == Delivered</text>
+<text text-anchor="middle" x="1024.03" y="-155.71" font-family="Helvetica,sans-Serif" font-size="10.00">[now &lt;= request.deadline]</text>
+</g>
+<!-- Delivering&#45;&gt;Violated -->
+<g id="edge8" class="edge">
+<title>Delivering-&gt;Violated</title>
+<path fill="none" stroke="black" d="M920.81,-131.9C973.48,-123.29 1074.68,-106.25 1090.16,-100.03 1096.41,-97.52 1102.7,-94.19 1108.63,-90.6"></path>
+<polygon fill="black" stroke="black" points="1110.44,-93.6 1116.94,-85.24 1106.64,-87.73 1110.44,-93.6"></polygon>
+<text text-anchor="middle" x="1024.03" y="-128.53" font-family="Helvetica,sans-Serif" font-size="10.00">now &gt; request.deadline</text>
+</g>
+<!-- Terminated -->
+<g id="node7" class="node">
+<title>Terminated</title>
+<path fill="#e8e8e8" stroke="black" stroke-dasharray="5,2" d="M66.85,-140.03C66.85,-140.03 19.21,-140.03 19.21,-140.03 13.21,-140.03 7.21,-134.03 7.21,-128.03 7.21,-128.03 7.21,-116.03 7.21,-116.03 7.21,-110.03 13.21,-104.03 19.21,-104.03 19.21,-104.03 66.85,-104.03 66.85,-104.03 72.85,-104.03 78.85,-110.03 78.85,-116.03 78.85,-116.03 78.85,-128.03 78.85,-128.03 78.85,-134.03 72.85,-140.03 66.85,-140.03"></path>
+<text text-anchor="middle" x="43.03" y="-118.73" font-family="Helvetica,sans-Serif" font-size="11.00">Terminated</text>
+</g>
+</g>
+</svg>
