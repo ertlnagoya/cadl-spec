@@ -5,199 +5,350 @@ title: "付録A. 構文リファレンス（EBNF）"
 
 # 付録A. 構文リファレンス（EBNF）
 
-本付録は CADL v0.1 の完全なEBNF文法を定義する。具象構文については本付録が
-規範的であるが，第5章の非形式的な記述との間に矛盾がある場合は第5章が優先する。
+CADLファイルは**YAML 1.2文書**である。本付録は CADL v0.1 の参照文法を
+2つの部分に分けて示す。文書の*構造*（A.2〜A.9）は，YAMLのマッピングと
+シーケンスの上のEBNFとして記述する。*式の部分言語*（A.1，A.10）は，
+個々のYAML文字列スカラーの中に書かれる。
 
-本文法はISO/IEC 14977記法を用いる。`INDENT` / `DEDENT` / `NEWLINE` は
-Pythonに類似したインデント依存規則により字句解析器が生成する。
+第5章と本付録は同じ構文を記述する。具象構文については本付録が規範的であり，
+第5章は説明のための記述である。リファレンス実装
+（[`cadl`](https://github.com/ertlnagoya/cadl)）は，この構文をそのまま
+受理することが期待される。v0.3における既知の相違は
+[A.12](#a12-reference-implementation-status-v03)に示す。
 
-## A.1 字句規則
+**記法。** 文法にはISO/IEC 14977のEBNFを用い，次の規約を置く。
+
+- `"name:"` のようにコロンで終わる終端記号は，YAMLマッピングのキーであり，
+  その後に値が続く。1つのマッピングの中の項目は任意の順序で書いてよく，
+  各項目は高々1回だけ現れる。
+- `{ "-" , x }` は，`x` を要素とするYAMLシーケンスである。ブロック形式と
+  フロー形式（`[a, b]`）は等価である。
+- 非終端記号 `k` を用いた `k , ":" , v` は，キーを記述者が選ぶマッピングである。
+- `text` は任意のYAML文字列スカラー，`number` は任意のYAML整数または
+  浮動小数点数，`scalar` は任意のYAMLスカラーである。これらの内容は
+  それ以上解釈しない。
+- `(* string *)` と注記した生成規則は，1つのYAML文字列スカラーの内容を記述する。
+
+インデント，コメント，引用符，ブロック形式とフロー形式の選択はYAMLの規定に従い，
+文法には示さない。`[`，`]`，`*`，`->`，`": "` を含むスカラー（たとえば
+`"TAXI[*]"` のようなアクター参照や `"A -> B : msg"` のようなステップ）は，
+引用符で囲むことが望ましい。フローシーケンスの中では，YAMLが別の意味に
+解釈するため，必ず引用符で囲まなければならない。
+
+本付録が定義しないキーは CADL v0.1 の一部ではない。処理系は，そのようなキーを
+理由にファイルを拒否してはならない。リファレンス実装はそれらを無視する。
+
+本文法は5.1.1節の設計レベルと検証レベルを対象とする。概要レベルの記述は，
+AIによる精緻化のための非形式的な入力であり，本文法に従う必要はない。
+
+## A.1 字句規則 {/* #a1-lexical-rules */}
+
+これらの規則はスカラーの内部に適用する。
 
 ```ebnf
 letter          = "A" | … | "Z" | "a" | … | "z" ;
 digit           = "0" | … | "9" ;
-identifier      = letter , { letter | digit | "_" } ;
-actor_id        = identifier , [ "[" , ( "*" | range_expr ) , "]" ] ;
+identifier      = ( letter | "_" ) , { letter | digit | "_" } ;
+hyphen_name     = identifier , { "-" , name_part } ;
+name_part       = ( letter | digit | "_" ) , { letter | digit | "_" } ;
+actor_ref       = identifier , [ "[" , index , "]" ] ;   (* string *)
+index           = "*" | range_expr | int_literal | identifier ;
 range_expr      = int_literal , ".." , ( int_literal | identifier ) ;
 string          = '"' , { any_char - '"' } , '"' ;
 int_literal     = digit , { digit } ;
-float_literal   = int_literal , "." , int_literal ;
+float_literal   = int_literal , "." , [ int_literal ] , [ exponent ]
+                | "." , int_literal , [ exponent ]
+                | int_literal , exponent ;
+exponent        = ( "e" | "E" ) , [ "+" | "-" ] , int_literal ;
 bool_literal    = "true" | "false" ;
 duration_lit    = int_literal , ( "ms" | "s" | "min" | "h" ) ;
-version_string  = int_literal , "." , int_literal , "." , int_literal ;
 literal         = string | int_literal | float_literal
                 | bool_literal | duration_lit ;
 ```
 
-## A.2 トップレベル構造
+`identifier` は，アクター，契約，プロトコル，レジーム，メトリクスの名前に用いる。
+`hyphen_name` は，拡張の名前とコード生成ターゲットの名前（たとえば `sos-dsl`，
+`unity-csharp`）にだけ用いる。数値リテラルは符号を持たない。
+
+## A.2 トップレベル構造 {/* #a2-top-level-structure */}
 
 ```ebnf
-cadl_file   = "sos:" , INDENT , sos_body , DEDENT ;
-sos_body    = "name:"    , string          , NEWLINE ,
-              [ "type:"   , sos_type        , NEWLINE ] ,
-              [ "version:", version_string  , NEWLINE ] ,
-              { section } ;
+cadl_file   = "sos:" , sos_body ;
+sos_body    = "name:" , text ,
+              [ "type:"         , sos_type ] ,
+              [ "version:"      , scalar ] ,
+              [ "description:"  , text ] ,
+              [ "extensions:"   , { "-" , extension_decl } ] ,
+              [ "context:"      , context_block ] ,
+              [ "actors:"       , { "-" , actor_def } ] ,
+              [ "contracts:"    , { "-" , contract_def } ] ,
+              [ "protocols:"    , { "-" , protocol_def } ] ,
+              [ "algorithms:"   , { algorithm_def } ] ,
+              [ "transitions:"  , { "-" , transition_def } ] ,
+              [ "metrics:"      , { "-" , metric_def } ] ,
+              [ "verification:" , { "-" , verify_def } ] ,
+              [ "codegen:"      , { "-" , codegen_def } ] ,
+              [ "motivation:"   , motivation_block ] ;
 sos_type    = "Directed" | "Acknowledged" | "Collaborative" | "Virtual" ;
-section     = context_section
-            | actors_section
-            | contracts_section
-            | protocols_section
-            | algorithms_section
-            | transitions_section
-            | metrics_section
-            | verification_section
-            | codegen_section ;
+extension_decl = hyphen_name , ":" , scalar ;
 ```
 
-## A.3 コンテキスト・アクター・メトリクス
+1つのファイルは1つのSoS定義を含む。`version:` には，慣例として `"1.0.0"` のような
+セマンティックバージョンの文字列を書く。
+
+**拡張点。** `extensions:` は，ファイルが依存する言語拡張を，名前とバージョンの組
+（たとえば `- sos-dsl: 0.1`）として宣言する。次の2つの拡張を定義している。
+
+- SoS-DSL拡張（[付録E](./appendix-e-sos-dsl)）。`contract_def`（A.4）に
+  キー `lifecycle:` と `monitors:` を追加する。
+- 動機拡張（[付録C](./appendix-c-motivation.md)）。`motivation_block` を定義する。
+
+## A.3 コンテキスト・アクター・メトリクス {/* #a3-context-actors-metrics */}
 
 ```ebnf
-context_section  = "context:"  , INDENT , { kv_entry } , DEDENT ;
-actors_section   = "actors:"   , INDENT , { actor_decl } , DEDENT ;
-actor_decl       = actor_id , ":" , INDENT , { kv_entry } , DEDENT ;
-metrics_section  = "metrics:"  , INDENT , { metric_decl } , DEDENT ;
-metric_decl      = identifier , ":" , INDENT ,
-                   "aggregation:" , string , NEWLINE ,
-                   [ "unit:"    , string , NEWLINE ] ,
-                   [ "target:"  , expr   , NEWLINE ] ,
-                   DEDENT ;
-kv_entry         = identifier , ":" , ( literal | inline_list
-                                       | INDENT , { kv_entry } , DEDENT ) ,
-                   NEWLINE ;
-inline_list      = "[" , [ literal , { "," , literal } ] , "]" ;
+context_block  = [ "environment:" , { identifier , ":" , scalar } ] ,
+                 [ "assumptions:" , { "-" , text } ] ;
+
+actor_def      = "id:"   , actor_ref ,
+                 "role:" , text ,
+                 [ "autonomy:"     , autonomy_level ] ,
+                 [ "capabilities:" , { "-" , text } ] ,
+                 [ "interface:"    , interface_def ] ;
+autonomy_level = "low" | "medium" | "high" ;
+interface_def  = [ "input:"  , { "-" , text } ] ,
+                 [ "output:" , { "-" , text } ] ;
+
+metric_def     = "id:" , identifier ,
+                 [ "formula:" , predicate ] ,          (* string *)
+                 [ "target:"  , scalar ] ;
 ```
 
-## A.4 コントラクト（制度層）
+`autonomy:` の既定値は `medium` である。`actor_def` の `id:` の添字は，通常は範囲
+（`"ROBOT[1..N]"`）であり，パラメータ化されたアクターの集合を宣言する。
+`environment:` の値が文字列でないときはリテラル（A.1）として読み，
+文字列のときはそのまま保持する。
+
+## A.4 コントラクト（制度層） {/* #a4-contracts-institution-layer */}
 
 ```ebnf
-contracts_section = "contracts:" , INDENT , { contract_decl } , DEDENT ;
-contract_decl     = identifier , ":" , INDENT , contract_body , DEDENT ;
-contract_body     = { "parties:"       , actor_list         , NEWLINE
-                    | "authority:"     , identifier         , NEWLINE
-                    | "alpha:"         , float_literal      , NEWLINE
-                    | "beta:"          , float_literal      , NEWLINE
-                    | "lambda:"        , float_literal      , NEWLINE
-                    | "obligations:"   , INDENT , { clause } , DEDENT
-                    | "permissions:"   , INDENT , { clause } , DEDENT
-                    | "prohibitions:"  , INDENT , { clause } , DEDENT
-                    | "sanctions:"     , INDENT , { clause } , DEDENT } ;
-clause            = "-" , predicate , NEWLINE ;
-actor_list        = actor_ref , { "," , actor_ref } ;
-actor_ref         = actor_id | "all" | "any" ;
+contract_def      = "id:"      , identifier ,
+                    "parties:" , { "-" , actor_ref } ,
+                    [ "assume:"           , { "-" , predicate } ] ,
+                    [ "guarantee:"        , { "-" , predicate } ] ,
+                    [ "authority:"        , authority_block ] ,
+                    [ "information:"      , information_block ] ,
+                    [ "responsibilities:" , { actor_ref , ":" , { "-" , text } } ] ,
+                    [ "incentives:"       , incentive_block ] ,
+                    [ "violation:"        , violation_block ] ,
+                    [ "duration:"         , scalar ] ,
+                    [ "lifecycle:"        , lifecycle_block ] ,       (* 付録E *)
+                    [ "monitors:"         , { "-" , monitor_def } ] ; (* 付録E *)
+
+authority_block   = [ "decision_scope:"  , text ] ,
+                    [ "decision_holder:" , actor_ref ] ,
+                    [ "beta:"            , number ] ,
+                    [ "mode:"            , text ] ;
+
+information_block = [ "alpha:"   , number ] ,
+                    [ "views:"   , { actor_ref , ":" , text } ] ,
+                    [ "sharing:" , { "-" , sharing_entry } ] ;
+sharing_entry     = actor_ref , "->" , actor_ref , ":" , identifier ;  (* string *)
+
+incentive_block   = [ "type:"   , text ] ,
+                    [ "lambda:" , number ] ,
+                    [ "rules:"  , { "-" , text } ] ;
+
+violation_block   = [ "detect:"     , text ] ,
+                    [ "action:"     , text ] ,
+                    [ "escalation:" , text ] ;
 ```
 
-## A.5 プロトコル
+`assume:` と `guarantee:` の各要素は，`predicate`（A.10）を保持する文字列である。
+`alpha`，`beta`，`lambda` は `[0, 1]` の範囲になければならない。`parties:` は
+宣言済みのアクターを少なくとも1つ挙げなければならず，契約の中のアクター参照は
+すべて `actors:` で宣言されたアクターを指さなければならない。`duration:` は
+`indefinite`，`duration_lit`，またはイベントの記述のいずれかである。
+
+## A.5 プロトコル {/* #a5-protocols */}
 
 ```ebnf
-protocols_section = "protocols:" , INDENT , { protocol_decl } , DEDENT ;
-protocol_decl     = identifier , ":" , INDENT , protocol_body , DEDENT ;
-protocol_body     = [ "participants:" , actor_list , NEWLINE ] ,
-                    [ "precondition:" , predicate  , NEWLINE ] ,
-                    [ "postcondition:", predicate  , NEWLINE ] ,
-                    "steps:" , INDENT , step_list , DEDENT ;
-step_list         = { step } ;
-step              = message_step
-                  | compute_step
-                  | conditional_step
-                  | parallel_step
-                  | barrier_step
-                  | loop_step ;
-message_step      = actor_ref , "->" , actor_ref , ":" , message_expr , NEWLINE ;
-compute_step      = actor_ref , ":" , computation_expr , NEWLINE ;
-conditional_step  = "if" , predicate , ":" , INDENT , step_list , DEDENT ,
-                    [ "else:" , INDENT , step_list , DEDENT ] ;
-parallel_step     = "parallel:" , INDENT , step_list , DEDENT ;
-barrier_step      = "barrier:" , predicate , NEWLINE ;
-loop_step         = "loop" , [ "while" , predicate ] , ":" ,
-                    INDENT , step_list , DEDENT ;
-message_expr      = identifier , [ "(" , [ arg_list ] , ")" ] ;
-computation_expr  = identifier , "(" , [ arg_list ] , ")" ;
-arg_list          = expr , { "," , expr } ;
+protocol_def     = "id:"      , identifier ,
+                   "trigger:" , text ,
+                   [ "precondition:"     , text ] ,
+                   "steps:"   , { "-" , step } ,
+                   [ "timing:"           , { identifier , ":" , scalar } ] ,
+                   [ "fallback:"         , { identifier , ":" , text } ] ,
+                   [ "rollback:"         , rollback_block ] ,
+                   [ "postcondition:"    , text ] ,
+                   [ "safety_invariant:" , text ] ;
+rollback_block   = [ "condition:" , text ] ,
+                   [ "action:"    , text ] ;
+
+step             = message_step | compute_step | conditional_step
+                 | parallel_step | barrier_step ;
+message_step     = actor_ref , "->" , actor_ref , ":" , step_expr ;
+compute_step     = actor_ref , ":" , step_expr ;
+conditional_step = "if" , predicate , ":" , { "-" , step } ,
+                   [ "else:" , { "-" , step } ] ;
+parallel_step    = "parallel:" , { "-" , step } ;
+barrier_step     = "barrier:" , predicate ;
+step_expr        = function_call | identifier ;
 ```
 
-## A.6 アルゴリズム
+`message_step` と `compute_step` は，シーケンスの1要素である。引用符で囲んだ
+文字列（`- "A -> B : msg(x)"`，推奨）として書いても，引用符なしで書いてもよい。
+後者の場合，YAMLはこれを項目が1つのマッピングとして読むが，両者は等価である。
+`conditional_step`，`parallel_step`，`barrier_step` は，キーが `if <predicate>`，
+`parallel`，`barrier` のマッピングである。`timing:` の代表的なキーは
+`max_response`，`max_total`，`checkpoint_interval` であり，`fallback:` の
+代表的なキーは `on_timeout` と `on_failure` である。
+
+## A.6 アルゴリズム {/* #a6-algorithms */}
 
 ```ebnf
-algorithms_section = "algorithms:" , INDENT , { algorithm_decl } , DEDENT ;
-algorithm_decl     = identifier , ":" , INDENT , algorithm_body , DEDENT ;
-algorithm_body     = [ "inputs:"  , inline_list , NEWLINE ] ,
-                     [ "outputs:" , inline_list , NEWLINE ] ,
-                     [ "model:"   , string      , NEWLINE ] ,
-                     [ "impl:"    , string      , NEWLINE ] ,
-                     [ "params:"  , INDENT , { kv_entry } , DEDENT ] ;
+algorithm_def = identifier , ":" , algorithm_body ;
+algorithm_body = [ "central:" , text ] ,
+                 [ "local:"   , text ] ;
 ```
 
-## A.7 遷移
+`algorithms:` は，機能の名前（たとえば `pathfinding`）から，中央側とローカル側で
+用いるアルゴリズムへのマッピングである。
+
+## A.7 遷移 {/* #a7-transitions */}
 
 ```ebnf
-transitions_section = "transitions:" , INDENT , { transition_decl } , DEDENT ;
-transition_decl     = identifier , ":" , INDENT ,
-                      "from:"   , identifier , NEWLINE ,
-                      "to:"     , identifier , NEWLINE ,
-                      "trigger:", predicate  , NEWLINE ,
-                      [ "guard:"  , predicate , NEWLINE ] ,
-                      [ "effect:" , action    , NEWLINE ] ,
-                      DEDENT ;
-action              = function_call ;
+transition_def = "from:" , identifier ,
+                 "to:"   , identifier ,
+                 [ "condition:"        , predicate ] ,     (* string *)
+                 [ "protocol:"         , identifier ] ,
+                 [ "safety_invariant:" , predicate ] ;     (* string *)
 ```
 
-## A.8 検証ブロック
+`from:` と `to:` はレジームの名前である。レジームは遷移の中で使うことで導入され，
+別個の宣言はない。`protocol:` は `protocols:` で宣言したプロトコルを
+指すことが望ましい。
+
+## A.8 検証ブロック {/* #a8-verification-block */}
 
 ```ebnf
-verification_section = "verification:" , INDENT , { verify_decl } , DEDENT ;
-verify_decl          = identifier , ":" , INDENT , verify_body , DEDENT ;
-verify_body          = "property:" , property_kind , NEWLINE ,
-                       "expr:"     , predicate      , NEWLINE ,
-                       [ "method:" , verify_method , NEWLINE ] ,
-                       [ "bound:"  , int_literal   , NEWLINE ] ;
-property_kind        = "safety" | "liveness" | "fairness" | "invariant" ;
-verify_method        = "smt" | "model_check" | "simulation" | "proof" ;
+verify_def    = "id:"   , identifier ,
+                "type:" , text ,
+                [ "target:"   , identifier ] ,
+                [ "property:" , text ] ,
+                [ "method:"   , verify_method ] ,
+                [ "expr:"     , predicate ] ,              (* string *)
+                [ "bound:"    , int_literal ] ;
+verify_method = "smt" | "model_check" | "simulation" | "proof" ;
 ```
 
-## A.9 コード生成ブロック
+`type:` は性質の種類を表し，たとえば `consistency`，`deadlock`，`safety`，
+`liveness` を書く。`target:` は対象の契約，プロトコル，または遷移の名前である。
+`method:` の既定値は `smt` である。宣言された手法を実装していない処理系は，
+その項目を黙って読み飛ばすのではなく `not_supported` として報告しなければならず，
+未知の手法はエラーとして報告しなければならない。
+
+## A.9 コード生成ブロック {/* #a9-codegen-block */}
 
 ```ebnf
-codegen_section = "codegen:" , INDENT , { codegen_target } , DEDENT ;
-codegen_target  = target_name , ":" , INDENT , codegen_body , DEDENT ;
-target_name     = "unity" | "ros2" | "python" | "solidity" | "opa" | identifier ;
-codegen_body    = [ "output:" , string , NEWLINE ] ,
-                  [ "template:", string , NEWLINE ] ,
-                  [ "options:" , INDENT , { kv_entry } , DEDENT ] ;
+codegen_def = [ "target:"   , hyphen_name ] ,
+              [ "output:"   , text ] ,
+              [ "mappings:" , { identifier , ":" , text } ] ;
 ```
 
-## A.10 式
+`target:` の既定値は `python` である。ターゲットの名前は
+[付録D](./appendix-d-codegen.md)に一覧する。`output:` は出力先のパスであり，
+`mappings:` はターゲットに固有の名前の対応を生成器に渡す。
+
+## A.10 式 {/* #a10-expressions */}
+
+`predicate` は，1つのYAML文字列スカラーの中に書く。
 
 ```ebnf
-expr             = logical_expr ;
-logical_expr     = comparison , { ( "AND" | "OR" ) , comparison }
-                 | "NOT" , expr ;
-comparison       = arith_expr , [ comp_op , arith_expr ] ;
-comp_op          = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+predicate        = or_expr ;
+or_expr          = and_expr , { "OR" , and_expr } ;
+and_expr         = not_expr , { "AND" , not_expr } ;
+not_expr         = "NOT" , not_expr
+                 | comparison ;
+comparison       = arith_expr , [ comp_op , arith_expr ]
+                 | quantified_expr ;
+comp_op          = "==" | "!=" | "<=" | ">=" | "<" | ">" ;
+quantified_expr  = ( "for all" | "exists" ) , identifier , "in" ,
+                   arith_expr , ":" , predicate ;
 arith_expr       = term , { ( "+" | "-" ) , term } ;
 term             = factor , { ( "*" | "/" ) , factor } ;
-factor           = literal | identifier | function_call
-                 | "(" , expr , ")" ;
+factor           = "(" , predicate , ")"
+                 | function_call
+                 | member_access
+                 | literal
+                 | indexed_ref ;
 function_call    = identifier , "(" , [ arg_list ] , ")" ;
-quantified_expr  = ( "for all" | "exists" ) , identifier , "in" , set_expr ,
-                   ":" , predicate ;
-predicate        = comparison | logical_expr | quantified_expr
-                 | function_call ;
-set_expr         = identifier | inline_list | range_expr ;
-event_expr       = function_call | identifier , "." , identifier ;
+arg_list         = predicate , { "," , predicate } ;
+member_access    = indexed_ref , "." , identifier , { "." , identifier } ;
+indexed_ref      = identifier ,
+                   [ "[" , ( "*" | range_expr | arith_expr ) , "]" ] ;
 ```
 
-## A.11 予約語
+演算子の結合の強さは，弱いものから順に `OR`，`AND`，`NOT`，比較，`+` `-`，
+`*` `/` である。優先順位が等しい二項演算子は左結合である。比較は結合的でない
+（`a < b < c` は述語ではない）。量化子の有効範囲は，右方向へ可能な限り広くとる。
+トークンの間の空白は無視する。
+
+`assume:` または `guarantee:` の要素がこの文法に従わなくても，構文エラーには
+ならない。その要素は*不透明な述語*として保持され，処理系はそれを変更せずに
+引き渡し，形式検証の対象から除く。これにより，設計レベルでは自然言語による
+条件を書くことができる。A.5のステップの式と条件についても同様である。
+
+## A.11 予約語 {/* #a11-reserved-keywords */}
+
+式の部分言語のキーワード。これらを識別子として用いてはならない。
 
 ```
-actors      algorithms    AND         any         all
-authority   barrier       beta        codegen     context
-contracts   effect        else        exists      expr
-fairness    for all       from        guard       if
-invariant   lambda        liveness    loop        metrics
-model_check name          NOT         OR          output
-parallel    parties       permissions postcondition precondition
-prohibitions property     protocols   proof       safety
-sanctions   simulation    smt         sos         steps
-target      template      to          transitions trigger
-type        unit          verification version    while
+AND    OR    NOT    true    false    for all    exists    in
 ```
+
+構造のキー。認識されるブロックごとに示す。
+
+| ブロック | キー |
+|---|---|
+| ファイル | `sos` |
+| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `metrics` `verification` `codegen` `motivation` |
+| `context` | `environment` `assumptions` |
+| アクター | `id` `role` `autonomy` `capabilities` `interface`（`input` `output`） |
+| 契約 | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` |
+| `authority` | `decision_scope` `decision_holder` `beta` `mode` |
+| `information` | `alpha` `views` `sharing` |
+| `incentives` | `type` `lambda` `rules` |
+| `violation` | `detect` `action` `escalation` |
+| プロトコル | `id` `trigger` `precondition` `steps` `timing` `fallback` `rollback`（`condition` `action`） `postcondition` `safety_invariant` |
+| ステップ | `if` `else` `parallel` `barrier` |
+| アルゴリズム | `central` `local` |
+| 遷移 | `from` `to` `condition` `protocol` `safety_invariant` |
+| メトリクス | `id` `formula` `target` |
+| 検証 | `id` `type` `target` `property` `method` `expr` `bound` |
+| コード生成 | `target` `output` `mappings` |
+
+列挙値: `Directed` `Acknowledged` `Collaborative` `Virtual`（SoSの型），
+`low` `medium` `high`（自律度），`smt` `model_check` `simulation` `proof`
+（検証手法），`ms` `s` `min` `h`（時間の単位）。拡張のキーと値は付録Cと付録Eに示す。
+
+## A.12 リファレンス実装の状況（v0.3） {/* #a12-reference-implementation-status-v03 */}
+
+リファレンス実装は，YAML 1.1のローダーでファイルを読み，寛容に振る舞う。
+パーサーが拒否するのは，`sos:` マッピングの欠落，不正なYAML，不正な `type:` だけである。
+`cadl check` は，これに加えて，idの重複，未宣言のアクター，当事者のない契約，
+`[0, 1]` の範囲外のガバナンスパラメータをエラーとして報告する。それ以外の必須キーが
+欠けている場合は，空の値で置き換える。v0.3では，次の点で本付録と相違する（v0.3.2で確認）。
+
+- **式。** v0.3.2より前のリリースでは，`OR` が `AND` より強く結合し，添字付き参照に対する
+  `member_access`（`ROBOT[i].battery`）が受理されず，算術演算子 `+ - * /` が正しく
+  処理されなかった。v0.3.2は，これらの点でA.10に従う。
+- **ステップ。** `conditional_step` の `else:` の分岐と，`barrier_step` の条件は保持されない。
+- **契約。** `sharing:` の要素は，引用符で囲んだ文字列として書いたときにだけ認識される。
+  認識できない `autonomy:` の値は `medium` として読まれる。
+- **検証。** v0.3.2までは，`method:`，`expr:`，`bound:` がファイルから読み込まれないため，すべての項目が
+  `method: smt` として扱われる。`not_supported` の結果は，APIを通じて構築した
+  検証指定に対して実装されている。
+- **コード生成。** `codegen:` の項目は構文解析されるが，それに基づく処理は行われない。
+  ターゲットはコマンドラインで選択する（付録D）。
+- **拡張。** `extensions:` と `motivation:` は無視される。`lifecycle:` と `monitors:` は，
+  `extensions:` が `sos-dsl` を宣言しているかどうかにかかわらず認識される。

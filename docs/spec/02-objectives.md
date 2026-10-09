@@ -5,8 +5,8 @@ title: "Language Objectives"
 
 ## 2.1 Problems CADL Solves
 CADL aims to describe the three layers of institutions, protocols, and
-algorithms in a single language for SoS, ensuring consistency and safety
-through formal verification at the design stage. This establishes an
+algorithms in a single language for SoS, and to verify consistency and safety
+through formal verification at the design stage. The goal is to establish an
 engineering cycle for institutions: "describe → verify → deploy →
 monitor."
 
@@ -42,7 +42,7 @@ corresponding to the five-layer framework (Policy / Governance / Control
 / Execution / Environment).
 
 **Parametric institutional design:** Make institutional parameters such
-as information sharing degree (α), decision decentralization degree (β),
+as information sharing degree (α), decision centralization degree (β),
 and incentive intensity (λ) numerically manipulable.
 
 **Contract-based composition:** Based on assume-guarantee contracts,
@@ -110,12 +110,12 @@ levels.
 Below shows the correspondence of description levels and support
 mechanisms for each user type.
 
-  **User Type**             **Primary Description Level**              **Primary Support Means**
-  ------------------------- ------------------------------------------ ----------------------------------
-  SoS Architect             Verification Level (Formal Descriptions)   IDE Plugin, Type Checker
-  Researcher                Design Level (Parametric)                  Parameter Exploration Tools
-  Student/Educator          Overview → Design Level                    Educational Templates, Tutorials
-  Enterprise Practitioner   Overview Level → AI Refinement             AI Support, Visualizer
-  Municipal Official        Overview Level                             Visualization, AI Dialogue
-  Citizen                   Overview Level (AI-Supported)              NL→CADL Conversion, AI Assistant
-  AI Agent                  All Levels                                 API, Parser Library
+| **User Type** | **Primary Description Level** | **Primary Support Means** |
+| --- | --- | --- |
+| SoS Architect | Verification Level (Formal Descriptions) | IDE Plugin, Type Checker |
+| Researcher | Design Level (Parametric) | Parameter Exploration Tools |
+| Student/Educator | Overview → Design Level | Educational Templates, Tutorials |
+| Enterprise Practitioner | Overview Level → AI Refinement | AI Support, Visualizer |
+| Municipal Official | Overview Level | Visualization, AI Dialogue |
+| Citizen | Overview Level (AI-Supported) | NL→CADL Conversion, AI Assistant |
+| AI Agent | All Levels | API, Parser Library |
