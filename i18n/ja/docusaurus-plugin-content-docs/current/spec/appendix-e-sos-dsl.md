@@ -158,9 +158,10 @@ Unity C#ジェネレータと一致する。このジェネレータは，その
 その状態を表す。
 
 v0.3のリファレンス実装は，2つのブロックを構文解析してIR（E.7）に変換するが，
-規則L-1からM-3まではまだ検査しない。`severity:`，`sampling:`，`deadline:` の値の
-妥当性も検査しない。認識できない `sampling:` は `event` として読まれ，読み取れない
-`deadline:` は捨てられ，`severity:` は書かれたとおりに引き継がれる。したがって，E.6の例は，
+規則L-1からM-3まではまだ検査しない。v0.3.7からは，`cadl check` が `Minor`，`Major`，
+`Critical` 以外の `severity:` をエラーとして報告する。`sampling:` と `deadline:` の値の
+妥当性は検査しない。認識できない `sampling:` は `event` として読まれ，読み取れない
+`deadline:` は捨てられる。したがって，E.6の例は，
 `collision_watch` が `OBSTACLES.positions` を観測しているにもかかわらず検査を通る。
 これは環境の量であり，M-1が求める宣言済みのアクターの属性ではない。
 
@@ -359,7 +360,9 @@ Unity C#ジェネレータ（`cadl codegen --target unity-csharp`）は，構文
 
 - 契約ごとに1つの状態機械クラス（状態は `lifecycle.states` から，
   遷移は `lifecycle.transitions` から得る）
-- `deadline_ms` を持つ遷移ごとに1つの期限タイマー
+- `deadline_ms` を持つ遷移ごとに1つの期限タイマー（v0.3では，その遷移が
+  `on_violation.transition` にも状態を指定している場合に限る。これを指定していない期限は，
+  生成されたコードでは強制されない）
 - `monitor` ごとに1つの，周期駆動またはイベント駆動のモニタータスク
 - 発火した `on_violation` または `on_match.violation` ごとに1件の違反ログ
 

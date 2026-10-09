@@ -52,7 +52,7 @@ CADL Description (.cadl)
 │  - Deadlock check   │
 │  - Regime graph     │
 └──────────┬──────────┘
-           │ Verified AST
+           │ AST
            ▼
 ┌─────────────────────┐    ┌─────────────────────────┐
 │ Code Generator      │───▶│ Runtime                 │
@@ -61,6 +61,10 @@ CADL Description (.cadl)
 │  - OPA / Unity C#   │    │  - Transition Control   │
 └─────────────────────┘    └─────────────────────────┘
 ```
+
+The figure shows the intended order of use. `cadl codegen` itself runs
+the type check but not the verification engine, so `cadl verify` has to
+be run separately before generating code.
 
 ## 6.2 Toolchain Components
 ### 6.2.1 Parser

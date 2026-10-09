@@ -221,7 +221,7 @@ contracts:
     assume:
       - "CENTRAL.is_operational == true"
       - "network_latency <= 200ms"
-      - "TAXI[i].has_capability(local_navigation) for all i"
+      - "for all t in TAXI[*]: has_capability(t, local_navigation)"
 
     guarantee:
       - "all_routes_conflict_free()"

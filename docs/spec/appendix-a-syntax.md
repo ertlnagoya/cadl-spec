@@ -252,7 +252,9 @@ verify_method = "smt" | "model_check" | "simulation" | "proof" ;
 
 `type:` names the kind of property, for example `consistency`,
 `deadlock`, `safety`, or `liveness`. `target:` names the contract,
-protocol, or transition concerned. `method:` defaults to `smt`. A
+protocol, or transition concerned: the `id` of a contract or protocol,
+the name of a regime, or `FROM->TO` for the transition between two
+regimes. `method:` defaults to `smt`. A
 processor that does not implement a declared method MUST report the
 entry as `not_supported` rather than skip it silently, and MUST report
 an unknown method as an error. A `target:` that names nothing declared
@@ -358,16 +360,20 @@ Appendices C and E.
 ## A.12 Reference implementation status (v0.3)
 
 The reference implementation reads the file with a YAML 1.1 loader and
-is lenient: only a missing `sos:` mapping, invalid YAML, and an invalid
-`type:` are rejected by the parser. `cadl check` additionally reports
-duplicate ids, undeclared actors, a contract without parties, and
-governance parameters outside `[0, 1]` as errors. In a predicate, a
-name counts as an actor reference, and must be declared, when it is
-indexed (`ROBOT[i]`) or is the object of a member access
-(`ROBOT.battery`); a name standing alone is taken as a state variable
-and is not checked. Other missing required keys are replaced by an
-empty value. At v0.3 it deviates from this appendix as follows (checked
-against v0.3.4).
+is lenient: only a missing `sos:` mapping, invalid YAML, an invalid
+`type:`, and an `alpha`, `beta`, or `lambda` that is not a number are
+rejected by the parser. `cadl check` additionally reports duplicate
+ids, undeclared actors, a party listed twice, a contract without
+parties, governance parameters outside `[0, 1]`, and a `severity:`
+other than `Minor`, `Major`, or `Critical` as errors. In an item of
+`assume:` or `guarantee:`, a name counts as an actor reference, and
+must be declared, when it is indexed (`ROBOT[i]`) or is the object of a
+member access (`ROBOT.battery`), including inside an index; a name
+standing alone is taken as a state variable and is not checked. The
+predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
+and monitor `rule:` are not checked for undeclared actors. Other
+missing required keys are replaced by an empty value. At v0.3 it
+deviates from this appendix as follows (checked against v0.3.7).
 
 - **Expressions.** Releases before v0.3.2 parsed `OR` more tightly than
   `AND`, did not accept a `member_access` on an indexed reference
@@ -375,7 +381,9 @@ against v0.3.4).
   `+ - * /`. v0.3.2 follows A.10 in these respects. Up to v0.3.3 a
   quantifier was accepted only at the start of a predicate or inside
   parentheses, and `in` and `exists` were accepted as identifiers;
-  v0.3.4 follows A.10 and A.11.
+  v0.3.4 follows A.10 and A.11. Up to v0.3.6 a name that begins with a
+  keyword was split (`NOT_READY` was read as `NOT _READY`); from v0.3.7
+  a keyword ends at a word boundary.
 - **Types.** The types of Section 5.2.1 are not checked. A value
   written with a type constructor (for example `Range(1, 4)`) is kept
   as text.
@@ -393,11 +401,12 @@ against v0.3.4).
   the file, so every entry is handled as `method: smt`. The
   `not_supported` result is implemented for specifications constructed
   through the API. v0.3.3 reads the three keys and reports methods other
-  than `smt` as `not_supported`. For an `smt` entry, v0.3.4 reports an
-  error when `target:` names nothing declared or when `expr:` is
-  unsatisfiable; it does not prove `expr` against the model. The
-  contract and transition checks of Section 6.3 run whether or not
-  entries are present.
+  than `smt` as `not_supported`. From v0.3.7 a `target:` that names
+  nothing declared is an error for every method. For an `smt` entry an
+  unsatisfiable `expr:` is an error, and an `expr:` that does not
+  conform to A.10 is reported as `unknown` and not checked; `expr` is
+  not proved against the model. The contract and transition checks of
+  Section 6.3 run whether or not entries are present.
 - **Codegen.** `codegen:` entries are parsed but not acted upon; the
   target is selected on the command line (Appendix D).
 - **Extensions.** `extensions:` and `motivation:` are ignored.
