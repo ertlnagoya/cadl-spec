@@ -117,7 +117,7 @@ cadl sim-ir cadl/mobility_sos.cadl --format json \
 ```
 
 いま読んでいるファイルは完成した仕様で、契約には §3 で読む `lifecycle:` と `monitors:` がすでに書かれています。そのため、上のコマンドは lifecycle がある、と表示するはずです。
-**構造だけ**だとどうなるかを見るには、作業用のコピーを作り、そこから `lifecycle:` と `monitors:` のブロックを削除して、同じ 2 つのコマンドを実行してください。`cadl check` は通りますが、IR では `"lifecycle": null`、monitors は 0 個になり、cadl-explorer には「契約が `lifecycle:` を宣言していない」という警告だけが表示されます。
+**構造だけ**だとどうなるかを見るには、作業用のコピーを作り、そこから `lifecycle:` と `monitors:` のブロックを削除して、同じ 2 つのコマンドを実行してください。`cadl check` は通りますが、IR では `"lifecycle": null`、monitors は 0 個になり、cadl-explorer には図が出ず、「契約が `lifecycle:` を宣言していない」という警告と、monitor が宣言されていないという案内だけが表示されます。
 構造だけでは「期限」「違反」「帰結」を書けない、というこのギャップを埋めているのが、§3 で読む 2 つのブロックです。
 :::
 
@@ -201,6 +201,8 @@ streamlit run app.py
 | 実線エッジ + `Δ 30s` / `Δ 5s` | deadline 付き遷移 |
 | 赤の破線エッジ + ラベル `violation` / `Major`（2 行） | `on_violation` による強制遷移 |
 
+図の中で `Terminated` はどこともつながっていません。契約は `Terminated` を終端状態として宣言していますが、そこへ入る遷移を書いていないためです。`mobility_sos.cadl` を **Designer** ページで開くと、同じことが Lifecycle の警告（`State 'Terminated' cannot be reached from the initial state 'Requested'`）として表示されます。`cadl check` はこの状態でも通ります。
+
 :::info[このパターンは何度も出てきます]
 このコースでは「CADL を編集 → `cadl sim-ir` で IR を再生成 → cadl-explorer をリロード」という 3 ステップを、節目（構造を読んだ後、契約を読んだ後、コード生成後、シミュレーション後、契約改訂後）でそのつど繰り返します。
 コードと図が連動して動く感触をつかむのが、このコースの主目的です。
@@ -246,7 +248,7 @@ python scripts/cadl_to_sumo.py
 生成されるもの：
 
 - `sumo/config/midtown.cadl.sumocfg` — `step-length` が CADL の `time_step_ms` から、
-  `end` は「`sumo/routes/midtown.rou.xml` の最後の `depart` ＋（1800 秒と `ride_time` guarantee の大きいほう）＋ 60 秒」で決まる（サンプルデータでは 3060 + 1800 + 60 = 4920）。経路ファイルがまだない場合は 3600 秒になるので、§6 の `generate_sumo_routes.py` のあと、`run_sumo.py` の前にこのスクリプトを再実行すると 4920 秒になる。§8 のように `ride_time` を厳しくしても `end` は短くならない
+  `end` は「`sumo/routes/midtown.rou.xml` の最後の `depart` ＋（1800 秒と `ride_time` guarantee の大きいほう）＋ 60 秒」で決まる（サンプルデータでは 3060 + 1800 + 60 = 4920）。経路ファイルがまだない場合は 3600 秒になる。§6 では `generate_sumo_routes.py` のあと、`run_sumo.py` の前にこのスクリプトを再実行するので、4920 秒になる。§8 のように `ride_time` を厳しくしても `end` は短くならない
 - `sumo/cadl_constraints.json` — `analyze_results.py` が読む契約条件（guarantees / deadlines / monitors）
 
 :::tip[🔍 可視化チェックポイント 2 — コード生成しても CADL ソースは変わらない]
@@ -269,6 +271,9 @@ netconvert -c sumo/network/midtown.netccfg
 
 # CSV → ルートファイル
 python scripts/generate_sumo_routes.py
+
+# 経路ファイルができたので sumocfg を作り直す（end = 4920 秒になる）
+python scripts/cadl_to_sumo.py
 
 # SUMO 実行（CADL 派生 sumocfg を自動選択）
 python scripts/run_sumo.py            # ヘッドレス
@@ -307,7 +312,7 @@ python scripts/analyze_results.py
 
 ここで実際に判定されるのは 2 つの `guarantee` 節だけです。deadline と monitor は一覧に出ますが、評価はされません。
 
-- `guarantees` は SUMO の `tripinfo.duration` / `waitingTime` に直接対応するので評価できる。
+- `guarantees` は `tripinfo.xml` に照らして評価される。`ride_time` は `tripinfo.duration` に直接対応する。`waiting_time` は `tripinfo.waitingTime` と比べているが、これは代理指標にすぎない。`waitingTime` は車両が走行中に停止していた時間であり、乗客がタクシーを待った時間ではない。このパイプラインでは CSV の 1 行ごとに、乗車時刻に乗車地点へ車両を 1 台投入するので、乗客の待ち時間は発生せず、値は 30 件すべて 0 秒になる。したがって、この `[OK]` はモデルの作り上、常に成り立つ。
 - `deadlines`（matching/accept）は SUMO 上に対応するイベントがないので未評価。
 - `monitors` は、乗客ごとの `waiting_time`（`Matched` の間）、`battery`、`route_deviation_ratio` を見ており、いずれも SUMO の標準出力にない属性なので未評価。
 
@@ -369,7 +374,7 @@ OK: 分析完了。
   CADL ソース (mobility_sos.cadl)
         │
         ├── 図 (cadl-explorer)        ← 仕様を眺める
-        ├── 実行 (SUMO)                ← 仕様が動いた結果
+        ├── 実行 (SUMO)                ← 動的な挙動
         └── 判定 (analyze_results.py) ← guarantee の判定
 ```
 
