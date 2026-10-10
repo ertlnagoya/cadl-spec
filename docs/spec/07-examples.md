@@ -29,9 +29,9 @@ not part of [Appendix A](./appendix-a-syntax.md):
   ([§A.8](./appendix-a-syntax.md#a8-verification-block)):
   - the keys `check:`, `severity:`, `message:`, `contracts:`,
     `transitions:`, `invariant:`, `tool:`, and `parameters:`. Only
-    three of them have a counterpart in A.8: `target:` stands for
-    `contracts:` and `transitions:`, and `expr:` for `check:`; the
-    listings use neither. `severity:`, `message:`, `invariant:`,
+    four of them have a counterpart in A.8: `target:` stands for
+    `contracts:` and `transitions:`, and `expr:` for `check:` and
+    `invariant:`; the listings use neither. `severity:`, `message:`,
     `tool:`, and `parameters:` have no counterpart;
   - the `method:` values `model_checking` and `bounded_model_checking`
     (A.8 has `model_check`), `Monte_Carlo(...)` (A.8 has `simulation`),

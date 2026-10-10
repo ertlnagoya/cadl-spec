@@ -271,11 +271,13 @@ protocol declared in `protocols:`.
 ```ebnf
 verify_def    = "id:"   , identifier ,
                 "type:" , text ,
-                [ "target:"   , identifier ] ,
+                [ "target:"   , verify_target ] ,
                 [ "property:" , text ] ,
                 [ "method:"   , verify_method ] ,
                 [ "expr:"     , predicate ] ,              (* string *)
                 [ "bound:"    , int_literal ] ;
+verify_target = identifier
+              | identifier , "->" , identifier ;           (* FROM->TO *)
 verify_method = "smt" | "model_check" | "simulation" | "proof" ;
 ```
 
@@ -459,7 +461,8 @@ deviates from this appendix as follows (checked against `cadl` 0.3.8).
   asks a processor that does not implement the extension to emit one.
   The SHOULD of [Appendix E](./appendix-e-sos-dsl.md) does not apply,
   because `cadl` implements `sos-dsl`; an `extensions:` declaration is
-  simply not checked. The `motivation:` block is not preserved either:
+  simply not checked. Where `cadl` falls short of Appendix E itself is
+  stated in [Section E.4](./appendix-e-sos-dsl.md#e4-static-semantics). The `motivation:` block is not preserved either:
   `cadl sim-ir` emits `motivation: null` for a file that has one,
   which deviates from the SHOULD of
   [Appendix C, Section C.6](./appendix-c-motivation.md).

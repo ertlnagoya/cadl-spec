@@ -1,10 +1,14 @@
 CADL Specification Site (cadl-spec)
 Copyright 2026 ERTL, Graduate School of Informatics, Nagoya University
 
-Code in this repository (the CADL and other code examples embedded in the
-documentation, the site source under src/ and under
-i18n/ja/docusaurus-plugin-content-pages/, and the configuration files) is
-licensed under the Apache License, Version 2.0 (see LICENSE).
+Documentation is licensed under Creative Commons Attribution 4.0
+International (see LICENSE-docs). The documentation is:
+  - the text under docs/ and i18n/ja/docusaurus-plugin-content-docs/,
+    except the code examples embedded in it;
+  - the figures under static/img/handson/ and
+    static/img/mobility_sos_lifecycle.png.
 
-Documentation (the text under docs/ and i18n/, and the figures under static/img/) is licensed under
-Creative Commons Attribution 4.0 International (see LICENSE-docs).
+Everything else in this repository is code and is licensed under the Apache
+License, Version 2.0 (see LICENSE): the CADL and other code examples embedded
+in the documentation, the site source (src/, the rest of i18n/, the remaining
+files under static/) and the configuration files.

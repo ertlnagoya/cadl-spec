@@ -50,7 +50,7 @@ There are only three things to remember.
 
 These are the four repositories. The simulator keeps the Unity project (`unity/`), the Go arbitrator (`arbitrator/`) and the Python runtime (`cadl/runtime/`) together in one repository; the files described in Section 4 below are all found there.
 
-A note on names: the Unity scene (`C-SoS.unity`), the robot controller (`Pilot_CSoS`) and the arbitrator directory (`C-SoS/`) carry the label "C-SoS". In the simulator, C-SoS stands for Collaborative SoS (its config has `sosType: collaborative`) and names its centralised-arbitrator mode, as opposed to its "D-SoS" mode. That label is set in the simulator, independently of the `type:` in a CADL file. The CADL file of this course declares `type: Acknowledged`, and that declaration is what the course text means when it classifies the robot-delivery SoS.
+A note on names: the Unity scene (`C-SoS.unity`), the robot controller (`Pilot_CSoS`) and the arbitrator directory (`C-SoS/`) carry the label "C-SoS". In the simulator, C-SoS stands for Collaborative SoS (its config has `sosType: collaborative`) and names the mode used in this course, in which the robots claim deliveries and the `arbitrator/C-SoS` arbitrator awards them. The repository also contains a `D-SoS.unity` scene for reference; its arbitrator is not included. That label is set in the simulator, independently of the `type:` in a CADL file. The CADL file of this course declares `type: Acknowledged`, and that declaration is what the course text means when it classifies the robot-delivery SoS.
 
 ## 3. The road one contract travels — file by file
 
@@ -93,7 +93,7 @@ Using the textbook example `sos_dsl_robot_delivery.cadl` (153 lines), let's foll
 | --- | --- |
 | `LineTrace/Pilot_CSoS.cs` | The robot's brain. Path following, bidding on deliveries (claim), winning bids, completion. **Knows nothing about contracts** |
 | `arbitrator/C-SoS/main/main.go` | The arbitrator (task dispatcher) written in Go. Distributes deliveries over NATS and awards them first-come-first-served (FCFS) |
-| `Assets/streamingAssets/cadl_config.json` | The graph (11 nodes / 17 edges), robot count, NATS settings. The source of the `[Config]` lines in the Console |
+| `Assets/streamingAssets/cadl_config.json` | The graph (11 nodes / 17 edges), robot count, NATS settings. Read by both sides: the arbitrator's `[Config]` startup lines (Terminal 2) and Unity's `[GraphDefinition] Loaded from CADL config` line in the Console come from it |
 
 ### Python reference runtime — `cadl/runtime/` (for cross-checking)
 

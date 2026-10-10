@@ -11,7 +11,7 @@ CADL expressions (predicates, steps) are written inside YAML strings.
 
 ```yaml
 sos:
-  name: <identifier>            # SoS name
+  name: <string>                # SoS name
   type: <Directed|Acknowledged|Collaborative|Virtual>  # SoS classification
   version: <semantic_version>
 
@@ -86,9 +86,16 @@ to the verification level by adding blocks.
 | Design | Designers, Researchers<br />Advanced Students | Institutional parameters (α,β,λ),<br />Protocol procedures,<br />Transition conditions, Metrics | Explicit parameter values<br />Type annotations<br />Constraint expressions |
 | Verification | SoS Architects<br />Verification Engineers | assume-guarantee contracts,<br />Safety invariants,<br />Formal properties (temporal logic) | Formal predicates and quantifiers<br />Annotations for SMT/model checking<br />Code generation/synthesis specification |
 
-v0.2 has no syntax for type annotations or temporal-logic properties:
-"Type annotations" in the design-level row and the verification-level
-row describe the intended direction. What a verification-level file can
+v0.2 has no syntax for type annotations, temporal-logic properties, or
+synthesis. Three entries of the table therefore describe the intended
+direction: "Type annotations" in the design-level row and, in the
+verification-level row, "Formal properties (temporal logic)" and the
+synthesis part of "Code generation/synthesis specification". The rest of
+the verification-level row exists in v0.2: assume-guarantee contracts,
+safety invariants, formal predicates and quantifiers, the `method:` of a
+`verification:` entry ([§A.8](./appendix-a-syntax.md#a8-verification-block))
+for SMT and model checking, and the `codegen:` block
+([§A.9](./appendix-a-syntax.md#a9-codegen-block)). What a verification-level file can
 contain in v0.2 is shown in the fragment below.
 
 Below is an example showing how the same institution for household
