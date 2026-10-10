@@ -12,7 +12,7 @@ title: "コース A — ロボット配送 (メイン教材)"
 >
 > **持ち帰るもの**: 自分で書いた CADL 仕様、その仕様から生成された Unity C# 実装、期限切れやバッテリ規則への違反が検出され、該当する契約インスタンスが `Violated` に移る、5 台構成の動くシミュレーション。
 >
-> **初めての人へ**: 先に [全体構造とコード解説](code-walkthrough.md) を読んでおくと、各 Step で自分がどの部品を触っているのかが見えます。
+> **初めての人へ**: 推奨する順序は [なぜ SoS-DSL なのか？](academic-background.md) → [全体構造とコード解説](code-walkthrough.md) → 本コースです。コース A の前に全体構造とコード解説を読んでおくと、各 Step で自分がどの部品を触っているのかが見えます。
 
 ---
 
@@ -111,7 +111,7 @@ flowchart LR
 | --- | --- | --- |
 | Python | 3.9 以上 | `cadl` CLI を実行 |
 | Unity | 6000.2.9f1 (Unity 6.2) | シミュレーションを実行 |
-| Go | 1.21 以上 | arbitrator をビルド |
+| Go | 1.23 以上 | arbitrator をビルド |
 | NATS Server | 最新版 | ロボットと arbitrator のメッセージバス |
 | Node.js | 20 以上 | 仕様サイトを表示（任意） |
 
@@ -228,7 +228,7 @@ CADL は (1) を本体文法（Appendix A）でカバーします。SoS-DSL 拡�
 cd ~/program/cadl-spec
 npm install
 npm run start
-# ブラウザで http://localhost:3000 が開く
+# ブラウザで http://localhost:3000/cadl-spec/ が開く
 ```
 
 15 分に収まるよう、下表の目安時間に沿って順に読んでいきます。
@@ -391,10 +391,10 @@ $ cadl check my_delivery.cadl
 Type check passed: my_delivery.cadl
 ```
 
-IR JSON に変換して最初の 30 行を確認：
+IR JSON に変換します。出力は 100 行ほどあります。下の表示は、ここで見るべき部分だけを抜粋したものです：
 
 ```bash
-cadl sim-ir my_delivery.cadl --format json | head -30
+cadl sim-ir my_delivery.cadl --format json
 ```
 
 ```jsonc
@@ -428,7 +428,16 @@ cadl sim-ir my_delivery.cadl --format json | head -30
 両方とも確認：
 
 1. `cadl check my_delivery.cadl` が `Type check passed: my_delivery.cadl` と表示され、`[ERROR]` の行がない。
-2. IR JSON で `"lifecycle": null` と `"monitors": []` になっている。
+2. IR JSON で `"lifecycle": null` と `"monitors": []` になっている。この 2 行は契約の末尾（出力の 86 行目あたり）にある。この 2 行だけを表示するには：
+
+   ```bash
+   cadl sim-ir my_delivery.cadl --format json | grep -n -A1 '"lifecycle"'
+   ```
+
+   ```
+   86:        "lifecycle": null,
+   87-        "monitors": []
+   ```
 
 この `null` と `[]` こそが **Step 3 で埋めるギャップ** です。構造だけの仕様では「ロボットは 5 秒以内に ack せよ」と言えない理由がこれです。
 
@@ -893,7 +902,7 @@ nats-server -p 4222
 ```bash
 # Terminal 2 — C-SoS arbitrator (Go)
 cd ~/program/cadl-raspimouse-simulator/arbitrator/C-SoS/main
-go run main.go
+go run .
 ```
 
 ```
@@ -912,7 +921,7 @@ go run main.go
 >
 > ```bash
 > cd ~/program/cadl-raspimouse-simulator/arbitrator/C-SoS/main
-> go run main.go -config ~/program/cadl-raspimouse-simulator/unity/Assets/streamingAssets/cadl_config.json
+> go run . -config ~/program/cadl-raspimouse-simulator/unity/Assets/streamingAssets/cadl_config.json
 > ```
 >
 > 起動直後に `[Config] … taskArbitration.enabled=true …` が表示されれば config を読めています。

@@ -26,6 +26,9 @@ listings use shapes (`modules:`, `generates:`, `targets:`) that are not
 the keys of Appendix A
 [§A.8](./appendix-a-syntax.md#a8-verification-block) and
 [§A.9](./appendix-a-syntax.md#a9-codegen-block).
+In the contract listings, `sharing_mode:` (Section 7.1) and
+`approval_required:` (Section 7.4) are likewise not keys of
+[§A.4](./appendix-a-syntax.md#a4-contracts-institution-layer).
 Runnable examples live in the `examples/` directory of the
 [`cadl` repository](https://github.com/ertlnagoya/cadl).
 :::
@@ -104,7 +107,7 @@ sos:
           - "bonus(CHILD[i], 200yen) when all_weekly_chores_done"
 
     - id: SHARED_RESOURCE_USE
-      parties: [PARENT[*], CHILD[*]]
+      parties: [PARENT[*], CHILD[*], AI_ASSISTANT]
       assume:
         - "resource.is_available"
       guarantee:
@@ -234,10 +237,14 @@ codegen:
 
 ## 7.2 Robot Delivery System
 An example of a robot delivery system using MAPF as an institutional
-experimentation platform. The listing defines the contract of the
-centralized regime (D-SoS) and the conditions for switching to and from
-a distributed one (C-SoS, distributed collaborative), depending on
-environmental conditions.
+experimentation platform. The SoS as a whole is declared
+`type: Acknowledged`: a dispatcher coordinates robots and customers that
+remain independently operated. The listing defines the contract of the
+centralized regime (β = 0.8, the dispatcher decides) and the conditions
+for switching to and from a distributed regime, in which the robots
+coordinate among themselves, depending on environmental conditions. The
+regime names are not SoS types, and the file-level `type:` does not
+change at a transition.
 
 ```yaml
 sos:
@@ -305,7 +312,7 @@ sos:
           - "reward(ROBOT[i], base_fee + speed_bonus) when delivery_on_time"
           - "penalty(ROBOT[i], -base_fee * 0.5) when delivery_late"
 
-  # === Institutional Transition: Switch from D-SoS to C-SoS based on failure rate ===
+  # === Institutional Transition: Switch between the centralized and distributed regimes based on failure rate ===
   transitions:
     - from: CENTRALIZED_REGIME
       to: DISTRIBUTED_REGIME
@@ -323,7 +330,7 @@ sos:
         AND latency_ms <= 100
         AND DISPATCHER.is_operational == true
       protocol: REGIME_SHIFT_PROTOCOL   # protocol definition omitted from this listing
-      safety_invariant: "no_collision"
+      safety_invariant: "no_collision AND no_order_loss"
 
   metrics:
     - id: throughput
@@ -453,7 +460,7 @@ codegen:
         num_robots: [10, 100, step=10]
       objective: "maximize(throughput) subject_to fairness >= 0.7"
       output: "regime_map.json"
-      # At each parameter point, determine optimal regime (D-SoS/C-SoS) and parameters (β,α,λ)
+      # At each parameter point, determine optimal regime (centralized/distributed) and parameters (β,α,λ)
 ```
 
 ## 7.3 IoT Data Sharing System
@@ -588,7 +595,7 @@ verification:
       # DATA_BROKER cannot access raw data
       NOT(exists flow: DATA_PROVIDER[*] -> DATA_BROKER
         where flow.contains(raw_data))
-      # CONSUMER[j] can only access subscribed data
+      # DATA_CONSUMER[j] can only access subscribed data
       AND for all consumer_j in DATA_CONSUMER[*]:
         consumer_j.accessible_data
           SUBSET_OF subscribed_data(consumer_j)
@@ -821,7 +828,7 @@ verification:
   # AI safety contract satisfiability
   - id: AI_SAFETY_SATISFIABILITY
     type: assume_guarantee
-    contract: AI_SAFETY_CONTRACT
+    contracts: [AI_SAFETY_CONTRACT]
     check: >
       # Under assume(training_data.is_representative),
       # is guarantee(no_harmful_action) always satisfied?

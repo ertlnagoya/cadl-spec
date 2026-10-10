@@ -7,7 +7,7 @@ description: "Optional motivation extension of CADL (v0.1-ext): agent motivation
 # Appendix C — Motivation Extension (v0.1-ext)
 
 This appendix describes the **motivation extension** to CADL used in the
-CADL Explorer demonstrator and the A-SoS motivation-sensitive governance
+CADL Explorer demonstrator and the D-SoS motivation-sensitive governance
 experiments. The core language ([Chapter 5](./05-language-spec.md) and
 [Appendix A](./appendix-a-syntax.md)) does **not** mandate this block; a
 conforming CADL processor that does not implement the extension MUST NOT

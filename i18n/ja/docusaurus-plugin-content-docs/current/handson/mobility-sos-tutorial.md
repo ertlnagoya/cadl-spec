@@ -61,7 +61,7 @@ cd ~/program
 
 # 演習用 venv
 cd mobility-sos-exercise
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
@@ -186,7 +186,7 @@ cadl sim-ir cadl/mobility_sos.cadl --format json > cadl/mobility_sos.ir.json
 cd ~/program/cadl-explorer
 streamlit run app.py
 # ブラウザで http://localhost:8501 が開く
-# サイドバー → "SoS_DSL_Lifecycle" → mobility_sos.ir.json をアップローダにドラッグ
+# サイドバー → "Contract Lifecycle" → mobility_sos.ir.json をアップローダにドラッグ
 ```
 
 以下のような図がブラウザに描画されます：

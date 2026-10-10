@@ -134,9 +134,22 @@ For Session 1 you will only touch **actors** and **contracts**. `protocols` and 
 
 **Procedure**:
 
-1. Add a protocol `DeliveryProposal` with `participants: [DISPATCHER, "ROBOT[i]"]`.
-2. List 3 steps: `DISPATCHER -> ROBOT : route_assignment`, `ROBOT -> DISPATCHER : ack`, `ROBOT -> DISPATCHER : completion`.
-3. Add `pre`/`post` conditions if you can think of any.
+1. Add a `protocols:` section under `sos:` (same indentation as `contracts:`) with one protocol, `DeliveryProposal`. Give it a `trigger`. A protocol has no separate list of participants: who takes part follows from the senders and receivers named in `steps`.
+2. List 3 steps under `steps:`, each written as a quoted string: `"DISPATCHER -> ROBOT[i] : route_assignment"`, `"ROBOT[i] -> DISPATCHER : ack"`, `"ROBOT[i] -> DISPATCHER : completion"`.
+3. Add a `precondition` / `postcondition` if you can think of any (the other optional keys are `safety_invariant` and `timing`).
+4. Run `cadl check my_delivery_v1.cadl`, then confirm that the protocol really reached the IR: `cadl sim-ir my_delivery_v1.cadl --format json | grep -n -A6 '"protocols"'` should show `"id": "DeliveryProposal"`. Do not rely on `cadl check` alone here — it silently ignores keys it does not know, so a misspelt key (`pre:`, `participants:` …) still passes.
+
+```yaml
+  protocols:
+    - id: DeliveryProposal
+      trigger: "new_delivery_request(CUSTOMER[i])"
+      precondition: "ROBOT[i].battery > 20"
+      steps:
+        - "DISPATCHER -> ROBOT[i] : route_assignment"
+        - "ROBOT[i] -> DISPATCHER : ack"
+        - "ROBOT[i] -> DISPATCHER : completion"
+      postcondition: "ROBOT[i].status == Delivered"
+```
 
 **Reflection**: Why is the protocol described as a sequence of *messages*, not as code? What does this give you that a Python function would not? (Hint: think about who *implements* each step.)
 
@@ -207,8 +220,8 @@ Two new keys make this explicit:
 1. Copy `v1` → `v2`.
 2. Add `lifecycle.states`, `lifecycle.initial`, `lifecycle.terminal`, and 4 transitions (`assign`, `accept`, `start_delivery`, `complete`).
 3. On `accept`, set `deadline: 5s` and `on_violation.transition: Violated` (the value is the target state). Also declare `extensions: [sos-dsl: 0.1]` under `sos:`, as in Step 3 of the main textbook.
-4. Run `cadl check` and `cadl sim-ir my_delivery_v2.cadl --format json | head -60`.
-5. Confirm in the IR that `"lifecycle"` is no longer `null`.
+4. Run `cadl check my_delivery_v2.cadl`, then `cadl sim-ir my_delivery_v2.cadl --format json | grep -n -A3 '"lifecycle"'` (the `"lifecycle"` key sits around line 86 of the IR, so `head` would cut it off).
+5. Confirm in the output that `"lifecycle"` is no longer `null`: the line now reads `"lifecycle": {`, followed by `"states": [` and the first state names.
 
 #### Exercise 2.2 (★★) — Add an over-speed monitor
 
@@ -299,10 +312,10 @@ Software engineers debug code. SoS engineers debug **diagrams** — because the 
 
 1. Run `cadl-explorer` (`streamlit run app.py`).
 2. Generate IR for v1 too: `cadl sim-ir my_delivery_v1.cadl --format json > my_delivery_v1.ir.json`.
-3. Open the *SoS_DSL_Lifecycle* page. Upload v1 first, then v2.
+3. Open the **Contract Lifecycle** page (in the list of pages at the top of the sidebar). Upload v1 first, then v2.
 4. Take screenshots.
 
-**Check**: For v1, the page should display a warning that the contract has no lifecycle. For v2, it should render a state machine with 7 states.
+**Check**: For v1, the page should display a warning that the contract has no lifecycle. For v2, it should render a state machine with 8 states (7 if you skipped Exercise 2.3, which adds `Cancelled`).
 
 #### Exercise 3.2 (★★) — A/B comparison report
 
@@ -326,7 +339,11 @@ Software engineers debug code. SoS engineers debug **diagrams** — because the 
 1. Create `cadl-explorer/cadl_sim/sos_dsl/violation_trace_view.py`.
 2. Parse each NDJSON line, group by `instance_id`, render as a horizontal bar with red `×` markers on violations.
 3. Use Plotly (`plotly.graph_objects.Bar`) — no new dependency required.
-4. Wire it in `cadl-explorer/pages/SoS_DSL_Violation_Trace.py`.
+4. Wire it in as a page. cadl-explorer has no `pages/` directory: pages live in `views/` and are registered explicitly in `app.py`. Create `cadl-explorer/views/violation_trace.py` (use `views/lifecycle.py` as a model), then add one entry to the `st.navigation([...])` list in `app.py`:
+
+   ```python
+   st.Page("views/violation_trace.py", title="Violation Trace", url_path="violation-trace"),
+   ```
 
 This builds on what you would expect to see *in advance* — by the time Session 4 runs simulation, you'll have a viewer ready for its output.
 
@@ -368,6 +385,8 @@ The Python runtime in `cadl-raspimouse-simulator/cadl/runtime/` consumes the IR 
 
 This is your **ground truth** to validate any spec change you make.
 
+The table describes the *bundled* fixture, which declares both monitors, `battery_guard` and `deadline_watch`. When you run the demo on your own IR (`--ir`, from Exercise 4.2 on), a monitor your file does not declare cannot fire. With the main textbook's v2, which has `battery_guard` but no `deadline_watch`, `robot-3-1` ends in `Delivering` with no violation, not in `Violated`. If your v2 has no `battery_guard` either, `robot-2-1` is still `Violated`, but via `deadline:accept`.
+
 ### Exercises (~50 min in class + homework)
 
 #### Exercise 4.1 (★) — Capture the baseline
@@ -391,8 +410,16 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 **Procedure**:
 
 1. Edit `my_delivery_v2.cadl`, change `deadline: 5s` to `deadline: 1s` on the `accept` transition.
-2. Use the e2e script to regenerate the IR and copy it as the demo fixture (or modify the demo script to load your IR).
-3. Re-run `multi_robot_demo --summary`.
+2. Regenerate the IR and run the demo on it with the `--ir` option (without `--ir` the demo loads the bundled fixture):
+
+   ```bash
+   cd ~/program/cadl_repo
+   cadl sim-ir my_delivery_v2.cadl --format json > my_delivery_v2.ir.json
+   cd ~/program/cadl-raspimouse-simulator
+   python3 -m cadl.runtime.multi_robot_demo --ir ~/program/cadl_repo/my_delivery_v2.ir.json --summary
+   ```
+
+3. Compare the summary with the one you get from the same file with `deadline: 5s`.
 
 **Reflection**: An overly tight deadline turns *every* contract into a violation, regardless of effort. An overly loose one masks misbehaviour. **What process would you use to pick a deadline value for a real SoS?** (Hint: data from baseline runs, plus a target false-positive rate.)
 
@@ -461,26 +488,49 @@ This is a small but useful *typology of regressions* in normative SoS specs.
 **Procedure**:
 
 1. Make the change you diagnosed in 5.1.
-2. Re-run `multi_robot_demo --summary` against the new IR.
+2. Generate the IR of the new file and re-run the demo against it, as in Exercise 4.2:
+
+   ```bash
+   cd ~/program/cadl_repo
+   cadl sim-ir my_delivery_v3.cadl --format json > my_delivery_v3.ir.json
+   cd ~/program/cadl-raspimouse-simulator
+   python3 -m cadl.runtime.multi_robot_demo --ir ~/program/cadl_repo/my_delivery_v3.ir.json --summary
+   ```
+
 3. Confirm the violation you fixed is gone *and* you didn't break anything else.
 
 **Submit**: `my_delivery_v3.cadl` + diff against v2.
 
 #### Exercise 5.3 (★★★) — Implement reward execution
 
-**Goal**: Currently rewards are *recorded* in `incentives.rules` but never *applied*. Make the Python runtime maintain a per-actor balance and credit a reward when a contract reaches `Completed`.
+**Goal**: Currently a reward is *written* in the spec (`incentives.rules`) but never *applied* — and the rule text does not even reach the runtime. When the spec is lowered to the IR (`cadl_repo/src/cadl/sim/lower.py`), only `lambda` and `incentive_type` are kept, under the contract's `governance`; the `rules` list is dropped. Make the Python runtime maintain a per-actor balance and credit a reward when a contract reaches `Completed`.
 
 **Procedure**:
 
 1. Extend `ContractRuntime` with `balances: dict[str, float]`, accessor `runtime.balance(actor_id)`.
-2. Parse `contract.spec["incentives"]["rules"]` for entries of the form `reward(<actor_ref>, <amount>) when on_time_delivery`.
+2. Get the rules. Because the IR does not carry them, read them from the `.cadl` source with the cadl parser, in a Python environment where the `cadl` package is installed (if your file has no `incentives:` block, add the one from Step 2 of the main textbook):
+
+   ```python
+   from cadl.parser import parse_file
+
+   sos = parse_file("my_delivery_v2.cadl")
+   for contract in sos.contracts:
+       if contract.incentives:
+           for rule in contract.incentives.rules:
+               print(contract.id, rule.description)
+   # DELIVERY_SLA reward(ROBOT[i], 10) when on_time_delivery
+   ```
+
+   Each rule is an `IncentiveRule` whose only field, `description`, holds the raw string. Parse entries of the form `reward(<actor_ref>, <amount>) when on_time_delivery` yourself (a regular expression is enough) and hand the result to the runtime.
+
+   *Stretch variant*: instead of reading the source, extend `lower.py` (and `GovernanceParams` in `sim/ir.py`) so that the IR carries the rules, confirm that they appear in the output of `cadl sim-ir --format json`, and let the runtime read them from the IR.
 3. On terminal-state entry, evaluate each rule against the trace; credit the matched actor.
 4. Add `cadl/runtime/tests/test_rewards.py` with at least:
    - One test: a robot earns 10 on a `Completed` delivery.
    - One test: no reward is paid on a `Violated` delivery.
 5. Update `multi_robot_demo --summary` to print final balances.
 
-**Reflection**: The CADL spec already says `reward(ROBOT[i], 10) when on_time_delivery`, but until this exercise the runtime ignored it. **Where is the line between "the spec says so" and "the runtime does so"?**
+**Reflection**: The CADL spec already says `reward(ROBOT[i], 10) when on_time_delivery`, but until this exercise the runtime ignored it — the IR did not even carry it. **Where is the line between "the spec says so" and "the runtime does so"?**
 
 #### Exercise 5.4 (★★★) — Final report
 

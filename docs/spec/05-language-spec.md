@@ -74,7 +74,9 @@ regime.
 CADL provides three graduated description levels according to user
 expertise and purpose. The overview level is informal and lies outside
 the grammar ([Appendix A](./appendix-a-syntax.md) says such a description need not conform
-to it). Moving to the design level means rewriting it into the structure
+to it). Its keys are free-form: the author may choose any keys, in any
+language (the overview-level example below uses `content:` and
+`conflict_resolution:`, which Appendix A does not define). Moving to the design level means rewriting it into the structure
 shown in the design-level example below; design-level files are extended
 to the verification level by adding blocks.
 
@@ -84,14 +86,15 @@ to the verification level by adding blocks.
 | Design | Designers, Researchers<br />Advanced Students | Institutional parameters (α,β,λ),<br />Protocol procedures,<br />Transition conditions, Metrics | Explicit parameter values<br />Type annotations<br />Constraint expressions |
 | Verification | SoS Architects<br />Verification Engineers | assume-guarantee contracts,<br />Safety invariants,<br />Formal properties (temporal logic) | Formal predicates and quantifiers<br />Annotations for SMT/model checking<br />Code generation/synthesis specification |
 
-v0.1 has no syntax for type annotations or temporal-logic properties;
-the verification-level row describes the intended direction.
+v0.1 has no syntax for type annotations or temporal-logic properties:
+"Type annotations" in the design-level row and the verification-level
+row describe the intended direction. What a verification-level file can
+contain in v0.1 is shown in the fragment below.
 
 Below is an example showing how the same institution for household
-"chore-sharing rules" is described at the overview level and at the
-design level. A verification-level description adds a `verification:`
-block to the design-level file; its syntax is in
-[Appendix A, §A.8](./appendix-a-syntax.md).
+"chore-sharing rules" is described at the overview level, at the
+design level, and, as a fragment added to the design-level file, at the
+verification level.
 
 ```yaml
 # === Overview Level: For Citizens and Students ===
@@ -155,10 +158,38 @@ sos:
             - PARENT[1] : make_final_decision
 ```
 
-For verification-level description examples, see
-[Section 7.1](./07-examples.md) for contradiction detection and
-verification
+A verification-level description adds a `verification:` block to the
+design-level file; its syntax is in
+[Appendix A, §A.8](./appendix-a-syntax.md#a8-verification-block). The
+fragment below is appended to the design-level example, under `sos:` at
+the same indentation as `protocols:`.
+
+```yaml
+  # === Verification Level: block appended to the design-level file ===
+  verification:
+    - id: CHORE_CONSISTENCY        # Target only
+      type: consistency
+      target: CHORE_SHARING
+      method: smt
+    - id: REWARD_BOUND             # With a predicate (Appendix A, A.10)
+      type: safety
+      target: CHORE_SHARING
+      property: "The weekly reward stays within the budget"
+      method: smt
+      expr: "weekly_reward >= 0 AND weekly_reward <= 400"
+```
+
+With this block appended, `cadl verify` (v0.3.8) accepts the file and
+reports both entries as passed. For the entry with `expr:` it checks
+only that the predicate is satisfiable; it does not prove it against
+the model
+([Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)).
+
+[Section 7.1](./07-examples.md) illustrates the contradiction detection
+that the verification level aims at
 ([Objective 2 of Section 1.2](./01-introduction.md#objective-2-computing-institutional-violations-and-contradictions)).
+Its listings are conceptual and use keys other than those of §A.8 (see
+the note at the beginning of Chapter 7).
 In this way, the
 same institution can be described at different granularities according
 to user needs, and AI supports refinement from overview level to design
@@ -192,6 +223,14 @@ An actor is the basic unit representing a constituent system in an SoS.
 Each actor has a unique identifier and declares its role, autonomy
 level, and capabilities. Sets of actors can be referenced using wildcard
 notation ([*]) or index ranges ([1..N]).
+The upper bound of a range is an integer or a name. A name such as `N`
+is a symbolic size: v0.1 has no construct that gives it a value, so the
+description stands for any number of actors. The reference
+implementation keeps such a range as written. It does not take `N` from
+`context.environment`, and `cadl sim-gen` writes an actor count only
+for a range whose bounds are both integers (`[1..3]` gives `count: 3`);
+for `[1..N]` the generated configuration carries no count
+([Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)).
 
 ```yaml
 actors:
@@ -232,7 +271,7 @@ semantics. Each contract has the following sub-elements:
 | assume | Preconditions. Conditions that the environment and other actors must satisfy for the contract to be valid. |
 | guarantee | Guarantee conditions. Properties that contract parties promise to provide when preconditions are met. |
 | authority | Decision scope and decision maker. Contains centralization parameter β. |
-| information | Holds `alpha` (sharing degree parameter α), the `views` each party has, and the `sharing` flows (`source -> target : item`). A push/pull/broadcast sharing mode cannot be expressed in v0.1 (in the example below it appears only as comments). |
+| information | Holds `alpha` (sharing degree parameter α), the `views` each party has, and the `sharing` flows (`source -> target : item`). A push/pull/broadcast sharing mode cannot be expressed in v0.1 (in the example below, the comments on the `sharing:` entries note whether a flow is periodic or event-driven; they are comments only). |
 | responsibilities | List of obligations and tasks for each party. |
 | incentives | Definition of rewards, penalties, and reputation mechanisms. Contains intensity parameter λ. |
 | duration | Validity period of the contract. Three types: indefinite, time-limited, event-driven. |
@@ -366,10 +405,13 @@ key of a YAML mapping, the entries of a mapping may appear in any order,
 and `{ "-" , x }` is a YAML sequence of `x`. For the complete grammar,
 including the expression syntax of predicates, see
 [Appendix A](./appendix-a-syntax.md), which is normative for the
-concrete syntax.
+concrete syntax. The rules below are abridged: they leave out
+`extensions:` and `motivation:` of the file and `lifecycle:` and
+`monitors:` of a contract (Appendix A, §A.2 and §A.4), as well as the
+rules of the nested blocks.
 
 ```ebnf
-(* CADL EBNF - Main Rules *)
+(* CADL EBNF - Main Rules (abridged; Appendix A is normative) *)
 
 cadl_file = "sos:" , sos_definition ;
 sos_definition = "name:" , text ,
@@ -433,8 +475,11 @@ step may be written unquoted: YAML reads `A -> B : m` as a one-entry
 mapping, which the parser accepts, though the quoted form
 (`- "A -> B : m"`) is recommended. An entry of `sharing:`
 (`- "TAXI[*] -> CENTRAL : position"`) and an actor reference with an
-index inside an inline list (`parties: [CENTRAL, "TAXI[*]"]`) must be
-quoted; otherwise YAML reads them differently or rejects them.
+index inside an inline list (`parties: [CENTRAL, "TAXI[*]"]`) MUST be
+quoted (Appendix A, notation and §A.4); otherwise YAML reads them
+differently or rejects them. The reference implementation silently
+drops an unquoted `sharing:` entry
+([Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)).
 
 ## 5.4 Semantics
 ### 5.4.1 Assume-Guarantee Semantics of Contracts

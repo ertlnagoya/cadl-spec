@@ -146,7 +146,7 @@ on PyPI as `cadl-lang`. The output below is from cadl 0.3.8.
 ### B-1. Install
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install cadl-lang
 cadl --version

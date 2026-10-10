@@ -70,7 +70,7 @@ cd ~/program
 
 # Exercise venv
 cd mobility-sos-exercise
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
@@ -199,7 +199,7 @@ cadl sim-ir cadl/mobility_sos.cadl --format json > cadl/mobility_sos.ir.json
 cd ~/program/cadl-explorer
 streamlit run app.py
 # Browser opens at http://localhost:8501
-# Sidebar → "SoS_DSL_Lifecycle" → drag mobility_sos.ir.json into the uploader
+# Sidebar → "Contract Lifecycle" → drag mobility_sos.ir.json into the uploader
 ```
 
 You should see something like:

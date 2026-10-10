@@ -4,7 +4,7 @@ title: "9. Research Directions and Open Challenges"
 description: "Research directions and open challenges for CADL, with related work, concrete research challenges, and a research roadmap."
 ---
 
-Based on use case analysis in [Section 8](./08-use-cases.md) and survey of existing research,
+Based on use case analysis in [Chapter 8](./08-use-cases.md) and survey of existing research,
 we organize research directions toward CADL realization and development.
 For each direction, we present related existing research and concrete
 research challenges that CADL should address.
@@ -80,7 +80,7 @@ contracts used for the automated execution of data sharing agreements, but insti
 | --- | --- | --- |
 | RD-5.1 | Cross-jurisdictional Institutional<br />Compatibility Verification | Technology to detect legal contradictions when composing CADL descriptions from different jurisdictions (e.g., differences between EU GDPR [[Regulation (EU) 2016/679]](./appendix-b-references.md) and Japanese Personal Information Protection Act [[Act No. 57 of 2003]](./appendix-b-references.md)). |
 | RD-5.2 | Parameterization of<br />Cultural Norms | Technology to model cultural dimensions (collectivism/individualism, power distance, uncertainty avoidance, etc.) as institutional parameters and handle cross-cultural governance differences quantitatively. |
-| RD-5.3 | Multilingual Institutional Description | Enable CADL overview-level descriptions in multiple languages with AI verifying institutional equivalence across languages. Realize NFR-7 (internationalization). |
+| RD-5.3 | Multilingual Institutional Description | Enable CADL overview-level descriptions in multiple languages with AI verifying institutional equivalence across languages. This goes beyond NFR-7 (internationalization), which only requires that human-readable text can be written in any language. |
 
 ## 9.6 Research Roadmap
 We organize the above research directions along a time axis and present

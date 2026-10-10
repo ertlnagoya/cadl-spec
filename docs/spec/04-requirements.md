@@ -64,9 +64,11 @@ The following are likewise targets, including the quantitative ones
 provides. NFR-7 separates human-readable
 text from identifiers: identifiers stay ASCII
 ([Appendix A, §A.1](./appendix-a-syntax.md#a1-lexical-rules)) because they
-become names in generated code (Solidity, Rego, C#, Go), where non-ASCII
+become names in generated code (Python, Solidity, Rego, C#), where non-ASCII
 names are not accepted by every target and would require normalization
-rules. The reference implementation meets NFR-7 as stated.
+rules. The reference implementation accepts Unicode text in strings and
+comments; it does not yet reject identifiers that violate the ASCII rule
+([Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)).
 
 | **ID** | **Requirement Name** | **Description** |
 | --- | --- | --- |
@@ -76,7 +78,7 @@ rules. The reference implementation meets NFR-7 as stated.
 | NFR-4 | Extensibility | Have a plugin mechanism to add domain-specific vocabulary and constraints as libraries. |
 | NFR-5 | Interoperability | Support code generation to SysMLv2 [[OMG, 2025]](./appendix-b-references.md), AADL [[Feiler & Gluch, 2012]](./appendix-b-references.md), and smart contracts (Solidity [[Solidity Documentation]](./appendix-b-references.md)). |
 | NFR-6 | AI Affinity | Ensure syntax is regular and has little ambiguity so LLMs can generate, modify, and explain CADL descriptions from natural language. Designed with AI-assisted barrier reduction (NL→CADL conversion, natural language explanation generation) in mind. |
-| NFR-7 | Internationalization | Be able to write human-readable text — string values such as `name`, `description`, `role`, and `message`, and comments — in any language using Unicode characters (Japanese, etc.). Identifiers (actor, contract, and protocol ids and the names used in expressions) are restricted to ASCII. |
+| NFR-7 | Internationalization | Be able to write human-readable text — string values such as `name`, `description`, and `role`, and comments — in any language using Unicode characters (Japanese, etc.). Identifiers (actor, contract, and protocol ids and the names used in expressions) are restricted to ASCII. |
 | NFR-8 | Visualization | Automatically generate diagrams such as authority structure diagrams, protocol sequence diagrams, and regime maps from CADL descriptions, enabling non-technical users to visually grasp the overall institutional picture. |
 
 ## 4.3 Constraints
@@ -84,6 +86,6 @@ rules. The reference implementation meets NFR-7 as stated.
 | **ID** | **Description** |
 | --- | --- |
 | C-1 | Be able to map to the five-layer framework [[Shimoyama & Matsubara, 2026]](./appendix-b-references.md); the mapping is given in [Section 2.2](./02-objectives.md). |
-| C-2 | Be able to describe SoS classifications (D/A/C/V-SoS) from [ISO/IEC/IEEE 21841:2019](./appendix-b-references.md). |
+| C-2 | Be able to describe SoS classifications (D/A/C/V-SoS) from [[ISO/IEC/IEEE 21841:2019]](./appendix-b-references.md). |
 | C-3 | Be able to integrate with IEC 62853 [[IEC 62853:2018]](./appendix-b-references.md) process views (consensus-building, accountability, fault response, change management). |
 | C-4 | Have a formal foundation based on assume-guarantee contract semantics. |
