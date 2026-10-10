@@ -1,13 +1,13 @@
 ---
 sidebar_position: 11
 title: "Appendix A: Syntax Reference (EBNF)"
-description: "Reference grammar of CADL v0.1 in EBNF: document structure, expression sub-language, reserved keywords, and reference implementation status."
+description: "Reference grammar of CADL v0.2 in EBNF: document structure, expression sub-language, reserved keywords, and reference implementation status."
 ---
 
 # Appendix A. Syntax Reference (EBNF)
 
 A CADL file is a **YAML 1.2 document** [[Ben-Kiki+, 2021]](./appendix-b-references.md). This appendix gives the reference
-grammar of CADL v0.1 in two parts: the *structure* of the document
+grammar of CADL v0.2 in two parts: the *structure* of the document
 (A.2–A.9), written as EBNF over YAML mappings and sequences, and the
 *expression sub-language* (A.1, A.10) that is written inside individual
 YAML string scalars.
@@ -49,7 +49,7 @@ MUST be quoted inside a flow sequence, where YAML would otherwise read
 it differently. A `sharing_entry` (A.4) MUST be a quoted string
 wherever it is written.
 
-Keys that this appendix does not define are not part of CADL v0.1. A
+Keys that this appendix does not define are not part of CADL v0.2. A
 processor MUST NOT reject a file because of them; the reference
 implementation ignores them.
 
@@ -128,7 +128,7 @@ name that can be declared:
   `lifecycle:` and `monitors:` to `contract_def` (A.4);
 - the motivation extension ([Appendix C](./appendix-c-motivation.md)),
   which defines `motivation_block`. It has no `extensions:` name in
-  v0.1 and is used simply by writing a `motivation:` block.
+  v0.2 and is used simply by writing a `motivation:` block.
 
 ## A.3 Context, actors, metrics
 
@@ -153,7 +153,7 @@ metric_def     = "id:" , identifier ,
 `autonomy:` defaults to `medium`. In `actor_def`, the index of `id:` is
 normally a range (`"ROBOT[1..N]"`) and declares a parameterised set of
 actors. The upper bound of a `range_expr` is an integer or an
-identifier. An identifier such as `N` is a symbolic size; v0.1 has no
+identifier. An identifier such as `N` is a symbolic size; v0.2 has no
 construct that binds it to a value (see
 [A.12](#a12-reference-implementation-status-v03) for what the reference
 implementation does with it). A non-string value in `environment:` is read as a literal

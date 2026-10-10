@@ -16,7 +16,7 @@ block syntactically and emit an *informational* diagnostic.
 
 The extension is versioned independently from the core language; this
 document describes **v0.1-ext**, which is the version label of the
-extension text. In v0.1 the extension has no name to declare under
+extension text. In v0.2 the extension has no name to declare under
 `extensions:`
 ([Appendix A.2](./appendix-a-syntax.md#a2-top-level-structure)); a file
 uses it simply by writing a `motivation:` block.

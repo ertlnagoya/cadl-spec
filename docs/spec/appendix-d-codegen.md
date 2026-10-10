@@ -1,12 +1,12 @@
 ---
 sidebar_position: 14
 title: "Appendix D: Codegen Target Catalog"
-description: "Catalog of CADL v0.1 code-generation targets: category, emitted artifact, and the module and command of the reference implementation."
+description: "Catalog of CADL v0.2 code-generation targets: category, emitted artifact, and the module and command of the reference implementation."
 ---
 
 # Appendix D — Codegen Target Catalog
 
-This appendix enumerates the code-generation targets defined by CADL v0.1
+This appendix enumerates the code-generation targets defined by CADL v0.2
 and the mapping to the reference implementation's directory layout.
 [Appendix A §A.9](./appendix-a-syntax.md#a9-codegen-block) defines the
 EBNF for `codegen:` entries; this appendix
@@ -31,7 +31,7 @@ pairs each target name with its **category**, **intended artifact**, and
 The name `python` denotes the runtime-code target in a `codegen:` entry;
 the simulator configuration of the same name is requested with
 `cadl sim-gen`. The Python simulator config therefore cannot be
-requested from a `codegen:` entry in v0.1; use `cadl sim-gen -t python`.
+requested from a `codegen:` entry in v0.2; use `cadl sim-gen -t python`.
 In the reference implementation at v0.3 the target is
 selected on the command line as shown in the last column; `codegen:`
 entries in the file are parsed but do not yet drive generation.

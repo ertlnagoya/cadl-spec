@@ -442,7 +442,7 @@ act on them.
 
 ## E.9 Backward compatibility
 
-Files written against unmodified CADL v0.1 remain valid. Files that use
+Files written against unmodified CADL v0.2 remain valid. Files that use
 the SoS-DSL extension SHOULD declare `sos-dsl: 0.1` under `extensions:`
 in the `sos:` mapping. Processors that do not implement the extension MUST
 NOT reject such files; they SHOULD emit a single informational

@@ -1,12 +1,12 @@
 ---
 sidebar_position: 0
-title: "CADL仕様書 v0.1"
-description: "CADL言語仕様書 v0.1 の入口ページ。概要，アーキテクチャ全体像，読み方，cadlツールの入手方法，関連ツールを示します。"
+title: "CADL仕様書 v0.2"
+description: "CADL言語仕様書 v0.2 の入口ページ。概要，アーキテクチャ全体像，読み方，cadlツールの入手方法，関連ツールを示します。"
 ---
 
 # CADL: Contract Architecture Description Language
 
-**言語仕様書 — Version 0.1 (ドラフト)**
+**言語仕様書 — Version 0.2 (ドラフト)**
 
 名古屋大学大学院情報学研究科 ERTL
 
@@ -140,7 +140,21 @@ cadl --version
 
 ## ステータス
 
-本書は**Version 0.1（ドラフト）** です。言語およびツールチェーンは開発中であり，
+本書は**Version 0.2（ドラフト）** です。言語およびツールチェーンは開発中であり，
 構文・意味論は今後のリビジョンで変更される可能性があります。
+
+Version 0.2 は，Version 0.1 の記述をリファレンス実装に合わせて改めたものです。
+既存のファイルの読み方に影響する変更は次のとおりです。
+
+- **β は意思決定集中度**：0 が完全分散，1 が完全集中です
+  （[5.4.2 節](./05-language-spec.md)）。Version 0.1 には，逆の向きで説明している
+  箇所がありました。
+- **SoS-DSL拡張（[付録E](./appendix-e-sos-dsl.md)）**：`on_violation.transition` と
+  `on_match.transition` は移り先の**状態**を指し（規則 L-5，M-3），
+  `on_match.violation` は宣言を必要としないラベルです（規則 M-2）。拡張の版は
+  `sos-dsl: 0.1` のままです。
+
+[動機拡張](./appendix-c-motivation.md)は，独自のラベル v0.1-ext のままです。
+
 フィードバックや議論は[GitHub Issues](https://github.com/ertlnagoya/cadl/issues)で歓迎します。
 仕様書や本サイトの問題は，[cadl-specのIssues](https://github.com/ertlnagoya/cadl-spec/issues)で報告できます。
