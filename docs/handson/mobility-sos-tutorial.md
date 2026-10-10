@@ -129,8 +129,8 @@ The file you are reading is the complete specification: its contract already car
 `lifecycle:` and `monitors:` blocks that §3 walks through, so the command should report a lifecycle.
 To see what the **structure alone** would give, make a scratch copy, delete the `lifecycle:` and
 `monitors:` blocks from it, and run the same two commands on the copy: `cadl check` still passes, but
-the IR has `"lifecycle": null` and no monitors, and cadl-explorer shows only a warning that the
-contract does not declare a `lifecycle:` section.
+the IR has `"lifecycle": null` and no monitors, and cadl-explorer shows no diagram: only a warning that the
+contract does not declare a `lifecycle:` section, and a note that it declares no monitors.
 That gap — structure alone cannot express deadlines, violations, or consequences — is what the blocks you read in §3 fill.
 :::
 
@@ -214,6 +214,8 @@ You should see something like:
 | Solid edge with `Δ 30s` / `Δ 5s` | deadline-bearing transitions |
 | Red dashed edge labelled `violation` / `Major` (two lines) | forced move to the `on_violation` target state |
 
+`Terminated` stands alone in the diagram: the contract declares it as a terminal state, but no transition leads to it. If you open `mobility_sos.cadl` on the **Designer** page, the same fact is reported as a Lifecycle warning (`State 'Terminated' cannot be reached from the initial state 'Requested'`). `cadl check` passes regardless.
+
 :::info[This pattern repeats throughout the tutorial]
 You will run **edit CADL → `cadl sim-ir` → reload cadl-explorer** at every milestone:
 after reading the structure, after reading the contract, after codegen, after the simulation, after revising the contract.
@@ -261,7 +263,7 @@ Example output (excerpt; the scripts print their progress messages in Japanese):
 Produces:
 
 - `sumo/config/midtown.cadl.sumocfg` — `step-length` from
-  `environment.time_step_ms`, `end` = the last `depart` in `sumo/routes/midtown.rou.xml` + the larger of 1800 s and the `ride_time` guarantee + 60 s (3060 + 1800 + 60 = 4920 with the sample data). If the route file does not exist yet, `end` is 3600 s; re-run this script after `generate_sumo_routes.py` in §6, before `run_sumo.py`, to get 4920 s. A tighter `ride_time` (as in §8) does not shorten `end`.
+  `environment.time_step_ms`, `end` = the last `depart` in `sumo/routes/midtown.rou.xml` + the larger of 1800 s and the `ride_time` guarantee + 60 s (3060 + 1800 + 60 = 4920 with the sample data). If the route file does not exist yet, `end` is 3600 s; §6 re-runs this script after `generate_sumo_routes.py`, before `run_sumo.py`, which gives 4920 s. A tighter `ride_time` (as in §8) does not shorten `end`.
 - `sumo/cadl_constraints.json` — the contract conditions (guarantees / deadlines / monitors) that
   `analyze_results.py` reads.
 
@@ -288,6 +290,9 @@ netconvert -c sumo/network/midtown.netccfg
 
 # CSV → route file
 python scripts/generate_sumo_routes.py
+
+# Regenerate the sumocfg now that the route file exists (end = 4920 s)
+python scripts/cadl_to_sumo.py
 
 # Run SUMO (picks the CADL-derived sumocfg)
 python scripts/run_sumo.py            # headless
@@ -326,7 +331,7 @@ Example output (excerpt; the header line is printed in Japanese):
 
 What is actually checked here is the two `guarantee` clauses only; the deadlines and the three monitors are listed but not evaluated:
 
-- **Guarantees** map directly to `tripinfo.duration` / `waitingTime` — evaluated.
+- **Guarantees** are evaluated against `tripinfo.xml`. `ride_time` maps directly to `tripinfo.duration`. `waiting_time` is compared with `tripinfo.waitingTime`, which is only a stand-in: it is the time a vehicle spent standing still during its trip, not the time a passenger waited for a taxi. In this pipeline each CSV row inserts one vehicle at the pickup point at the pickup time, so no passenger ever waits, and the value is 0 s for all 30 trips. This `[OK]` therefore holds by construction.
 - **Deadlines** for matching/accept events are not modeled in SUMO yet — flagged SKIP.
 - **Monitors** observe per-passenger `waiting_time` while `Matched`, `battery`, and `route_deviation_ratio`, none of which SUMO exports — flagged SKIP.
 
