@@ -296,7 +296,7 @@ python scripts/run_sumo.py            # headless
 
 This populates `results/tripinfo.xml` and `results/summary.xml`.
 
-The headless run needs nothing beyond the `eclipse-sumo` package. `--gui` starts `sumo-gui`, which is an X11 application: on macOS it needs [XQuartz](https://www.xquartz.org/) installed and running, and without it the run stops with `FXApp::openDisplay: unable to open display`. The rest of this course uses only the headless results.
+The headless run needs nothing beyond the `eclipse-sumo` package. `--gui` starts `sumo-gui`, which is an X11 application: on macOS it needs [XQuartz](https://www.xquartz.org/) installed and running, and without it the run stops with `FXApp::openDisplay: unable to open display`. The same error appears right after installing XQuartz, until you log out and back in; to continue without doing so, start XQuartz (`open -a XQuartz`) and run `export DISPLAY=:0` in the terminal first. In the SUMO window, press the play button to start the simulation. The rest of this course uses only the headless results.
 
 ---
 

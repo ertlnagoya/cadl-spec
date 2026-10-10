@@ -277,7 +277,7 @@ python scripts/run_sumo.py            # ヘッドレス
 
 完了すると `results/tripinfo.xml` と `results/summary.xml` が生成されます。
 
-ヘッドレス実行に必要なのは `eclipse-sumo` パッケージだけです。`--gui` は X11 アプリケーションの `sumo-gui` を起動するため、macOS では [XQuartz](https://www.xquartz.org/) をインストールして起動しておく必要があります。XQuartz がないと `FXApp::openDisplay: unable to open display` で止まります。このコースの以降の手順は、ヘッドレス実行の結果だけを使います。
+ヘッドレス実行に必要なのは `eclipse-sumo` パッケージだけです。`--gui` は X11 アプリケーションの `sumo-gui` を起動するため、macOS では [XQuartz](https://www.xquartz.org/) をインストールして起動しておく必要があります。XQuartz がないと `FXApp::openDisplay: unable to open display` で止まります。XQuartz をインストールした直後も、いったんログアウトして再ログインするまでは同じエラーになります。再ログインせずに続ける場合は、XQuartz を起動し（`open -a XQuartz`）、ターミナルで `export DISPLAY=:0` を実行してから起動してください。SUMO のウィンドウでは、再生ボタンを押すとシミュレーションが始まります。このコースの以降の手順は、ヘッドレス実行の結果だけを使います。
 
 ---
 
