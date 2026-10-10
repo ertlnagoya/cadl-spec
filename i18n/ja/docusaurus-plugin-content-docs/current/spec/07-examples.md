@@ -11,9 +11,9 @@ description: "家庭内ルール，ロボット配送，IoTデータ共有，AI�
 :::note
 本章の記述例はCADLが意図する設計を例示する概念的なものであり，リファレンス実装（`cadl` 0.3）はこのままの形では受理しない。基本構造の記述は，`ROBOT[*]`のようなアクター参照を引用符なしでインラインリスト内に書いており，YAMLベースのパーサはこれを拒否する。`verification:`と`codegen:`の記述は，`sos:`の外に置いた断片である。記述例は，[付録A](./appendix-a-syntax.md)にない将来のキーと値も用いている。
 
-- **契約**（[§A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)）：`sharing_mode:`（7.1節）と`approval_required:`（7.4節）。
+- **契約**（[§A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)）：`sharing_mode:`（7.1節）と`approval_required:`（7.4節）。7.2節と7.3節の記述例は，`sharing:`の項目を引用符なしで書き，共有対象を呼び出しの形（たとえば`position(period: 500ms)`）で書いてもいる。A.4は，各項目を引用符付きの文字列とし，共有対象を識別子とすることを求めている。
 - **`verification:`の項目**（[§A.8](./appendix-a-syntax.md#a8-verification-block)）：
-  - キー`check:`，`severity:`，`message:`，`contracts:`，`transitions:`，`invariant:`，`tool:`，`parameters:`。A.8でこれらに当たるのは`target:`と`expr:`であるが，記述例はこれらを用いていない。
+  - キー`check:`，`severity:`，`message:`，`contracts:`，`transitions:`，`invariant:`，`tool:`，`parameters:`。このうちA.8に対応するキーがあるのは3つだけである。`contracts:`と`transitions:`には`target:`が，`check:`には`expr:`が対応するが，記述例はどちらも用いていない。`severity:`，`message:`，`invariant:`，`tool:`，`parameters:`に対応するキーはA.8にない。
   - `method:`の値`model_checking`と`bounded_model_checking`（A.8では`model_check`），`Monte_Carlo(...)`（A.8では`simulation`），`linear_programming`，`taint_analysis`。`SMT`はA.8では`smt`と書く。リファレンス実装の検証器が実装する検証手法は`smt`だけである。
   - `bound: 1000_steps`（A.8では，`bound:`は整数である）。
 - **`codegen:`**（[§A.9](./appendix-a-syntax.md#a9-codegen-block)）：A.9が定義するのは，キー`target:`，`output:`，`mappings:`を持つ項目の列である。記述例は，これを1つのマッピングとして書き，次のものを用いている。
@@ -27,7 +27,7 @@ description: "家庭内ルール，ロボット配送，IoTデータ共有，AI�
 | **記述例** | **目的1: 計算機処理** | **目的2: 矛盾検出** | **目的3: 自動変換・コード生成** |
 |---|---|---|---|
 | 7.1 家庭内ルール | 制度パラメータの形式化 / 暗黙知の構造化 | 義務衝突の検出 / スケジュール矛盾の発見 | 家庭アプリ通知コード生成 / カレンダー連携コード |
-| 7.2 ロボット配送 | モードマップの計算 / 環境パラメータ空間の定義 | 安全不変条件の検証 / 制度遷移時の整合性検査 | 制御コードの自動生成 / 監視器コードの合成 |
+| 7.2 ロボット配送 | モードマップの計算 / 環境パラメータ空間の定義 | 安全不変条件の検証 / 制度遷移時の整合性検査 | 制御コードの自動生成 / モニターコードの合成 |
 | 7.3 IoTデータ共有 | プライバシー制約の形式化 / SLA条件の計算 | SLA間矛盾の検出 / アクセス権衝突の発見 | データパイプライン生成 / 契約監視コードの合成 |
 | 7.4 AI融合 | モード推薦の形式化 / NL→CADL変換 | AI安全契約の検証 / 権限境界の矛盾検出 | ガバナンスポリシー生成 / 反応型合成 |
 
@@ -368,7 +368,7 @@ verification:
 
 ### 7.2.2 コード生成・自動変換（目的3）
 
-配送システムの制度記述から，DISPATCHERの割当アルゴリズム，ROBOTの制御ロジック，および契約監視器のコードを自動生成する。さらに，制度パラメータの最適化によりモードマップを自動構築する。
+配送システムの制度記述から，DISPATCHERの割当アルゴリズム，ROBOTの制御ロジック，および契約モニターのコードを自動生成する。さらに，制度パラメータの最適化によりモードマップを自動構築する。
 
 ```yaml
 # === 目的3: コード生成・自動変換 ===
@@ -397,7 +397,7 @@ codegen:
         - "    def avoid_collisions_locally(self, local_map):"
         - "    def report_anomalies(self, event: AnomalyEvent):"
 
-    # 契約監視器生成
+    # 契約モニター生成
     - id: SLA_MONITOR
       source_contract: DELIVERY_SLA
       generates:
@@ -577,13 +577,13 @@ verification:
 
 ### 7.3.2 コード生成・自動変換（目的3）
 
-データ共有契約からデータパイプラインのスケルトンコード，SLA監視器，課金ロジックを自動生成する。スマートコントラクト（Solidity [[Solidity Documentation]](./appendix-b-references.md)）への変換も示す。生成したコントラクトの検査には，静的解析ツールSlither [[Feist+, 2019]](./appendix-b-references.md) を指定している。
+データ共有契約からデータパイプラインのスケルトンコード，SLAモニター，課金ロジックを自動生成する。スマートコントラクト（Solidity [[Solidity Documentation]](./appendix-b-references.md)）への変換も示す。生成したコントラクトの検査には，静的解析ツールSlither [[Feist+, 2019]](./appendix-b-references.md) を指定している。
 
 ```yaml
 # === 目的3: コード生成・自動変換 ===
 codegen:
   targets:
-    # Python: データパイプライン・監視器
+    # Python: データパイプライン・モニター
     - language: "python"
       modules:
         - id: DATA_PIPELINE

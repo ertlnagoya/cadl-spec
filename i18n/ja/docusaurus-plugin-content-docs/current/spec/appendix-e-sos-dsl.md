@@ -172,7 +172,7 @@ Unity C#ジェネレータと一致する。このジェネレータは，その
 `rule` の中で `now` が読む時計を表す。
 
 リファレンス実装（`cadl` 0.3）は，2つのブロックを構文解析してIR（E.7）に変換するが，
-規則L-1からM-3まではまだ検査しない。v0.3.7からは，`cadl check` が `Minor`，`Major`，
+規則L-1からM-3まではまだ検査しない。`cadl` 0.3.7からは，`cadl check` が `Minor`，`Major`，
 `Critical` 以外の `severity:` をエラーとして報告する。`sampling:` と `deadline:` の値の
 妥当性は検査しない。認識できない `sampling:` は `event` として読まれ，読み取れない
 `deadline:` は捨てられる。`rule:`，`when:`，`on:` はテキストのまま保持される。
@@ -371,7 +371,7 @@ IRには `null` が記録される。重大度のフィールドは，`on_violat
 `Major` が記録される。IRが `null` を記録している箇所に既定値（`Major`，およびラベルとしての
 モニターの `id`）を適用することは，IRを利用する側に委ねる。
 
-コマンド `cadl sim-ir <file> --format json` は，CADL ExplorerのLifecycle Viewなどの
+コマンド `cadl sim-ir <file> --format json` は，CADL ExplorerのContract Lifecycleページなどの
 下流のツールに向けて，この形（上の例は一部を省略している）を出力する。
 Unity C#ジェネレータ（`cadl codegen --target unity-csharp`）は，構文解析された
 同じ契約をもとに動作する。PythonのリファレンスランタイムもこのJSONを読み込む。このランタイムは，

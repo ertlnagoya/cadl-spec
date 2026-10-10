@@ -81,7 +81,7 @@ If you are using GitHub pages for hosting, this command is a convenient way to b
 
 ## License
 
-- **Documentation** (the text and figures under `docs/` and `i18n/`): [Creative Commons Attribution 4.0 International (CC BY 4.0)](LICENSE-docs).
-- **Code** (the CADL and other code examples embedded in the documentation, and the site source under `src/` and the configuration files): [Apache License 2.0](LICENSE).
+- **Documentation** (the text under `docs/` and `i18n/`, and the figures under `static/img/`): [Creative Commons Attribution 4.0 International (CC BY 4.0)](LICENSE-docs).
+- **Code** (the CADL and other code examples embedded in the documentation, the site source under `src/` and `i18n/ja/docusaurus-plugin-content-pages/`, and the configuration files): [Apache License 2.0](LICENSE).
 
 Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University.

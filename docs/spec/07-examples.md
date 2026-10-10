@@ -21,12 +21,18 @@ not part of [Appendix A](./appendix-a-syntax.md):
 - **Contracts**
   ([§A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)):
   `sharing_mode:` (Section 7.1) and `approval_required:` (Section 7.4).
+  The listings of Sections 7.2 and 7.3 also write `sharing:` entries
+  unquoted and with call-style items (for example
+  `position(period: 500ms)`), whereas A.4 requires each entry to be a
+  quoted string whose item is an identifier.
 - **`verification:` entries**
   ([§A.8](./appendix-a-syntax.md#a8-verification-block)):
   - the keys `check:`, `severity:`, `message:`, `contracts:`,
-    `transitions:`, `invariant:`, `tool:`, and `parameters:`. A.8 has
-    `target:` and `expr:` in their place, which the listings do not
-    use;
+    `transitions:`, `invariant:`, `tool:`, and `parameters:`. Only
+    three of them have a counterpart in A.8: `target:` stands for
+    `contracts:` and `transitions:`, and `expr:` for `check:`; the
+    listings use neither. `severity:`, `message:`, `invariant:`,
+    `tool:`, and `parameters:` have no counterpart;
   - the `method:` values `model_checking` and `bounded_model_checking`
     (A.8 has `model_check`), `Monte_Carlo(...)` (A.8 has `simulation`),
     `linear_programming`, and `taint_analysis`. `SMT` is written `smt`

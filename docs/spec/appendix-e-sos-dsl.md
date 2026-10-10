@@ -192,7 +192,7 @@ may mention. `time` in `observe:` denotes the clock that `now` reads in
 a rule.
 
 The reference implementation (`cadl` 0.3) parses both blocks and lowers them
-to the IR (E.7) but does not yet check rules L-1 to M-3. From v0.3.7
+to the IR (E.7) but does not yet check rules L-1 to M-3. From `cadl` 0.3.7
 `cadl check` reports a `severity:` other than `Minor`, `Major`, or
 `Critical` as an error. `sampling:` and `deadline:` values are not
 validated: an unrecognised `sampling:` is read as `event`, and a
@@ -405,7 +405,7 @@ records `Major`. Where the IR records `null`, applying the defaults
 IR.
 
 The `cadl sim-ir <file> --format json` command emits this shape
-(abridged above) for downstream tools such as the Lifecycle View of
+(abridged above) for downstream tools such as the Contract Lifecycle page of
 CADL Explorer. The Unity C# generator (`cadl codegen --target
 unity-csharp`) works from the same parsed contract. A Python reference
 runtime also consumes this JSON; it is published in the

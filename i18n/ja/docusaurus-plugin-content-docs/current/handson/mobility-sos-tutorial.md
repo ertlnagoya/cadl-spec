@@ -246,7 +246,7 @@ python scripts/cadl_to_sumo.py
 生成されるもの：
 
 - `sumo/config/midtown.cadl.sumocfg` — `step-length` が CADL の `time_step_ms` から、
-  `end` は「`sumo/routes/midtown.rou.xml` の最後の `depart` ＋（1800 秒と `ride_time` guarantee の大きいほう）＋ 60 秒」で決まる（サンプルデータでは 3060 + 1800 + 60 = 4920）。経路ファイルがまだない場合は 3600 秒になるので、§6 のあとでこのスクリプトを再実行すると 4920 秒になる。§8 のように `ride_time` を厳しくしても `end` は短くならない
+  `end` は「`sumo/routes/midtown.rou.xml` の最後の `depart` ＋（1800 秒と `ride_time` guarantee の大きいほう）＋ 60 秒」で決まる（サンプルデータでは 3060 + 1800 + 60 = 4920）。経路ファイルがまだない場合は 3600 秒になるので、§6 の `generate_sumo_routes.py` のあと、`run_sumo.py` の前にこのスクリプトを再実行すると 4920 秒になる。§8 のように `ride_time` を厳しくしても `end` は短くならない
 - `sumo/cadl_constraints.json` — `analyze_results.py` が読む契約条件（guarantees / deadlines / monitors）
 
 :::tip[🔍 可視化チェックポイント 2 — コード生成しても CADL ソースは変わらない]
@@ -388,10 +388,10 @@ python scripts/cadl_to_sumo.py
 | 課題 | ヒント |
 |---|---|
 | `match` の deadline を 30s から 10s に厳しくしたとき、何件が現実的に間に合うか調べる | SUMO には match イベントがなく（CSV の 1 行が車両 1 台）、`cadl_to_sumo.py` は IR を読むだけなので、この行は `[SKIP]` のままです。`analyze_results.py` を拡張し、`tripinfo.xml` の `departDelay` を代理指標として使います。サンプルデータでは 30 件すべて 0 秒なので、まず match イベントを何と定義するかを決めてください |
-| `num_taxis` を 10 から 5 に変えて、何かが変わるかを調べる | SUMO のパイプラインは `num_taxis` を使っていません（需要は CSV から来て、1 行が車両 1 台）。変更後も `tripinfo.xml` は同一です。`summary.xml` の `running` の時系列（サンプルデータでは最大 2）から、この需要に必要な台数と、capacity 違反が現れるには何をモデル化する必要があるかを論じてください |
+| `num_taxis` を 10 から 5 に変えて、何かが変わるかを調べる | SUMO のパイプラインは `num_taxis` を使っていません（需要は CSV から来て、1 行が車両 1 台）。変更後も `tripinfo.xml` の 30 件の `<tripinfo>` 行は同一です（生成日時を含む先頭のコメントだけが変わります）。`summary.xml` の `running` の時系列（サンプルデータでは最大 2）から、この需要に必要な台数と、capacity 違反が現れるには何をモデル化する必要があるかを論じてください |
 | 新しい monitor `surge_pricing_guard` を追加し、ツールチェーンのどこまで届くかを追う | YAML の `monitors:` に追記して IR を作り直す。IR（monitor が 4 件）、cadl-explorer の Monitors テーブル、`analyze_results.py` の `[SKIP]` 一覧に現れることを確認します。このパイプラインは monitor の rule を評価しないので、発火の様子はまだ観察できません |
 | A/B の可視化比較：改訂前と改訂後の設計を見比べる | cadl-explorer の **Designer** ページで `.cadl` を開き、**Versions** で版を保存してから改訂後のファイルを開き、そこで二つを比較する。**Compare two designs** の **A — baseline** に保存した版を選び（初期値が同梱の例題になっていることがある）、**B** は現在の設計にする（構造の差分とソースの差分）。Lifecycle 図を並べて見たいときは、**Contract Lifecycle** ページをブラウザの 2 つのタブで開き、それぞれに別の IR をアップロードする（別ポートで 2 つ起動する必要はありません） |
-| `[SKIP]` のひとつを評価可能にする：TraCI で SUMO の信号を読み、`match` deadline を実測する | `pip install eclipse-sumo` だけでは `traci` を import できません。`pip install traci` を実行するか、`$SUMO_HOME/tools` を `sys.path` に追加します。`traci.vehicle.getDeparture(vehID)`（または `traci.simulation.getDepartedIDList()`）を読み、CSV の `pickup_time` との差を計算します。これは投入遅延であり、`match` の代理指標（サンプルデータでは 0 秒）です。モデル化された match イベントではありません |
+| `[SKIP]` のひとつを評価可能にする：TraCI で SUMO の信号を読み、`match` deadline を実測する | `pip install eclipse-sumo` だけでは `traci` を import できません。`pip install traci` を実行するか、`import sumo` のあとで `os.path.join(sumo.SUMO_HOME, "tools")` を `sys.path` に追加します（pip でのインストールではシェル変数 `$SUMO_HOME` は設定されません）。`traci.vehicle.getDeparture(vehID)`（または `traci.simulation.getDepartedIDList()`）を読み、CSV の `pickup_time` との差を計算します。これは投入遅延であり、`match` の代理指標（サンプルデータでは 0 秒）です。モデル化された match イベントではありません |
 
 ---
 

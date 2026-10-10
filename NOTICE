@@ -2,8 +2,9 @@ CADL Specification Site (cadl-spec)
 Copyright 2026 ERTL, Graduate School of Informatics, Nagoya University
 
 Code in this repository (the CADL and other code examples embedded in the
-documentation, the site source under src/ and the configuration files) is
+documentation, the site source under src/ and under
+i18n/ja/docusaurus-plugin-content-pages/, and the configuration files) is
 licensed under the Apache License, Version 2.0 (see LICENSE).
 
-Documentation (the text and figures under docs/ and i18n/) is licensed under
+Documentation (the text under docs/ and i18n/, and the figures under static/img/) is licensed under
 Creative Commons Attribution 4.0 International (see LICENSE-docs).

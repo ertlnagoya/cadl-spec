@@ -446,13 +446,23 @@ deviates from this appendix as follows (checked against `cadl` 0.3.8).
   present.
 - **Codegen.** `codegen:` entries are parsed but not acted upon; the
   target is selected on the command line
-  ([Appendix D](./appendix-d-codegen.md)).
+  ([Appendix D](./appendix-d-codegen.md)). An entry whose `target:`
+  the implementation cannot emit (for example `target: ros2`) is
+  therefore accepted without a diagnostic by `cadl check` and
+  `cadl codegen`, whereas `-t ros2` on the command line is rejected.
+  This deviates from the MUST of
+  [Appendix D, Section D.4](./appendix-d-codegen.md).
 - **Extensions.** `extensions:` and `motivation:` are ignored, and no
   informational diagnostic is emitted for them: `cadl check` reports
-  only that the type check passed. This deviates from the SHOULD of
-  [Appendix C](./appendix-c-motivation.md) and
-  [Appendix E](./appendix-e-sos-dsl.md), which ask a processor that
-  does not implement an extension to emit one.
+  only that the type check passed. For `motivation:` this deviates
+  from the SHOULD of [Appendix C](./appendix-c-motivation.md), which
+  asks a processor that does not implement the extension to emit one.
+  The SHOULD of [Appendix E](./appendix-e-sos-dsl.md) does not apply,
+  because `cadl` implements `sos-dsl`; an `extensions:` declaration is
+  simply not checked. The `motivation:` block is not preserved either:
+  `cadl sim-ir` emits `motivation: null` for a file that has one,
+  which deviates from the SHOULD of
+  [Appendix C, Section C.6](./appendix-c-motivation.md).
   `lifecycle:` and `monitors:` are recognised whether or not
   `extensions:` declares `sos-dsl`.
 

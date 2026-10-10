@@ -162,4 +162,4 @@ CADL 処理系は，`motivation:` ブロックを持たないファイルを受�
   リファレンス実装は，
   [付録A §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)
   に挙げた相違を伴ってコア言語を実装しており，動機拡張は実装していない。
-- [用語集](./glossary.md) — ρ, κ, プロファイル用語の定義。
+- [用語集](./glossary.md) — ρ，κ，プロファイル用語の定義。

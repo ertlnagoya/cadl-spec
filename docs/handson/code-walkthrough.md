@@ -50,7 +50,7 @@ There are only three things to remember.
 
 These are the four repositories. The simulator keeps the Unity project (`unity/`), the Go arbitrator (`arbitrator/`) and the Python runtime (`cadl/runtime/`) together in one repository; the files described in Section 4 below are all found there.
 
-A note on names: the Unity scene (`C-SoS.unity`), the robot controller (`Pilot_CSoS`) and the arbitrator directory (`C-SoS/`) carry the label "C-SoS". That is the simulator's own name for its centralised-arbitrator mode (as opposed to its "D-SoS" mode); it is independent of CADL and does not mean CADL's `Collaborative` type. The CADL file of this course declares `type: Acknowledged`, and that declaration is what the course text means when it classifies the robot-delivery SoS.
+A note on names: the Unity scene (`C-SoS.unity`), the robot controller (`Pilot_CSoS`) and the arbitrator directory (`C-SoS/`) carry the label "C-SoS". In the simulator, C-SoS stands for Collaborative SoS (its config has `sosType: collaborative`) and names its centralised-arbitrator mode, as opposed to its "D-SoS" mode. That label is set in the simulator, independently of the `type:` in a CADL file. The CADL file of this course declares `type: Acknowledged`, and that declaration is what the course text means when it classifies the robot-delivery SoS.
 
 ## 3. The road one contract travels — file by file
 
