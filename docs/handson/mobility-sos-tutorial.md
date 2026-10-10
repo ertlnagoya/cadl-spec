@@ -296,6 +296,8 @@ python scripts/run_sumo.py            # headless
 
 This populates `results/tripinfo.xml` and `results/summary.xml`.
 
+The headless run needs nothing beyond the `eclipse-sumo` package. `--gui` starts `sumo-gui`, which is an X11 application: on macOS it needs [XQuartz](https://www.xquartz.org/) installed and running, and without it the run stops with `FXApp::openDisplay: unable to open display`. The rest of this course uses only the headless results.
+
 ---
 
 ## 7. Check the results against the contract (10 min)

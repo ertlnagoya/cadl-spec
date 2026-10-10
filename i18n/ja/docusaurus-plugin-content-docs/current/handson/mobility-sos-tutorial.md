@@ -277,6 +277,8 @@ python scripts/run_sumo.py            # ヘッドレス
 
 完了すると `results/tripinfo.xml` と `results/summary.xml` が生成されます。
 
+ヘッドレス実行に必要なのは `eclipse-sumo` パッケージだけです。`--gui` は X11 アプリケーションの `sumo-gui` を起動するため、macOS では [XQuartz](https://www.xquartz.org/) をインストールして起動しておく必要があります。XQuartz がないと `FXApp::openDisplay: unable to open display` で止まります。このコースの以降の手順は、ヘッドレス実行の結果だけを使います。
+
 ---
 
 ## 7. 結果を契約に照らして判定する（10 分）
