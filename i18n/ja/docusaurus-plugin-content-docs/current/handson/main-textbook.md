@@ -136,7 +136,7 @@ CADL ツールチェインは、各部分が独立して進化できるよう 4 
 | --- | --- | --- |
 | `cadl-spec`            | 言語仕様書とこのハンズオンサイト（Docusaurus） | `main`（既定） |
 | `cadl`（`cadl_repo` としてクローン） | コンパイラ本体（パーサ・IR・コード生成器） | `master`（既定） |
-| `cadl-explorer`        | Streamlit ベースの可視化 | `main`（既定） |
+| `cadl-explorer`        | CADL を可視化・編集する Streamlit アプリ | `main`（既定） |
 | `cadl-raspimouse-simulator` | Step 5〜6 で使うシミュレータ。Unity プロジェクト・Go arbitrator・Python 参照ランタイムを 1 つのリポジトリにまとめたもの | `main`（既定） |
 
 :::info[リポジトリの公開状況]
@@ -622,10 +622,12 @@ monitors[0].id    : battery_guard
 ## Step 4 — ライフサイクルを可視化する (15 分)
 
 ### 学ぶこと
-- cadl-explorer の Lifecycle View ページの読み方。
+- cadl-explorer の **Contract Lifecycle** ページの読み方（このコースでは、このページが見せるものを *Lifecycle View* と呼びます）。
 - 視覚的な慣習（二重円、破線枠、赤エッジ）が仕様のどこに対応するか。
 
 ### 手順
+
+Step 0 で有効にした仮想環境（`cadl_repo/.venv`）にインストールします。`requirements.txt` が求める `cadl-lang` は、Step 0 でクローンからインストールしたものと同じパッケージなので、置き換えは起きません。
 
 ```bash
 cd ~/program/cadl-explorer
@@ -639,7 +641,9 @@ streamlit run app.py
 IR JSON のロード方法は 2 通り：
 
 - **(a) アップロード** — 自分のファイルの IR を読み込みます。先に `~/program/cadl_repo` で `cadl sim-ir my_delivery.cadl --format json > my_delivery.ir.json` を実行して保存し、その `my_delivery.ir.json` を File uploader にドラッグ & ドロップします。
-- **(b) 同梱例** — ドロップダウンから `sos_dsl_robot_delivery.ir.json` を選択。
+- **(b) 同梱例** — `sos_dsl_robot_delivery.ir.json` を使います。ページを開くと最初から表示されています。ドロップダウン（**Bundled example**）は、アップロードしたファイルを取り除いたあとで同梱例に戻るためのものです。
+
+> **近道。** **Designer** ページは、`cadl sim-ir` を経ずに `.cadl` ファイルから同じ図を描きます。**Open an existing CADL file** でファイルを開き、ビューを **Lifecycle** に切り替えます。契約のインスタンスを 1 ステップずつたどることもできます。この Step であえて IR を使うのは、シミュレータと生成されたランタイムが読むのが IR だからです。
 
 ### 表示されるもの
 
@@ -657,7 +661,7 @@ IR JSON のロード方法は 2 通り：
 
 以下の模式図は **(a) の `my_delivery.cadl`**（4 遷移・モニター 1 個）を読み込んだ場合です。**(b) の同梱例 `sos_dsl_robot_delivery.cadl`** を読み込むと遷移は 5（`late_failure` を追加）、モニターは 3 個（`battery_guard` / `collision_watch` / `deadline_watch`）になります。
 
-ページは 2 列に分かれます：
+ページは 2 列に分かれます。下の図は模式図です。実際のページでは、図は左から右へ描かれ、各エッジには遷移の id ではなくトリガ（`on:` の文。たとえば `ROBOT[i] -> DISPATCHER : ack(accepted)`。続けて `Δ 5s` と、あれば `[when]` の条件）が書かれ、メタデータには状態の名前が並び、Monitors テーブルには `rule` の列もあります：
 
 ```
 ┌──────────────────────────────────┬──────────────────────────────┐
@@ -710,7 +714,7 @@ IR JSON のロード方法は 2 通り：
 ライフサイクルのスクリーンショットを撮るか、よく見て確認：
 
 - 二重円のノードは `Proposed` だけ。
-- `Assigned` から `Violated` への **赤い破線エッジ** が 1 本ある（これが期限切れによる強制遷移）。
+- `Assigned` から `Violated` への **赤い破線エッジ** が 1 本ある（これが期限切れによる強制遷移）。同梱例では、このほかに `now > request.deadline` と書かれた実線のエッジが 3 本、`Violated` に入ります（`late_failure` 遷移が出ていく状態ごとに 1 本）。
 - Monitors テーブルに `battery_guard` が `periodic(500ms)` / `Major` で表示されている。
 
 ### おさらい

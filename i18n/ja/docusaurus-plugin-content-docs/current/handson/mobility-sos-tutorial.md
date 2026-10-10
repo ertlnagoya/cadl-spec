@@ -386,7 +386,7 @@ python scripts/cadl_to_sumo.py
 | match の deadline を 30s から 10s に厳しくしたとき、何件が現実的に間に合うか調べる | `cadl_to_sumo.py` を拡張して、SUMO から match 時刻も出力させる |
 | `num_taxis` を 10 から 5 に減らしたとき、capacity 違反は SUMO のどの統計に現れるか | `summary.xml` の `running` を時系列で見る |
 | 新しい monitor `surge_pricing_guard` を追加して、需要過多時の挙動を観察する | YAML に monitor を追記して IR を作り直す |
-| A/B の可視化比較：cadl-explorer を 2 つ別ポート（8501 / 8502）で起動し、改訂前と改訂後の Lifecycle 図を並べて見比べる | `streamlit run app.py --server.port 8502` で 2 窓目を起動し、それぞれに別の IR をアップロード |
+| A/B の可視化比較：改訂前と改訂後の設計を見比べる | cadl-explorer の **Designer** ページで `.cadl` を開き、**Versions** で版を保存してから改訂後のファイルを開き、そこで二つを比較する（構造の差分とソースの差分）。Lifecycle 図を並べて見たいときは、**Contract Lifecycle** ページをブラウザの 2 つのタブで開き、それぞれに別の IR をアップロードする（別ポートで 2 つ起動する必要はありません） |
 | `[SKIP]` のひとつを評価可能にする：match deadline を SUMO 上で実測する | TraCI で `vehicle.depart` を取得し、CSV の `pickup_time` との差を計算 |
 
 ---

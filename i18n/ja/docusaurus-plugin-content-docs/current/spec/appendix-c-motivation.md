@@ -124,7 +124,7 @@ sos:
 ```
 
 CADL Explorer のシミュレータは，同じ `motivation:` ブロックを，独自の
-フラットな設定ファイルから読み込む。この設定ファイルでは，`sos_type:` や
+設定ファイルから読み込む。この設定ファイルでは，`sos_type:` や
 `environment:` などのシミュレータ設定と並べて書く。同ファイルには，キー
 `alpha`，`beta`，`lambda` を持つトップレベルの `governance:` マッピングもある。
 これらはシミュレータのパラメータ（自律度，集中度，探索確率）であり，[5.4.2 節](./05-language-spec.md)の
@@ -152,7 +152,9 @@ CADL 処理系は，`motivation:` ブロックを持たないファイルを受�
 
 - **[CADL Explorer](https://github.com/ertlnagoya/cadl-explorer)**（デモ）:
   v0.1-ext を，シミュレータの設定スキーマ
-  （`cadl_sim/schema/motivation_schema.py`）に実装。
+  （`cadl_sim/schema/motivation_schema.py`）に実装。Explorer のページが
+  受け付けるプロファイルは `uniform`，`linear`，`polarized` で，`custom` は
+  受け付けない。
 - **[`cadl`](https://github.com/ertlnagoya/cadl)**（リファレンス実装）:
   AST の `SoSDefinition` に省略可能な `MotivationBlock` を定義している。
   v0.3 のパーサは CADL ファイルの `motivation:` キーを読み込まない。

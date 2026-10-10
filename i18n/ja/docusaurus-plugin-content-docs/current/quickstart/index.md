@@ -37,7 +37,7 @@ streamlit run app.py
 |---|---|
 | **Explorer** | 2つのガバナンス設計 A と B を比べる（このクイックスタート）。 |
 | **Designer** | CADL のモデル全体を編集，検査，可視化する。 |
-| **Contract Lifecycle** | IR の JSON から契約の状態機械を1ステップずつたどる。 |
+| **Contract Lifecycle** | IR の JSON から契約のライフサイクル（状態機械）とモニタを描く。 |
 | **About & Glossary** | ツールの説明，パラメータの値，用語。 |
 
 最初に開くのは **Explorer** のページです。このページは，2つの設計
@@ -98,7 +98,7 @@ B と比べる相手を変えるには，**A — baseline** を開いて同じ�
 ダウンロードできます。ブラウザのアドレスには現在の設定が記録されるので，
 アドレスを写せば比較を共有できます。
 
-![D-SoS（A）と C-SoS（B）を比べている CADL Explorer：左にサイドバーの設定，右に Outcome と因果連鎖の節](/img/handson/explorer-compare.jpg)
+![D-SoS（A）と C-SoS（B）を比べている CADL Explorer：左にサイドバーの設定，右に Outcome の節](/img/handson/explorer-compare.jpg)
 
 ### A-5. オプション — 自作CADLを貼り付ける
 
@@ -124,7 +124,10 @@ motivation:
 
 合成の指標が使うのは，`sos_type`，エージェントの `profile`，`rho` だけです。
 `alpha`，`beta`，`lambda` などのほかの項目は，生成される IR と設定には
-引き継がれますが，結果は変えません。
+引き継がれますが，結果は変えません。別に扱われるのは `Directed` だけで，
+ほかの `sos_type` は協調型として計算されます。プロファイルは `uniform`，
+`linear`，`polarized` の3つです。この形式にないキーや，階層を誤って書いた
+キーは，エラーにならずに無視されるので，上の入れ子の形を守ってください。
 
 この YAML は Explorer のページ独自の設定の形式で，CADL のモデル全体では
 ありません。CADL のモデル全体（アクター，契約，ライフサイクル，モニタ）を

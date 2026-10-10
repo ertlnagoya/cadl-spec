@@ -419,7 +419,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
    python3 -m cadl.runtime.multi_robot_demo --ir ~/program/cadl_repo/my_delivery_v2.ir.json --summary
    ```
 
-3. Compare the summary with the one you get from the same file with `deadline: 5s`.
+3. Compare the summary with the one you get from the same file with `deadline: 5s`. (`my_delivery_v2.cadl` has no `deadline_watch` monitor and no `late_failure` transition, so `robot-3-1` ends in `Delivering` instead of `Violated` in both runs: your own v2 reproduces four of the five outcomes of the bundled example.)
 
 **Reflection**: An overly tight deadline turns *every* contract into a violation, regardless of effort. An overly loose one masks misbehaviour. **What process would you use to pick a deadline value for a real SoS?** (Hint: data from baseline runs, plus a target false-positive rate.)
 

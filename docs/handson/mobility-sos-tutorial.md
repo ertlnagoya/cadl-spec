@@ -411,7 +411,7 @@ python scripts/cadl_to_sumo.py
 | Tighten `match` deadline 30s→10s; how many trips realistically meet it? | Extend `cadl_to_sumo.py` to also export per-vehicle match timestamps. |
 | Reduce `num_taxis` from 10 to 5; where does the capacity violation show up? | Look at `summary.xml`'s `running` time-series. |
 | Add a new monitor `surge_pricing_guard` and observe its trigger pattern. | Add it under `monitors:` and regenerate the IR. |
-| **A/B visual diff**: launch two cadl-explorer instances on different ports (8501 / 8502), upload the *before* and *after* IRs side-by-side, and compare the lifecycles. | `streamlit run app.py --server.port 8502` for the second window. |
+| **A/B visual diff**: compare the *before* and *after* designs. | In cadl-explorer, open the `.cadl` file on the **Designer** page, save a version under **Versions**, open the revised file and compare the two there (structured diff and source diff). To see two lifecycle diagrams side by side, open the **Contract Lifecycle** page in two browser tabs and upload one IR in each; a second instance on another port is not needed. |
 | Close one of the `[SKIP]` gaps by exporting the relevant SUMO signal via TraCI. | Start with the `match` deadline: capture `vehicle.depart` and compare it to the CSV's `pickup_time`. |
 
 ---

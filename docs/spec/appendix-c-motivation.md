@@ -132,7 +132,7 @@ sos:
 ```
 
 CADL Explorer's simulator reads the same `motivation:` block from its
-own flat configuration file, next to simulator settings such as
+own configuration file, next to simulator settings such as
 `sos_type:` and `environment:`. That file also has a top-level
 `governance:` mapping with keys `alpha`, `beta`, and `lambda`. These are
 simulator parameters — autonomy level, centralization level, and
@@ -164,7 +164,9 @@ block verbatim so downstream tools can consume it.
 
 - **[CADL Explorer](https://github.com/ertlnagoya/cadl-explorer)**
   (demo): implements v0.1-ext in the configuration schema of its
-  simulator (`cadl_sim/schema/motivation_schema.py`).
+  simulator (`cadl_sim/schema/motivation_schema.py`). The Explorer page
+  accepts the profiles `uniform`, `linear` and `polarized`; it rejects
+  `custom`.
 - **[`cadl`](https://github.com/ertlnagoya/cadl)** (reference
   implementation): defines an optional `MotivationBlock` on
   `SoSDefinition` in its AST. At v0.3 the parser does not read the

@@ -419,7 +419,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
    python3 -m cadl.runtime.multi_robot_demo --ir ~/program/cadl_repo/my_delivery_v2.ir.json --summary
    ```
 
-3. 同じファイルを `deadline: 5s` のまま実行したときの summary と比べる。
+3. 同じファイルを `deadline: 5s` のまま実行したときの summary と比べる。（`my_delivery_v2.cadl` には `deadline_watch` モニターと `late_failure` 遷移が無いので、どちらの実行でも `robot-3-1` は `Violated` ではなく `Delivering` で終わります。自分の v2 で再現できるのは、同梱例の 5 通りの結末のうち 4 通りです。）
 
 **振り返り**: 厳しすぎる期限は努力に関係なく *すべての* 契約を違反にします。緩すぎる期限は不正動作を見逃します。**実 SoS の期限値を決めるプロセスは？**（ヒント：ベースラインデータ + 許容偽陽性率）
 
