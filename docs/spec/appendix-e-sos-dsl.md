@@ -137,7 +137,7 @@ E.6. The key `on` SHOULD be written without quotation marks; a
 processor built on a YAML 1.1 loader, which reads an unquoted `on` as a
 boolean, MUST still recognise it as this key.
 
-## E.4 Static semantics
+## E.4 Static semantics {/* #e4-static-semantics */}
 
 A SoS-DSL-aware processor MUST, in addition to existing checks:
 

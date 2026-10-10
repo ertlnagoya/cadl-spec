@@ -119,7 +119,7 @@ CADL（Contract Architecture Description Language）は、複数のシステム�
 `lifecycle:` と `monitors:` は CADL 本体ではなく、SoS-DSL 拡張（cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)）にあります。
 拡張になっているのは、これらが「規範（守るべきルール）」を一級の概念として扱うパーツで、構造（actors / contracts のスケルトン）だけを書きたい場合は本体だけで十分だからです。
 
-各コースの §3 で `lifecycle:` と `monitors:` を扱い始めた時点で、SoS-DSL を実際に使っていることになります。
+コース A の Step 3 で `lifecycle:` と `monitors:` を書き足した時点（コース B では §3 でそれらを読んだ時点）で、SoS-DSL を実際に使っていることになります。
 
 ---
 
@@ -158,7 +158,7 @@ CADL/SoS-DSL は、ISO 標準が定義する SoS 工学プロセスを記法と�
 CADL は次の 3 系統が交差する位置にあります。
 
 - アーキテクチャ記述言語 (ADL) — ACME, AADL, Wright など。CADL の `actors:` `protocols:` が古典的 ADL の流れ（Medvidovic & Taylor 2000）。
-- 規範的マルチエージェントシステム (Normative MAS) — 義務・許可・禁止を一級の概念として扱う研究系統（Boella et al. 2006）。CADL の `obligations:` 系がここに対応。
+- 規範的マルチエージェントシステム (Normative MAS) — 義務・許可・禁止を一級の概念として扱う研究系統（Boella et al. 2006）。CADL の `responsibilities:` と、SoS-DSL の `on_violation:` がここに対応。
 - 実行時検証 (Runtime Verification) — 動作中システムを形式仕様に対して観測・違反検出する技術（Bartocci et al. 2018）。CADL の `monitors:` がここに対応。
 
 ### 5.3 ブロックチェーン DSL との違い

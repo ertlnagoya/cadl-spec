@@ -252,11 +252,13 @@ transition_def = "from:" , identifier ,
 ```ebnf
 verify_def    = "id:"   , identifier ,
                 "type:" , text ,
-                [ "target:"   , identifier ] ,
+                [ "target:"   , verify_target ] ,
                 [ "property:" , text ] ,
                 [ "method:"   , verify_method ] ,
                 [ "expr:"     , predicate ] ,              (* string *)
                 [ "bound:"    , int_literal ] ;
+verify_target = identifier
+              | identifier , "->" , identifier ;           (* FROM->TO *)
 verify_method = "smt" | "model_check" | "simulation" | "proof" ;
 ```
 
@@ -414,6 +416,7 @@ AND    OR    NOT    true    false    for all    exists    in
   [付録C](./appendix-c-motivation.md)の規定と相違する。
   [付録E](./appendix-e-sos-dsl.md)の同じ趣旨の規定は，`cadl` が `sos-dsl` を実装しているため
   適用されない。`extensions:` の宣言は，単に検査されないだけである。
+  `cadl` が付録Eそのものに対して満たしていない点は，[E.4節](./appendix-e-sos-dsl.md#e4-static-semantics)に示す。
   `motivation:` ブロックは保持もされない。`cadl sim-ir` は，このブロックを持つファイルに
   対して `motivation: null` を出力する。これは，拡張に対応しない処理系がブロックを原文のまま
   保持することを望ましいとする[付録CのC.6節](./appendix-c-motivation.md)の規定と相違する。`lifecycle:` と `monitors:` は，

@@ -123,7 +123,7 @@ The `lifecycle:` and `monitors:` features live in a CADL extension called **SoS-
 It's an "extension" because they elevate **norms** (rules to obey) to first-class concepts ─
 core CADL alone (actors / contract skeleton) doesn't include them.
 
-When you reach §3 of any course and add `lifecycle:` / `monitors:`,
+When you add `lifecycle:` / `monitors:` in Step 3 of Course A (or read them in §3 of Course B),
 **you are using SoS-DSL for the first time**.
 
 ---
@@ -162,7 +162,7 @@ processes the ISO standards prescribe — the standards themselves stop short of
 ### 5.2 Three research traditions CADL draws from
 
 - **Architecture Description Languages (ADL)** ─ ACME, AADL, Wright … CADL's `actors:` / `protocols:` inherit from this tradition (Medvidovic & Taylor 2000).
-- **Normative Multi-Agent Systems** ─ obligations, permissions, prohibitions as first-class objects (Boella et al. 2006). CADL's `obligations:` clauses fit here.
+- **Normative Multi-Agent Systems** ─ obligations, permissions, prohibitions as first-class objects (Boella et al. 2006). CADL's `responsibilities:` and the `on_violation:` clauses of SoS-DSL fit here.
 - **Runtime Verification** ─ observing a running system against a formal specification (Bartocci et al. 2018). CADL's `monitors:` belong here.
 
 ### 5.3 Difference from blockchain DSLs

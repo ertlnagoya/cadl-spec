@@ -370,9 +370,12 @@ version — what matters is the *pattern*: `waiting_time` stays `OK` while `ride
 `VIOLATED`):
 
 ```text
-[OK          ] waiting_time <= 300s  (tripinfo.waitingTime)
-[VIOLATED (12)] ride_time <= 100s  (tripinfo.duration  e.g. ['taxi_8', 'taxi_9', ...])
+      [OK          ] waiting_time <= 300s  (tripinfo.waitingTime)
+      [VIOLATED (12)] ride_time <= 100s  (tripinfo.duration  e.g. ['taxi_8', 'taxi_9', 'taxi_10', 'taxi_11', 'taxi_14'])
+OK: 分析完了。
 ```
+
+The last line is the script's closing message ("analysis complete"); it matches the `grep` pattern because it starts with `OK`.
 
 :::tip[🔍 Visualization Checkpoint 4 — Post-revision (★ highlight)]
 Reload cadl-explorer **before** running `analyze_results.py`.

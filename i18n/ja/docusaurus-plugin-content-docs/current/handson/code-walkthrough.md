@@ -50,7 +50,7 @@ flowchart LR
 
 リポジトリはこの 4 つです。シミュレータは、Unity プロジェクト（`unity/`）、Go アービトレータ（`arbitrator/`）、Python ランタイム（`cadl/runtime/`）を 1 つのリポジトリにまとめています。下の第 4 節で説明するファイルは、すべてこのリポジトリにあります。
 
-名前についての補足です。Unity シーン（`C-SoS.unity`）、ロボットの制御コード（`Pilot_CSoS`）、アービトレータのディレクトリ（`C-SoS/`）に付いている「C-SoS」は、シミュレータ側では Collaborative SoS の略で（設定ファイルは `sosType: collaborative`）、中央アービトレータ方式のモード（「D-SoS」モードと対になるもの）の名前です。このラベルはシミュレータ側で決まるもので、CADL ファイルの `type:` とは独立です。このコースの CADL ファイルは `type: Acknowledged` と宣言しており、教材がロボット配送 SoS の類型を述べるときは、この宣言を指しています。
+名前についての補足です。Unity シーン（`C-SoS.unity`）、ロボットの制御コード（`Pilot_CSoS`）、アービトレータのディレクトリ（`C-SoS/`）に付いている「C-SoS」は、シミュレータ側では Collaborative SoS の略で（設定ファイルは `sosType: collaborative`）、このコースで使うモードの名前です。このモードでは、ロボットが配送を申し出て（claim）、`arbitrator/C-SoS` のアービトレータが落札を決めます。リポジトリには参考用に `D-SoS.unity` シーンも入っていますが、そのアービトレータは含まれていません。このラベルはシミュレータ側で決まるもので、CADL ファイルの `type:` とは独立です。このコースの CADL ファイルは `type: Acknowledged` と宣言しており、教材がロボット配送 SoS の類型を述べるときは、この宣言を指しています。
 
 ## 3. 1 つの契約が通る道 — ファイル単位で追う
 
@@ -93,7 +93,7 @@ flowchart LR
 | --- | --- |
 | `LineTrace/Pilot_CSoS.cs` | ロボットの頭脳。経路追従・配送の入札（claim）・落札・完了。**契約のことは何も知らない** |
 | `arbitrator/C-SoS/main/main.go` | Go 製のアービトレータ（配送の割当係）。NATS で配送を配り、早い者勝ち（FCFS）で落札を決める |
-| `Assets/streamingAssets/cadl_config.json` | グラフ（11 ノード・17 エッジ）・ロボット台数・NATS 設定。Console の `[Config]` 行の出どころ |
+| `Assets/streamingAssets/cadl_config.json` | グラフ（11 ノード・17 エッジ）・ロボット台数・NATS 設定。両側が読み込む：アービトレータ起動時の `[Config]` 行（Terminal 2）と、Unity の Console に出る `[GraphDefinition] Loaded from CADL config` の行は、このファイルに由来する |
 
 ### Python 参照ランタイム — `cadl/runtime/`（答え合わせ用）
 

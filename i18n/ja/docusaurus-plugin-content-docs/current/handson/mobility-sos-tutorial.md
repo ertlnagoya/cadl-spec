@@ -348,9 +348,12 @@ python scripts/analyze_results.py | grep -E "OK|VIOLATED"
 期待される結果（SUMO 1.28.0 では違反 12 件。違反件数と該当タクシーの並びは、乱数シードや SUMO のバージョンによって変わります。着目すべきは `waiting_time` が `OK` で `ride_time` が `VIOLATED` になる、という**内訳の形**です）：
 
 ```text
-[OK          ] waiting_time <= 300s  (tripinfo.waitingTime)
-[VIOLATED (12)] ride_time <= 100s  (tripinfo.duration  e.g. ['taxi_8', 'taxi_9', ...])
+      [OK          ] waiting_time <= 300s  (tripinfo.waitingTime)
+      [VIOLATED (12)] ride_time <= 100s  (tripinfo.duration  e.g. ['taxi_8', 'taxi_9', 'taxi_10', 'taxi_11', 'taxi_14'])
+OK: 分析完了。
 ```
+
+最後の行はスクリプトの終了メッセージです。`OK` で始まるので `grep` のパターンに一致します。
 
 :::tip[🔍 可視化チェックポイント 4 — 改訂後（このコースの山場）]
 `analyze_results.py` を実行する前に、cadl-explorer をリロードしてみてください。

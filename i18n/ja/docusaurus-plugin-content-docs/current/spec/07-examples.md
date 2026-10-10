@@ -13,7 +13,7 @@ description: "家庭内ルール，ロボット配送，IoTデータ共有，AI�
 
 - **契約**（[§A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)）：`sharing_mode:`（7.1節）と`approval_required:`（7.4節）。7.2節と7.3節の記述例は，`sharing:`の項目を引用符なしで書き，共有対象を呼び出しの形（たとえば`position(period: 500ms)`）で書いてもいる。A.4は，各項目を引用符付きの文字列とし，共有対象を識別子とすることを求めている。
 - **`verification:`の項目**（[§A.8](./appendix-a-syntax.md#a8-verification-block)）：
-  - キー`check:`，`severity:`，`message:`，`contracts:`，`transitions:`，`invariant:`，`tool:`，`parameters:`。このうちA.8に対応するキーがあるのは3つだけである。`contracts:`と`transitions:`には`target:`が，`check:`には`expr:`が対応するが，記述例はどちらも用いていない。`severity:`，`message:`，`invariant:`，`tool:`，`parameters:`に対応するキーはA.8にない。
+  - キー`check:`，`severity:`，`message:`，`contracts:`，`transitions:`，`invariant:`，`tool:`，`parameters:`。このうちA.8に対応するキーがあるのは4つだけである。`contracts:`と`transitions:`には`target:`が，`check:`と`invariant:`には`expr:`が対応するが，記述例はどちらも用いていない。`severity:`，`message:`，`tool:`，`parameters:`に対応するキーはA.8にない。
   - `method:`の値`model_checking`と`bounded_model_checking`（A.8では`model_check`），`Monte_Carlo(...)`（A.8では`simulation`），`linear_programming`，`taint_analysis`。`SMT`はA.8では`smt`と書く。リファレンス実装の検証器が実装する検証手法は`smt`だけである。
   - `bound: 1000_steps`（A.8では，`bound:`は整数である）。
 - **`codegen:`**（[§A.9](./appendix-a-syntax.md#a9-codegen-block)）：A.9が定義するのは，キー`target:`，`output:`，`mappings:`を持つ項目の列である。記述例は，これを1つのマッピングとして書き，次のものを用いている。
