@@ -19,7 +19,7 @@ the tool. They are independent, so either can come first.
 
 No installation is required if you use
 **[CADL Explorer](https://cadl-explorer.streamlit.app/)**.
-The steps below describe CADL Explorer v0.5.0.
+The steps below describe CADL Explorer v0.5.1.
 
 ### A-1. Open CADL Explorer
 
@@ -134,7 +134,8 @@ The synthetic metrics depend only on `sos_type`, the agent `profile` and
 `rho`. Other fields such as `alpha`, `beta` and `lambda` are carried into
 the generated IR and config but do not change the results. Only `Directed`
 is modelled separately: any other `sos_type` is computed as collaborative.
-The profiles are `uniform`, `linear` and `polarized`. Keys that the format
+The profiles are `uniform`, `linear` and `polarized`; any other value,
+including the `custom` profile of Appendix C, is rejected with an error. Keys that the format
 does not know, or keys written at the wrong level, are ignored without an
 error, so keep to the nested layout above.
 
@@ -238,7 +239,9 @@ Verification FAILED: 7/9 checks passed
 ```
 
 The file still passes `cadl check`: it is well formed, but the contract
-can never apply. Finding this kind of contradiction before deployment is
+can never apply. The total is now 9 checks instead of 8 because the
+entailment line changes from `[INFO]` to `[PASS]`: contradictory
+assumptions imply anything, so that `[PASS]` is vacuous. Finding this kind of contradiction before deployment is
 what the verifier is for. Remove the added line and the file verifies
 again.
 
@@ -248,9 +251,9 @@ configs from the same file; all commands are listed in the
 
 ## Next steps
 
-- Read the [Specification Introduction](../spec/intro) for the language as a
-  whole.
 - **To learn by doing → [the Hands-on index](../handson/index.md)** (includes a three-stage path for beginners).
+- Read the [Specification Introduction](../spec/intro.md) for the language as a
+  whole.
 - Chapter [5. Language Specification](../spec/05-language-spec.md) covers the
   three-layer syntax.
 - Chapter [7. Examples](../spec/07-examples.md) walks through larger worked

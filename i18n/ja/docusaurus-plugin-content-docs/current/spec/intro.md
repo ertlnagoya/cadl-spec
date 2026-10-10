@@ -6,11 +6,11 @@ description: "CADL言語仕様書 v0.2 の入口ページ。概要，アーキ�
 
 # CADL: Contract Architecture Description Language
 
-**言語仕様書 — Version 0.2 (ドラフト)**
+**言語仕様書 — Version 0.2（ドラフト）**
 
 名古屋大学大学院情報学研究科 ERTL
 
-2026年10月9日
+2026年10月10日
 
 ---
 
@@ -153,8 +153,21 @@ Version 0.2 は，Version 0.1 の記述をリファレンス実装に合わせ�
   `on_match.transition` は移り先の**状態**を指し（規則 L-5，M-3），
   `on_match.violation` は宣言を必要としないラベルです（規則 M-2）。拡張の版は
   `sos-dsl: 0.1` のままです。
+- **`sharing:` の要素は引用符で囲んだ文字列で書かなければなりません**
+  （`- "TAXI[*] -> CENTRAL : position"`）。引用符がないと，YAML はこれを文字列ではなく
+  マッピングとして読みます
+  （[付録A A.4節](./appendix-a-syntax.md#a4-contracts-institution-layer)）。
+- **記号で書いた範囲の上限は記号的な大きさ**：`[1..N]` の `N` は任意のアクター数を表し，
+  これに値を与える構文は言語にありません（[5.2.2 節](./05-language-spec.md)，
+  [付録A A.3節](./appendix-a-syntax.md#a3-context-actors-metrics)）。
+- **識別子は ASCII に限ります**。文字列とコメントには任意の Unicode 文字を使用できます
+  （[第4章](./04-requirements.md)の要求 NFR-7，
+  [付録A A.1節](./appendix-a-syntax.md#a1-lexical-rules)）。
 
 [動機拡張](./appendix-c-motivation.md)は，独自のラベル v0.1-ext のままです。
+
+仕様書とリファレンス実装の版は，独立に番号を付けています。本仕様書は Version 0.2 であり，
+内容の確認に用いたリファレンス実装は `cadl` 0.3.8 です。
 
 フィードバックや議論は[GitHub Issues](https://github.com/ertlnagoya/cadl/issues)で歓迎します。
 仕様書や本サイトの問題は，[cadl-specのIssues](https://github.com/ertlnagoya/cadl-spec/issues)で報告できます。

@@ -154,7 +154,7 @@ A SoS-DSL-aware processor MUST, in addition to existing checks:
   `on_violation:` block. When a transition has a `deadline:` but no
   `on_violation.transition`, missing the deadline is still a violation
   (severity `Major` unless overridden) but causes no change of state.
-  v0.1 defines no way to refer to the implicit `Timeout` event from
+  `sos-dsl` 0.1 defines no way to refer to the implicit `Timeout` event from
   `on:`.
 - **L-5.** Every `lifecycle.transitions[*].on_violation.transition`
   MUST name a state that appears in `lifecycle.states` (the target
@@ -181,17 +181,17 @@ In a `rule` (and therefore in `when:` and in an `on:` event), three
 identifiers are reserved: `state` is the current lifecycle state of the
 instance, `now` is the current time, and `request` is the request that
 created the instance (e.g. `request.deadline`). A bare identifier that
-names a lifecycle state (e.g. `Assigned`) denotes that state. v0.1 has
+names a lifecycle state (e.g. `Assigned`) denotes that state. `sos-dsl` 0.1 has
 no syntax for the trigger that creates an instance or for the fields of
 `request`; the host application creates instances and supplies
 `request` (see E.8).
 
 In a monitor, `observe:` names the quantities the monitor reads and is
-carried into the IR; in v0.1 it does not restrict which names a `rule`
+carried into the IR; in `sos-dsl` 0.1 it does not restrict which names a `rule`
 may mention. `time` in `observe:` denotes the clock that `now` reads in
 a rule.
 
-The reference implementation at v0.3 parses both blocks and lowers them
+The reference implementation (`cadl` 0.3) parses both blocks and lowers them
 to the IR (E.7) but does not yet check rules L-1 to M-3. From v0.3.7
 `cadl check` reports a `severity:` other than `Minor`, `Major`, or
 `Critical` as an error. `sampling:` and `deadline:` values are not
@@ -206,7 +206,7 @@ of a declared actor as M-1 requires.
 ## E.5 Dynamic semantics (informative)
 
 - A contract instance is created when its initial trigger fires (e.g.,
-  a `DeliveryRequest` arrives). v0.1 has no syntax for this trigger or
+  a `DeliveryRequest` arrives). `sos-dsl` 0.1 has no syntax for this trigger or
   for the fields of `request`; the host application creates instances
   and supplies `request` (see E.8). It advances through `lifecycle.states`
   driven by `lifecycle.transitions[*].on` events, deadline timers
@@ -228,7 +228,7 @@ of a declared actor as M-1 requires.
 - `emit:` lists the names of additional events to publish when the
   transition fires, for consumption by visualization and logging
   tools. The reference generators carry `emit:` into the IR but do not
-  act on it at v0.3; every transition is published as a lifecycle
+  act on it in `cadl` 0.3; every transition is published as a lifecycle
   event regardless.
 - `monitors` evaluate independently of the lifecycle state machine but
   can read `state` (current lifecycle state) in their `rule:`. A
@@ -421,14 +421,14 @@ contract that has a `lifecycle:` or `monitors:` block it produces:
 
 - a state machine class per contract (states from `lifecycle.states`,
   transitions from `lifecycle.transitions`),
-- a deadline timer per transition with a `deadline_ms` (at v0.3 only
+- a deadline timer per transition with a `deadline_ms` (in `cadl` 0.3 only
   when the transition also names a state in `on_violation.transition`;
   a deadline without one is not enforced by the generated code),
 - a periodic / event-driven monitor task per `monitor`,
 - a violation log entry per fired `on_violation` or
   `on_match.violation`.
 
-At v0.3 the generated runtime matches an `on:` event by comparing its
+In `cadl` 0.3 the generated runtime matches an `on:` event by comparing its
 text with the name of the event posted by the host application, and it
 evaluates a `rule` without function calls: a rule that contains one,
 such as `collision_watch` in E.6, never matches. The generated

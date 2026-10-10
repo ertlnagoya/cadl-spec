@@ -10,7 +10,7 @@ description: "Entry page of the CADL language specification v0.2: overview, arch
 
 Graduate School of Informatics, Nagoya University — ERTL
 
-October 9, 2026
+October 10, 2026
 
 ---
 
@@ -70,7 +70,7 @@ the order below, but each chapter is also self-contained.
 - **[1. Introduction](./01-introduction.md)** — Motivation, problem setting, and
   the role of CADL within the SoS research agenda.
 - **[2. Objectives](./02-objectives.md)** — What CADL aims to solve, and the
-  scope of this first draft.
+  scope of this draft.
 - **[3. Comparison](./03-comparison.md)** — Relationship to existing ADLs,
   contract languages, and multi-agent DSLs.
 - **[4. Requirements](./04-requirements.md)** — Functional and non-functional
@@ -165,9 +165,24 @@ implementation. The changes that affect how an existing file is read are:
   `on_match.transition` name a target *state* (rules L-5 and M-3), and
   `on_match.violation` is a label that needs no declaration (rule M-2). The
   extension itself is still `sos-dsl: 0.1`.
+- **A `sharing:` entry MUST be a quoted string**
+  (`- "TAXI[*] -> CENTRAL : position"`); unquoted, YAML reads it as a
+  mapping and not as a string
+  ([Appendix A, §A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)).
+- **The bound of a symbolic range is a symbolic size**: in `[1..N]`, `N`
+  stands for any number of actors, and the language has no construct that
+  gives it a value ([Section 5.2.2](./05-language-spec.md),
+  [Appendix A, §A.3](./appendix-a-syntax.md#a3-context-actors-metrics)).
+- **Identifiers are ASCII**; strings and comments may contain any Unicode
+  character (requirement NFR-7 in [Chapter 4](./04-requirements.md),
+  [Appendix A, §A.1](./appendix-a-syntax.md#a1-lexical-rules)).
 
 The [motivation extension](./appendix-c-motivation.md) keeps its own label,
 v0.1-ext.
+
+The specification and the reference implementation are numbered
+independently: this specification is Version 0.2, and the reference
+implementation it was checked against is `cadl` 0.3.8.
 
 Feedback and discussion are welcome via [GitHub Issues](https://github.com/ertlnagoya/cadl/issues).
 Problems with the specification or this site can be reported at

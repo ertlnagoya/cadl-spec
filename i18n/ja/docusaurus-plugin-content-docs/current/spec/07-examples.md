@@ -9,7 +9,19 @@ description: "家庭内ルール，ロボット配送，IoTデータ共有，AI�
 本章では，4つの適用領域を通じてCADLの記述例を示す。各例は，[第1章](./01-introduction.md)で掲げた3つの目的に対応する記述機能を具体的に例示している。
 
 :::note
-本章の記述例はCADLが意図する設計を例示する概念的なものであり，v0.3リファレンス実装はこのままの形では受理しない。基本構造の記述は，`ROBOT[*]`のようなアクター参照を引用符なしでインラインリスト内に書いており，YAMLベースのパーサはこれを拒否する。`verification:`と`codegen:`の記述は，`sos:`の外に置いた断片である。また，`optimization:`，`policy_codegen:`，`post_generation_verification:`，`calendar_integration:`，`tool:`や，`Monte_Carlo(...)`のような検証手法など，[付録A](./appendix-a-syntax.md)の範囲を超える将来の構成要素も含む。リファレンス実装の検証器が実装する検証手法は`smt`だけである。これらの構成要素のほかにも，`verification:`の記述はキー（`check:`，`severity:`，`message:`，`contracts:`）を，`codegen:`の記述は形（`modules:`，`generates:`，`targets:`）を用いているが，これらは付録Aの[§A.8](./appendix-a-syntax.md#a8-verification-block)と[§A.9](./appendix-a-syntax.md#a9-codegen-block)のキーではない。契約の記述に現れる`sharing_mode:`（7.1節）と`approval_required:`（7.4節）も，同様に[§A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)のキーではない。実行できる例は，[`cadl`リポジトリ](https://github.com/ertlnagoya/cadl)の`examples/`ディレクトリにある。
+本章の記述例はCADLが意図する設計を例示する概念的なものであり，リファレンス実装（`cadl` 0.3）はこのままの形では受理しない。基本構造の記述は，`ROBOT[*]`のようなアクター参照を引用符なしでインラインリスト内に書いており，YAMLベースのパーサはこれを拒否する。`verification:`と`codegen:`の記述は，`sos:`の外に置いた断片である。記述例は，[付録A](./appendix-a-syntax.md)にない将来のキーと値も用いている。
+
+- **契約**（[§A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)）：`sharing_mode:`（7.1節）と`approval_required:`（7.4節）。
+- **`verification:`の項目**（[§A.8](./appendix-a-syntax.md#a8-verification-block)）：
+  - キー`check:`，`severity:`，`message:`，`contracts:`，`transitions:`，`invariant:`，`tool:`，`parameters:`。A.8でこれらに当たるのは`target:`と`expr:`であるが，記述例はこれらを用いていない。
+  - `method:`の値`model_checking`と`bounded_model_checking`（A.8では`model_check`），`Monte_Carlo(...)`（A.8では`simulation`），`linear_programming`，`taint_analysis`。`SMT`はA.8では`smt`と書く。リファレンス実装の検証器が実装する検証手法は`smt`だけである。
+  - `bound: 1000_steps`（A.8では，`bound:`は整数である）。
+- **`codegen:`**（[§A.9](./appendix-a-syntax.md#a9-codegen-block)）：A.9が定義するのは，キー`target:`，`output:`，`mappings:`を持つ項目の列である。記述例は，これを1つのマッピングとして書き，次のものを用いている。
+  - `modules:`。その項目は，`id:`，`generates:`，`synthesis:`と，キー`source_contract:`，`source_contracts:`，`source_role:`，`source_protocol:`，`source_transitions:`，`source_incentives:`を持つ。
+  - `target:`の代わりに`language:`を持つ`targets:`（7.3節）。
+  - ブロック`calendar_integration:`（7.1節），`optimization:`（7.2節），`post_generation_verification:`（7.3節），`policy_codegen:`（7.4節）。最後のものは`target: "rego"`と書いているが，[付録D](./appendix-d-codegen.md)でのターゲット名は`opa`である。
+
+実行できる例は，[`cadl`リポジトリ](https://github.com/ertlnagoya/cadl)の`examples/`ディレクトリにある。
 :::
 
 | **記述例** | **目的1: 計算機処理** | **目的2: 矛盾検出** | **目的3: 自動変換・コード生成** |

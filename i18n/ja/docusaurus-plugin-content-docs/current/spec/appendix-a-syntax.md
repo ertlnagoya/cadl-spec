@@ -14,7 +14,7 @@ CADLファイルは**YAML 1.2文書** [[Ben-Kiki+, 2021]](./appendix-b-reference
 [第5章](./05-language-spec.md)と本付録は同じ構文を記述する。具象構文については本付録が規範的であり，
 第5章は説明のための記述である。リファレンス実装
 （[`cadl`](https://github.com/ertlnagoya/cadl)）は，この構文をそのまま
-受理することが期待される。v0.3における既知の相違は
+受理することが期待される。`cadl` 0.3における既知の相違は
 [A.12](#a12-reference-implementation-status-v03)に示す。
 
 この文法を試すには，リファレンス実装をインストールし（`pip install cadl-lang`），
@@ -364,7 +364,7 @@ AND    OR    NOT    true    false    for all    exists    in
 （検証手法），`ms` `s` `min` `h`（時間の単位）。拡張のキーと値は
 [付録C](./appendix-c-motivation.md)と[付録E](./appendix-e-sos-dsl.md)に示す。
 
-## A.12 リファレンス実装の状況（v0.3） {/* #a12-reference-implementation-status-v03 */}
+## A.12 リファレンス実装の状況（`cadl` 0.3） {/* #a12-reference-implementation-status-v03 */}
 
 リファレンス実装は，YAML 1.1のローダーでファイルを読み，寛容に振る舞う。
 パーサが拒否するのは，`sos:` マッピングの欠落，不正なYAML，不正な `type:`，
@@ -377,9 +377,9 @@ AND    OR    NOT    true    false    for all    exists    in
 みなされ，宣言されていなければならない。単独で現れる名前は状態変数とみなされ，
 検査されない。`condition:`，`safety_invariant:`，`formula:`，`expr:`，およびモニターの
 `rule:` の述語については，未宣言のアクターの検査を行わない。それ以外の必須キーが
-欠けている場合は，空の値で置き換える。v0.3では，次の点で本付録と相違する（v0.3.8で確認）。
+欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.8で確認）。
 
-- **式。** v0.3.8では，式はA.10とA.11に従う。既知の相違はない。
+- **式。** `cadl` 0.3.8では，式はA.10とA.11に従う。既知の相違はない。
 - **識別子。** A.1のASCIIの規則とA.11の予約語は強制されない。`cadl check` は，
   非ASCII文字やハイフンを含む `id`，および予約語（`AND`，`OR`，`true`）である `id` を，
   アクターについても契約についても，診断を出さずに受理する。
@@ -404,8 +404,11 @@ AND    OR    NOT    true    false    for all    exists    in
   [6.3節](./06-design.md)の契約と遷移の検査は，項目の有無にかかわらず実行される。
 - **コード生成。** `codegen:` の項目は構文解析されるが，それに基づく処理は行われない。
   ターゲットはコマンドラインで選択する（[付録D](./appendix-d-codegen.md)）。
-- **拡張。** `extensions:` と `motivation:` は無視される。`lifecycle:` と `monitors:` は，
+- **拡張。** `extensions:` と `motivation:` は無視され，これらについて情報レベルの診断も
+  出ない。`cadl check` は，型検査に合格したことだけを報告する。これは，拡張を実装して
+  いない処理系が情報レベルの診断を出すことを望ましいとする[付録C](./appendix-c-motivation.md)と
+  [付録E](./appendix-e-sos-dsl.md)の規定と相違する。`lifecycle:` と `monitors:` は，
   `extensions:` が `sos-dsl` を宣言しているかどうかにかかわらず認識される。
 
-v0.3.7より前のリリースは，これらの点のいくつかで異なっていた。その経緯は，cadlリポジトリの
+`cadl` の0.3.7より前のリリースは，これらの点のいくつかで異なっていた。その経緯は，cadlリポジトリの
 [CHANGELOG](https://github.com/ertlnagoya/cadl/blob/master/CHANGELOG.md)にある。

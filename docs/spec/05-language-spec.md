@@ -199,7 +199,7 @@ and verification levels.
 ### 5.2.1 Type System
 
 The table below lists the built-in types of CADL. They are
-part of the language design; the reference implementation at v0.3 does
+part of the language design; the reference implementation (`cadl` 0.3) does
 not check them (Appendix A, A.12).
 
 | **Type Name** | **Description** | **Example** |
@@ -345,7 +345,7 @@ five kinds of step.
 - **`barrier:`** — a synchronisation point: the protocol continues only
   when the given condition holds.
 
-The reference implementation at v0.3 does not retain the `else:` branch
+The reference implementation (`cadl` 0.3) does not retain the `else:` branch
 or the barrier condition ([Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)).
 
 ```yaml
@@ -535,7 +535,7 @@ Each step of a protocol is interpreted as a labeled transition system
 composition of A's send action and B's receive action. Timing
 constraints are encoded as invariants of timed automata; verification
 by model checkers such as UPPAAL [[Larsen+, 1997]](./appendix-b-references.md) is the design intent. Model checking is
-not integrated in v0.3; deadlock detection is done by structural
+not integrated in `cadl` 0.3; deadlock detection is done by structural
 analysis ([Section 6.3](./06-design.md)).
 
 ## 5.5 Where to Go Next

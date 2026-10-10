@@ -174,7 +174,7 @@ SoS Contract DSL 拡張の用語である。
   [ソースリポジトリ](https://github.com/ertlnagoya/cadl-explorer) を参照。
 - **Saved comparisons（保存した比較）** — CADL Explorer で保存した比較
   （**Save this comparison**）のセッション内の記録。CSV / JSON で
-  エクスポートできる。v0.4.0 より前の名前は「Run history」。
+  エクスポートできる。CADL Explorer v0.4.0 より前の名前は「Run history」。
 - **CADL id / IR id / config id** — 各段階（CADL 設定，IR，シミュレータ
   設定）の SHA-256 の先頭 12 桁。CADL Explorer が表示する。同一の CADL id
   ＋同一シード集合なら結果が一致する。

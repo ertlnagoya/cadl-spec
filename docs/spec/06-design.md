@@ -1,11 +1,11 @@
 ---
 sidebar_position: 6
 title: "6. Design"
-description: "Design of the CADL toolchain: architecture, parser, type checker, verification engine, and runtime, with what the v0.3 reference implementation provides."
+description: "Design of the CADL toolchain: architecture, parser, type checker, verification engine, and runtime, with what the reference implementation (cadl 0.3) provides."
 ---
 
 This chapter describes the design of the CADL toolchain. Each section
-separates what the public reference implementation (`cadl` v0.3)
+separates what the public reference implementation (`cadl` 0.3)
 provides from what is design intent and still planned.
 [Chapter 10](./10-roadmap.md) tracks the status per phase.
 
@@ -16,14 +16,14 @@ components:
 **Parser and Type Checker (Frontend):** Analyzes CADL descriptions and
 generates abstract syntax trees (AST). Static type checking verifies
 actor reference resolution, contract party consistency, and parameter
-ranges. Available in v0.3.
+ranges. Available in `cadl` 0.3.
 
 **Verification Engine (Verifier):** Performs formal verification on AST.
-v0.3 provides consistency verification with an SMT solver (Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md)), protocol
+`cadl` 0.3 provides consistency verification with an SMT solver (Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md)), protocol
 deadlock detection, and graph analysis of regime transitions. Model
 checking and reachability analysis of continuous dynamics are planned.
 
-**Code Generator:** Generates code from CADL descriptions. v0.3 targets
+**Code Generator:** Generates code from CADL descriptions. `cadl` 0.3 targets
 Python (runtime), Solidity [[Solidity Documentation]](./appendix-b-references.md), OPA/Rego [[Open Policy Agent]](./appendix-b-references.md), and Unity C# (for the SoS-DSL
 extension, [Appendix E](./appendix-e-sos-dsl.md)), and also emits
 simulator configurations; the targets are listed in
@@ -32,10 +32,10 @@ generation and conversion to SysMLv2 [[OMG, 2025]](./appendix-b-references.md) a
 
 **Runtime Monitor:** Monitors execution of deployed institutions,
 detects contract violations, executes institutional transitions, and
-performs logging. v0.3 provides these as classes in the generated
+performs logging. `cadl` 0.3 provides these as classes in the generated
 runtime code, not as a separate monitoring service.
 
-The pipeline below shows the stages as provided by v0.3.
+The pipeline below shows the stages as provided by `cadl` 0.3.
 
 ```text
 Processing Pipeline:
@@ -73,7 +73,7 @@ be run separately before generating code.
 ### 6.2.1 Parser
 
 Parses YAML-based syntax and additionally parses CADL-specific
-constraint expressions and protocol steps. In v0.3 a YAML loader reads
+constraint expressions and protocol steps. In `cadl` 0.3 a YAML loader reads
 the document structure and a Lark [[Shinan+]](./appendix-b-references.md) grammar parses the expression
 sub-language; parse results are output as typed AST. Parsing stops at
 the first error, and keys the parser does not know are skipped without a
@@ -109,9 +109,9 @@ provides the following commands.
 ## 6.3 Verification Engine
 The verification engine is designed to integrate four verification
 techniques. The reference verifier implements only the `smt` method;
-the last column shows what v0.3 provides for each technique.
+the last column shows what `cadl` 0.3 provides for each technique.
 
-| **Verification Technique** | **Verification Target** | **Tool Foundation (design)** | **v0.3 reference implementation** |
+| **Verification Technique** | **Verification Target** | **Tool Foundation (design)** | **Reference implementation (`cadl` 0.3)** |
 |---|---|---|---|
 | SMT-Based Verification | Consistency between contracts. Logical consistency of guarantees. | Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), CVC5 [[Barbosa+, 2022]](./appendix-b-references.md) | Available with Z3: consistency within each contract and between contracts that share a party, satisfiability of the assumptions of each contract, exclusivity of transition conditions. Whether the guarantees follow from the assumptions is reported as information only. CVC5 is not integrated. |
 | Model Checking | Deadlock and livelock detection in protocols. Exhaustive search of reachable states. | UPPAAL [[Larsen+, 1997]](./appendix-b-references.md), NuSMV [[Cimatti+, 2002]](./appendix-b-references.md) | Not integrated. Deadlock detection is done by structural analysis instead (mutual sends between the branches of a `parallel` block, barrier reachability, circular fallback chains). Steps written in sequence are ordered and are not treated as circular waits. Livelock detection is planned. |
@@ -125,24 +125,24 @@ follows; unless noted, they describe design intent:
 
 **Contract Monitoring:** Monitors satisfaction of assume/guarantee at
 runtime for each contract and executes defined violation actions when
-violations are detected. v0.3 generates one monitor class per contract
+violations are detected. `cadl` 0.3 generates one monitor class per contract
 that checks assume/guarantee and records violations.
 
 **Institutional Transition Control:** Safely executes institutional
 transitions in response to environmental parameter changes based on
 regime maps. Manages each step of transition protocols and provides
-rollback functionality. v0.3 generates a regime controller that
+rollback functionality. `cadl` 0.3 generates a regime controller that
 evaluates transition conditions and asserts the safety invariant when
 switching; managed transition steps and rollback execution are planned.
 
 **Metrics Collection:** Computes defined evaluation metrics
 (performance, fairness, resilience, etc.) in real-time and displays them
-on dashboards. v0.3 generates a metrics collector that records values
+on dashboards. `cadl` 0.3 generates a metrics collector that records values
 and checks targets; a dashboard is not provided.
 
 **Logging and Audit:** Records all protocol executions, contract
 violations, and institutional transitions with timestamps, supporting
-post-analysis and accountability. The v0.3 runtime keeps a timestamped
+post-analysis and accountability. The `cadl` 0.3 runtime keeps a timestamped
 in-memory log of protocol executions, violations, and regime
 transitions. Integration with IEC 62853 [[IEC 62853:2018]](./appendix-b-references.md)
 agreement description databases is planned.
