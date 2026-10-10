@@ -180,7 +180,7 @@ The checks of the reference verifier are described in
   and the [source repository](https://github.com/ertlnagoya/cadl-explorer).
 - **Saved comparisons** — Session-local record of the comparisons saved
   in CADL Explorer (**Save this comparison**), exportable as CSV / JSON.
-  Called "Run history" before v0.4.0.
+  Called "Run history" before CADL Explorer v0.4.0.
 - **CADL id / IR id / config id** — The first 12 hex digits of the
   SHA-256 of each stage (the CADL config, the IR, the simulator config),
   shown by CADL Explorer. Equal CADL ids with equal seed sets produce

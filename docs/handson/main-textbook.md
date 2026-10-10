@@ -915,7 +915,7 @@ go run .
 [Config]   taskArbitration.enabled=true protocol=fcfs intervalSec=5.0
 ```
 
-If that third line reads `taskArbitration.enabled=true`, the arbitrator has loaded its configuration and is ready to start handing out deliveries. If it says `false`, or the `[Config]` lines do not appear at all, the config file was not read — pass its absolute path with `-config` as shown in the note below.
+If that third line reads `taskArbitration.enabled=true`, the arbitrator has loaded its configuration and is ready to start handing out deliveries. If it says `false`, or the `[Config]` lines do not appear at all, the config file was not read — pass its absolute path with `-config` as shown in the note below. A further line, `[Motivation] Disabled (baseline A-SoS behavior)`, follows; it only says that the motivation extension is off, and the "A-SoS" in it is an older name that does not refer to the SoS type of this scene.
 
 > #### 🛠 Restart the arbitrator before every Play (important)
 >

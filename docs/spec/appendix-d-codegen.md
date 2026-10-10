@@ -12,7 +12,7 @@ and the mapping to the reference implementation's directory layout.
 EBNF for `codegen:` entries; this appendix
 pairs each target name with its **category**, **intended artifact**, and
 **implementation location** in the reference implementation
-([`cadl`](https://github.com/ertlnagoya/cadl), v0.3).
+([`cadl`](https://github.com/ertlnagoya/cadl) 0.3).
 
 ## D.1 Target catalog
 
@@ -25,14 +25,14 @@ pairs each target name with its **category**, **intended artifact**, and
 | `unity` | Simulator config | JSON for a Unity-based simulator | `cadl.sim.gen_unity` | `cadl sim-gen -t unity` |
 | `go` | Simulator config | JSON for a Go-based simulator | `cadl.sim.gen_go` | `cadl sim-gen -t go` |
 | `python` (simulator) | Simulator config | YAML for a Python-based simulator | `cadl.sim.gen_python` | `cadl sim-gen -t python` |
-| `ros2` | Runtime node | ROS 2 [[Macenski+, 2022]](./appendix-b-references.md) node scaffolds | not implemented at v0.3 | — |
-| other name (user-defined) | Plugin | Whatever the user plugin emits | no plugin mechanism exists at v0.3; other target names are rejected by the CLI | — |
+| `ros2` | Runtime node | ROS 2 [[Macenski+, 2022]](./appendix-b-references.md) node scaffolds | not implemented in `cadl` 0.3 | — |
+| other name (user-defined) | Plugin | Whatever the user plugin emits | no plugin mechanism exists in `cadl` 0.3; other target names are rejected by the CLI | — |
 
 The name `python` denotes the runtime-code target in a `codegen:` entry;
 the simulator configuration of the same name is requested with
 `cadl sim-gen`. The Python simulator config therefore cannot be
 requested from a `codegen:` entry in v0.2; use `cadl sim-gen -t python`.
-In the reference implementation at v0.3 the target is
+In the reference implementation (`cadl` 0.3) the target is
 selected on the command line as shown in the last column; `codegen:`
 entries in the file are parsed but do not yet drive generation.
 
@@ -68,7 +68,7 @@ independently.
   that simulation.
 - Pick **`python`** when you want an executable runtime skeleton of the
   actors, contract monitors, and protocols; **`ros2`** is reserved for
-  driving actual robots and is not implemented at v0.3.
+  driving actual robots and is not implemented in `cadl` 0.3.
 - Pick **`solidity`** when the Institution-layer contracts must be
   enforced on-chain (blockchain deployment).
 - Pick **`opa`** when contracts should be enforced as policies at API

@@ -32,7 +32,7 @@ never asked to write code cold.
 
 ---
 
-## 🧑‍💻 For learners — three courses
+## 🧑‍🎓 For learners — three courses
 
 All courses share the **same CADL/SoS-DSL syntax**; only the domain and target runtime change.
 Take them in order: A → B → C.

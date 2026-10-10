@@ -97,7 +97,7 @@ motivation_model      = "none" | "commitment_budget" | "hybrid" ;
 - `used_i` は，実行開始からアクター i が引き受けたゴール（コミットメント）の累積数である。
 - `overshoot = max(0, used_i − B_i)` は，アクター i が予算を超過した量である。予算内の間は 0 である。
 - 追加待機 `⌊ρ · overshoot · wait_scale⌋` は，ランタイムのディスパッチャの再試行ティック数で数え，次の経路割当てまでの通常の待機に加算する。
-- 「嗜好を考慮した経路優先度」（`hybrid`）は v0.1-ext では**未定義**である。式は与えられておらず，参照シミュレータは予算制約だけを適用するため，`hybrid` は `commitment_budget` と同じ動作になる。
+- 「嗜好を考慮した経路優先度」（`hybrid`）は v0.1-ext では**未定義**である。式は与えられておらず，リファレンスシミュレータは予算制約だけを適用するため，`hybrid` は `commitment_budget` と同じ動作になる。
 
 実効感度は `ρ · 𝟙[model ≠ "none"]`。
 `model = "none"` のとき，ランタイムは `rho` を無視しなければならない。
@@ -157,7 +157,7 @@ CADL 処理系は，`motivation:` ブロックを持たないファイルを受�
   受け付けない。
 - **[`cadl`](https://github.com/ertlnagoya/cadl)**（リファレンス実装）:
   AST の `SoSDefinition` に省略可能な `MotivationBlock` を定義している。
-  v0.3 のパーサは CADL ファイルの `motivation:` キーを読み込まない。
+  `cadl` 0.3 のパーサは CADL ファイルの `motivation:` キーを読み込まない。
   このブロックは受理されたうえで無視され，検証とコード生成でも使われない。
   リファレンス実装は，
   [付録A §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)

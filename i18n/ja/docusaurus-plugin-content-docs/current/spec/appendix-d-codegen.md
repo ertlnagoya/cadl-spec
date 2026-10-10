@@ -10,7 +10,7 @@ description: "CADL v0.2のコード生成ターゲットの一覧。各ターゲ
 リファレンス実装のディレクトリ構成との対応を示す。
 [付録A §A.9](./appendix-a-syntax.md#a9-codegen-block) が `codegen:` の項目の EBNF を定義する。
 本付録では，各ターゲット名を**カテゴリ**・**生成物**・
-**リファレンス実装（[`cadl`](https://github.com/ertlnagoya/cadl)，v0.3）内の
+**リファレンス実装（[`cadl`](https://github.com/ertlnagoya/cadl) 0.3）内の
 モジュール**と対応づける。
 
 ## D.1 ターゲット一覧
@@ -24,13 +24,13 @@ description: "CADL v0.2のコード生成ターゲットの一覧。各ターゲ
 | `unity` | シミュレータ設定 | Unity ベースのシミュレータ用 JSON | `cadl.sim.gen_unity` | `cadl sim-gen -t unity` |
 | `go` | シミュレータ設定 | Go ベースのシミュレータ用 JSON | `cadl.sim.gen_go` | `cadl sim-gen -t go` |
 | `python`（シミュレータ） | シミュレータ設定 | Python ベースのシミュレータ用 YAML | `cadl.sim.gen_python` | `cadl sim-gen -t python` |
-| `ros2` | ランタイムノード | ROS 2 [[Macenski+, 2022]](./appendix-b-references.md) ノードの雛形 | v0.3 では未実装 | — |
-| その他の名前（ユーザ定義） | プラグイン | プラグインが出力するもの | v0.3 にはプラグイン機構がなく，その他のターゲット名は CLI が拒否する | — |
+| `ros2` | ランタイムノード | ROS 2 [[Macenski+, 2022]](./appendix-b-references.md) ノードの雛形 | `cadl` 0.3 では未実装 | — |
+| その他の名前（ユーザ定義） | プラグイン | プラグインが出力するもの | `cadl` 0.3 にはプラグイン機構がなく，その他のターゲット名は CLI が拒否する | — |
 
 `codegen:` の項目では，名前 `python` はランタイムコードのターゲットを指す。
 同名のシミュレータ設定は `cadl sim-gen` で生成する。したがって，v0.2 では
 Python のシミュレータ設定を `codegen:` の項目から要求することはできず，
-`cadl sim-gen -t python` を用いる。v0.3 のリファレンス実装では，
+`cadl sim-gen -t python` を用いる。リファレンス実装（`cadl` 0.3）では，
 最右列に示すとおりコマンドラインでターゲットを選択する。ファイル中の
 `codegen:` の項目は構文解析されるが，まだ生成を駆動しない。
 
@@ -64,7 +64,7 @@ src/cadl/
   中で実行する場合は **`unity-csharp`**。
 - **`python`**: アクター，契約モニター，プロトコルの実行可能な
   ランタイムの骨格が必要な場合。**`ros2`** は実ロボットの駆動のために
-  予約されており，v0.3 では未実装。
+  予約されており，`cadl` 0.3 では未実装。
 - **`solidity`**: Institution 層契約をオンチェーン（ブロックチェーン）
   で強制する場合。
 - **`opa`**: 契約を API／サービス境界のポリシー（policy-as-code）

@@ -8,7 +8,7 @@ description: "Purpose and scope of the CADL specification, the challenges of SoS
 CADL (Contract Architecture Description Language) is a domain-specific
 language (DSL) for formally specifying, verifying, and deploying
 institutional designs in System of Systems (SoS). This document presents
-the first draft of the CADL language specification, covering language
+the CADL language specification (Version 0.2, Draft), covering language
 objectives, requirements, syntax and semantics definitions, and
 toolchain design.
 

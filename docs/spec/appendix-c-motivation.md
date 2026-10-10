@@ -169,7 +169,7 @@ block verbatim so downstream tools can consume it.
   `custom`.
 - **[`cadl`](https://github.com/ertlnagoya/cadl)** (reference
   implementation): defines an optional `MotivationBlock` on
-  `SoSDefinition` in its AST. At v0.3 the parser does not read the
+  `SoSDefinition` in its AST. In `cadl` 0.3 the parser does not read the
   `motivation:` key from a CADL file; the block is accepted and
   ignored, and verification and code generation do not use it. The
   reference implementation implements the core language with the

@@ -11,24 +11,43 @@ corresponding to the three objectives outlined in
 
 :::note
 The examples illustrate the intended design of CADL; they are conceptual
-and are not accepted as written by the v0.3 reference implementation.
+and are not accepted as written by the reference implementation (`cadl` 0.3).
 The base definitions write actor references such as `ROBOT[*]` unquoted
 inside inline lists, which its YAML-based parser rejects, and the
 `verification:` / `codegen:` listings are fragments placed outside
-`sos:`. They also use forward-looking constructs beyond
-[Appendix A](./appendix-a-syntax.md), such
-as `optimization:`, `policy_codegen:`, `post_generation_verification:`,
-`calendar_integration:`, `tool:`, and verification methods like
-`Monte_Carlo(...)`; the reference verifier implements only `smt`.
-Besides these constructs, the `verification:` listings use keys
-(`check:`, `severity:`, `message:`, `contracts:`) and the `codegen:`
-listings use shapes (`modules:`, `generates:`, `targets:`) that are not
-the keys of Appendix A
-[§A.8](./appendix-a-syntax.md#a8-verification-block) and
-[§A.9](./appendix-a-syntax.md#a9-codegen-block).
-In the contract listings, `sharing_mode:` (Section 7.1) and
-`approval_required:` (Section 7.4) are likewise not keys of
-[§A.4](./appendix-a-syntax.md#a4-contracts-institution-layer).
+`sos:`. The listings also use forward-looking keys and values that are
+not part of [Appendix A](./appendix-a-syntax.md):
+
+- **Contracts**
+  ([§A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)):
+  `sharing_mode:` (Section 7.1) and `approval_required:` (Section 7.4).
+- **`verification:` entries**
+  ([§A.8](./appendix-a-syntax.md#a8-verification-block)):
+  - the keys `check:`, `severity:`, `message:`, `contracts:`,
+    `transitions:`, `invariant:`, `tool:`, and `parameters:`. A.8 has
+    `target:` and `expr:` in their place, which the listings do not
+    use;
+  - the `method:` values `model_checking` and `bounded_model_checking`
+    (A.8 has `model_check`), `Monte_Carlo(...)` (A.8 has `simulation`),
+    `linear_programming`, and `taint_analysis`. `SMT` is written `smt`
+    in A.8, and it is the only method the reference verifier
+    implements;
+  - `bound: 1000_steps` (in A.8, `bound:` is an integer).
+- **`codegen:`**
+  ([§A.9](./appendix-a-syntax.md#a9-codegen-block)): A.9 defines a
+  sequence of entries with the keys `target:`, `output:`, and
+  `mappings:`. The listings write one mapping instead, and use
+  - `modules:`, whose entries have `id:`, `generates:`, `synthesis:`,
+    and the keys `source_contract:`, `source_contracts:`,
+    `source_role:`, `source_protocol:`, `source_transitions:`, and
+    `source_incentives:`;
+  - `targets:` with `language:` in place of `target:` (Section 7.3);
+  - the blocks `calendar_integration:` (Section 7.1), `optimization:`
+    (Section 7.2), `post_generation_verification:` (Section 7.3), and
+    `policy_codegen:` (Section 7.4). The last has `target: "rego"`,
+    whereas the target name in
+    [Appendix D](./appendix-d-codegen.md) is `opa`.
+
 Runnable examples live in the `examples/` directory of the
 [`cadl` repository](https://github.com/ertlnagoya/cadl).
 :::

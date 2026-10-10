@@ -15,7 +15,7 @@ title: "クイックスタート"
 
 ## 経路 A — ブラウザで試す（CADL Explorer） {/* #path-a */}
 
-**[CADL Explorer](https://cadl-explorer.streamlit.app/)** を使えばインストールは不要です。以下の手順は CADL Explorer v0.5.0 の画面にもとづいています。
+**[CADL Explorer](https://cadl-explorer.streamlit.app/)** を使えばインストールは不要です。以下の手順は CADL Explorer v0.5.1 の画面にもとづいています。
 
 ### A-1. CADL Explorer を開く
 
@@ -126,7 +126,8 @@ motivation:
 `alpha`，`beta`，`lambda` などのほかの項目は，生成される IR と設定には
 引き継がれますが，結果は変えません。別に扱われるのは `Directed` だけで，
 ほかの `sos_type` は協調型として計算されます。プロファイルは `uniform`，
-`linear`，`polarized` の3つです。この形式にないキーや，階層を誤って書いた
+`linear`，`polarized` の3つで，それ以外の値（付録C の `custom` を含む）は
+エラーになります。この形式にないキーや，階層を誤って書いた
 キーは，エラーにならずに無視されるので，上の入れ子の形を守ってください。
 
 この YAML は Explorer のページ独自の設定の形式で，CADL のモデル全体では
@@ -222,7 +223,7 @@ cadl verify my_delivery.cadl
 Verification FAILED: 7/9 checks passed
 ```
 
-このファイルは `cadl check` には通ります。書式としては正しいものの，契約が決して適用されないからです。こうした矛盾を運用前に見つけるのが検証器の役割です。追加した行を消すと，再び検証に通ります。
+このファイルは `cadl check` には通ります。書式としては正しいものの，契約が決して適用されないからです。検査の合計が 8 件から 9 件に増えているのは，entailment の行が `[INFO]` から `[PASS]` に変わるためです。矛盾した前提からは何でも導けるので，この `[PASS]` に意味はありません。こうした矛盾を運用前に見つけるのが検証器の役割です。追加した行を消すと，再び検証に通ります。
 
 この先は，同じファイルから `cadl codegen` と `cadl sim-gen` でコードやシミュレータ設定を生成できます。全コマンドは [cadl リポジトリの README](https://github.com/ertlnagoya/cadl#readme) にあります。
 

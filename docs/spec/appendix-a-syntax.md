@@ -16,7 +16,7 @@ YAML string scalars.
 syntax. This appendix is normative for the concrete syntax; Chapter 5 is
 explanatory. The
 reference implementation ([`cadl`](https://github.com/ertlnagoya/cadl))
-is expected to accept exactly this syntax; known deviations of v0.3 are
+is expected to accept exactly this syntax; known deviations of `cadl` 0.3 are
 listed in [A.12](#a12-reference-implementation-status-v03).
 
 To try the grammar, install the reference implementation
@@ -392,7 +392,7 @@ Enumerated values: `Directed` `Acknowledged` `Collaborative` `Virtual`
 [Appendix C](./appendix-c-motivation.md) and
 [Appendix E](./appendix-e-sos-dsl.md).
 
-## A.12 Reference implementation status (v0.3)
+## A.12 Reference implementation status (`cadl` 0.3) {/* #a12-reference-implementation-status-v03 */}
 
 The reference implementation reads the file with a YAML 1.1 loader and
 is lenient: only a missing `sos:` mapping, invalid YAML, an invalid
@@ -407,10 +407,10 @@ member access (`ROBOT.battery`), including inside an index; a name
 standing alone is taken as a state variable and is not checked. The
 predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
 and monitor `rule:` are not checked for undeclared actors. Other
-missing required keys are replaced by an empty value. At v0.3 it
-deviates from this appendix as follows (checked against v0.3.8).
+missing required keys are replaced by an empty value. `cadl` 0.3
+deviates from this appendix as follows (checked against `cadl` 0.3.8).
 
-- **Expressions.** Expressions follow A.10 and A.11 in v0.3.8; no
+- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.8; no
   deviation is known.
 - **Identifiers.** The ASCII rule of A.1 and the reserved words of
   A.11 are not enforced. `cadl check` accepts, without a diagnostic, an
@@ -447,11 +447,16 @@ deviates from this appendix as follows (checked against v0.3.8).
 - **Codegen.** `codegen:` entries are parsed but not acted upon; the
   target is selected on the command line
   ([Appendix D](./appendix-d-codegen.md)).
-- **Extensions.** `extensions:` and `motivation:` are ignored.
+- **Extensions.** `extensions:` and `motivation:` are ignored, and no
+  informational diagnostic is emitted for them: `cadl check` reports
+  only that the type check passed. This deviates from the SHOULD of
+  [Appendix C](./appendix-c-motivation.md) and
+  [Appendix E](./appendix-e-sos-dsl.md), which ask a processor that
+  does not implement an extension to emit one.
   `lifecycle:` and `monitors:` are recognised whether or not
   `extensions:` declares `sos-dsl`.
 
-Releases before v0.3.7 differed in several of these points; the history
+Releases of `cadl` before 0.3.7 differed in several of these points; the history
 is in the
 [CHANGELOG](https://github.com/ertlnagoya/cadl/blob/master/CHANGELOG.md)
 of the cadl repository.
