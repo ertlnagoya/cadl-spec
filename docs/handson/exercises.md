@@ -336,14 +336,23 @@ Software engineers debug code. SoS engineers debug **diagrams** — because the 
 
 **Procedure**:
 
-1. Create `cadl-explorer/cadl_sim/sos_dsl/violation_trace_view.py`.
-2. Parse each NDJSON line, group by `instance_id`, render as a horizontal bar with red `×` markers on violations.
-3. Use Plotly (`plotly.graph_objects.Bar`) — no new dependency required.
-4. Wire it in as a page. cadl-explorer has no `pages/` directory: pages live in `views/` and are registered explicitly in `app.py`. Create `cadl-explorer/views/violation_trace.py` (use `views/lifecycle.py` as a model), then add one entry to the `st.navigation([...])` list in `app.py`:
+1. Produce a log to develop against (from the simulator repository):
+
+   ```bash
+   cd ~/program/cadl-raspimouse-simulator
+   python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
+   ```
+
+   Each line is one JSON record. The fields you need are `instance_id`, `kind` (`lifecycle` or `violation`), `to_state`, `t_ms`, and, on violations, `detected_by`.
+2. Create `cadl-explorer/cadl_sim/sos_dsl/violation_trace_view.py`. Parse each NDJSON line and group by `instance_id`. A state segment runs from one `lifecycle` record's `t_ms` to the next one of the same instance. The log has no end-of-run record, so close each instance's last state at the largest `t_ms` in the log (otherwise an instance that never leaves `Proposed` has no bar).
+3. Draw with Plotly — no new dependency required: `go.Bar(orientation="h", base=start, x=duration)` for the state segments and `go.Scatter(mode="markers", marker=dict(symbol="x", color="red"))` for the violations (`Bar` alone cannot draw the markers).
+4. Wire it in as a page. cadl-explorer has no `pages/` directory: pages live in `views/` and are registered explicitly in `app.py`. Create `cadl-explorer/views/violation_trace.py` (use `views/lifecycle.py` as a model), let it read the log with `st.file_uploader(..., type=["ndjson"])` (the repository bundles no sample log), then add one entry to the `st.navigation([...])` list in `app.py`:
 
    ```python
    st.Page("views/violation_trace.py", title="Violation Trace", url_path="violation-trace"),
    ```
+
+With the baseline log you should get five rows, `robot-0-1` to `robot-4-1`, and three red markers.
 
 This builds on what you would expect to see *in advance* — by the time Session 4 runs simulation, you'll have a viewer ready for its output.
 
@@ -405,11 +414,11 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 
 #### Exercise 4.2 (★★) — Tighten the deadline
 
-**Goal**: Cut `accept` deadline from `5s` to `1s` in `my_delivery_v2.cadl`. Does any robot still complete?
+**Goal**: Shorten the `accept` deadline in `my_delivery_v2.cadl` step by step — `5s` → `1s` → `100ms` → `50ms` — and find the point at which the outcome changes. Does any robot still complete?
 
 **Procedure**:
 
-1. Edit `my_delivery_v2.cadl`, change `deadline: 5s` to `deadline: 1s` on the `accept` transition.
+1. Edit `my_delivery_v2.cadl`, change `deadline: 5s` to `deadline: 1s` on the `accept` transition (the scenario's time scale is milliseconds: the robots acknowledge about 100 ms after assignment).
 2. Regenerate the IR and run the demo on it with the `--ir` option (without `--ir` the demo loads the bundled fixture):
 
    ```bash
@@ -419,9 +428,15 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
    python3 -m cadl.runtime.multi_robot_demo --ir ~/program/cadl_repo/my_delivery_v2.ir.json --summary
    ```
 
-3. Compare the summary with the one you get from the same file with `deadline: 5s`.
+3. Compare the summary with the one you get from the same file with `deadline: 5s`, then repeat steps 1–2 with `100ms` and `50ms`. With the main textbook's v2 you should see:
 
-**Reflection**: An overly tight deadline turns *every* contract into a violation, regardless of effort. An overly loose one masks misbehaviour. **What process would you use to pick a deadline value for a real SoS?** (Hint: data from baseline runs, plus a target false-positive rate.)
+   | `deadline` | What changes |
+   |---|---|
+   | `5s`, `1s` | Nothing: the summaries are identical. The deadline is not what limits these runs. |
+   | `100ms` | `robot-2-1` is still `Violated`, but the cause changes from `monitor:battery_guard` to `deadline:accept` — the deadline now fires before the monitor does. |
+   | `50ms` | No robot completes: `robot-0-1` to `robot-3-1` are all `Violated` with `deadline:accept`. |
+
+**Reflection**: An overly tight deadline (`50ms` here) turns *every* contract into a violation, regardless of effort. An overly loose one (`5s` and `1s` behave the same) masks misbehaviour. **What process would you use to pick a deadline value for a real SoS?** (Hint: data from baseline runs, plus a target false-positive rate.)
 
 #### Exercise 4.3 (★★) — Modify world parameters
 
@@ -507,28 +522,34 @@ This is a small but useful *typology of regressions* in normative SoS specs.
 
 **Procedure**:
 
-1. Extend `ContractRuntime` with `balances: dict[str, float]`, accessor `runtime.balance(actor_id)`.
-2. Get the rules. Because the IR does not carry them, read them from the `.cadl` source with the cadl parser, in a Python environment where the `cadl` package is installed (if your file has no `incentives:` block, add the one from Step 2 of the main textbook):
+1. Extend `ContractRuntime` with `balances: dict[str, float]`, accessor `runtime.balance(actor_id)`, and a way to receive the rules, for example `ContractRuntime(ir, log_path=None, reward_rules=[...])`.
+2. Get the rules. Because the IR does not carry them, read them from the `.cadl` source with the cadl parser **in a separate script that writes them to JSON** (if your file has no `incentives:` block, add the one from Step 2 of the main textbook):
 
    ```python
+   # dump_rules.py — run with the Python environment where cadl-lang is installed
+   import json, sys
    from cadl.parser import parse_file
 
-   sos = parse_file("my_delivery_v2.cadl")
-   for contract in sos.contracts:
-       if contract.incentives:
-           for rule in contract.incentives.rules:
-               print(contract.id, rule.description)
-   # DELIVERY_SLA reward(ROBOT[i], 10) when on_time_delivery
+   sos = parse_file(sys.argv[1])
+   rules = [{"contract": c.id, "rule": r.description}
+            for c in sos.contracts if c.incentives
+            for r in c.incentives.rules]
+   json.dump(rules, open(sys.argv[2], "w"), indent=2)
+   # python dump_rules.py my_delivery_v2.cadl rules.json
+   # -> [{"contract": "DELIVERY_SLA", "rule": "reward(ROBOT[i], 10) when on_time_delivery"}]
    ```
 
-   Each rule is an `IncentiveRule` whose only field, `description`, holds the raw string. Parse entries of the form `reward(<actor_ref>, <amount>) when on_time_delivery` yourself (a regular expression is enough) and hand the result to the runtime.
+   The script has to be separate: the simulator repository has its own top-level `cadl/` package, which shadows `cadl-lang`, so `from cadl.parser import parse_file` fails with `No module named 'cadl.parser'` inside the runtime, its tests, or anything run with `python -m` from the simulator root. Run the script from another directory and pass `rules.json` to the demo (add a `--rewards rules.json` option to `multi_robot_demo`).
 
-   *Stretch variant*: instead of reading the source, extend `lower.py` (and `GovernanceParams` in `sim/ir.py`) so that the IR carries the rules, confirm that they appear in the output of `cadl sim-ir --format json`, and let the runtime read them from the IR.
-3. On terminal-state entry, evaluate each rule against the trace; credit the matched actor.
-4. Add `cadl/runtime/tests/test_rewards.py` with at least:
+   Each rule is a raw string. Parse entries of the form `reward(<actor_ref>, <amount>) when on_time_delivery` yourself (a regular expression is enough) and skip the others (the bundled example also has a `penalty(...)` rule).
+
+   *Stretch variant*: instead of reading the source, extend `lower.py` (and `GovernanceParams` in `sim/ir.py`) so that the IR carries the rules, for example as `governance.incentive_rules`. Run `cadl` from your edited checkout (`pip install -e .`; the PyPI release does not have the key), confirm that the rules appear in the output of `cadl sim-ir --format json`, and let the runtime read them from the IR.
+3. Decide who is paid. The runtime knows only the instance id (`robot-0-1`); a contract instance has no actor field. Pass the actor when the instance is opened (for example `open_instance(..., actors={"ROBOT": "robot-0"})`) and map the rule's `ROBOT[i]` to it.
+4. Credit on entry to a terminal state. An instance is closed in two places — `StateMachineEngine.fire_transition` (ordinary transitions, including `complete`) and `ContractRuntime._fire_state_jump` (deadline and monitor jumps) — so hook both. Define `on_time_delivery` yourself as "the instance entered `Completed` and has no `violation` record"; the runtime's predicate evaluator cannot decide it, because it treats a bare identifier as true.
+5. Add `cadl/runtime/tests/test_rewards.py` with at least:
    - One test: a robot earns 10 on a `Completed` delivery.
    - One test: no reward is paid on a `Violated` delivery.
-5. Update `multi_robot_demo --summary` to print final balances.
+6. Update `multi_robot_demo --summary` to print final balances. With the bundled scenario, `robot-0` ends with 10 and the other four with 0.
 
 **Reflection**: The CADL spec already says `reward(ROBOT[i], 10) when on_time_delivery`, but until this exercise the runtime ignored it — the IR did not even carry it. **Where is the line between "the spec says so" and "the runtime does so"?**
 

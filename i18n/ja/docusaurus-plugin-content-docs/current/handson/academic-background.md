@@ -180,10 +180,10 @@ CADL は仕様レベルに留まり、コードはターゲットごとに生成
 #### B. ISO 標準
 
 - ISO/IEC/IEEE 21839:2019. *Systems and software engineering — System of Systems (SoS) considerations in life cycle stages of a system*.
-- ISO/IEC/IEEE 21840:2019. *Guidelines for the utilization of ISO/IEC/IEEE 15288 in the context of System of Systems*.
-- ISO/IEC/IEEE 21841:2019. *Taxonomy of Systems of Systems*.
-- ISO/IEC/IEEE 15288:2023. *System life cycle processes*.
-- ISO/IEC/IEEE 42010:2022. *Architecture description*.
+- ISO/IEC/IEEE 21840:2019. *Systems and software engineering — Guidelines for the utilization of ISO/IEC/IEEE 15288 in the context of system of systems (SoS)*.
+- ISO/IEC/IEEE 21841:2019. *Systems and software engineering — Taxonomy of systems of systems*.
+- ISO/IEC/IEEE 15288:2023. *Systems and software engineering — System life cycle processes*.
+- ISO/IEC/IEEE 42010:2022. *Software, systems and enterprise — Architecture description*.
 
 #### C. アーキテクチャ記述言語
 

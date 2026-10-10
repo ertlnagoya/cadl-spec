@@ -314,13 +314,15 @@ Example output (excerpt; the header line is printed in Japanese):
       [OK          ] waiting_time <= 300s  (tripinfo.waitingTime)
       [OK          ] ride_time <= 1800s  (tripinfo.duration)
     -- deadlines (lifecycle) --
-      [SKIP        ] match      ≤ 30.0s  (matching event not modeled in SUMO yet)
-      [SKIP        ] accept     ≤ 5.0s   (matching event not modeled in SUMO yet)
+      [SKIP        ] match      ≤ 30.0s  (not-evaluated (matching/accept events not modeled in SUMO yet))
+      [SKIP        ] accept     ≤ 5.0s  (not-evaluated (matching/accept events not modeled in SUMO yet))
     -- monitors --
-      [SKIP        ] low_battery_guard   (battery not exported by SUMO)
+      [SKIP        ] waiting_too_long      (not-evaluated (observed attribute not exported by SUMO))
+      [SKIP        ] low_battery_guard     (not-evaluated (observed attribute not exported by SUMO))
+      [SKIP        ] detour_guard          (not-evaluated (observed attribute not exported by SUMO))
 ```
 
-What is actually checked here is the two `guarantee` clauses only; the deadlines and the monitor are listed but not evaluated:
+What is actually checked here is the two `guarantee` clauses only; the deadlines and the three monitors are listed but not evaluated:
 
 - **Guarantees** map directly to `tripinfo.duration` / `waitingTime` — evaluated.
 - **Deadlines** for matching/accept events are not modeled in SUMO yet — flagged SKIP.
@@ -361,13 +363,13 @@ python scripts/cadl_to_sumo.py
 python scripts/analyze_results.py | grep -E "OK|VIOLATED"
 ```
 
-Output (the violation count and the taxis listed vary with the random seed and your SUMO
+Output (12 violations with SUMO 1.28.0; the violation count and the taxis listed vary with the random seed and your SUMO
 version — what matters is the *pattern*: `waiting_time` stays `OK` while `ride_time` turns
 `VIOLATED`):
 
 ```text
 [OK          ] waiting_time <= 300s  (tripinfo.waitingTime)
-[VIOLATED (13)] ride_time <= 100s  (tripinfo.duration  e.g. ['taxi_8', 'taxi_9', ...])
+[VIOLATED (12)] ride_time <= 100s  (tripinfo.duration  e.g. ['taxi_8', 'taxi_9', ...])
 ```
 
 :::tip[🔍 Visualization Checkpoint 4 — Post-revision (★ highlight)]

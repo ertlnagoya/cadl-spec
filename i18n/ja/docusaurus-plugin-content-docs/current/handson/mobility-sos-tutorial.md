@@ -295,10 +295,12 @@ python scripts/analyze_results.py
       [OK          ] waiting_time <= 300s  (tripinfo.waitingTime)
       [OK          ] ride_time <= 1800s  (tripinfo.duration)
     -- deadlines (lifecycle) --
-      [SKIP        ] match      ≤ 30.0s  (matching event not modeled in SUMO yet)
-      [SKIP        ] accept     ≤ 5.0s   (matching event not modeled in SUMO yet)
+      [SKIP        ] match      ≤ 30.0s  (not-evaluated (matching/accept events not modeled in SUMO yet))
+      [SKIP        ] accept     ≤ 5.0s  (not-evaluated (matching/accept events not modeled in SUMO yet))
     -- monitors --
-      [SKIP        ] low_battery_guard   (battery not exported by SUMO)
+      [SKIP        ] waiting_too_long      (not-evaluated (observed attribute not exported by SUMO))
+      [SKIP        ] low_battery_guard     (not-evaluated (observed attribute not exported by SUMO))
+      [SKIP        ] detour_guard          (not-evaluated (observed attribute not exported by SUMO))
 ```
 
 ここで実際に判定されるのは 2 つの `guarantee` 節だけです。deadline と monitor は一覧に出ますが、評価はされません。
@@ -341,11 +343,11 @@ python scripts/cadl_to_sumo.py
 python scripts/analyze_results.py | grep -E "OK|VIOLATED"
 ```
 
-期待される結果（違反件数と該当タクシーの並びは、乱数シードや SUMO のバージョンによって変わります。着目すべきは `waiting_time` が `OK` で `ride_time` が `VIOLATED` になる、という**内訳の形**です）：
+期待される結果（SUMO 1.28.0 では違反 12 件。違反件数と該当タクシーの並びは、乱数シードや SUMO のバージョンによって変わります。着目すべきは `waiting_time` が `OK` で `ride_time` が `VIOLATED` になる、という**内訳の形**です）：
 
 ```text
 [OK          ] waiting_time <= 300s  (tripinfo.waitingTime)
-[VIOLATED (13)] ride_time <= 100s  (tripinfo.duration  e.g. ['taxi_8', 'taxi_9', ...])
+[VIOLATED (12)] ride_time <= 100s  (tripinfo.duration  e.g. ['taxi_8', 'taxi_9', ...])
 ```
 
 :::tip[🔍 可視化チェックポイント 4 — 改訂後（このコースの山場）]

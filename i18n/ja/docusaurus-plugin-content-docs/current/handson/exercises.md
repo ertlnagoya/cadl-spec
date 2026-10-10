@@ -336,14 +336,23 @@ stateDiagram-v2
 
 **手順**:
 
-1. `cadl-explorer/cadl_sim/sos_dsl/violation_trace_view.py` を作成。
-2. NDJSON 各行をパースし `instance_id` でグループ化、状態区間ごとに横バー、違反イベントは赤い × でマーク。
-3. Plotly（`plotly.graph_objects.Bar`）を使用 — 新規依存不要。
-4. ページとして配線する。cadl-explorer に `pages/` ディレクトリはない。ページは `views/` に置き、`app.py` で明示的に登録する。`cadl-explorer/views/violation_trace.py` を作成し（`views/lifecycle.py` を手本にする）、`app.py` の `st.navigation([...])` のリストに 1 行追加：
+1. 開発用のログを作る（シミュレータのリポジトリで実行）：
+
+   ```bash
+   cd ~/program/cadl-raspimouse-simulator
+   python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
+   ```
+
+   1 行が 1 つの JSON レコードです。使うフィールドは `instance_id`、`kind`（`lifecycle` または `violation`）、`to_state`、`t_ms`、違反レコードの `detected_by` です。
+2. `cadl-explorer/cadl_sim/sos_dsl/violation_trace_view.py` を作成。NDJSON 各行をパースし `instance_id` でグループ化する。状態区間は、ある `lifecycle` レコードの `t_ms` から、同じインスタンスの次の `lifecycle` レコードの `t_ms` まで。ログには実行終了のレコードがないので、各インスタンスの最後の状態はログ中の最大の `t_ms` で閉じる（そうしないと、`Proposed` から動かないインスタンスにバーが出ない）。
+3. Plotly で描く — 新規依存不要。状態区間は `go.Bar(orientation="h", base=start, x=duration)`、違反は `go.Scatter(mode="markers", marker=dict(symbol="x", color="red"))` を使う（`Bar` だけではマーカーを描けない）。
+4. ページとして配線する。cadl-explorer に `pages/` ディレクトリはない。ページは `views/` に置き、`app.py` で明示的に登録する。`cadl-explorer/views/violation_trace.py` を作成し（`views/lifecycle.py` を手本にする）、ログは `st.file_uploader(..., type=["ndjson"])` で読み込む（リポジトリにサンプルのログは同梱されていない）。そのうえで `app.py` の `st.navigation([...])` のリストに 1 行追加：
 
    ```python
    st.Page("views/violation_trace.py", title="Violation Trace", url_path="violation-trace"),
    ```
+
+ベースラインのログでは、`robot-0-1`〜`robot-4-1` の 5 行と、赤いマーカー 3 個が表示されます。
 
 これは *先回り* で作るものです — 第 4 回でシミュレーションが走るとき、ビューワが既に準備できている状態にしておきます。
 
@@ -405,11 +414,11 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 
 #### 演習 4.2 (★★) — 期限を縮める
 
-**目的**: `my_delivery_v2.cadl` の `accept` 期限を `5s` から `1s` に縮める。それでも完了するロボットはいるか？
+**目的**: `my_delivery_v2.cadl` の `accept` 期限を `5s` → `1s` → `100ms` → `50ms` と段階的に縮め、結果が変わる境目を見つける。それでも完了するロボットはいるか？
 
 **手順**:
 
-1. `my_delivery_v2.cadl` を編集、`accept` 遷移の `deadline: 5s` を `deadline: 1s` に変更。
+1. `my_delivery_v2.cadl` を編集、`accept` 遷移の `deadline: 5s` を `deadline: 1s` に変更（このシナリオの時間スケールはミリ秒で、ロボットは割当ての約 100 ms 後に応答します）。
 2. IR を再生成し、`--ir` オプションを付けてデモを実行（`--ir` を付けないと同梱の fixture が読み込まれる）：
 
    ```bash
@@ -419,9 +428,15 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
    python3 -m cadl.runtime.multi_robot_demo --ir ~/program/cadl_repo/my_delivery_v2.ir.json --summary
    ```
 
-3. 同じファイルを `deadline: 5s` のまま実行したときの summary と比べる。
+3. 同じファイルを `deadline: 5s` のまま実行したときの summary と比べ、続けて `100ms` と `50ms` で手順 1〜2 を繰り返す。本編テキストの v2 では次のようになります。
 
-**振り返り**: 厳しすぎる期限は努力に関係なく *すべての* 契約を違反にします。緩すぎる期限は不正動作を見逃します。**実 SoS の期限値を決めるプロセスは？**（ヒント：ベースラインデータ + 許容偽陽性率）
+   | `deadline` | 変化 |
+   |---|---|
+   | `5s`、`1s` | 変化なし。summary は同一で、この実行では期限は制約になっていない。 |
+   | `100ms` | `robot-2-1` は `Violated` のままだが、原因が `monitor:battery_guard` から `deadline:accept` に変わる（モニタより先に期限が発火する）。 |
+   | `50ms` | 完了するロボットがなくなる。`robot-0-1`〜`robot-3-1` がすべて `deadline:accept` で `Violated` になる。 |
+
+**振り返り**: 厳しすぎる期限（ここでは `50ms`）は努力に関係なく *すべての* 契約を違反にします。緩すぎる期限（`5s` と `1s` は同じ結果）は不正動作を見逃します。**実 SoS の期限値を決めるプロセスは？**（ヒント：ベースラインデータ + 許容偽陽性率）
 
 #### 演習 4.3 (★★) — World パラメータを変える
 
@@ -507,28 +522,34 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 
 **手順**:
 
-1. `ContractRuntime` に `balances: dict[str, float]` を追加し、アクセサ `runtime.balance(actor_id)` を提供。
-2. ルールを取得する。IR には入っていないので、cadl のパーサで `.cadl` ソースから読む。`cadl` パッケージをインストールした Python 環境で実行すること（自分のファイルに `incentives:` ブロックがなければ、メイン教材 Step 2 のものを追加する）：
+1. `ContractRuntime` に `balances: dict[str, float]` とアクセサ `runtime.balance(actor_id)` を追加し、ルールを受け取る口を用意する（例：`ContractRuntime(ir, log_path=None, reward_rules=[...])`）。
+2. ルールを取得する。IR には入っていないので、cadl のパーサで `.cadl` ソースから読み、**別のスクリプトで JSON に書き出す**（自分のファイルに `incentives:` ブロックがなければ、メイン教材 Step 2 のものを追加する）：
 
    ```python
+   # dump_rules.py — cadl-lang をインストールした Python 環境で実行
+   import json, sys
    from cadl.parser import parse_file
 
-   sos = parse_file("my_delivery_v2.cadl")
-   for contract in sos.contracts:
-       if contract.incentives:
-           for rule in contract.incentives.rules:
-               print(contract.id, rule.description)
-   # DELIVERY_SLA reward(ROBOT[i], 10) when on_time_delivery
+   sos = parse_file(sys.argv[1])
+   rules = [{"contract": c.id, "rule": r.description}
+            for c in sos.contracts if c.incentives
+            for r in c.incentives.rules]
+   json.dump(rules, open(sys.argv[2], "w"), indent=2)
+   # python dump_rules.py my_delivery_v2.cadl rules.json
+   # -> [{"contract": "DELIVERY_SLA", "rule": "reward(ROBOT[i], 10) when on_time_delivery"}]
    ```
 
-   各ルールは `IncentiveRule` で、唯一のフィールド `description` に元の文字列がそのまま入っている。`reward(<actor_ref>, <amount>) when on_time_delivery` の形式を自分でパースし（正規表現で足りる）、結果をランタイムに渡す。
+   別スクリプトにするのは、シミュレータのリポジトリに独自のトップレベルパッケージ `cadl/` があり、`cadl-lang` を隠してしまうためです。ランタイムの中、そのテスト、あるいはシミュレータのルートから `python -m` で実行するコードでは、`from cadl.parser import parse_file` が `No module named 'cadl.parser'` で失敗します。スクリプトは別のディレクトリで実行し、`rules.json` をデモに渡します（`multi_robot_demo` に `--rewards rules.json` オプションを追加する）。
 
-   *発展版*: ソースを読む代わりに、`lower.py`（と `sim/ir.py` の `GovernanceParams`）を拡張して IR にルールを載せ、`cadl sim-ir --format json` の出力に現れることを確認したうえで、ランタイムが IR から読むようにする。
-3. 終端状態到達時に各ルールをトレースに対して評価し、マッチしたアクターに加算。
-4. `cadl/runtime/tests/test_rewards.py` を追加：
+   各ルールは元の文字列のままです。`reward(<actor_ref>, <amount>) when on_time_delivery` の形式を自分でパースし（正規表現で足りる）、それ以外は読み飛ばします（同梱の例には `penalty(...)` のルールもある）。
+
+   *発展版*: ソースを読む代わりに、`lower.py`（と `sim/ir.py` の `GovernanceParams`）を拡張して IR にルールを載せる（例：`governance.incentive_rules`）。編集したチェックアウトの `cadl` を使い（`pip install -e .`。PyPI 版にはこのキーがない）、`cadl sim-ir --format json` の出力に現れることを確認したうえで、ランタイムが IR から読むようにする。
+3. 誰に支払うかを決める。ランタイムが知っているのはインスタンス ID（`robot-0-1`）だけで、契約インスタンスにアクターのフィールドはない。インスタンスを開くときにアクターを渡し（例：`open_instance(..., actors={"ROBOT": "robot-0"})`）、ルールの `ROBOT[i]` をそれに対応付ける。
+4. 終端状態に入ったときに加算する。インスタンスが閉じる箇所は 2 つある — `StateMachineEngine.fire_transition`（`complete` を含む通常の遷移）と `ContractRuntime._fire_state_jump`（期限とモニタによるジャンプ）— ので、両方にフックする。`on_time_delivery` は「インスタンスが `Completed` に入り、`violation` レコードがない」と自分で定義する。ランタイムの述語評価器は単独の識別子を真として扱うため、これを判定できない。
+5. `cadl/runtime/tests/test_rewards.py` を追加：
    - 配送 `Completed` で 10 ポイント獲得するテスト
    - `Violated` 配送では報酬が払われないテスト
-5. `multi_robot_demo --summary` の出力に最終残高を追加。
+6. `multi_robot_demo --summary` の出力に最終残高を追加。同梱のシナリオでは `robot-0` が 10、他の 4 台は 0 になる。
 
 **振り返り**: CADL 仕様には既に `reward(ROBOT[i], 10) when on_time_delivery` と書かれていましたが、ここまでランタイムは無視してきました。IR にすら載っていませんでした。**「仕様にそう書いてある」と「ランタイムが実際にそう動く」の境界線はどこですか？**
 
