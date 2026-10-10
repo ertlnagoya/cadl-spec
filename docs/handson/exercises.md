@@ -436,6 +436,8 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
    | `100ms` | `robot-2-1` is still `Violated`, but the cause changes from `monitor:battery_guard` to `deadline:accept` — the deadline now fires before the monitor does. |
    | `50ms` | No robot completes: `robot-0-1` to `robot-3-1` are all `Violated` with `deadline:accept`. |
 
+   `my_delivery_v2.cadl` has no `deadline_watch` monitor and no `late_failure` transition, so `robot-3-1` ends in `Delivering` instead of `Violated` at `5s`, `1s` and `100ms`: your own v2 reproduces four of the five outcomes of the bundled example.
+
 **Reflection**: An overly tight deadline (`50ms` here) turns *every* contract into a violation, regardless of effort. An overly loose one (`5s` and `1s` behave the same) masks misbehaviour. **What process would you use to pick a deadline value for a real SoS?** (Hint: data from baseline runs, plus a target false-positive rate.)
 
 #### Exercise 4.3 (★★) — Modify world parameters

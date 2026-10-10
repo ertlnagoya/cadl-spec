@@ -45,7 +45,7 @@ There are only three things to remember.
 | --- | --- | --- | --- |
 | `cadl-spec` | The language specification and this textbook site | Yes | Read only |
 | `cadl` (cloned as `cadl_repo`) | The compiler (parser, type checker, IR, code generation) | Yes | Used as a command |
-| `cadl-explorer` | Streamlit visualization (state machine diagrams) | Yes | Used as a command |
+| `cadl-explorer` | Streamlit app: compares governance designs, edits and checks CADL, draws state machine diagrams | Yes | Used as a web app (`streamlit run app.py`) |
 | `cadl-raspimouse-simulator` | Unity project, Go arbitrator, Python runtime | Yes | **Where you mainly work in Steps 5–6** |
 
 These are the four repositories. The simulator keeps the Unity project (`unity/`), the Go arbitrator (`arbitrator/`) and the Python runtime (`cadl/runtime/`) together in one repository; the files described in Section 4 below are all found there.

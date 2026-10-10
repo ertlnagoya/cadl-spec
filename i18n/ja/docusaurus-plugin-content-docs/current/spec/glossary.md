@@ -172,15 +172,18 @@ SoS Contract DSL 拡張の用語である。
   ウェブアプリ。
   [cadl-explorer.streamlit.app](https://cadl-explorer.streamlit.app/) と
   [ソースリポジトリ](https://github.com/ertlnagoya/cadl-explorer) を参照。
-- **Run history（実行履歴）** — CADL Explorer のセッション内
-  実行記録。CSV / JSON でエクスポートできる。
-- **Config hash** — CADL 設定全体の SHA-256 指紋。同一ハッシュ
+- **Saved comparisons（保存した比較）** — CADL Explorer で保存した比較
+  （**Save this comparison**）のセッション内の記録。CSV / JSON で
+  エクスポートできる。v0.4.0 より前の名前は「Run history」。
+- **CADL id / IR id / config id** — 各段階（CADL 設定，IR，シミュレータ
+  設定）の SHA-256 の先頭 12 桁。CADL Explorer が表示する。同一の CADL id
   ＋同一シード集合なら結果が一致する。
 
 ## 評価指標
 
 - **Throughput（スループット）** — 単位時間あたりの完了タスク数
-  （フリート全体）。
+  （フリート全体）。CADL Explorer では，300 秒の 1 回の実行での配送の
+  合計として示す。
 - **Autonomy（自律性）** — ローカルに決定された意思決定の割合
   （中央指示との対比）。
 - **Fairness（公平性）** — アクター間の負荷／報酬分布。

@@ -45,7 +45,7 @@ flowchart LR
 | --- | --- | --- | --- |
 | `cadl-spec` | 言語仕様書とこの教材サイト | 公開 | 読むだけ |
 | `cadl`（`cadl_repo` としてクローン） | コンパイラ（パーサ・型検査・IR・コード生成） | 公開 | コマンドとして使う |
-| `cadl-explorer` | Streamlit の可視化（状態機械図） | 公開 | コマンドとして使う |
+| `cadl-explorer` | Streamlit アプリ：ガバナンス設計の比較、CADL の編集と検査、状態機械図の描画 | 公開 | Web アプリとして使う（`streamlit run app.py`） |
 | `cadl-raspimouse-simulator` | Unity プロジェクト・Go アービトレータ・Python ランタイム | 公開 | **Step 5〜6 で主に触る場所** |
 
 リポジトリはこの 4 つです。シミュレータは、Unity プロジェクト（`unity/`）、Go アービトレータ（`arbitrator/`）、Python ランタイム（`cadl/runtime/`）を 1 つのリポジトリにまとめています。下の第 4 節で説明するファイルは、すべてこのリポジトリにあります。
