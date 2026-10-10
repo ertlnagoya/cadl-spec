@@ -915,7 +915,7 @@ go run .
 [Config]   taskArbitration.enabled=true protocol=fcfs intervalSec=5.0
 ```
 
-この 3 行目 `taskArbitration.enabled=true` が出ていれば、arbitrator が設定を読めていて配送を配り始められる状態です。ここが `false` だったり `[Config]` 行自体が出ない場合は、設定ファイルを読めていません（下の注記の `-config` で絶対パスを渡してください）。このあとに `[Motivation] Disabled (baseline A-SoS behavior)` という行も出ますが、動機拡張が無効であることを示しているだけです。この行の「A-SoS」は古い呼び名で、このシーンの SoS 型を指してはいません。
+この 3 行目 `taskArbitration.enabled=true` が出ていれば、arbitrator が設定を読めていて配送を配り始められる状態です。ここが `false` だったり `[Config]` 行自体が出ない場合は、設定ファイルを読めていません（下の注記の `-config` で絶対パスを渡してください）。このあとに `[Motivation] Disabled (baseline behavior)` という行も出ますが、動機拡張が無効であることを示しているだけです。
 
 > #### 🛠 Play のたびに arbitrator を再起動する（重要）
 >

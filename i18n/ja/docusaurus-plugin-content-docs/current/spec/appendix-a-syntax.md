@@ -1,12 +1,12 @@
 ---
 sidebar_position: 11
 title: "付録A. 構文リファレンス（EBNF）"
-description: "CADL v0.2の参照文法をEBNFで示す。文書の構造，式の部分言語，予約語，リファレンス実装の状況を扱う。"
+description: "CADL v0.2のリファレンス文法をEBNFで示す。文書の構造，式の部分言語，予約語，リファレンス実装の状況を扱う。"
 ---
 
 # 付録A. 構文リファレンス（EBNF）
 
-CADLファイルは**YAML 1.2文書** [[Ben-Kiki+, 2021]](./appendix-b-references.md) である。本付録は CADL v0.2 の参照文法を
+CADLファイルは**YAML 1.2文書** [[Ben-Kiki+, 2021]](./appendix-b-references.md) である。本付録は CADL v0.2 のリファレンス文法を
 2つの部分に分けて示す。文書の*構造*（A.2〜A.9）は，YAMLのマッピングと
 シーケンスの上のEBNFとして記述する。*式の部分言語*（A.1，A.10）は，
 個々のYAML文字列スカラーの中に書かれる。
@@ -404,10 +404,19 @@ AND    OR    NOT    true    false    for all    exists    in
   [6.3節](./06-design.md)の契約と遷移の検査は，項目の有無にかかわらず実行される。
 - **コード生成。** `codegen:` の項目は構文解析されるが，それに基づく処理は行われない。
   ターゲットはコマンドラインで選択する（[付録D](./appendix-d-codegen.md)）。
+  このため，実装が出力できない `target:` を持つ項目（たとえば `target: ros2`）は，
+  `cadl check` でも `cadl codegen` でも診断なしに受理される。一方，コマンドラインの
+  `-t ros2` は拒否される。これは，出力できないターゲットについて診断を
+  出力しなければならないとする[付録DのD.4節](./appendix-d-codegen.md)の規定と相違する。
 - **拡張。** `extensions:` と `motivation:` は無視され，これらについて情報レベルの診断も
-  出ない。`cadl check` は，型検査に合格したことだけを報告する。これは，拡張を実装して
-  いない処理系が情報レベルの診断を出すことを望ましいとする[付録C](./appendix-c-motivation.md)と
-  [付録E](./appendix-e-sos-dsl.md)の規定と相違する。`lifecycle:` と `monitors:` は，
+  出ない。`cadl check` は，型検査に合格したことだけを報告する。`motivation:` については，
+  これは，拡張を実装していない処理系が情報レベルの診断を出すことを望ましいとする
+  [付録C](./appendix-c-motivation.md)の規定と相違する。
+  [付録E](./appendix-e-sos-dsl.md)の同じ趣旨の規定は，`cadl` が `sos-dsl` を実装しているため
+  適用されない。`extensions:` の宣言は，単に検査されないだけである。
+  `motivation:` ブロックは保持もされない。`cadl sim-ir` は，このブロックを持つファイルに
+  対して `motivation: null` を出力する。これは，拡張に対応しない処理系がブロックを原文のまま
+  保持することを望ましいとする[付録CのC.6節](./appendix-c-motivation.md)の規定と相違する。`lifecycle:` と `monitors:` は，
   `extensions:` が `sos-dsl` を宣言しているかどうかにかかわらず認識される。
 
 `cadl` の0.3.7より前のリリースは，これらの点のいくつかで異なっていた。その経緯は，cadlリポジトリの

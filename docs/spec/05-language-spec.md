@@ -179,7 +179,7 @@ the same indentation as `protocols:`.
       expr: "weekly_reward >= 0 AND weekly_reward <= 400"
 ```
 
-With this block appended, `cadl verify` (v0.3.8) accepts the file and
+With this block appended, `cadl verify` (`cadl` 0.3.8) accepts the file and
 reports both entries as passed. For the entry with `expr:` it checks
 only that the predicate is satisfiable; it does not prove it against
 the model

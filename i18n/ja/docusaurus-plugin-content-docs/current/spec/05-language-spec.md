@@ -49,8 +49,8 @@ sos:
       local: <アルゴリズム名>
 
   transitions:                  # 制度遷移定義
-    - from: <制度ID>
-      to: <制度ID>
+    - from: <モードID>
+      to: <モードID>
       condition: <述語式>
       protocol: <遷移プロトコルID>
       safety_invariant: <安全条件>
@@ -158,7 +158,7 @@ sos:
       expr: "weekly_reward >= 0 AND weekly_reward <= 400"
 ```
 
-このブロックを追加したファイルを，`cadl verify`（v0.3.8）は受理し，2つの項目をどちらも合格と報告する。`expr:` を持つ項目については，述語が充足可能であることだけを検査し，モデルに対して証明することはしない（[付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)）。
+このブロックを追加したファイルを，`cadl verify`（`cadl` 0.3.8）は受理し，2つの項目をどちらも合格と報告する。`expr:` を持つ項目については，述語が充足可能であることだけを検査し，モデルに対して証明することはしない（[付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)）。
 
 [7.1節](./07-examples.md)は，検証レベルが目指す矛盾検出を例示する（[1.2節の目的2](./01-introduction.md#目的2-sosの制度違反や矛盾を計算できるようにする)）。7.1節の記述例は概念的なものであり，A.8節のキーとは異なるキーを用いている（第7章冒頭の注記を参照）。このように，同一の制度が利用者のニーズに応じて異なる粒度で記述でき，AIが概要レベルから設計・検証レベルへの精緻化を支援する。
 
@@ -244,7 +244,7 @@ contracts:
     authority:
       decision_scope: "route_assignment"
       decision_holder: CENTRAL
-      beta: 0.9          # 意思決定の集中度（0=完全分散, 1=完全集中）
+      beta: 0.9          # 意思決定の集中度（0=完全分散，1=完全集中）
 
     information:
       alpha: 0.9          # 情報共有度
