@@ -108,7 +108,7 @@ See [Chapter 1, §1.3.4](./01-introduction.md).
 
 - **Regime** (also written *operational mode*) — The complete set of
   institutional settings effective at a given time. As environmental
-  conditions change, the optimal regime also changes. In the v0.1 syntax
+  conditions change, the optimal regime also changes. In the v0.2 syntax
   a regime is a name used in `transitions:`; see
   [Section 5.1](./05-language-spec.md#51-overall-structure) and
   [Appendix A, §A.7](./appendix-a-syntax.md#a7-transitions).

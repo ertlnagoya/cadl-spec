@@ -16,7 +16,7 @@ description: "CADLの任意の動機拡張（v0.1-ext）を規定する。エー
 
 本拡張はコア言語と独立にバージョニングされる。
 本書は **v0.1-ext** を規定する。v0.1-ext は本拡張の文書の版を示すラベルである。
-v0.1 では，本拡張は `extensions:` に宣言する名前を持たない
+v0.2 では，本拡張は `extensions:` に宣言する名前を持たない
 （[付録A.2](./appendix-a-syntax.md#a2-top-level-structure)）。
 ファイルは `motivation:` ブロックを書くだけで本拡張を用いる。
 

@@ -64,7 +64,7 @@ The skeleton shows the main blocks only; `description`, `verification`,
 `codegen`, `extensions`, and `motivation` are omitted. The complete list
 of keys is in [Appendix A, §A.11](./appendix-a-syntax.md#a11-reserved-keywords).
 
-In v0.1 a regime is a name. It is introduced by appearing in `from:` /
+In v0.2 a regime is a name. It is introduced by appearing in `from:` /
 `to:` of `transitions:`; there is no separate declaration, and the
 language has no syntax that attaches contracts or parameter values to a
 regime.
@@ -86,10 +86,10 @@ to the verification level by adding blocks.
 | Design | Designers, Researchers<br />Advanced Students | Institutional parameters (α,β,λ),<br />Protocol procedures,<br />Transition conditions, Metrics | Explicit parameter values<br />Type annotations<br />Constraint expressions |
 | Verification | SoS Architects<br />Verification Engineers | assume-guarantee contracts,<br />Safety invariants,<br />Formal properties (temporal logic) | Formal predicates and quantifiers<br />Annotations for SMT/model checking<br />Code generation/synthesis specification |
 
-v0.1 has no syntax for type annotations or temporal-logic properties:
+v0.2 has no syntax for type annotations or temporal-logic properties:
 "Type annotations" in the design-level row and the verification-level
 row describe the intended direction. What a verification-level file can
-contain in v0.1 is shown in the fragment below.
+contain in v0.2 is shown in the fragment below.
 
 Below is an example showing how the same institution for household
 "chore-sharing rules" is described at the overview level, at the
@@ -224,7 +224,7 @@ Each actor has a unique identifier and declares its role, autonomy
 level, and capabilities. Sets of actors can be referenced using wildcard
 notation ([*]) or index ranges ([1..N]).
 The upper bound of a range is an integer or a name. A name such as `N`
-is a symbolic size: v0.1 has no construct that gives it a value, so the
+is a symbolic size: v0.2 has no construct that gives it a value, so the
 description stands for any number of actors. The reference
 implementation keeps such a range as written. It does not take `N` from
 `context.environment`, and `cadl sim-gen` writes an actor count only
@@ -271,7 +271,7 @@ semantics. Each contract has the following sub-elements:
 | assume | Preconditions. Conditions that the environment and other actors must satisfy for the contract to be valid. |
 | guarantee | Guarantee conditions. Properties that contract parties promise to provide when preconditions are met. |
 | authority | Decision scope and decision maker. Contains centralization parameter β. |
-| information | Holds `alpha` (sharing degree parameter α), the `views` each party has, and the `sharing` flows (`source -> target : item`). A push/pull/broadcast sharing mode cannot be expressed in v0.1 (in the example below, the comments on the `sharing:` entries note whether a flow is periodic or event-driven; they are comments only). |
+| information | Holds `alpha` (sharing degree parameter α), the `views` each party has, and the `sharing` flows (`source -> target : item`). A push/pull/broadcast sharing mode cannot be expressed in v0.2 (in the example below, the comments on the `sharing:` entries note whether a flow is periodic or event-driven; they are comments only). |
 | responsibilities | List of obligations and tasks for each party. |
 | incentives | Definition of rewards, penalties, and reputation mechanisms. Contains intensity parameter λ. |
 | duration | Validity period of the contract. Three types: indefinite, time-limited, event-driven. |

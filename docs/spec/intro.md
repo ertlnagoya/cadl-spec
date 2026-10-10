@@ -1,12 +1,12 @@
 ---
 sidebar_position: 0
-title: "CADL Specification v0.1"
-description: "Entry page of the CADL language specification v0.1: overview, architecture, reading guide, how to get the cadl tool, and related tools."
+title: "CADL Specification v0.2"
+description: "Entry page of the CADL language specification v0.2: overview, architecture, reading guide, how to get the cadl tool, and related tools."
 ---
 
 # CADL: Contract Architecture Description Language
 
-**Language Specification — Version 0.1 (Draft)**
+**Language Specification — Version 0.2 (Draft)**
 
 Graduate School of Informatics, Nagoya University — ERTL
 
@@ -151,8 +151,24 @@ To write and run the language rather than only read about it, see the [hands-on 
 
 ## Status
 
-This is **Version 0.1 (Draft)**. The language and toolchain are under active
-development; syntax and semantics may change in future revisions. Feedback
-and discussion are welcome via [GitHub Issues](https://github.com/ertlnagoya/cadl/issues).
+This is **Version 0.2 (Draft)**. The language and toolchain are under active
+development; syntax and semantics may change in future revisions.
+
+Version 0.2 reconciles the text of Version 0.1 with the reference
+implementation. The changes that affect how an existing file is read are:
+
+- **β is the degree of centralisation of decision-making**: 0 is fully
+  decentralised and 1 is fully centralised
+  ([Section 5.4.2](./05-language-spec.md)). Parts of Version 0.1 described
+  it in the opposite direction.
+- **SoS-DSL extension ([Appendix E](./appendix-e-sos-dsl.md))**: `on_violation.transition` and
+  `on_match.transition` name a target *state* (rules L-5 and M-3), and
+  `on_match.violation` is a label that needs no declaration (rule M-2). The
+  extension itself is still `sos-dsl: 0.1`.
+
+The [motivation extension](./appendix-c-motivation.md) keeps its own label,
+v0.1-ext.
+
+Feedback and discussion are welcome via [GitHub Issues](https://github.com/ertlnagoya/cadl/issues).
 Problems with the specification or this site can be reported at
 [cadl-spec Issues](https://github.com/ertlnagoya/cadl-spec/issues).

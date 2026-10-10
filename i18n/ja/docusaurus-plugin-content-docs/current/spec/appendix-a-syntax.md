@@ -1,12 +1,12 @@
 ---
 sidebar_position: 11
 title: "付録A. 構文リファレンス（EBNF）"
-description: "CADL v0.1の参照文法をEBNFで示す。文書の構造，式の部分言語，予約語，リファレンス実装の状況を扱う。"
+description: "CADL v0.2の参照文法をEBNFで示す。文書の構造，式の部分言語，予約語，リファレンス実装の状況を扱う。"
 ---
 
 # 付録A. 構文リファレンス（EBNF）
 
-CADLファイルは**YAML 1.2文書** [[Ben-Kiki+, 2021]](./appendix-b-references.md) である。本付録は CADL v0.1 の参照文法を
+CADLファイルは**YAML 1.2文書** [[Ben-Kiki+, 2021]](./appendix-b-references.md) である。本付録は CADL v0.2 の参照文法を
 2つの部分に分けて示す。文書の*構造*（A.2〜A.9）は，YAMLのマッピングと
 シーケンスの上のEBNFとして記述する。*式の部分言語*（A.1，A.10）は，
 個々のYAML文字列スカラーの中に書かれる。
@@ -43,7 +43,7 @@ CADLファイルは**YAML 1.2文書** [[Ben-Kiki+, 2021]](./appendix-b-reference
 解釈するため，必ず引用符で囲まなければならない。`sharing_entry`（A.4）は，
 どこに書く場合も，引用符で囲んだ文字列でなければならない。
 
-本付録が定義しないキーは CADL v0.1 の一部ではない。処理系は，そのようなキーを
+本付録が定義しないキーは CADL v0.2 の一部ではない。処理系は，そのようなキーを
 理由にファイルを拒否してはならない。リファレンス実装はそれらを無視する。
 
 本文法は[5.1.1節](./05-language-spec.md)の設計レベルと検証レベルを対象とする。概要レベルの記述は，
@@ -112,7 +112,7 @@ extension_decl = hyphen_name , ":" , scalar ;
 - SoS-DSL拡張（[付録E](./appendix-e-sos-dsl.md)）。名前 `sos-dsl`，バージョン `0.1` として
   宣言する。`contract_def`（A.4）にキー `lifecycle:` と `monitors:` を追加する。
 - 動機拡張（[付録C](./appendix-c-motivation.md)）。`motivation_block` を定義する。
-  v0.1では `extensions:` に書く名前を持たず，`motivation:` ブロックを書くだけで用いる。
+  v0.2では `extensions:` に書く名前を持たず，`motivation:` ブロックを書くだけで用いる。
 
 ## A.3 コンテキスト・アクター・メトリクス {/* #a3-context-actors-metrics */}
 
@@ -137,7 +137,7 @@ metric_def     = "id:" , identifier ,
 `autonomy:` の既定値は `medium` である。`actor_def` の `id:` の添字は，通常は範囲
 （`"ROBOT[1..N]"`）であり，パラメータ化されたアクターの集合を宣言する。
 `range_expr` の上限は整数または識別子である。`N` のような識別子は記号的な大きさであり，
-v0.1にはこれを値に束縛する構文がない（リファレンス実装での扱いは
+v0.2にはこれを値に束縛する構文がない（リファレンス実装での扱いは
 [A.12](#a12-reference-implementation-status-v03)を参照）。
 `environment:` の値が文字列でないときはリテラル（A.1）として読み，
 文字列のときはそのまま保持する。
