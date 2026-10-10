@@ -136,7 +136,7 @@ The CADL toolchain is split across four repositories so each piece can evolve in
 | --- | --- | --- |
 | `cadl-spec`            | the language reference and this hands-on site (Docusaurus) | `main` (default) |
 | `cadl` (cloned as `cadl_repo`) | the compiler: parser, IR, code generators | `master` (default) |
-| `cadl-explorer`        | a Streamlit visualiser | `main` (default) |
+| `cadl-explorer`        | a Streamlit app that visualises and edits CADL | `main` (default) |
 | `cadl-raspimouse-simulator` | the simulator used in Steps 5–6: Unity project, Go arbitrator and Python reference runtime in one repository | `main` (default) |
 
 :::info[Repository availability]
@@ -613,10 +613,12 @@ The same file now describes both the structure (Step 2) and the rules (Step 3). 
 ## Step 4 — Visualise the lifecycle (15 min)
 
 ### What you'll learn
-- How to read the Lifecycle View page of cadl-explorer.
+- How to read the **Contract Lifecycle** page of cadl-explorer (this course calls what it shows the *Lifecycle View*).
 - How visual conventions (double circle, dashed border, red edge) map to the spec.
 
 ### Procedure
+
+Install into the virtual environment you activated in Step 0 (`cadl_repo/.venv`); `requirements.txt` asks for the same `cadl-lang` package that Step 0 installed from the clone, so nothing is replaced.
 
 ```bash
 cd ~/program/cadl-explorer
@@ -630,7 +632,9 @@ In the list of pages at the top of the sidebar, switch from the default page (**
 Two ways to load IR JSON:
 
 - **(a) Upload** the IR of your own file. Save it first with `cadl sim-ir my_delivery.cadl --format json > my_delivery.ir.json` (run in `~/program/cadl_repo`), then drag-and-drop `my_delivery.ir.json` into the file uploader.
-- **(b) Pick the bundled example** `sos_dsl_robot_delivery.ir.json` from the dropdown.
+- **(b) Use the bundled example** `sos_dsl_robot_delivery.ir.json`. It is shown as soon as the page opens; the dropdown (**Bundled example**) is there to return to it after an upload has been removed.
+
+> **Shortcut.** The **Designer** page draws the same diagram straight from a `.cadl` file, without the `cadl sim-ir` step: open the file under **Open an existing CADL file** and switch the view to **Lifecycle**. It can also step through one contract instance. This step uses the IR on purpose, because the IR is what the simulator and the generated runtime read.
 
 ### What you should see
 
@@ -648,7 +652,7 @@ Below the diagram, the page lists the monitors of the contract:
 
 The sketch below reflects **(a), `my_delivery.cadl`** (4 transitions, 1 monitor). If you instead load **(b), the bundled example `sos_dsl_robot_delivery.cadl`**, you'll see 5 transitions (it adds `late_failure`) and 3 monitors (`battery_guard` / `collision_watch` / `deadline_watch`).
 
-The page is split into two columns:
+The page is split into two columns. The sketch is schematic: on the real page the diagram runs left to right, each edge is labelled with its trigger (the `on:` text, such as `ROBOT[i] -> DISPATCHER : ack(accepted)`, then `Δ 5s` and any `[when]` condition) rather than the transition id, the metadata lists the state names, and the Monitors table also has a `rule` column.
 
 ```
 ┌──────────────────────────────────┬──────────────────────────────┐
@@ -701,7 +705,7 @@ Visual conventions:
 Take a screenshot of your lifecycle (or just look carefully) and confirm:
 
 - The **only** double-circle node is `Proposed`.
-- There is exactly one **red dashed edge** going from `Assigned` to `Violated`. That is the forced move to `Violated` when the `accept` deadline expires.
+- There is exactly one **red dashed edge** going from `Assigned` to `Violated`. That is the forced move to `Violated` when the `accept` deadline expires. (The bundled example also draws three solid `now > request.deadline` edges into `Violated`, one for each state the `late_failure` transition can leave.)
 - The monitors table shows `battery_guard` with sampling `periodic(500ms)` and severity `Major`.
 
 ### Recap

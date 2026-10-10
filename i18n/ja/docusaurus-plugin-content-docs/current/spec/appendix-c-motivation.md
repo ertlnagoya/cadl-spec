@@ -6,8 +6,9 @@ description: "CADLの任意の動機拡張（v0.1-ext）を規定する。エー
 
 # 付録C. 動機拡張（Motivation Extension, v0.1-ext）
 
-本付録は、CADL Explorer デモおよび A-SoS 動機感応型ガバナンス実験で
-使用される CADL の**動機拡張**を規定する。
+本付録は、CADL Explorer デモおよび Directed SoS の動機感応型ガバナンス実験
+（CADL Explorer の「D-SoS + motivation-sensitive」テンプレート。v0.4.1 までの
+名前は「A-SoS + motivation-sensitive」）で使用される CADL の**動機拡張**を規定する。
 コア言語（[第 5 章](./05-language-spec.md)・[付録A](./appendix-a-syntax.md)）は
 本ブロックを必須としない。
 拡張を未実装の CADL 準拠の処理系は、`motivation:` ブロックを理由に
@@ -124,7 +125,7 @@ sos:
 ```
 
 CADL Explorer のシミュレータは、同じ `motivation:` ブロックを、独自の
-フラットな設定ファイルから読み込む。この設定ファイルでは、`sos_type:` や
+設定ファイルから読み込む。この設定ファイルでは、`sos_type:` や
 `environment:` などのシミュレータ設定と並べて書く。同ファイルには、キー
 `alpha`、`beta`、`lambda` を持つトップレベルの `governance:` マッピングもある。
 これらはシミュレータのパラメータ（自律度、集中度、探索確率）であり、[5.4.2 節](./05-language-spec.md)の
@@ -152,7 +153,9 @@ CADL 処理系は、`motivation:` ブロックを持たないファイルを受�
 
 - **[CADL Explorer](https://github.com/ertlnagoya/cadl-explorer)**（デモ）:
   v0.1-ext を、シミュレータの設定スキーマ
-  （`cadl_sim/schema/motivation_schema.py`）に実装。
+  （`cadl_sim/schema/motivation_schema.py`）に実装。Explorer のページが
+  受け付けるプロファイルは `uniform`、`linear`、`polarized` で、`custom` は
+  受け付けない。
 - **[`cadl`](https://github.com/ertlnagoya/cadl)**（リファレンス実装）:
   AST の `SoSDefinition` に省略可能な `MotivationBlock` を定義している。
   v0.3 のパーサーは CADL ファイルの `motivation:` キーを読み込まない。

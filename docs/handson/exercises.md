@@ -299,7 +299,7 @@ Software engineers debug code. SoS engineers debug **diagrams** — because the 
 
 1. Run `cadl-explorer` (`streamlit run app.py`).
 2. Generate IR for v1 too: `cadl sim-ir my_delivery_v1.cadl --format json > my_delivery_v1.ir.json`.
-3. Open the *SoS_DSL_Lifecycle* page. Upload v1 first, then v2.
+3. Open the **Contract Lifecycle** page. Upload v1 first, then v2.
 4. Take screenshots.
 
 **Check**: For v1, the page should display a warning that the contract has no lifecycle. For v2, it should render a state machine with 7 states.
@@ -326,7 +326,7 @@ Software engineers debug code. SoS engineers debug **diagrams** — because the 
 1. Create `cadl-explorer/cadl_sim/sos_dsl/violation_trace_view.py`.
 2. Parse each NDJSON line, group by `instance_id`, render as a horizontal bar with red `×` markers on violations.
 3. Use Plotly (`plotly.graph_objects.Bar`) — no new dependency required.
-4. Wire it in `cadl-explorer/pages/SoS_DSL_Violation_Trace.py`.
+4. Wire it in: create the page as `cadl-explorer/views/violation_trace.py` and register it with an `st.Page(...)` entry in the `st.navigation` list of `app.py` (the app lists its pages there; it has no `pages/` directory).
 
 This builds on what you would expect to see *in advance* — by the time Session 4 runs simulation, you'll have a viewer ready for its output.
 
@@ -391,8 +391,8 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 **Procedure**:
 
 1. Edit `my_delivery_v2.cadl`, change `deadline: 5s` to `deadline: 1s` on the `accept` transition.
-2. Use the e2e script to regenerate the IR and copy it as the demo fixture (or modify the demo script to load your IR).
-3. Re-run `multi_robot_demo --summary`.
+2. Use the e2e script to regenerate the IR.
+3. Re-run the demo on your IR: `python3 -m cadl.runtime.multi_robot_demo --ir <your>.ir.json --summary`. (`my_delivery_v2.cadl` has no `deadline_watch` monitor and no `late_failure` transition, so `robot-3-1` ends in `Delivering` instead of `Violated`: your own v2 reproduces four of the five outcomes of the bundled example.)
 
 **Reflection**: An overly tight deadline turns *every* contract into a violation, regardless of effort. An overly loose one masks misbehaviour. **What process would you use to pick a deadline value for a real SoS?** (Hint: data from baseline runs, plus a target false-positive rate.)
 

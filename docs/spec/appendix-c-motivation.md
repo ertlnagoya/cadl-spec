@@ -7,8 +7,9 @@ description: "Optional motivation extension of CADL (v0.1-ext): agent motivation
 # Appendix C — Motivation Extension (v0.1-ext)
 
 This appendix describes the **motivation extension** to CADL used in the
-CADL Explorer demonstrator and the A-SoS motivation-sensitive governance
-experiments. The core language ([Chapter 5](./05-language-spec.md) and
+CADL Explorer demonstrator and the motivation-sensitive governance
+experiments on a Directed SoS (the "D-SoS + motivation-sensitive" template of
+CADL Explorer, named "A-SoS + motivation-sensitive" up to v0.4.1). The core language ([Chapter 5](./05-language-spec.md) and
 [Appendix A](./appendix-a-syntax.md)) does **not** mandate this block; a
 conforming CADL processor that does not implement the extension MUST NOT
 reject a file because of the `motivation:` block. It SHOULD accept the
@@ -132,7 +133,7 @@ sos:
 ```
 
 CADL Explorer's simulator reads the same `motivation:` block from its
-own flat configuration file, next to simulator settings such as
+own configuration file, next to simulator settings such as
 `sos_type:` and `environment:`. That file also has a top-level
 `governance:` mapping with keys `alpha`, `beta`, and `lambda`. These are
 simulator parameters — autonomy level, centralization level, and
@@ -164,7 +165,9 @@ block verbatim so downstream tools can consume it.
 
 - **[CADL Explorer](https://github.com/ertlnagoya/cadl-explorer)**
   (demo): implements v0.1-ext in the configuration schema of its
-  simulator (`cadl_sim/schema/motivation_schema.py`).
+  simulator (`cadl_sim/schema/motivation_schema.py`). The Explorer page
+  accepts the profiles `uniform`, `linear` and `polarized`; it rejects
+  `custom`.
 - **[`cadl`](https://github.com/ertlnagoya/cadl)** (reference
   implementation): defines an optional `MotivationBlock` on
   `SoSDefinition` in its AST. At v0.3 the parser does not read the

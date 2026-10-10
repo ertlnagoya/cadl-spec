@@ -299,7 +299,7 @@ stateDiagram-v2
 
 1. `cadl-explorer` を起動（`streamlit run app.py`）。
 2. v1 用にも IR を生成：`cadl sim-ir my_delivery_v1.cadl --format json > my_delivery_v1.ir.json`。
-3. *SoS_DSL_Lifecycle* ページを開く。v1 を先にアップロード、次に v2。
+3. **Contract Lifecycle** ページを開く。v1 を先にアップロード、次に v2。
 4. スクリーンショットを取る。
 
 **確認**: v1 では「契約にライフサイクルが無い」旨の警告が表示される。v2 では 7 状態の状態機械が描画される。
@@ -326,7 +326,7 @@ stateDiagram-v2
 1. `cadl-explorer/cadl_sim/sos_dsl/violation_trace_view.py` を作成。
 2. NDJSON 各行をパースし `instance_id` でグループ化、状態区間ごとに横バー、違反イベントは赤い × でマーク。
 3. Plotly（`plotly.graph_objects.Bar`）を使用 — 新規依存不要。
-4. `cadl-explorer/pages/SoS_DSL_Violation_Trace.py` で配線。
+4. 配線する：ページを `cadl-explorer/views/violation_trace.py` として作り、`app.py` の `st.navigation` のリストに `st.Page(...)` を 1 行追加する（このアプリはページをそこに並べており、`pages/` ディレクトリはありません）。
 
 これは *先回り* で作るものです — 第 4 回でシミュレーションが走るとき、ビューワが既に準備できている状態にしておきます。
 
@@ -391,7 +391,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 **手順**:
 
 1. `my_delivery_v2.cadl` を編集、`accept` 遷移の `deadline: 5s` を `deadline: 1s` に変更。
-2. e2e スクリプトで IR を再生成し、デモのフィクスチャとしてコピー（または demo スクリプトを自分の IR をロードするように変更）。
+2. e2e スクリプトで IR を再生成する。デモには `python3 -m cadl.runtime.multi_robot_demo --ir <自分の>.ir.json --summary` のように `--ir` で自分の IR を渡す（`my_delivery_v2.cadl` には `deadline_watch` モニターと `late_failure` 遷移が無いので、`robot-3-1` は `Violated` ではなく `Delivering` で終わります。自分の v2 で再現できるのは、同梱例の 5 通りの結末のうち 4 通りです）。
 3. `multi_robot_demo --summary` を再実行。
 
 **振り返り**: 厳しすぎる期限は努力に関係なく *すべての* 契約を違反にします。緩すぎる期限は不正動作を見逃します。**実 SoS の期限値を決めるプロセスは？**（ヒント：ベースラインデータ + 許容偽陽性率）

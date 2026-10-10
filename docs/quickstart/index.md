@@ -40,7 +40,7 @@ The app has four pages, listed at the top of the sidebar:
 |---|---|
 | **Explorer** | Compare two governance designs, A and B (this quick start). |
 | **Designer** | Edit, check and visualise a full CADL model. |
-| **Contract Lifecycle** | Step through the state machine of a contract from its IR JSON. |
+| **Contract Lifecycle** | Draw the lifecycle state machine and the monitors of a contract from its IR JSON. |
 | **About & Glossary** | What the tool does, the parameter values and the terms. |
 
 The **Explorer** page opens first. It compares two designs, **A** (the
@@ -106,7 +106,7 @@ the **Saved comparisons** table at the bottom of the page, which can be
 downloaded as CSV or JSON. The address in the browser records the current
 settings, so copying it shares the comparison.
 
-![CADL Explorer comparing D-SoS (A) with C-SoS (B): sidebar controls on the left, the Outcome and causal-chain sections on the right](/img/handson/explorer-compare.jpg)
+![CADL Explorer comparing D-SoS (A) with C-SoS (B): sidebar controls on the left, the Outcome section on the right](/img/handson/explorer-compare.jpg)
 
 ### A-5. Optional — paste your own CADL
 
@@ -132,7 +132,11 @@ motivation:
 
 The synthetic metrics depend only on `sos_type`, the agent `profile` and
 `rho`. Other fields such as `alpha`, `beta` and `lambda` are carried into
-the generated IR and config but do not change the results.
+the generated IR and config but do not change the results. Only `Directed`
+is modelled separately: any other `sos_type` is computed as collaborative.
+The profiles are `uniform`, `linear` and `polarized`. Keys that the format
+does not know, or keys written at the wrong level, are ignored without an
+error, so keep to the nested layout above.
 
 This YAML is the Explorer's own configuration format, not a full CADL
 model. To write and check a full CADL model (actors, contracts,

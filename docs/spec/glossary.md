@@ -172,14 +172,18 @@ The checks of the reference verifier are described in
 - **CADL Explorer** — Interactive web app that walks the pipeline
   end-to-end. See [cadl-explorer.streamlit.app](https://cadl-explorer.streamlit.app/)
   and the [source repository](https://github.com/ertlnagoya/cadl-explorer).
-- **Run history** — Session-local record of experiment runs in CADL
-  Explorer, exportable as CSV / JSON.
-- **Config hash** — SHA-256 fingerprint of the full CADL config; equal
-  hashes with equal seed sets produce identical results.
+- **Saved comparisons** — Session-local record of the comparisons saved
+  in CADL Explorer (**Save this comparison**), exportable as CSV / JSON.
+  Called "Run history" before v0.4.0.
+- **CADL id / IR id / config id** — The first 12 hex digits of the
+  SHA-256 of each stage (the CADL config, the IR, the simulator config),
+  shown by CADL Explorer. Equal CADL ids with equal seed sets produce
+  identical results.
 
 ## Evaluation metrics
 
-- **Throughput** — Completed tasks per unit time across the fleet.
+- **Throughput** — Completed tasks per unit time across the fleet. CADL
+  Explorer reports it as the total deliveries of one 300 s run.
 - **Autonomy** — Share of decisions made locally (vs dictated centrally).
 - **Fairness** — Distribution of workload or reward across actors.
 - **Region (performance–autonomy plane)** — Convex area covered by a
