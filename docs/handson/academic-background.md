@@ -186,10 +186,10 @@ so the same spec serves as the common source for Unity, SUMO, and the Python ref
 #### B. ISO standards
 
 - **[ISO 21839]** ISO/IEC/IEEE 21839:2019. *Systems and software engineering — System of Systems (SoS) considerations in life cycle stages of a system*.
-- **[ISO 21840]** ISO/IEC/IEEE 21840:2019. *Guidelines for the utilization of ISO/IEC/IEEE 15288 in the context of System of Systems*.
-- **[ISO 21841]** ISO/IEC/IEEE 21841:2019. *Taxonomy of Systems of Systems*.
-- **[ISO 15288]** ISO/IEC/IEEE 15288:2023. *System life cycle processes*.
-- **[ISO 42010]** ISO/IEC/IEEE 42010:2022. *Architecture description*.
+- **[ISO 21840]** ISO/IEC/IEEE 21840:2019. *Systems and software engineering — Guidelines for the utilization of ISO/IEC/IEEE 15288 in the context of system of systems (SoS)*.
+- **[ISO 21841]** ISO/IEC/IEEE 21841:2019. *Systems and software engineering — Taxonomy of systems of systems*.
+- **[ISO 15288]** ISO/IEC/IEEE 15288:2023. *Systems and software engineering — System life cycle processes*.
+- **[ISO 42010]** ISO/IEC/IEEE 42010:2022. *Software, systems and enterprise — Architecture description*.
 
 #### C. Architecture description languages
 
