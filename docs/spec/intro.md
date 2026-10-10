@@ -81,7 +81,10 @@ the order below, but each chapter is also self-contained.
 - **[5. Language Specification](./05-language-spec.md)** — Core syntax and
   semantics of the three layers (Institution / Protocol / Algorithm).
 - **[6. Design](./06-design.md)** — Design rationale, toolchain architecture,
-  and intermediate representation (IR).
+  verification engine, and runtime system. The intermediate
+  representation (IR) is described in
+  [Appendix E, §E.7](./appendix-e-sos-dsl.md#e7-intermediate-representation-ir-addition)
+  and the [Glossary](./glossary.md).
 - **[7. Examples](./07-examples.md)** — Worked examples illustrating typical
   CADL usage.
 

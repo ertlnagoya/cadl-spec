@@ -7,6 +7,7 @@ description: "CADL仕様書で用いる用語を分野別に定義し，各用�
 # 用語集
 
 CADLおよび周辺の研究プログラムで用いる作業語彙をまとめる。
+用語は分野別にまとめている。
 リンク先は各用語を詳しく導入している章である。
 平易な説明と具体例を添えた入門用の用語集は，
 [第1章の1.3節](./01-introduction.md#13-用語集)を参照されたい。
@@ -17,7 +18,12 @@ CADLおよび周辺の研究プログラムで用いる作業語彙をまとめ�
   System of Systems の Institution / Protocol / Algorithm の三層を，
   検証可能な単一ドキュメントで記述するDSLである。
   [仕様書イントロダクション](./intro.md) を参照。
-- **Institution 層** — アクターと契約を宣言する層。各契約は，当事者，
+- **Institution 層** — 誰がどの規則のもとで参加するかを記述する層。
+  `actors:`，`contracts:`，および `transitions:`（運用モードを切り替える条件）
+  からなる。[2.2節](./02-objectives.md)と
+  [付録AのA.4節](./appendix-a-syntax.md#a4-contracts-institution-layer)も
+  同じ定義を用いる。リファレンス実装のIRでは，`institution` がアクターと契約を保持し，
+  遷移はトップレベルの別のリストになる。各契約は，当事者，
   `assume` / `guarantee`，`authority`，`information`，
   `responsibilities`，`incentives`，`violation` を記述し，
   ガバナンスパラメータ α / β / λ を保持する。
@@ -59,14 +65,14 @@ CADLおよび周辺の研究プログラムで用いる作業語彙をまとめ�
   メカニズム。契約の `incentives` ブロックに書く。
 
 **CADL Explorer のシミュレーション設定（最上位の `governance:`
-ブロック，[Appendix C](./appendix-c-motivation.md)）**
+ブロック，[付録C](./appendix-c-motivation.md)）**
 
 - **α（アルファ）** — エージェントの自律度。α が高いほど局所的な
   判断の余地が大きい。
 - **β（ベータ）** — 集中度。β が高いほど中央権限が支配的である。
 - **λ（ラムダ）** — 探索確率。λ=0 は決定的な経路選択を意味する。
 
-**動機拡張（[Appendix C](./appendix-c-motivation.md)）**
+**動機拡張（[付録C](./appendix-c-motivation.md)）**
 
 - **ρ（ロー）** — 動機感度。エージェント個別の動機値が意思決定に
   及ぼす強さを制御する。ρ=0 は動機非依存，ρ=1 で予算／待機が動機に
@@ -95,7 +101,7 @@ CADLおよび周辺の研究プログラムで用いる作業語彙をまとめ�
 
 [第1章 1.3.4節](./01-introduction.md) を参照。
 
-- **Regime（運用モード）**（「レジーム」「モード」とも表記） — ある時点で
+- **Regime（運用モード）**（「モード」とも表記。キーワードやコマンド名では英語の `regime` を用いる） — ある時点で
   有効な制度の設定一式。環境条件が変わると，最適なモードも変わる。
   v0.1の構文では，モードは `transitions:` で使う名前である。
   [5.1節](./05-language-spec.md#51-全体構造)と[付録AのA.7節](./appendix-a-syntax.md#a7-transitions)を参照。
@@ -112,7 +118,7 @@ CADLおよび周辺の研究プログラムで用いる作業語彙をまとめ�
 ## SoS-DSL拡張
 
 SoS Contract DSL 拡張の用語である。
-[Appendix E](./appendix-e-sos-dsl.md) を参照。
+[付録E](./appendix-e-sos-dsl.md) を参照。
 
 - **Lifecycle（ライフサイクル）** — 契約の `lifecycle:` ブロック。
   状態の集合 `states`，初期状態 `initial`，終端状態 `terminal`，
@@ -154,7 +160,7 @@ SoS Contract DSL 拡張の用語である。
 
 - **IR（中間表現）** — CADL ソースから構築される三層データ構造。
   シミュレータ設定の生成器が利用する。
-- **Codegen ターゲット** — [Appendix D](./appendix-d-codegen.md) の
+- **Codegen ターゲット** — [付録D](./appendix-d-codegen.md) の
   カタログに挙げた出力形式。`unity` と `go`（シミュレーション設定），
   `ros2`（ランタイムノード），`python`，`solidity`（スマート
   コントラクト），`opa`（Regoポリシー），`unity-csharp`（Unity向けの
@@ -192,7 +198,7 @@ SoS Contract DSL 拡張の用語である。
   への適合を主張するものではない。
 - **ISO/IEC/IEEE 21841** — SoS 分類
   （Directed / Acknowledged / Collaborative / Virtual） [[ISO/IEC/IEEE 21841:2019]](./appendix-b-references.md)。
-- **EBNF** — Extended Backus–Naur Form [[ISO/IEC 14977:1996]](./appendix-b-references.md)。Appendix A で CADL の
+- **EBNF** — Extended Backus–Naur Form [[ISO/IEC 14977:1996]](./appendix-b-references.md)。付録Aで CADL の
   具象構文を定義するのに使用する。
 - **SMT** — Satisfiability Modulo Theories。CADL の
   `method: smt` 検証の基盤である。
@@ -203,7 +209,7 @@ SoS Contract DSL 拡張の用語である。
 
 - [仕様書イントロダクション](./intro.md)
 - [言語仕様（第5章）](./05-language-spec.md)
-- [Appendix A — 構文（EBNF）](./appendix-a-syntax.md)
-- [Appendix C — 動機拡張](./appendix-c-motivation.md)
-- [Appendix D — コード生成ターゲット一覧](./appendix-d-codegen.md)
-- [Appendix E — SoS Contract DSL 拡張](./appendix-e-sos-dsl.md)
+- [付録A — 構文（EBNF）](./appendix-a-syntax.md)
+- [付録C — 動機拡張](./appendix-c-motivation.md)
+- [付録D — コード生成ターゲット一覧](./appendix-d-codegen.md)
+- [付録E — SoS Contract DSL 拡張](./appendix-e-sos-dsl.md)

@@ -7,9 +7,8 @@ description: "Optional motivation extension of CADL (v0.1-ext): agent motivation
 # Appendix C — Motivation Extension (v0.1-ext)
 
 This appendix describes the **motivation extension** to CADL used in the
-CADL Explorer demonstrator and the motivation-sensitive governance
-experiments on a Directed SoS (the "D-SoS + motivation-sensitive" template of
-CADL Explorer, named "A-SoS + motivation-sensitive" up to v0.4.1). The core language ([Chapter 5](./05-language-spec.md) and
+CADL Explorer demonstrator and the D-SoS motivation-sensitive governance
+experiments. The core language ([Chapter 5](./05-language-spec.md) and
 [Appendix A](./appendix-a-syntax.md)) does **not** mandate this block; a
 conforming CADL processor that does not implement the extension MUST NOT
 reject a file because of the `motivation:` block. It SHOULD accept the

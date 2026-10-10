@@ -12,7 +12,7 @@ title: "Course A — Robot Delivery (Main Textbook)"
 >
 > **What you take home**: A working CADL specification you wrote yourself, a generated Unity C# implementation, and a running 5-robot delivery simulation in which missed deadlines and battery-rule violations are detected and the affected contract instances are moved to `Violated`.
 >
-> **First time here?** Read the [Architecture & Code Walkthrough](code-walkthrough.md) first — it shows which part of the system each Step touches.
+> **First time here?** The recommended order is [Why SoS-DSL?](academic-background.md) → [Architecture & Code Walkthrough](code-walkthrough.md) → this course. Reading the walkthrough before you start is recommended: it shows which part of the system each Step touches.
 
 ---
 
@@ -111,7 +111,7 @@ flowchart LR
 | --- | --- | --- |
 | Python | 3.9+ | runs the `cadl` CLI |
 | Unity | 6000.2.9f1 (Unity 6.2) | runs the simulation |
-| Go | 1.21+ | builds the arbitrator |
+| Go | 1.23+ | builds the arbitrator |
 | NATS Server | latest | message bus between robots ⇄ arbitrator |
 | Node.js | 20+ | renders the spec website (optional) |
 
@@ -228,7 +228,7 @@ CADL covers (1) directly in its main grammar (Appendix A). The SoS-DSL extension
 cd ~/program/cadl-spec
 npm install
 npm run start
-# Browser opens at http://localhost:3000
+# Browser opens at http://localhost:3000/cadl-spec/
 ```
 
 Read these chapters in order; the time guide is what we recommend so you stay within the 15-minute budget.
@@ -391,10 +391,10 @@ $ cadl check my_delivery.cadl
 Type check passed: my_delivery.cadl
 ```
 
-Now lower it to IR JSON and look at the first 30 lines:
+Now lower it to IR JSON. The output is about 100 lines long; the listing below is abridged to the parts that matter here:
 
 ```bash
-cadl sim-ir my_delivery.cadl --format json | head -30
+cadl sim-ir my_delivery.cadl --format json
 ```
 
 ```jsonc
@@ -428,7 +428,16 @@ cadl sim-ir my_delivery.cadl --format json | head -30
 Verify both:
 
 1. `cadl check my_delivery.cadl` prints `Type check passed: my_delivery.cadl` (and no `[ERROR]` lines).
-2. The IR JSON has `"lifecycle": null` and `"monitors": []`.
+2. The IR JSON has `"lifecycle": null` and `"monitors": []`. These two lines sit at the end of the contract (around line 86 of the output). To print just them:
+
+   ```bash
+   cadl sim-ir my_delivery.cadl --format json | grep -n -A1 '"lifecycle"'
+   ```
+
+   ```
+   86:        "lifecycle": null,
+   87-        "monitors": []
+   ```
 
 These two `null` / `[]` are **the gap we will fill in Step 3** — they are why the structure-only specification cannot say "the robot must ack within 5 seconds".
 
@@ -897,7 +906,7 @@ nats-server -p 4222
 ```bash
 # Terminal 2 — C-SoS arbitrator (Go)
 cd ~/program/cadl-raspimouse-simulator/arbitrator/C-SoS/main
-go run main.go
+go run .
 ```
 
 ```
@@ -916,7 +925,7 @@ If that third line reads `taskArbitration.enabled=true`, the arbitrator has load
 >
 > ```bash
 > cd ~/program/cadl-raspimouse-simulator/arbitrator/C-SoS/main
-> go run main.go -config ~/program/cadl-raspimouse-simulator/unity/Assets/streamingAssets/cadl_config.json
+> go run . -config ~/program/cadl-raspimouse-simulator/unity/Assets/streamingAssets/cadl_config.json
 > ```
 >
 > If `[Config] … taskArbitration.enabled=true …` prints at startup, the config loaded correctly.
