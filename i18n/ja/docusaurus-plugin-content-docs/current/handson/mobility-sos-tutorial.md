@@ -143,13 +143,13 @@ contracts:
         - id: match
           from: Requested
           to:   Matched
-          # on: ...
+          on:   "PLATFORM -> TAXI[i] : match_assignment"
           deadline: 30s
           on_violation: { transition: Violated, severity: Major }
         - id: accept
           from: Matched
           to:   Accepted
-          # on: ...
+          on:   "TAXI[i] -> PLATFORM : ack(accepted)"
           deadline: 5s
           on_violation: { transition: Violated, severity: Major }
         # ...
@@ -199,7 +199,7 @@ streamlit run app.py
 | 灰色破線枠 = `Delivered`/`Cancelled`/`Terminated` | 通常終端 |
 | 赤系破線枠 = `Violated` | 違反終端 |
 | 実線エッジ + `Δ 30s` / `Δ 5s` | deadline 付き遷移 |
-| 赤の破線エッジ + `violation Major` | `on_violation` による強制遷移 |
+| 赤の破線エッジ + ラベル `violation` / `Major`（2 行） | `on_violation` による強制遷移 |
 
 :::info[このパターンは何度も出てきます]
 このコースでは「CADL を編集 → `cadl sim-ir` で IR を再生成 → cadl-explorer をリロード」という 3 ステップを、節目（構造を読んだ後、契約を読んだ後、コード生成後、シミュレーション後、契約改訂後）でそのつど繰り返します。
@@ -208,7 +208,7 @@ streamlit run app.py
 
 ### 演習 4-1
 
-`cadl/mobility_sos.cadl` の `match` の `deadline: 30s` を `60s` に書き換えて、IR を作り直し、cadl-explorer をリロードしてみてください。
+`cadl/mobility_sos.cadl` の `match` の `deadline: 30s` を `60s` に書き換えて、IR を作り直し、もう一度アップロードしてみてください。
 エッジラベルが `Δ 30s` から `Δ 60s` に変わるはずです。
 確認できたら 30s に戻してから次の章へ進んでください（以降の手順は 30s 前提）。
 
@@ -246,11 +246,11 @@ python scripts/cadl_to_sumo.py
 生成されるもの：
 
 - `sumo/config/midtown.cadl.sumocfg` — `step-length` が CADL の `time_step_ms` から、
-  `end` が CSV 最終 depart + ride_time guarantee から決まる
+  `end` は「`sumo/routes/midtown.rou.xml` の最後の `depart` ＋（1800 秒と `ride_time` guarantee の大きいほう）＋ 60 秒」で決まる（サンプルデータでは 3060 + 1800 + 60 = 4920）。経路ファイルがまだない場合は 3600 秒になるので、§6 のあとでこのスクリプトを再実行すると 4920 秒になる。§8 のように `ride_time` を厳しくしても `end` は短くならない
 - `sumo/cadl_constraints.json` — `analyze_results.py` が読む契約条件（guarantees / deadlines / monitors）
 
 :::tip[🔍 可視化チェックポイント 2 — コード生成しても CADL ソースは変わらない]
-`cadl_to_sumo.py` は IR を読んで SUMO の設定ファイルを書き出すだけで、`cadl/mobility_sos.cadl` の `lifecycle:` / `monitors:` には触れません。
+`cadl_to_sumo.py` は IR を読んで SUMO の設定ファイルを書き出すだけで、`cadl/mobility_sos.cadl` の `lifecycle:` / `monitors:` には触れません（§3 のときと 1 バイトも変わりません）。
 ここで cadl-explorer をリロードしても、§4 と同じ図が出るだけのはずです。
 
 「コード生成は仕様を書き換えない」というこの性質があるおかげで、CADL を仕様の唯一の出典として扱えます。
@@ -309,7 +309,7 @@ python scripts/analyze_results.py
 
 - `guarantees` は SUMO の `tripinfo.duration` / `waitingTime` に直接対応するので評価できる。
 - `deadlines`（matching/accept）は SUMO 上に対応するイベントがないので未評価。
-- `monitors` は battery や route_deviation など、SUMO の標準出力にない属性を見ているので未評価。
+- `monitors` は、乗客ごとの `waiting_time`（`Matched` の間）、`battery`、`route_deviation_ratio` を見ており、いずれも SUMO の標準出力にない属性なので未評価。
 
 :::tip[🔍 可視化チェックポイント 3 — 仕様と実装の対応を確認]
 `analyze_results.py` の `[OK]` / `[SKIP]` の各行と cadl-explorer の図は、同じ CADL から派生したものです。
@@ -321,7 +321,7 @@ python scripts/analyze_results.py
 | `[OK] ride_time <= 1800s` | 同上 |
 | `[SKIP] match ≤ 30.0s` | `Requested → Matched` の `Δ 30s` ラベル |
 | `[SKIP] accept ≤ 5.0s` | `Matched → Accepted` の `Δ 5s` ラベル |
-| `[SKIP] low_battery_guard` | Monitors テーブルの 1 行目 |
+| `[SKIP] waiting_too_long` / `low_battery_guard` / `detour_guard` | Monitors テーブルの 1・2・3 行目 |
 
 `[SKIP]` は失敗ではなく、「SUMO にはこの観測量が無い」という事実をそのまま表しているだけです。
 このギャップを TraCI で埋める課題が §9 にあります。
@@ -387,11 +387,11 @@ python scripts/cadl_to_sumo.py
 
 | 課題 | ヒント |
 |---|---|
-| match の deadline を 30s から 10s に厳しくしたとき、何件が現実的に間に合うか調べる | `cadl_to_sumo.py` を拡張して、SUMO から match 時刻も出力させる |
-| `num_taxis` を 10 から 5 に減らしたとき、capacity 違反は SUMO のどの統計に現れるか | `summary.xml` の `running` を時系列で見る |
-| 新しい monitor `surge_pricing_guard` を追加して、需要過多時の挙動を観察する | YAML に monitor を追記して IR を作り直す |
-| A/B の可視化比較：改訂前と改訂後の設計を見比べる | cadl-explorer の **Designer** ページで `.cadl` を開き、**Versions** で版を保存してから改訂後のファイルを開き、そこで二つを比較する（構造の差分とソースの差分）。Lifecycle 図を並べて見たいときは、**Contract Lifecycle** ページをブラウザの 2 つのタブで開き、それぞれに別の IR をアップロードする（別ポートで 2 つ起動する必要はありません） |
-| `[SKIP]` のひとつを評価可能にする：match deadline を SUMO 上で実測する | TraCI で `vehicle.depart` を取得し、CSV の `pickup_time` との差を計算 |
+| `match` の deadline を 30s から 10s に厳しくしたとき、何件が現実的に間に合うか調べる | SUMO には match イベントがなく（CSV の 1 行が車両 1 台）、`cadl_to_sumo.py` は IR を読むだけなので、この行は `[SKIP]` のままです。`analyze_results.py` を拡張し、`tripinfo.xml` の `departDelay` を代理指標として使います。サンプルデータでは 30 件すべて 0 秒なので、まず match イベントを何と定義するかを決めてください |
+| `num_taxis` を 10 から 5 に変えて、何かが変わるかを調べる | SUMO のパイプラインは `num_taxis` を使っていません（需要は CSV から来て、1 行が車両 1 台）。変更後も `tripinfo.xml` は同一です。`summary.xml` の `running` の時系列（サンプルデータでは最大 2）から、この需要に必要な台数と、capacity 違反が現れるには何をモデル化する必要があるかを論じてください |
+| 新しい monitor `surge_pricing_guard` を追加し、ツールチェーンのどこまで届くかを追う | YAML の `monitors:` に追記して IR を作り直す。IR（monitor が 4 件）、cadl-explorer の Monitors テーブル、`analyze_results.py` の `[SKIP]` 一覧に現れることを確認します。このパイプラインは monitor の rule を評価しないので、発火の様子はまだ観察できません |
+| A/B の可視化比較：改訂前と改訂後の設計を見比べる | cadl-explorer の **Designer** ページで `.cadl` を開き、**Versions** で版を保存してから改訂後のファイルを開き、そこで二つを比較する。**Compare two designs** の **A — baseline** に保存した版を選び（初期値は同梱の例題）、**B** は現在の設計にする（構造の差分とソースの差分）。Lifecycle 図を並べて見たいときは、**Contract Lifecycle** ページをブラウザの 2 つのタブで開き、それぞれに別の IR をアップロードする（別ポートで 2 つ起動する必要はありません） |
+| `[SKIP]` のひとつを評価可能にする：TraCI で SUMO の信号を読み、`match` deadline を実測する | `pip install eclipse-sumo` だけでは `traci` を import できません。`pip install traci` を実行するか、`$SUMO_HOME/tools` を `sys.path` に追加します。`traci.vehicle.getDeparture(vehID)`（または `traci.simulation.getDepartedIDList()`）を読み、CSV の `pickup_time` との差を計算します。これは投入遅延であり、`match` の代理指標（サンプルデータでは 0 秒）です。モデル化された match イベントではありません |
 
 ---
 

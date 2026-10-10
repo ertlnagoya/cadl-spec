@@ -157,13 +157,13 @@ contracts:
         - id: match
           from: Requested
           to:   Matched
-          # on: ...
+          on:   "PLATFORM -> TAXI[i] : match_assignment"
           deadline: 30s
           on_violation: { transition: Violated, severity: Major }
         - id: accept
           from: Matched
           to:   Accepted
-          # on: ...
+          on:   "TAXI[i] -> PLATFORM : ack(accepted)"
           deadline: 5s
           on_violation: { transition: Violated, severity: Major }
         # ...
@@ -212,7 +212,7 @@ You should see something like:
 | Dashed grey = `Delivered`/`Cancelled`/`Terminated` | normal terminals |
 | Dashed pink = `Violated` | violation terminal |
 | Solid edge with `Δ 30s` / `Δ 5s` | deadline-bearing transitions |
-| Red dashed edge with `violation Major` | forced move to the `on_violation` target state |
+| Red dashed edge labelled `violation` / `Major` (two lines) | forced move to the `on_violation` target state |
 
 :::info[This pattern repeats throughout the tutorial]
 You will run **edit CADL → `cadl sim-ir` → reload cadl-explorer** at every milestone:
@@ -222,8 +222,8 @@ The whole point of the tutorial is to internalize that **the picture changes in 
 
 ### Exercise 4-1
 
-Change the `match` deadline from `30s` to `60s`, regenerate the IR,
-and reload the page. The edge label should update to `Δ 60s`.
+In `cadl/mobility_sos.cadl`, change the `match` deadline from `30s` to `60s`, regenerate the IR,
+and upload it again. The edge label should change from `Δ 30s` to `Δ 60s`.
 **Once verified, revert it back to 30s before continuing** (later sections assume 30s).
 
 ---
@@ -261,7 +261,7 @@ Example output (excerpt; the scripts print their progress messages in Japanese):
 Produces:
 
 - `sumo/config/midtown.cadl.sumocfg` — `step-length` from
-  `environment.time_step_ms`, `end` from CSV last depart + `ride_time` guarantee.
+  `environment.time_step_ms`, `end` = the last `depart` in `sumo/routes/midtown.rou.xml` + the larger of 1800 s and the `ride_time` guarantee + 60 s (3060 + 1800 + 60 = 4920 with the sample data). If the route file does not exist yet, `end` is 3600 s; re-run this script after §6 to get 4920 s. A tighter `ride_time` (as in §8) does not shorten `end`.
 - `sumo/cadl_constraints.json` — the contract conditions (guarantees / deadlines / monitors) that
   `analyze_results.py` reads.
 
@@ -328,7 +328,7 @@ What is actually checked here is the two `guarantee` clauses only; the deadlines
 
 - **Guarantees** map directly to `tripinfo.duration` / `waitingTime` — evaluated.
 - **Deadlines** for matching/accept events are not modeled in SUMO yet — flagged SKIP.
-- **Monitors** referencing `battery` / `route_deviation` are not exported by SUMO — flagged SKIP.
+- **Monitors** observe per-passenger `waiting_time` while `Matched`, `battery`, and `route_deviation_ratio`, none of which SUMO exports — flagged SKIP.
 
 :::tip[🔍 Visualization Checkpoint 3 — Post-simulation (spec ↔ outcomes)]
 Each line of `analyze_results.py`'s output traces back to something in cadl-explorer's diagram.
@@ -340,7 +340,7 @@ With the explorer open beside the terminal, walk through the correspondence:
 | `[OK] ride_time <= 1800s` | Same as above |
 | `[SKIP] match ≤ 30.0s` | The `Δ 30s` label on the `Requested → Matched` edge |
 | `[SKIP] accept ≤ 5.0s` | The `Δ 5s` label on the `Matched → Accepted` edge |
-| `[SKIP] low_battery_guard` | First row of the Monitors table |
+| `[SKIP] waiting_too_long` / `low_battery_guard` / `detour_guard` | First, second and third rows of the Monitors table |
 
 **`SKIP` is not a failure** — it simply reports that SUMO has no observable for that signal.
 A stretch goal in §9 walks through closing one of these gaps via TraCI.
@@ -412,11 +412,11 @@ python scripts/cadl_to_sumo.py
 
 | Task | Hint |
 |---|---|
-| Tighten `match` deadline 30s→10s; how many trips realistically meet it? | Extend `cadl_to_sumo.py` to also export per-vehicle match timestamps. |
-| Reduce `num_taxis` from 10 to 5; where does the capacity violation show up? | Look at `summary.xml`'s `running` time-series. |
-| Add a new monitor `surge_pricing_guard` and observe its trigger pattern. | Add it under `monitors:` and regenerate the IR. |
-| **A/B visual diff**: compare the *before* and *after* designs. | In cadl-explorer, open the `.cadl` file on the **Designer** page, save a version under **Versions**, open the revised file and compare the two there (structured diff and source diff). To see two lifecycle diagrams side by side, open the **Contract Lifecycle** page in two browser tabs and upload one IR in each; a second instance on another port is not needed. |
-| Close one of the `[SKIP]` gaps by exporting the relevant SUMO signal via TraCI. | Start with the `match` deadline: capture `vehicle.depart` and compare it to the CSV's `pickup_time`. |
+| Tighten the `match` deadline 30s→10s; how many trips realistically meet it? | SUMO has no match event (one CSV row is one vehicle), and `cadl_to_sumo.py` only reads the IR, so the line stays `[SKIP]`. Extend `analyze_results.py` to use `departDelay` in `tripinfo.xml` as a proxy. With the sample data it is 0 s for all 30 trips, so first decide what a match event should be. |
+| Change `num_taxis` from 10 to 5 and find out whether anything changes. | Nothing in the SUMO pipeline consumes `num_taxis` (demand comes from the CSV, one vehicle per row): `tripinfo.xml` is identical after the change. Use the `running` time series in `summary.xml` (it peaks at 2 with the sample data) to argue what fleet size this demand needs, and what would have to be modelled for a capacity violation to appear. |
+| Add a new monitor `surge_pricing_guard` and follow it through the toolchain. | Add it under `monitors:` and regenerate the IR. Confirm that it reaches the IR (4 monitors), the Monitors table in cadl-explorer and the `[SKIP]` list of `analyze_results.py`. Monitor rules are not evaluated by this pipeline, so there is no trigger pattern to observe yet. |
+| **A/B visual diff**: compare the *before* and *after* designs. | In cadl-explorer, open the `.cadl` file on the **Designer** page, save a version under **Versions**, open the revised file and compare the two there: under **Compare two designs**, choose your saved version as **A — baseline** (the default is a bundled example) and the current design as **B** (structured diff and source diff). To see two lifecycle diagrams side by side, open the **Contract Lifecycle** page in two browser tabs and upload one IR in each; a second instance on another port is not needed. |
+| Close one of the `[SKIP]` gaps by reading the relevant SUMO signal via TraCI: measure the `match` deadline. | `pip install eclipse-sumo` does not make `traci` importable: run `pip install traci`, or add `$SUMO_HOME/tools` to `sys.path`. Read `traci.vehicle.getDeparture(vehID)` (or `traci.simulation.getDepartedIDList()`) and compare it with the CSV's `pickup_time`. This measures insertion delay — a proxy for `match`, 0 s in the sample data — not a modelled match event. |
 
 ---
 
