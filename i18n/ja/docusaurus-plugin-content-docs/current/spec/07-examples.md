@@ -9,7 +9,7 @@ description: "家庭内ルール，ロボット配送，IoTデータ共有，AI�
 本章では，4つの適用領域を通じてCADLの記述例を示す。各例は，[第1章](./01-introduction.md)で掲げた3つの目的に対応する記述機能を具体的に例示している。
 
 :::note
-本章の記述例はCADLが意図する設計を例示する概念的なものであり，v0.3リファレンス実装はこのままの形では受理しない。基本構造の記述は，`ROBOT[*]`のようなアクター参照を引用符なしでインラインリスト内に書いており，YAMLベースのパーサはこれを拒否する。`verification:`と`codegen:`の記述は，`sos:`の外に置いた断片である。また，`optimization:`，`policy_codegen:`，`post_generation_verification:`，`calendar_integration:`，`tool:`や，`Monte_Carlo(...)`のような検証手法など，[付録A](./appendix-a-syntax.md)の範囲を超える将来の構成要素も含む。リファレンス実装の検証器が実装する検証手法は`smt`だけである。これらの構成要素のほかにも，`verification:`の記述はキー（`check:`，`severity:`，`message:`，`contracts:`）を，`codegen:`の記述は形（`modules:`，`generates:`，`targets:`）を用いているが，これらは付録Aの[§A.8](./appendix-a-syntax.md#a8-verification-block)と[§A.9](./appendix-a-syntax.md#a9-codegen-block)のキーではない。実行できる例は，[`cadl`リポジトリ](https://github.com/ertlnagoya/cadl)の`examples/`ディレクトリにある。
+本章の記述例はCADLが意図する設計を例示する概念的なものであり，v0.3リファレンス実装はこのままの形では受理しない。基本構造の記述は，`ROBOT[*]`のようなアクター参照を引用符なしでインラインリスト内に書いており，YAMLベースのパーサはこれを拒否する。`verification:`と`codegen:`の記述は，`sos:`の外に置いた断片である。また，`optimization:`，`policy_codegen:`，`post_generation_verification:`，`calendar_integration:`，`tool:`や，`Monte_Carlo(...)`のような検証手法など，[付録A](./appendix-a-syntax.md)の範囲を超える将来の構成要素も含む。リファレンス実装の検証器が実装する検証手法は`smt`だけである。これらの構成要素のほかにも，`verification:`の記述はキー（`check:`，`severity:`，`message:`，`contracts:`）を，`codegen:`の記述は形（`modules:`，`generates:`，`targets:`）を用いているが，これらは付録Aの[§A.8](./appendix-a-syntax.md#a8-verification-block)と[§A.9](./appendix-a-syntax.md#a9-codegen-block)のキーではない。契約の記述に現れる`sharing_mode:`（7.1節）と`approval_required:`（7.4節）も，同様に[§A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)のキーではない。実行できる例は，[`cadl`リポジトリ](https://github.com/ertlnagoya/cadl)の`examples/`ディレクトリにある。
 :::
 
 | **記述例** | **目的1: 計算機処理** | **目的2: 矛盾検出** | **目的3: 自動変換・コード生成** |
@@ -79,7 +79,7 @@ sos:
           - "bonus(CHILD[i], 200yen) when all_weekly_chores_done"
 
     - id: SHARED_RESOURCE_USE
-      parties: [PARENT[*], CHILD[*]]
+      parties: [PARENT[*], CHILD[*], AI_ASSISTANT]
       assume:
         - "resource.is_available"
       guarantee:
@@ -205,7 +205,7 @@ codegen:
 
 ## 7.2 ロボット配送システム
 
-MAPFを制度実験プラットフォームとして活用するロボット配送システムの例である。この記述例は，中央集権型の制度（D-SoS）の契約と，環境条件に応じて分散協調型の制度（C-SoS）との間で切り替える条件を定義する。
+MAPFを制度実験プラットフォームとして活用するロボット配送システムの例である。SoS全体は `type: Acknowledged` と宣言している。ディスパッチャが，独立に運用されるロボットと顧客を調整する構成である。この記述例は，集中型の運用モード（β = 0.8，ディスパッチャが決定する）の契約と，環境条件に応じて，ロボット同士が協調する分散型の運用モードとの間で切り替える条件を定義する。運用モードの名前はSoSの類型ではなく，ファイルレベルの `type:` は遷移によって変わらない。
 
 ```yaml
 sos:
@@ -273,7 +273,7 @@ sos:
           - "reward(ROBOT[i], base_fee + speed_bonus) when delivery_on_time"
           - "penalty(ROBOT[i], -base_fee * 0.5) when delivery_late"
 
-  # === 制度遷移: 障害率に応じてD-SoSからC-SoSへ切替 ===
+  # === 制度遷移: 障害率に応じて集中型と分散型の運用モードを切替 ===
   transitions:
     - from: CENTRALIZED_REGIME
       to: DISTRIBUTED_REGIME
@@ -291,7 +291,7 @@ sos:
         AND latency_ms <= 100
         AND DISPATCHER.is_operational == true
       protocol: REGIME_SHIFT_PROTOCOL   # プロトコルの定義はこの記述例では省略
-      safety_invariant: "no_collision"
+      safety_invariant: "no_collision AND no_order_loss"
 
   metrics:
     - id: throughput
@@ -415,7 +415,7 @@ codegen:
         num_robots: [10, 100, step=10]
       objective: "maximize(throughput) subject_to fairness >= 0.7"
       output: "regime_map.json"
-      # 各パラメータ点で最適な制度（D-SoS/C-SoS）とパラメータ(β,α,λ)を決定
+      # 各パラメータ点で最適な運用モード（集中型/分散型）とパラメータ(β,α,λ)を決定
 ```
 
 ## 7.3 IoTデータ共有システム
@@ -546,7 +546,7 @@ verification:
       # DATA_BROKERは生データにアクセスできない
       NOT(exists flow: DATA_PROVIDER[*] -> DATA_BROKER
         where flow.contains(raw_data))
-      # CONSUMER[j]はsubscribedデータのみ参照可能
+      # DATA_CONSUMER[j]はsubscribedデータのみ参照可能
       AND for all consumer_j in DATA_CONSUMER[*]:
         consumer_j.accessible_data
           SUBSET_OF subscribed_data(consumer_j)
@@ -770,7 +770,7 @@ verification:
   # AI安全契約の充足可能性
   - id: AI_SAFETY_SATISFIABILITY
     type: assume_guarantee
-    contract: AI_SAFETY_CONTRACT
+    contracts: [AI_SAFETY_CONTRACT]
     check: >
       # assume(training_data.is_representative)の下で
       # guarantee(no_harmful_action)が常に成立するか

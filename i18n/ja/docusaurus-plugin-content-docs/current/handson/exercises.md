@@ -134,9 +134,22 @@ flowchart LR
 
 **手順**:
 
-1. プロトコル `DeliveryProposal` を追加：`participants: [DISPATCHER, "ROBOT[i]"]`。
-2. 3 ステップを列挙：`DISPATCHER -> ROBOT : route_assignment`、`ROBOT -> DISPATCHER : ack`、`ROBOT -> DISPATCHER : completion`。
-3. 思いつくなら `pre`/`post` 条件を追加。
+1. `sos:` の下（`contracts:` と同じインデント）に `protocols:` セクションを追加し、プロトコル `DeliveryProposal` を 1 つ書く。`trigger` を付ける。プロトコルに参加者の一覧を書くキーはない。誰が参加するかは `steps` に書いた送信者と受信者で決まる。
+2. `steps:` に 3 ステップを、それぞれクオートした文字列で列挙：`"DISPATCHER -> ROBOT[i] : route_assignment"`、`"ROBOT[i] -> DISPATCHER : ack"`、`"ROBOT[i] -> DISPATCHER : completion"`。
+3. 思いつくなら `precondition` / `postcondition` を追加（ほかに任意のキーとして `safety_invariant` と `timing` がある）。
+4. `cadl check my_delivery_v1.cadl` を実行し、続けてプロトコルが IR に入ったことを確認：`cadl sim-ir my_delivery_v1.cadl --format json | grep -n -A6 '"protocols"'` に `"id": "DeliveryProposal"` が出る。ここでは `cadl check` だけに頼らないこと。`cadl check` は知らないキーを黙って無視するので、キー名を間違えても（`pre:`、`participants:` など）検査は通ってしまう。
+
+```yaml
+  protocols:
+    - id: DeliveryProposal
+      trigger: "new_delivery_request(CUSTOMER[i])"
+      precondition: "ROBOT[i].battery > 20"
+      steps:
+        - "DISPATCHER -> ROBOT[i] : route_assignment"
+        - "ROBOT[i] -> DISPATCHER : ack"
+        - "ROBOT[i] -> DISPATCHER : completion"
+      postcondition: "ROBOT[i].status == Delivered"
+```
 
 **振り返り**: なぜプロトコルは *メッセージ* の列として書かれ、コードとして書かれないのでしょうか？ Python 関数では得られないどんな利点があるでしょうか？（ヒント：各ステップを *誰が実装するか* を考える。）
 
@@ -207,8 +220,8 @@ stateDiagram-v2
 1. `v1` → `v2` をコピー。
 2. `lifecycle.states`、`lifecycle.initial`、`lifecycle.terminal` と 4 つの遷移（`assign`、`accept`、`start_delivery`、`complete`）を追加。
 3. `accept` に `deadline: 5s` と `on_violation.transition: Violated` を設定（値は移動先の状態名）。あわせて、メイン教材の Step 3 と同じく `sos:` の下に `extensions: [sos-dsl: 0.1]` を宣言する。
-4. `cadl check` と `cadl sim-ir my_delivery_v2.cadl --format json | head -60` を実行。
-5. IR で `"lifecycle"` が `null` でないことを確認。
+4. `cadl check my_delivery_v2.cadl` を実行し、続けて `cadl sim-ir my_delivery_v2.cadl --format json | grep -n -A3 '"lifecycle"'` を実行（`"lifecycle"` キーは IR の 86 行目あたりにあるので、`head` では途中で切れて見えない）。
+5. 出力で `"lifecycle"` が `null` でなくなったことを確認：行が `"lifecycle": {` になり、続いて `"states": [` と最初の状態名が並ぶ。
 
 #### 演習 2.2 (★★) — 過速度モニターを追加
 
@@ -299,10 +312,10 @@ stateDiagram-v2
 
 1. `cadl-explorer` を起動（`streamlit run app.py`）。
 2. v1 用にも IR を生成：`cadl sim-ir my_delivery_v1.cadl --format json > my_delivery_v1.ir.json`。
-3. *SoS_DSL_Lifecycle* ページを開く。v1 を先にアップロード、次に v2。
+3. **Contract Lifecycle** ページを開く（サイドバー上部のページ一覧にある）。v1 を先にアップロード、次に v2。
 4. スクリーンショットを取る。
 
-**確認**: v1 では「契約にライフサイクルが無い」旨の警告が表示される。v2 では 7 状態の状態機械が描画される。
+**確認**: v1 では「契約にライフサイクルが無い」旨の警告が表示される。v2 では 8 状態の状態機械が描画される（`Cancelled` を追加する演習 2.3 を飛ばした場合は 7 状態）。
 
 #### 演習 3.2 (★★) — A/B 比較レポート
 
@@ -326,7 +339,11 @@ stateDiagram-v2
 1. `cadl-explorer/cadl_sim/sos_dsl/violation_trace_view.py` を作成。
 2. NDJSON 各行をパースし `instance_id` でグループ化、状態区間ごとに横バー、違反イベントは赤い × でマーク。
 3. Plotly（`plotly.graph_objects.Bar`）を使用 — 新規依存不要。
-4. `cadl-explorer/pages/SoS_DSL_Violation_Trace.py` で配線。
+4. ページとして配線する。cadl-explorer に `pages/` ディレクトリはない。ページは `views/` に置き、`app.py` で明示的に登録する。`cadl-explorer/views/violation_trace.py` を作成し（`views/lifecycle.py` を手本にする）、`app.py` の `st.navigation([...])` のリストに 1 行追加：
+
+   ```python
+   st.Page("views/violation_trace.py", title="Violation Trace", url_path="violation-trace"),
+   ```
 
 これは *先回り* で作るものです — 第 4 回でシミュレーションが走るとき、ビューワが既に準備できている状態にしておきます。
 
@@ -368,6 +385,8 @@ stateDiagram-v2
 
 これがあらゆる仕様変更を検証する **ground truth（正解）** です。
 
+この表は *同梱の* fixture についてのものです。同梱の fixture は `battery_guard` と `deadline_watch` の両方の monitor を宣言しています。自分の IR でデモを動かすとき（`--ir`、演習 4.2 以降）、自分のファイルで宣言していない monitor は発火しません。メイン教材の v2 は `battery_guard` を持ちますが `deadline_watch` を持たないので、`robot-3-1` は `Violated` にならず、違反なしの `Delivering` で終わります。自分の v2 に `battery_guard` もない場合、`robot-2-1` は `Violated` のままですが、原因は `deadline:accept` になります。
+
 ### 演習（授業 50 分 + 宿題）
 
 #### 演習 4.1 (★) — ベースラインを取得
@@ -391,8 +410,16 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 **手順**:
 
 1. `my_delivery_v2.cadl` を編集、`accept` 遷移の `deadline: 5s` を `deadline: 1s` に変更。
-2. e2e スクリプトで IR を再生成し、デモのフィクスチャとしてコピー（または demo スクリプトを自分の IR をロードするように変更）。
-3. `multi_robot_demo --summary` を再実行。
+2. IR を再生成し、`--ir` オプションを付けてデモを実行（`--ir` を付けないと同梱の fixture が読み込まれる）：
+
+   ```bash
+   cd ~/program/cadl_repo
+   cadl sim-ir my_delivery_v2.cadl --format json > my_delivery_v2.ir.json
+   cd ~/program/cadl-raspimouse-simulator
+   python3 -m cadl.runtime.multi_robot_demo --ir ~/program/cadl_repo/my_delivery_v2.ir.json --summary
+   ```
+
+3. 同じファイルを `deadline: 5s` のまま実行したときの summary と比べる。
 
 **振り返り**: 厳しすぎる期限は努力に関係なく *すべての* 契約を違反にします。緩すぎる期限は不正動作を見逃します。**実 SoS の期限値を決めるプロセスは？**（ヒント：ベースラインデータ + 許容偽陽性率）
 
@@ -461,26 +488,49 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
 **手順**:
 
 1. 5.1 で診断した変更を実施。
-2. 新しい IR に対して `multi_robot_demo --summary` を再実行。
+2. 演習 4.2 と同じ手順で、新しいファイルの IR を生成し、その IR に対してデモを再実行：
+
+   ```bash
+   cd ~/program/cadl_repo
+   cadl sim-ir my_delivery_v3.cadl --format json > my_delivery_v3.ir.json
+   cd ~/program/cadl-raspimouse-simulator
+   python3 -m cadl.runtime.multi_robot_demo --ir ~/program/cadl_repo/my_delivery_v3.ir.json --summary
+   ```
+
 3. 修正したい違反が消え、*かつ* 他を壊していないことを確認。
 
 **提出**: `my_delivery_v3.cadl` + v2 との diff。
 
 #### 演習 5.3 (★★★) — 報酬実行を実装
 
-**目的**: 現在 `incentives.rules` の報酬は *記録* されるだけで *実行* されない。Python ランタイムにアクターごとの残高を持たせ、契約が `Completed` に到達したら報酬を加算する。
+**目的**: 現在、報酬は仕様（`incentives.rules`）に *書かれている* だけで *実行* されない。しかも、ルールの文字列はランタイムまで届いていない。仕様を IR に変換するとき（`cadl_repo/src/cadl/sim/lower.py`）、契約の `governance` に残るのは `lambda` と `incentive_type` だけで、`rules` のリストは落とされる。Python ランタイムにアクターごとの残高を持たせ、契約が `Completed` に到達したら報酬を加算する。
 
 **手順**:
 
 1. `ContractRuntime` に `balances: dict[str, float]` を追加し、アクセサ `runtime.balance(actor_id)` を提供。
-2. `contract.spec["incentives"]["rules"]` を `reward(<actor_ref>, <amount>) when on_time_delivery` の形式でパース。
+2. ルールを取得する。IR には入っていないので、cadl のパーサで `.cadl` ソースから読む。`cadl` パッケージをインストールした Python 環境で実行すること（自分のファイルに `incentives:` ブロックがなければ、メイン教材 Step 2 のものを追加する）：
+
+   ```python
+   from cadl.parser import parse_file
+
+   sos = parse_file("my_delivery_v2.cadl")
+   for contract in sos.contracts:
+       if contract.incentives:
+           for rule in contract.incentives.rules:
+               print(contract.id, rule.description)
+   # DELIVERY_SLA reward(ROBOT[i], 10) when on_time_delivery
+   ```
+
+   各ルールは `IncentiveRule` で、唯一のフィールド `description` に元の文字列がそのまま入っている。`reward(<actor_ref>, <amount>) when on_time_delivery` の形式を自分でパースし（正規表現で足りる）、結果をランタイムに渡す。
+
+   *発展版*: ソースを読む代わりに、`lower.py`（と `sim/ir.py` の `GovernanceParams`）を拡張して IR にルールを載せ、`cadl sim-ir --format json` の出力に現れることを確認したうえで、ランタイムが IR から読むようにする。
 3. 終端状態到達時に各ルールをトレースに対して評価し、マッチしたアクターに加算。
 4. `cadl/runtime/tests/test_rewards.py` を追加：
    - 配送 `Completed` で 10 ポイント獲得するテスト
    - `Violated` 配送では報酬が払われないテスト
 5. `multi_robot_demo --summary` の出力に最終残高を追加。
 
-**振り返り**: CADL 仕様には既に `reward(ROBOT[i], 10) when on_time_delivery` と書かれていましたが、ここまでランタイムは無視してきました。**「仕様にそう書いてある」と「ランタイムが実際にそう動く」の境界線はどこですか？**
+**振り返り**: CADL 仕様には既に `reward(ROBOT[i], 10) when on_time_delivery` と書かれていましたが、ここまでランタイムは無視してきました。IR にすら載っていませんでした。**「仕様にそう書いてある」と「ランタイムが実際にそう動く」の境界線はどこですか？**
 
 #### 演習 5.4 (★★★) — 最終レポート
 

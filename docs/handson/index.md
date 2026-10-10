@@ -11,8 +11,8 @@ The materials fall into **two tracks**. Pick the one that matches your role.
 
 | Your role | What you do | Where to start |
 |---|---|---|
-| 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | [Why SoS-DSL?](academic-background.md) → [Course A](main-textbook.md) → B → C |
-| 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim [Why SoS-DSL?](academic-background.md) then jump to [Course C](exercises.md) |
+| 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | [Why SoS-DSL?](academic-background.md) → [Code Walkthrough](code-walkthrough.md) (recommended before Course A) → [Course A](main-textbook.md) → B → C |
+| 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim [Why SoS-DSL?](academic-background.md) then jump to [Course C](exercises.md#course-c) |
 
 :::info[Repository availability]
 `cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI), `cadl-explorer` (visualisation) and `cadl-raspimouse-simulator` (simulator) are public, so every step of Course A can be followed with public repositories. `mobility-sos-exercise`, used by Course B, is **not publicly available at present**.
@@ -26,7 +26,7 @@ never asked to write code cold.
 
 | Stage | What you do | Materials | Rough time |
 |---|---|---|---|
-| **① Understand** | Grasp the overall structure (four repositories, three of them public; the spec → IR → codegen flow) and what each key program does | [Architecture & Code Walkthrough](code-walkthrough.md), then skim the [Academic Background](academic-background.md) | 0.5–1 day |
+| **① Understand** | Grasp the overall structure (four repositories; the spec → IR → codegen flow) and what each key program does | [Why SoS-DSL?](academic-background.md) (skimming is fine), then the [Architecture & Code Walkthrough](code-walkthrough.md) (recommended before Course A) | 0.5–1 day |
 | **② Practise with templates** | Copy the provided skeletons and fill them in while going once around the loop: write a contract → check → visualise → run the simulation | [Course A (main textbook)](main-textbook.md) Steps 0–6, then the ★ / ★★ exercises of [the exercises booklet](exercises.md) Part 1 | 1–2 weeks |
 | **③ Build from scratch** | Add features with no template: new monitors and states (★★★), model a new domain (Part 2), or the LLM contract-generation loop (advanced exercise) | ★★★ / advanced exercise / Part 2 of [the exercises booklet](exercises.md) | as your interest dictates |
 
@@ -85,7 +85,7 @@ After finishing, practice with the extra exercises:
 | **You will learn** | Designing actors / contracts / lifecycle / monitors **on your own** for a new domain, then choosing your own runtime |
 
 Course C is deliberately open-ended: the brief is an outline, not a step-by-step tutorial. It is **Part 2** of the exercises booklet:
-→ [Exercises booklet — Part 2 (Course C)](exercises.md)
+→ [Exercises booklet — Part 2 (Course C)](exercises.md#course-c)
 
 ---
 
@@ -117,4 +117,4 @@ After that, start with **[Why SoS-DSL?](academic-background.md)** and then **[Co
 | Course A — main textbook | [Robot Delivery](main-textbook.md) |
 | Course A — extra problems | [Exercises](exercises.md) |
 | Course B — mobility tutorial | [Urban Mobility](mobility-sos-tutorial.md) |
-| Course C — your own SoS | [Exercises Part 2](exercises.md) |
+| Course C — your own SoS | [Exercises Part 2](exercises.md#course-c) |

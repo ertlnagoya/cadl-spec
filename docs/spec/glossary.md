@@ -18,7 +18,13 @@ explanations and examples, see
   specifying the Institution / Protocol / Algorithm layers of a System
   of Systems in a single, verifiable document. See the
   [Specification introduction](./intro.md).
-- **Institution layer** — The layer that declares actors and contracts.
+- **Institution layer** — The layer that states who participates and
+  under which rules: `actors:`, `contracts:`, and `transitions:` (the
+  conditions for switching between regimes). The same definition is used
+  in [Section 2.2](./02-objectives.md) and
+  [Appendix A, §A.4](./appendix-a-syntax.md#a4-contracts-institution-layer).
+  In the IR of the reference implementation, `institution` holds the
+  actors and contracts, and the transitions are a separate top-level list.
   Each contract states its parties, `assume` / `guarantee`, `authority`,
   `information`, `responsibilities`, `incentives`, and `violation`, and
   carries the governance parameters α, β, λ.

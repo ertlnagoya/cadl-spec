@@ -16,7 +16,7 @@ CADL（Contract Architecture Description Language）は，System of Systems（So
 
 ## 1.2 背景: SoSにおける制度設計の課題
 
-SoSは，独立に運用される複数のシステムが相互に連携し，単独のシステムでは実現できない能力を発現するシステム構成である [[Maier, 1998]](./appendix-b-references.md)。[ISO/IEC/IEEE 21841:2019](./appendix-b-references.md) では，SoSをDirected（統率型），Acknowledged（認知型），Collaborative（協調型），Virtual（仮想型）の4種に分類している。
+SoSは，独立に運用される複数のシステムが相互に連携し，単独のシステムでは実現できない能力を発現するシステム構成である [[Maier, 1998]](./appendix-b-references.md)。[[ISO/IEC/IEEE 21841:2019]](./appendix-b-references.md) では，SoSをDirected（統率型），Acknowledged（認知型），Collaborative（協調型），Virtual（仮想型）の4種に分類している。
 
 従来のSoS研究は制御・協調アルゴリズムや技術的最適化に焦点を当ててきたが，ガバナンス・制度設計がシステム全体の振る舞いを構造的に規定する上位層の設計変数として注目されている。しかし，現在のSoS制度設計は自然言語の契約・合意書に依存しており，以下の課題が存在する。
 

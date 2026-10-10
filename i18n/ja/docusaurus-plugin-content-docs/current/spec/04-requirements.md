@@ -57,7 +57,7 @@ description: "CADL言語とその処理系が目指す機能要求，非機能�
 
 ## 4.2 非機能要求
 
-以下も同様に目標であり，定量的な目標（NFR-3など）や変換先（NFR-5）を含む。現在の実装が提供する範囲は[第10章](./10-roadmap.md)を参照されたい。NFR-7は，人が読むテキストと識別子を区別する。識別子はASCIIに限る（[付録AのA.1節](./appendix-a-syntax.md#a1-lexical-rules)）。識別子は生成コード（Solidity，Rego，C#，Go）の名前になり，非ASCIIの名前はすべての変換先で受け付けられるわけではなく，正規化の規則も必要になるためである。参照実装は，この内容のNFR-7を満たしている。
+以下も同様に目標であり，定量的な目標（NFR-3など）や変換先（NFR-5）を含む。現在の実装が提供する範囲は[第10章](./10-roadmap.md)を参照されたい。NFR-7は，人が読むテキストと識別子を区別する。識別子はASCIIに限る（[付録AのA.1節](./appendix-a-syntax.md#a1-lexical-rules)）。識別子は生成コード（Python，Solidity，Rego，C#）の名前になり，非ASCIIの名前はすべての変換先で受け付けられるわけではなく，正規化の規則も必要になるためである。リファレンス実装は，文字列とコメントの中のUnicodeテキストを受理する。ASCIIの規則に違反する識別子を拒否することは，まだ行っていない（[付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)）。
 
 | **ID** | **要求名** | **内容** |
 |---|---|---|
@@ -67,7 +67,7 @@ description: "CADL言語とその処理系が目指す機能要求，非機能�
 | NFR-4 | 拡張性 | ドメイン固有の語彙・制約をライブラリとして追加できるプラグイン機構を持つこと。 |
 | NFR-5 | 相互運用性 | SysMLv2 [[OMG, 2025]](./appendix-b-references.md)，AADL [[Feiler & Gluch, 2012]](./appendix-b-references.md)，スマートコントラクト（Solidity [[Solidity Documentation]](./appendix-b-references.md)）へのコード生成をサポートすること。 |
 | NFR-6 | AI親和性 | LLMが自然言語からCADL記述を生成・修正・説明できるよう，構文が規則的で曖昧さが少ないこと。AI支援による敷居低減（NL→CADL変換，自然言語での説明生成）を前提とした設計であること。 |
-| NFR-7 | 国際化 | 人が読むテキスト（`name`，`description`，`role`，`message` などの文字列値とコメント）を，Unicode文字（日本語等）を用いて任意の言語で記述できること。識別子（アクター・契約・プロトコルのIDと，式で用いる名前）はASCIIに限る。 |
+| NFR-7 | 国際化 | 人が読むテキスト（`name`，`description`，`role` などの文字列値とコメント）を，Unicode文字（日本語等）を用いて任意の言語で記述できること。識別子（アクター・契約・プロトコルのIDと，式で用いる名前）はASCIIに限る。 |
 | NFR-8 | ビジュアライゼーション | CADL記述から権限構造図，プロトコルシーケンス図，モードマップ等のダイアグラムを自動生成し，非技術者でも制度の全体像を視覚的に把握できること。 |
 
 ## 4.3 制約条件
@@ -75,6 +75,6 @@ description: "CADL言語とその処理系が目指す機能要求，非機能�
 | **ID** | **内容** |
 |---|---|
 | C-1 | 五層フレームワーク[[Shimoyama & Matsubara, 2026]](./appendix-b-references.md)との対応付けが可能であること。対応は[2.2節](./02-objectives.md)に示す。 |
-| C-2 | [ISO/IEC/IEEE 21841:2019](./appendix-b-references.md) のSoS分類（D/A/C/V-SoS）を記述可能であること。 |
+| C-2 | [[ISO/IEC/IEEE 21841:2019]](./appendix-b-references.md) のSoS分類（D/A/C/V-SoS）を記述可能であること。 |
 | C-3 | IEC 62853 [[IEC 62853:2018]](./appendix-b-references.md) のプロセスビュー（合意形成・説明責任・障害対応・変化対応）との連携が可能であること。 |
 | C-4 | assume-guarantee契約セマンティクスに基づく形式的基盤を持つこと。 |

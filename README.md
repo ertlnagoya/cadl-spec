@@ -9,7 +9,7 @@ This repository hosts the specification and teaching materials for **CADL (Contr
 | Section | English | 日本語 |
 | --- | --- | --- |
 | Specification (chapters 1–10, appendices A–E, glossary) | [docs/spec/intro](https://www.ertl.jp/cadl-spec/docs/spec/intro/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/spec/intro/) |
-| Quick Start (CADL Explorer tour) | [docs/quickstart](https://www.ertl.jp/cadl-spec/docs/quickstart/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/quickstart/) |
+| Quick Start (two paths: CADL Explorer in the browser, or the `cadl` CLI) | [docs/quickstart](https://www.ertl.jp/cadl-spec/docs/quickstart/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/quickstart/) |
 | Hands-on course | [docs/handson](https://www.ertl.jp/cadl-spec/docs/handson/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/) |
 
 Sources: the specification is under [`docs/spec/`](docs/spec/) (English) and [`i18n/ja/docusaurus-plugin-content-docs/current/spec/`](i18n/ja/docusaurus-plugin-content-docs/current/spec/) (Japanese); the landing page is [`src/pages/index.tsx`](src/pages/index.tsx) with its Japanese copy under `i18n/ja/docusaurus-plugin-content-pages/`. A change to an English page needs the same change in the Japanese one.
@@ -24,6 +24,7 @@ A self-paced workshop of about 95 minutes and a 5-session exercise course that w
 | --- | --- | --- |
 | Hands-on index | [docs/handson](https://www.ertl.jp/cadl-spec/docs/handson/) | [ja/docs/handson](https://www.ertl.jp/cadl-spec/ja/docs/handson/) |
 | Why SoS-DSL? (background for learners) | [academic-background](https://www.ertl.jp/cadl-spec/docs/handson/academic-background) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/academic-background) |
+| Code walkthrough (recommended before Course A) | [code-walkthrough](https://www.ertl.jp/cadl-spec/docs/handson/code-walkthrough/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/code-walkthrough/) |
 | Course A — Robot Delivery (main textbook) | [main-textbook](https://www.ertl.jp/cadl-spec/docs/handson/main-textbook) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/main-textbook) |
 | Course A — Exercises | [exercises](https://www.ertl.jp/cadl-spec/docs/handson/exercises) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/exercises) |
 | Course B — Urban Mobility (CADL × SUMO) | [mobility-sos-tutorial](https://www.ertl.jp/cadl-spec/docs/handson/mobility-sos-tutorial) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/mobility-sos-tutorial) |

@@ -11,8 +11,8 @@ CADL と SoS-DSL のハンズオン教材は、目的別に 2 つのトラック
 
 | 読み手 | やること | 入口 |
 |---|---|---|
-| 🧑‍🎓 学習者 | 自分で CADL を書いて動かす | [なぜ SoS-DSL なのか？](academic-background.md) → [コース A](main-textbook.md) → B → C |
-| 🧑‍🔬 研究者 | 教材を自分の SoS の試作に流用する | [なぜ SoS-DSL なのか？](academic-background.md)を流し読み → [コース C](exercises.md) |
+| 🧑‍🎓 学習者 | 自分で CADL を書いて動かす | [なぜ SoS-DSL なのか？](academic-background.md) → [コード解説](code-walkthrough.md)（コース A の前に読むのを推奨） → [コース A](main-textbook.md) → B → C |
+| 🧑‍🔬 研究者 | 教材を自分の SoS の試作に流用する | [なぜ SoS-DSL なのか？](academic-background.md)を流し読み → [コース C](exercises.md#course-c) |
 
 :::info[リポジトリの公開状況]
 `cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）、`cadl-raspimouse-simulator`（シミュレータ）は公開しています。コース A はすべての Step を公開リポジトリだけで進められます。コース B で使う `mobility-sos-exercise` は**現時点では非公開**です。
@@ -24,7 +24,7 @@ CADL と SoS-DSL のハンズオン教材は、目的別に 2 つのトラック
 
 | 段階 | 何をするか | 使う教材 | 目安 |
 |---|---|---|---|
-| **① 理解する** | 全体の構造（4 リポジトリ（うち 3 つが公開）・仕様→IR→コード生成の流れ）と主要プログラムの役割を把握する | [全体構造とコード解説](code-walkthrough.md) → [学術的背景](academic-background.md)（流し読み可） | 0.5〜1 日 |
+| **① 理解する** | 全体の構造（4 リポジトリ・仕様→IR→コード生成の流れ）と主要プログラムの役割を把握する | [なぜ SoS-DSL なのか？](academic-background.md)（流し読み可） → [全体構造とコード解説](code-walkthrough.md)（コース A の前に読むのを推奨） | 0.5〜1 日 |
 | **② 雛形で練習する** | 用意された骨組みをコピーして埋めながら、契約の記述 → 検査 → 可視化 → シミュレーション実行を一周する | [コース A（メイン教材）](main-textbook.md) Step 0〜6 → [演習問題集](exercises.md) Part 1 の ★・★★ 課題 | 1〜2 週間 |
 | **③ ゼロから作る** | 雛形なしで機能を追加する：新しい監視・状態の追加（★★★）、別ドメインのモデリング（Part 2）、LLM による契約生成ループ（発展課題） | [演習問題集](exercises.md) の ★★★・発展課題・Part 2 | 興味に応じて |
 
@@ -83,7 +83,7 @@ A〜C で前提となる用語をひと通り出しておく短い導入です�
 | 学べること | 新しいドメインに対して actors / contracts / lifecycle / monitors を自力で設計し、ランタイムも自分で選ぶ |
 
 コース C は意図的に自由度を高くしてあり、課題は手順書ではなく概要として示しています。演習問題集の Part 2 がこれに当たります：
-→ [演習問題集 — Part 2（コース C）](exercises.md)
+→ [演習問題集 — Part 2（コース C）](exercises.md#course-c)
 
 ---
 
@@ -114,4 +114,4 @@ cd ~/program/cadl_repo
 | コース A — メイン教材 | [ロボット配送](main-textbook.md) |
 | コース A — 演習問題集 | [演習問題集](exercises.md) |
 | コース B — モビリティ | [都市モビリティ](mobility-sos-tutorial.md) |
-| コース C — 自分の SoS | [演習問題集 Part 2](exercises.md) |
+| コース C — 自分の SoS | [演習問題集 Part 2](exercises.md#course-c) |

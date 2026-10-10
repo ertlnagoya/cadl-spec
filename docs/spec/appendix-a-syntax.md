@@ -46,7 +46,8 @@ style are governed by YAML and are not shown. A scalar that contains
 `[`, `]`, `*`, `->`, or `": "` — for example an actor reference such as
 `"TAXI[*]"` or a step such as `"A -> B : msg"` — SHOULD be quoted, and
 MUST be quoted inside a flow sequence, where YAML would otherwise read
-it differently.
+it differently. A `sharing_entry` (A.4) MUST be a quoted string
+wherever it is written.
 
 Keys that this appendix does not define are not part of CADL v0.1. A
 processor MUST NOT reject a file because of them; the reference
@@ -87,7 +88,9 @@ literal         = string | int_literal | float_literal
 (for example `sos-dsl`, `unity-csharp`). Numeric literals are unsigned.
 Identifiers are ASCII. Strings and comments may contain any Unicode
 character, which is what requirement NFR-7
-([Chapter 4](./04-requirements.md)) asks for.
+([Chapter 4](./04-requirements.md)) asks for. The reference
+implementation does not yet enforce the ASCII rule
+([A.12](#a12-reference-implementation-status-v03)).
 
 ## A.2 Top-level structure
 
@@ -149,10 +152,17 @@ metric_def     = "id:" , identifier ,
 
 `autonomy:` defaults to `medium`. In `actor_def`, the index of `id:` is
 normally a range (`"ROBOT[1..N]"`) and declares a parameterised set of
-actors. A non-string value in `environment:` is read as a literal
+actors. The upper bound of a `range_expr` is an integer or an
+identifier. An identifier such as `N` is a symbolic size; v0.1 has no
+construct that binds it to a value (see
+[A.12](#a12-reference-implementation-status-v03) for what the reference
+implementation does with it). A non-string value in `environment:` is read as a literal
 (A.1); a string value is kept verbatim.
 
 ## A.4 Contracts (Institution layer)
+
+The Institution layer consists of `contracts:`, defined here, together
+with `actors:` (A.3) and `transitions:` (A.7).
 
 ```ebnf
 contract_def      = "id:"      , identifier ,
@@ -192,6 +202,9 @@ Each item of `assume:` and `guarantee:` is a string holding a
 `parties:` MUST name at least one declared actor, and every actor
 reference in a contract MUST refer to an actor declared in `actors:`.
 `duration:` is `indefinite`, a `duration_lit`, or an event description.
+A `sharing_entry` MUST be written as a quoted string
+(`- "TAXI[*] -> CENTRAL : position"`); unquoted, YAML reads it as a
+one-entry mapping and not as a string.
 
 ## A.5 Protocols
 
@@ -399,6 +412,14 @@ deviates from this appendix as follows (checked against v0.3.8).
 
 - **Expressions.** Expressions follow A.10 and A.11 in v0.3.8; no
   deviation is known.
+- **Identifiers.** The ASCII rule of A.1 and the reserved words of
+  A.11 are not enforced. `cadl check` accepts, without a diagnostic, an
+  actor or contract `id` that contains non-ASCII characters or a hyphen,
+  or that is a reserved word (`AND`, `OR`, `true`).
+- **Ranges.** A range with a symbolic bound (`"TAXI[1..N]"`) is kept as
+  written. `N` is not looked up in `environment:`, and an index is not
+  checked against the declared range. `cadl sim-gen` writes a `count`
+  only when both bounds are integers.
 - **Types.** The types of [Section 5.2.1](./05-language-spec.md) are not
   checked. A value
   written with a type constructor (for example `Range(1, 4)`) is kept
@@ -410,8 +431,9 @@ deviates from this appendix as follows (checked against v0.3.8).
   appendix.
 - **Steps.** The `else:` branch of a `conditional_step` and the
   condition of a `barrier_step` are not retained.
-- **Contracts.** A `sharing:` entry is recognised only when it is
-  written as a quoted string. An unrecognised `autonomy:` value is read
+- **Contracts.** An unquoted `sharing:` entry, which A.4 forbids, is
+  dropped silently: `cadl parse` and `cadl check` issue no diagnostic
+  for it. An unrecognised `autonomy:` value is read
   as `medium`.
 - **Verification.** `method:`, `expr:`, and `bound:` are read. Methods
   other than `smt` are reported as `not_supported` (shown as `[SKIP]`

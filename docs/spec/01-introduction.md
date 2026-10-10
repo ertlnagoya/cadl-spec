@@ -23,7 +23,7 @@ and [Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-sta
 ## 1.2 Background: Challenges of Institutional Design in SoS
 An SoS is a system configuration in which multiple independently
 operated systems cooperate to achieve capabilities that no single system
-can achieve alone [[Maier, 1998]](./appendix-b-references.md). [ISO/IEC/IEEE 21841:2019](./appendix-b-references.md) classifies SoS into four
+can achieve alone [[Maier, 1998]](./appendix-b-references.md). [[ISO/IEC/IEEE 21841:2019]](./appendix-b-references.md) classifies SoS into four
 types: Directed, Acknowledged, Collaborative, and Virtual.
 
 Traditional SoS research has focused on control/coordination algorithms
