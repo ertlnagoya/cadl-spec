@@ -90,14 +90,14 @@ motivation_model      = "none" | "commitment_budget" | "hybrid" ;
 |---------|------|
 | `none` | ベースライン — 動機を無視（ρ = 0 と等価） |
 | `commitment_budget` | アクター i にコミットメント予算 `B_i = budget_base + κ · m_i` を与える。予算を超過したアクターは，`⌊ρ · overshoot · wait_scale⌋` の追加待機により抑制される |
-| `hybrid` | 上記の予算制約**に加え**，嗜好を考慮した経路優先度。ρ が両方を制御する。優先度の規則は v0.1-ext では**未定義**（下記参照） |
+| `hybrid` | **予約済み。** v0.1-ext では `commitment_budget` と同じ効果を持つ（下記参照） |
 
 表中の量は次のように定義する。
 
 - `used_i` は，実行開始からアクター i が引き受けたゴール（コミットメント）の累積数である。
 - `overshoot = max(0, used_i − B_i)` は，アクター i が予算を超過した量である。予算内の間は 0 である。
 - 追加待機 `⌊ρ · overshoot · wait_scale⌋` は，ランタイムのディスパッチャの再試行ティック数で数え，次の経路割当てまでの通常の待機に加算する。
-- 「嗜好を考慮した経路優先度」（`hybrid`）は v0.1-ext では**未定義**である。式は与えられておらず，リファレンスシミュレータは予算制約だけを適用するため，`hybrid` は `commitment_budget` と同じ動作になる。
+- `hybrid` は，予算制約に嗜好を考慮した経路優先度を加えるモデルのために**予約**されている。v0.1-ext はこの優先度の規則を定義しない。処理系は `model: hybrid` を受理しなければならず，`commitment_budget` として扱わなければならない。リファレンスシミュレータはそのように動作する。拡張の将来の版が優先度の規則を定義しうるため，予算制約だけを必要とするファイルは `commitment_budget` と書くことが望ましい。
 
 実効感度は `ρ · 𝟙[model ≠ "none"]`。
 `model = "none"` のとき，ランタイムは `rho` を無視しなければならない。
@@ -116,7 +116,7 @@ sos:
     agent:
       profile: linear
     governance:
-      model: hybrid
+      model: commitment_budget
       rho: 0.6
       kappa: 5.0
       budget_base: 3
