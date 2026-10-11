@@ -26,7 +26,7 @@ pairs each target name with its **category**, **intended artifact**, and
 | `go` | Simulator config | JSON for a Go-based simulator | `cadl.sim.gen_go` | `cadl sim-gen -t go` |
 | `python` (simulator) | Simulator config | YAML for a Python-based simulator | `cadl.sim.gen_python` | `cadl sim-gen -t python` |
 | `ros2` | Runtime node | ROS 2 [[Macenski+, 2022]](./appendix-b-references.md) node scaffolds | not implemented in `cadl` 0.3 | — |
-| other name (user-defined) | Plugin | Whatever the user plugin emits | no plugin mechanism exists in `cadl` 0.3; other target names are rejected by the CLI | — |
+| other name (user-defined) | Plugin | Whatever the user plugin emits | no plugin mechanism exists in `cadl` 0.3; other target names are rejected on the command line and get a warning in a `codegen:` entry | — |
 
 The name `python` denotes the runtime-code target in a `codegen:` entry;
 the simulator configuration of the same name is requested with
@@ -34,7 +34,9 @@ the simulator configuration of the same name is requested with
 requested from a `codegen:` entry in v0.2; use `cadl sim-gen -t python`.
 In the reference implementation (`cadl` 0.3) the target is
 selected on the command line as shown in the last column; `codegen:`
-entries in the file are parsed but do not yet drive generation.
+entries in the file are parsed but do not yet drive generation. From
+`cadl` 0.3.9, an entry that names a target the implementation cannot
+emit gets a warning (D.4).
 
 ## D.2 Two-tier generator layout
 

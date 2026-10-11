@@ -67,7 +67,8 @@ text from identifiers: identifiers stay ASCII
 become names in generated code (Python, Solidity, Rego, C#), where non-ASCII
 names are not accepted by every target and would require normalization
 rules. The reference implementation accepts Unicode text in strings and
-comments; it does not yet reject identifiers that violate the ASCII rule
+comments and, from `cadl` 0.3.9, reports an id that violates the ASCII
+rule as an error
 ([Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)).
 
 | **ID** | **Requirement Name** | **Description** |

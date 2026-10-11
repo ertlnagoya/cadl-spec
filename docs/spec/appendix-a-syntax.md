@@ -88,9 +88,9 @@ literal         = string | int_literal | float_literal
 (for example `sos-dsl`, `unity-csharp`). Numeric literals are unsigned.
 Identifiers are ASCII. Strings and comments may contain any Unicode
 character, which is what requirement NFR-7
-([Chapter 4](./04-requirements.md)) asks for. The reference
-implementation does not yet enforce the ASCII rule
-([A.12](#a12-reference-implementation-status-v03)).
+([Chapter 4](./04-requirements.md)) asks for. From `cadl` 0.3.9 the
+reference implementation reports an id or regime name that violates the
+ASCII rule as an error ([A.12](#a12-reference-implementation-status-v03)).
 
 ## A.2 Top-level structure
 
@@ -401,8 +401,9 @@ is lenient: only a missing `sos:` mapping, invalid YAML, an invalid
 `type:`, and an `alpha`, `beta`, or `lambda` that is not a number are
 rejected by the parser. `cadl check` additionally reports duplicate
 ids, undeclared actors, a party listed twice, a contract without
-parties, governance parameters outside `[0, 1]`, and a `severity:`
-other than `Minor`, `Major`, or `Critical` as errors. In an item of
+parties, governance parameters outside `[0, 1]`, a `severity:`
+other than `Minor`, `Major`, or `Critical`, an id or regime name that
+is not an identifier, and a malformed `sharing:` entry as errors. In an item of
 `assume:` or `guarantee:`, a name counts as an actor reference, and
 must be declared, when it is indexed (`ROBOT[i]`) or is the object of a
 member access (`ROBOT.battery`), including inside an index; a name
@@ -410,14 +411,17 @@ standing alone is taken as a state variable and is not checked. The
 predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
 and monitor `rule:` are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. `cadl` 0.3
-deviates from this appendix as follows (checked against `cadl` 0.3.8).
+deviates from this appendix as follows (checked against `cadl` 0.3.9).
 
-- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.8; no
+- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.9; no
   deviation is known.
-- **Identifiers.** The ASCII rule of A.1 and the reserved words of
-  A.11 are not enforced. `cadl check` accepts, without a diagnostic, an
-  actor or contract `id` that contains non-ASCII characters or a hyphen,
-  or that is a reserved word (`AND`, `OR`, `true`).
+- **Identifiers.** From `cadl` 0.3.9, `cadl check` reports as an error
+  an actor, contract, protocol, or metric id, or a regime name, that is
+  not an identifier of A.1 (for example one with non-ASCII characters
+  or a hyphen) or that is a reserved word of A.11 or the `IN` of
+  [Appendix E](./appendix-e-sos-dsl.md). Other names — the ids of
+  verification entries, monitors, and lifecycle transitions, and the
+  names of lifecycle states — are not checked.
 - **Ranges.** A range with a symbolic bound (`"TAXI[1..N]"`) is kept as
   written. `N` is not looked up in `environment:`, and an index is not
   checked against the declared range. `cadl sim-gen` writes a `count`
@@ -433,10 +437,15 @@ deviates from this appendix as follows (checked against `cadl` 0.3.8).
   appendix.
 - **Steps.** The `else:` branch of a `conditional_step` and the
   condition of a `barrier_step` are not retained.
-- **Contracts.** An unquoted `sharing:` entry, which A.4 forbids, is
-  dropped silently: `cadl parse` and `cadl check` issue no diagnostic
-  for it. An unrecognised `autonomy:` value is read
-  as `medium`.
+- **Contracts.** From `cadl` 0.3.9, a `sharing:` entry that is not a
+  string of the form `"SOURCE -> TARGET : item"`, or whose item does not
+  begin with an identifier, is an error in `cadl check`; earlier
+  releases dropped an unquoted entry without a diagnostic. An entry
+  whose item begins with an identifier and continues with other text,
+  such as the arguments in `"A -> B : report(period: 5s)"`, is accepted
+  with a warning and only the leading name is kept; this form is not
+  part of this appendix. An unrecognised `autonomy:` value is read as
+  `medium`.
 - **Verification.** `method:`, `expr:`, and `bound:` are read. Methods
   other than `smt` are reported as `not_supported` (shown as `[SKIP]`
   in text output), and an unknown method is an error. A `target:` that
@@ -448,26 +457,25 @@ deviates from this appendix as follows (checked against `cadl` 0.3.8).
   present.
 - **Codegen.** `codegen:` entries are parsed but not acted upon; the
   target is selected on the command line
-  ([Appendix D](./appendix-d-codegen.md)). An entry whose `target:`
-  the implementation cannot emit (for example `target: ros2`) is
-  therefore accepted without a diagnostic by `cadl check` and
-  `cadl codegen`, whereas `-t ros2` on the command line is rejected.
-  This deviates from the MUST of
-  [Appendix D, Section D.4](./appendix-d-codegen.md).
-- **Extensions.** `extensions:` and `motivation:` are ignored, and no
-  informational diagnostic is emitted for them: `cadl check` reports
-  only that the type check passed. For `motivation:` this deviates
-  from the SHOULD of [Appendix C](./appendix-c-motivation.md), which
-  asks a processor that does not implement the extension to emit one.
-  The SHOULD of [Appendix E](./appendix-e-sos-dsl.md) does not apply,
-  because `cadl` implements `sos-dsl`; an `extensions:` declaration is
-  simply not checked. Where `cadl` falls short of Appendix E itself is
-  stated in [Section E.4](./appendix-e-sos-dsl.md#e4-static-semantics). The `motivation:` block is not preserved either:
-  `cadl sim-ir` emits `motivation: null` for a file that has one,
-  which deviates from the SHOULD of
-  [Appendix C, Section C.6](./appendix-c-motivation.md).
-  `lifecycle:` and `monitors:` are recognised whether or not
-  `extensions:` declares `sos-dsl`.
+  ([Appendix D](./appendix-d-codegen.md)). From `cadl` 0.3.9, an entry
+  whose `target:` the implementation cannot emit (for example
+  `target: ros2`) gets a warning from `cadl check`, `cadl verify`, and
+  `cadl codegen`, which is the diagnostic that
+  [Appendix D, Section D.4](./appendix-d-codegen.md) requires; the file
+  remains valid. On the command line `-t ros2` is rejected.
+- **Extensions.** `lifecycle:` and `monitors:` are recognised whether
+  or not `extensions:` declares `sos-dsl`. From `cadl` 0.3.9,
+  `cadl check` emits an informational diagnostic, which never makes a
+  file invalid, for an `extensions:` name other than `sos-dsl`, for a
+  version of `sos-dsl` other than `0.1`, and for a `motivation:` block,
+  as [Appendix C](./appendix-c-motivation.md) asks of a processor that
+  does not implement the extension. The `motivation:` block is not
+  interpreted, but `cadl sim-ir` passes it on as written under the key
+  `motivation_block`
+  ([Appendix C, Section C.6](./appendix-c-motivation.md)); the key is
+  absent when the file has no such block. Where `cadl` falls short of
+  Appendix E itself is stated in
+  [Section E.4](./appendix-e-sos-dsl.md#e4-static-semantics).
 
 Releases of `cadl` before 0.3.7 differed in several of these points; the history
 is in the

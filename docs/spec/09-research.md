@@ -30,7 +30,7 @@ incentive interference is required.
 Establishment of technology to explicitly formalize institutional
 knowledge implicitly shared in household rules and community customs as
 CADL descriptions is required. IndoorWorld [[Wu+, Findings of EMNLP 2025]](./appendix-b-references.md)
-realizes household behavior simulation with LLM agents, but the inverse
+realizes behavior simulation of LLM agents in indoor environments, but the inverse
 problem of extracting institutional rules from observed behavior
 patterns (institutional reverse engineering) remains unaddressed.
 

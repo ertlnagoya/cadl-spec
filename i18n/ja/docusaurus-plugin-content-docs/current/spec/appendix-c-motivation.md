@@ -157,9 +157,11 @@ CADL 処理系は，`motivation:` ブロックを持たないファイルを受�
   受け付けない。
 - **[`cadl`](https://github.com/ertlnagoya/cadl)**（リファレンス実装）:
   AST の `SoSDefinition` に省略可能な `MotivationBlock` を定義している。
-  `cadl` 0.3 のパーサは CADL ファイルの `motivation:` キーを読み込まない。
-  このブロックは受理されたうえで無視され，検証とコード生成でも使われない。
+  `cadl` 0.3.9 からは，パーサが `motivation:` ブロックを読み込む。`cadl check` は
+  このブロックについて情報レベルの診断を出し，`cadl sim-ir` はブロックを書かれたとおりに
+  `motivation_block` というキーで引き渡す（C.6）。検証とコード生成では使われない。
   リファレンス実装は，
   [付録A §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)
-  に挙げた相違を伴ってコア言語を実装しており，動機拡張は実装していない。
+  に挙げた相違を伴ってコア言語を実装しており，動機拡張は実装していない。すなわち，
+  ブロックの検証，プロファイルの解決，ガバナンスモデルの適用は行わない。
 - [用語集](./glossary.md) — ρ，κ，プロファイル用語の定義。

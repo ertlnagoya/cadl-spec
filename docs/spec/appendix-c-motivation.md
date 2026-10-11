@@ -169,11 +169,13 @@ block verbatim so downstream tools can consume it.
   `custom`.
 - **[`cadl`](https://github.com/ertlnagoya/cadl)** (reference
   implementation): defines an optional `MotivationBlock` on
-  `SoSDefinition` in its AST. In `cadl` 0.3 the parser does not read the
-  `motivation:` key from a CADL file; the block is accepted and
-  ignored, and verification and code generation do not use it. The
-  reference implementation implements the core language with the
-  deviations listed in
+  `SoSDefinition` in its AST. From `cadl` 0.3.9 the parser reads the
+  `motivation:` block: `cadl check` emits an informational diagnostic
+  for it, and `cadl sim-ir` passes it on as written under the key
+  `motivation_block` (C.6). Verification and code generation do not
+  use it. The reference implementation implements the core language
+  with the deviations listed in
   [Appendix A §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)
-  and does not implement the motivation extension.
+  and does not implement the motivation extension: it does not
+  validate the block, resolve profiles, or apply a governance model.
 - [Glossary](./glossary.md) — definitions of ρ, κ, profile terms.

@@ -84,7 +84,7 @@ YAMLベースの構文を解析し，CADL固有の制約式・プロトコルス
 |---|---|---|---|
 | SMTベース検証 | 契約間の無矛盾性。guaranteeの論理的整合性。 | Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), CVC5 [[Barbosa+, 2022]](./appendix-b-references.md) | Z3で利用できる: 各契約内および当事者を共有する契約間の無矛盾性，各契約のassumeの充足可能性，遷移条件の排他性。assumeからguaranteeが導かれるかどうかは，情報としてのみ報告する。CVC5は統合していない。 |
 | モデル検査 | プロトコルのデッドロック，ライブロック検出。到達可能状態の網羅的探索。 | UPPAAL [[Larsen+, 1997]](./appendix-b-references.md), NuSMV [[Cimatti+, 2002]](./appendix-b-references.md) | 統合していない。デッドロック検出は構造解析（`parallel`ブロックの分岐間での相互送信，バリアへの到達可能性，フォールバックの循環）で代替している。逐次に書かれたステップは順序付けられており，循環待ちとしては扱わない。ライブロック検出は計画段階である。 |
-| 到達可能性解析 | 制度遷移時の安全性不変条件の保持。Hamilton-Jacobi到達可能性解析 [[Bansal+, 2017]](./appendix-b-references.md)。 | hj_reachability [[Stanford ASL]](./appendix-b-references.md) | 統合していない。代わりに，モード遷移グラフ上の到達可能性・行き止まり状態・閉路の解析と，Z3による各安全不変条件の充足可能性検査を利用できる。初期モードは遷移から推定し，出ていく遷移のないモードは失敗として報告する。 |
+| 到達可能性解析 | 制度遷移時の安全不変条件の保持。Hamilton-Jacobi到達可能性解析 [[Bansal+, 2017]](./appendix-b-references.md)。 | hj_reachability [[Stanford ASL]](./appendix-b-references.md) | 統合していない。代わりに，モード遷移グラフ上の到達可能性・行き止まり状態・閉路の解析と，Z3による各安全不変条件の充足可能性検査を利用できる。初期モードは遷移から推定し，出ていく遷移のないモードは失敗として報告する。 |
 | 構成的検証 | アクター追加・離脱時の差分検証。既存契約への影響分析。 | 独自実装 | 計画段階である。 |
 
 ## 6.4 ランタイムシステム
