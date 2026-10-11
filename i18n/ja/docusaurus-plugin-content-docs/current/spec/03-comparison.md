@@ -12,7 +12,7 @@ description: "MOISE+，OperA，Symboleo，AADL契約拡張，SysMLv2，スマー
 組織的マルチエージェントシステムのための構造的・機能的・義務論的記述モデル [[Hübner+, 2007]](./appendix-b-references.md)。組織の役割・グループ・ミッションを形式的に記述できるが，契約やアルゴリズムの記述は範囲外である。
 
 **OperA:**
-エージェント組織のための組織モデル [[Dignum, 2004]](./appendix-b-references.md)。社会構造・相互作用構造・規範構造の3側面から組織を記述する。プロトコル記述に一定の対応があるが，SoSの制度層は扱わない。
+エージェントベースシステムのための組織モデル [[Dignum, 2004]](./appendix-b-references.md)。社会構造・相互作用構造・規範構造の3側面から組織を記述する。プロトコル記述に一定の対応があるが，SoSの制度層は扱わない。
 
 **Symboleo:**
 法的契約の形式仕様言語 [[Sharifi+, 2020]](./appendix-b-references.md)。契約の当事者・義務・権利・違反条件を厳密に記述できるが，組織構造やプロトコル，技術アーキテクチャとの統合は範囲外である。
@@ -26,7 +26,7 @@ description: "MOISE+，OperA，Symboleo，AADL契約拡張，SysMLv2，スマー
 分散的な自己統治を実現する実装基盤。代表的な言語にSolidity [[Solidity Documentation]](./appendix-b-references.md) があり，有限状態機械に基づく安全なコントラクトの設計手法も提案されている [[Mavridou & Laszka, 2018]](./appendix-b-references.md)。C-SoSのガバナンス実装に有望だが，制度の設計段階での検証や3層統合記述は提供しない。
 
 **IADフレームワーク:**
-Ostromの制度分析・発展フレームワーク [[Ostrom, 2005]](./appendix-b-references.md)。共有資源のガバナンスを概念的に分析するが，形式的な記述言語ではなく，定量的パラメータ化は限定的である。
+Ostromの制度分析・発展フレームワーク [[Ostrom, 2005]](./appendix-b-references.md)。共有資源のガバナンスを概念的に分析するが，形式的な記述言語ではなく，パラメータ化は限定的である。
 
 ## 3.2 比較分析
 

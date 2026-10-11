@@ -77,7 +77,7 @@ literal         = string | int_literal | float_literal
 `identifier` は，アクター，契約，プロトコル，運用モード（regime），メトリクスの名前に用いる。
 `hyphen_name` は，拡張の名前とコード生成ターゲットの名前（たとえば `sos-dsl`，
 `unity-csharp`）にだけ用いる。数値リテラルは符号を持たない。
-識別子はASCIIに限る。文字列とコメントには任意のUnicode文字を使用できる。これが要求NFR-7（[第4章](./04-requirements.md)）の求める内容である。リファレンス実装は，ASCIIの規則をまだ強制していない（[A.12](#a12-reference-implementation-status-v03)）。
+識別子はASCIIに限る。文字列とコメントには任意のUnicode文字を使用できる。これが要求NFR-7（[第4章](./04-requirements.md)）の求める内容である。`cadl` 0.3.9からは，リファレンス実装は，ASCIIの規則に違反するidや運用モードの名前をエラーとして報告する（[A.12](#a12-reference-implementation-status-v03)）。
 
 ## A.2 トップレベル構造 {/* #a2-top-level-structure */}
 
@@ -372,19 +372,22 @@ AND    OR    NOT    true    false    for all    exists    in
 パーサが拒否するのは，`sos:` マッピングの欠落，不正なYAML，不正な `type:`，
 および数値でない `alpha`，`beta`，`lambda` だけである。
 `cadl check` は，これに加えて，idの重複，未宣言のアクター，重複して挙げられた当事者，
-当事者のない契約，`[0, 1]` の範囲外のガバナンスパラメータ，および `Minor`，`Major`，
-`Critical` 以外の `severity:` をエラーとして報告する。`assume:` または `guarantee:` の
+当事者のない契約，`[0, 1]` の範囲外のガバナンスパラメータ，`Minor`，`Major`，
+`Critical` 以外の `severity:`，識別子でないidや運用モードの名前，および形式に合わない
+`sharing:` の要素をエラーとして報告する。`assume:` または `guarantee:` の
 項目の中では，名前が添字付きである（`ROBOT[i]`）か，メンバーアクセスの対象である
 （`ROBOT.battery`）とき，添字の中に現れる場合も含めて，その名前はアクターへの参照と
 みなされ，宣言されていなければならない。単独で現れる名前は状態変数とみなされ，
 検査されない。`condition:`，`safety_invariant:`，`formula:`，`expr:`，およびモニターの
 `rule:` の述語については，未宣言のアクターの検査を行わない。それ以外の必須キーが
-欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.8で確認）。
+欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.9で確認）。
 
-- **式。** `cadl` 0.3.8では，式はA.10とA.11に従う。既知の相違はない。
-- **識別子。** A.1のASCIIの規則とA.11の予約語は強制されない。`cadl check` は，
-  非ASCII文字やハイフンを含む `id`，および予約語（`AND`，`OR`，`true`）である `id` を，
-  アクターについても契約についても，診断を出さずに受理する。
+- **式。** `cadl` 0.3.9では，式はA.10とA.11に従う。既知の相違はない。
+- **識別子。** `cadl` 0.3.9からは，`cadl check` は，アクター，契約，プロトコル，メトリクスのid，
+  および運用モードの名前が，A.1の識別子でない場合（たとえば非ASCII文字やハイフンを含む場合），
+  またはA.11の予約語か[付録E](./appendix-e-sos-dsl.md)の `IN` である場合に，エラーとして報告する。
+  それ以外の名前（検証項目，モニター，ライフサイクルの遷移のid，およびライフサイクルの状態の名前）は
+  検査されない。
 - **範囲。** 上限が記号である範囲（`"TAXI[1..N]"`）は，書かれたとおりに保持される。
   `N` を `environment:` から引くことはなく，添字が宣言された範囲に収まるかどうかも
   検査されない。`cadl sim-gen` が `count` を出力するのは，両端が整数のときだけである。
@@ -395,8 +398,11 @@ AND    OR    NOT    true    false    for all    exists    in
   書いた `sampling:`，および大文字と小文字を問わない `method:` も受理する。
   これらの形式は本付録の一部ではない。
 - **ステップ。** `conditional_step` の `else:` の分岐と，`barrier_step` の条件は保持されない。
-- **契約。** A.4が禁じている引用符なしの `sharing:` の要素は，黙って捨てられる。
-  `cadl parse` も `cadl check` も，これについて診断を出さない。
+- **契約。** `cadl` 0.3.9からは，`"SOURCE -> TARGET : item"` の形式の文字列でない `sharing:` の要素，
+  および項目が識別子で始まらない要素は，`cadl check` でエラーとなる。それより前のリリースは，
+  引用符なしの要素を診断なしに捨てていた。`"A -> B : report(period: 5s)"` の引数のように，
+  項目が識別子で始まり，その後ろに別の文字列が続く要素は，警告を出したうえで受理され，
+  先頭の名前だけが保持される。この形式は本付録の一部ではない。
   認識できない `autonomy:` の値は `medium` として読まれる。
 - **検証。** `method:`，`expr:`，`bound:` は読み込まれる。`smt` 以外の手法は
   `not_supported` として報告され（テキスト出力では `[SKIP]` と表示される），未知の手法は
@@ -406,21 +412,17 @@ AND    OR    NOT    true    false    for all    exists    in
   [6.3節](./06-design.md)の契約と遷移の検査は，項目の有無にかかわらず実行される。
 - **コード生成。** `codegen:` の項目は構文解析されるが，それに基づく処理は行われない。
   ターゲットはコマンドラインで選択する（[付録D](./appendix-d-codegen.md)）。
-  このため，実装が出力できない `target:` を持つ項目（たとえば `target: ros2`）は，
-  `cadl check` でも `cadl codegen` でも診断なしに受理される。一方，コマンドラインの
-  `-t ros2` は拒否される。これは，出力できないターゲットについて診断を
-  出力しなければならないとする[付録DのD.4節](./appendix-d-codegen.md)の規定と相違する。
-- **拡張。** `extensions:` と `motivation:` は無視され，これらについて情報レベルの診断も
-  出ない。`cadl check` は，型検査に合格したことだけを報告する。`motivation:` については，
-  これは，拡張を実装していない処理系が情報レベルの診断を出すことを望ましいとする
-  [付録C](./appendix-c-motivation.md)の規定と相違する。
-  [付録E](./appendix-e-sos-dsl.md)の同じ趣旨の規定は，`cadl` が `sos-dsl` を実装しているため
-  適用されない。`extensions:` の宣言は，単に検査されないだけである。
+  `cadl` 0.3.9からは，実装が出力できない `target:` を持つ項目（たとえば `target: ros2`）について，
+  `cadl check`，`cadl verify`，`cadl codegen` が警告を出す。これは[付録DのD.4節](./appendix-d-codegen.md)が
+  求める診断であり，ファイルは有効なままである。コマンドラインの `-t ros2` は拒否される。
+- **拡張。** `lifecycle:` と `monitors:` は，`extensions:` が `sos-dsl` を宣言しているかどうかに
+  かかわらず認識される。`cadl` 0.3.9からは，`cadl check` は，`sos-dsl` 以外の `extensions:` の名前，
+  `0.1` 以外の `sos-dsl` のバージョン，および `motivation:` ブロックについて，情報レベルの診断を出す。
+  この診断によってファイルが無効になることはない。これは，拡張を実装していない処理系に
+  [付録C](./appendix-c-motivation.md)が求めるものである。`motivation:` ブロックは解釈されないが，
+  `cadl sim-ir` は，このブロックを書かれたとおりに `motivation_block` というキーで引き渡す
+  （[付録CのC.6節](./appendix-c-motivation.md)）。ファイルにこのブロックがなければ，このキーは出力されない。
   `cadl` が付録Eそのものに対して満たしていない点は，[E.4節](./appendix-e-sos-dsl.md#e4-static-semantics)に示す。
-  `motivation:` ブロックは保持もされない。`cadl sim-ir` は，このブロックを持つファイルに
-  対して `motivation: null` を出力する。これは，拡張に対応しない処理系がブロックを原文のまま
-  保持することを望ましいとする[付録CのC.6節](./appendix-c-motivation.md)の規定と相違する。`lifecycle:` と `monitors:` は，
-  `extensions:` が `sos-dsl` を宣言しているかどうかにかかわらず認識される。
 
 `cadl` の0.3.7より前のリリースは，これらの点のいくつかで異なっていた。その経緯は，cadlリポジトリの
 [CHANGELOG](https://github.com/ertlnagoya/cadl/blob/master/CHANGELOG.md)にある。

@@ -186,7 +186,7 @@ the same indentation as `protocols:`.
       expr: "weekly_reward >= 0 AND weekly_reward <= 400"
 ```
 
-With this block appended, `cadl verify` (`cadl` 0.3.8) accepts the file and
+With this block appended, `cadl verify` (`cadl` 0.3.9) accepts the file and
 reports both entries as passed. For the entry with `expr:` it checks
 only that the predicate is satisfiable; it does not prove it against
 the model
@@ -484,8 +484,8 @@ mapping, which the parser accepts, though the quoted form
 (`- "TAXI[*] -> CENTRAL : position"`) and an actor reference with an
 index inside an inline list (`parties: [CENTRAL, "TAXI[*]"]`) MUST be
 quoted (Appendix A, notation and §A.4); otherwise YAML reads them
-differently or rejects them. The reference implementation silently
-drops an unquoted `sharing:` entry
+differently or rejects them. From `cadl` 0.3.9 the reference implementation reports an unquoted
+`sharing:` entry as an error
 ([Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)).
 
 ## 5.4 Semantics

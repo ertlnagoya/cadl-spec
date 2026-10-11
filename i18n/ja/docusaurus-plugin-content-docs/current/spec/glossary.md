@@ -86,7 +86,7 @@ CADLおよび周辺の研究プログラムで用いる作業語彙をまとめ�
 
 ## System of Systems (SoS)
 
-- **SoS** — 独立に運用される複数システムが，自律性を保ったまま
+- **SoS** — 独立に管理される複数システムが，運用上の自律性を保ったまま
   共通目的に向けて協調する集合体。
 - **Directed SoS（統率型，D-SoS）** — 中央権限が構成システム間の
   協調を指示する。
@@ -142,14 +142,14 @@ SoS Contract DSL 拡張の用語である。
 `verification:` ブロックは[付録AのA.8節](./appendix-a-syntax.md#a8-verification-block)で
 規定する。
 
-- **安全性（Safety）** — 「悪いことが起きない」。状態に関する
-  不変性として表現する。
+- **安全性（Safety）** — 「悪いことが起きない」。システム状態に関する
+  不変条件として表現する。
 - **活性（Liveness）** — 「良いことがいずれ起きる」。通常 ◇φ
   （eventually φ）という時相論理式で表す。
 - **公平性（Fairness）** — スケジューリング／資源配分の制約。
   いずれの参加者も無期限に飢餓しない。
 - **不変条件（Invariant）** — 到達可能な全状態で成立すべき述語。
-- **検証手法** — `smt`（例: Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md)），`model_check`，`simulation`，
+- **検証手法** — `smt`（SMT求解，例: Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md)），`model_check`，`simulation`，
   `proof`。リファレンス実装が実装するのは `smt` だけである。
 - **デッドロック** — いずれのプロトコルステップも発火不能な大域
   状態。
@@ -176,7 +176,7 @@ SoS Contract DSL 拡張の用語である。
   （**Save this comparison**）のセッション内の記録。CSV / JSON で
   エクスポートできる。CADL Explorer v0.4.0 より前の名前は「Run history」。
 - **CADL id / IR id / config id** — 各段階（CADL 設定，IR，シミュレータ
-  設定）の SHA-256 の先頭 12 桁。CADL Explorer が表示する。同一の CADL id
+  設定）の SHA-256 の16進表記の先頭 12 桁。CADL Explorer が表示する。同一の CADL id
   ＋同一シード集合なら結果が一致する。
 
 ## 評価指標
@@ -188,7 +188,7 @@ SoS Contract DSL 拡張の用語である。
   （中央指示との対比）。
 - **Fairness（公平性）** — アクター間の負荷／報酬分布。
 - **Region（性能–自律性平面の領域）** — 実験群が throughput ×
-  autonomy 平面で覆う凸領域。
+  autonomy の2次元平面で覆う凸領域。
 
 ## 関連規格・略語
 
