@@ -1006,7 +1006,7 @@ Console に以下のような行が連続的に出ます。Console の検索欄�
 
 ![Play 中の Unity：Scene ビューに経路網上のロボット、Console に DELIVERY_SLA で絞り込んだライフサイクルイベント](/img/handson/unity-play-console.jpg)
 
-このスクリーンショットは Play 開始から数秒後のもので、Console の検索欄に `DELIVERY_SLA` と入力し、Scene タブを選んだ状態です。
+このスクリーンショットは Play 開始から数秒後のもので、Console の検索欄に `DELIVERY_SLA` と入力し、Scene タブを選んだ状態です。この画像では、手順 6.3 のオブジェクトが Hierarchy では「New Game Object」のままになっていますが、Inspector には名前 `ContractRuntimeHost` が出ています。実際の画面では、どちらも `ContractRuntimeHost` と表示されます。
 
 同じ実行中の経路網を拡大したものです。5 台のロボットが走行しています。
 

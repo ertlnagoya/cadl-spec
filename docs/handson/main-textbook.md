@@ -1006,7 +1006,7 @@ In the Console, lines like the following should appear continuously. You can fil
 
 ![Unity in Play mode: robots on the road network in the Scene view, and the Console filtered on DELIVERY_SLA showing lifecycle events](/img/handson/unity-play-console.jpg)
 
-The screenshot was taken a few seconds into Play, with `DELIVERY_SLA` typed in the Console search box and the Scene tab selected.
+The screenshot was taken a few seconds into Play, with `DELIVERY_SLA` typed in the Console search box and the Scene tab selected. In this capture the Hierarchy still lists the object of step 6.3 as "New Game Object" although the Inspector shows its name, `ContractRuntimeHost`; on your screen both show `ContractRuntimeHost`.
 
 A closer look at the road during the same run, with the five robots on their way:
 
