@@ -192,16 +192,27 @@ may mention. `time` in `observe:` denotes the clock that `now` reads in
 a rule.
 
 The reference implementation (`cadl` 0.3) parses both blocks and lowers them
-to the IR (E.7) but does not yet check rules L-1 to M-3. From `cadl` 0.3.7
+to the IR (E.7). From `cadl` 0.3.10 `cadl check` applies the rules above:
+a violation of L-1, L-2, L-3, L-5, or M-3 is an error, as are a
+lifecycle without an initial state, a duplicate transition or monitor
+id, a monitor without a `rule:`, an undeclared actor in a
+`message_event` of `on:`, and a state name, transition id, monitor id,
+or violation label that is not an identifier. Three findings are
+warnings and leave the file valid: a `deadline:` without an
+`on_violation:` block (the SHOULD of L-4), an `observe:` entry whose
+object is not a declared actor (M-1), and an `on:`, `when:`, or `rule:`
+that is not a `rule` of E.3, which is then kept as text. Reporting M-1
+as a warning deviates from the MUST of that rule: the example in E.6
+passes with one warning, because `collision_watch` observes
+`OBSTACLES.positions`, an environment quantity that is not an attribute
+of a declared actor. An `observe:` entry that is a bare name is
+accepted, since it cannot be told from a message name, and the actors
+named inside a `rule:` or `when:` are not checked. From `cadl` 0.3.7
 `cadl check` reports a `severity:` other than `Minor`, `Major`, or
 `Critical` as an error. `sampling:` and `deadline:` values are not
 validated: an unrecognised `sampling:` is read as `event`, and a
-`deadline:` it cannot read is dropped. `rule:`, `when:`, and `on:` are
-kept as text; `cadl check` does not parse them, so a malformed one is
-not reported. The example
-in E.6 accordingly passes although `collision_watch` observes
-`OBSTACLES.positions`, an environment quantity that is not an attribute
-of a declared actor as M-1 requires.
+`deadline:` it cannot read is dropped. Releases before 0.3.10 did not
+check rules L-1 to M-3.
 
 ## E.5 Dynamic semantics (informative)
 

@@ -402,8 +402,11 @@ is lenient: only a missing `sos:` mapping, invalid YAML, an invalid
 rejected by the parser. `cadl check` additionally reports duplicate
 ids, undeclared actors, a party listed twice, a contract without
 parties, governance parameters outside `[0, 1]`, a `severity:`
-other than `Minor`, `Major`, or `Critical`, an id or regime name that
-is not an identifier, and a malformed `sharing:` entry as errors. In an item of
+other than `Minor`, `Major`, or `Critical`, an `autonomy:` other than
+`low`, `medium`, or `high`, an id or regime name that
+is not an identifier, a malformed `sharing:` entry, and a violation of
+rules L-1, L-2, L-3, L-5, or M-3 of
+[Appendix E](./appendix-e-sos-dsl.md#e4-static-semantics) as errors. In an item of
 `assume:` or `guarantee:`, a name counts as an actor reference, and
 must be declared, when it is indexed (`ROBOT[i]`) or is the object of a
 member access (`ROBOT.battery`), including inside an index; a name
@@ -411,17 +414,18 @@ standing alone is taken as a state variable and is not checked. The
 predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
 and monitor `rule:` are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. `cadl` 0.3
-deviates from this appendix as follows (checked against `cadl` 0.3.9).
+deviates from this appendix as follows (checked against `cadl` 0.3.10).
 
-- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.9; no
+- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.10; no
   deviation is known.
 - **Identifiers.** From `cadl` 0.3.9, `cadl check` reports as an error
   an actor, contract, protocol, or metric id, or a regime name, that is
   not an identifier of A.1 (for example one with non-ASCII characters
   or a hyphen) or that is a reserved word of A.11 or the `IN` of
-  [Appendix E](./appendix-e-sos-dsl.md). Other names — the ids of
-  verification entries, monitors, and lifecycle transitions, and the
-  names of lifecycle states — are not checked.
+  [Appendix E](./appendix-e-sos-dsl.md). From `cadl` 0.3.10 the same
+  check applies to the names of lifecycle states, the ids of lifecycle
+  transitions and monitors, and the violation labels of monitors. The
+  ids of verification entries are not checked.
 - **Ranges.** A range with a symbolic bound (`"TAXI[1..N]"`) is kept as
   written. `N` is not looked up in `environment:`, and an index is not
   checked against the declared range. `cadl sim-gen` writes a `count`
@@ -435,8 +439,10 @@ deviates from this appendix as follows (checked against `cadl` 0.3.9).
   `sampling:` written as a mapping with `kind` and `period_ms`, and a
   `method:` in any letter case. These forms are not part of this
   appendix.
-- **Steps.** The `else:` branch of a `conditional_step` and the
-  condition of a `barrier_step` are not retained.
+- **Steps.** From `cadl` 0.3.10 the `else:` branch of a
+  `conditional_step` and the condition of a `barrier_step` are
+  retained, so actors named in an `else:` branch are checked and both
+  reach the simulator IR; earlier releases discarded them.
 - **Contracts.** From `cadl` 0.3.9, a `sharing:` entry that is not a
   string of the form `"SOURCE -> TARGET : item"`, or whose item does not
   begin with an identifier, is an error in `cadl check`; earlier
@@ -444,8 +450,9 @@ deviates from this appendix as follows (checked against `cadl` 0.3.9).
   whose item begins with an identifier and continues with other text,
   such as the arguments in `"A -> B : report(period: 5s)"`, is accepted
   with a warning and only the leading name is kept; this form is not
-  part of this appendix. An unrecognised `autonomy:` value is read as
-  `medium`.
+  part of this appendix. From `cadl` 0.3.10 an `autonomy:` value other
+  than `low`, `medium`, or `high` is an error in `cadl check`; earlier
+  releases read it as `medium` without a diagnostic.
 - **Verification.** `method:`, `expr:`, and `bound:` are read. Methods
   other than `smt` are reported as `not_supported` (shown as `[SKIP]`
   in text output), and an unknown method is an error. A `target:` that
