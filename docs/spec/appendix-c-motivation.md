@@ -92,7 +92,7 @@ For `N` actors:
 |---------|--------|
 | `none` | Baseline — motivation is ignored (equivalent to ρ = 0). |
 | `commitment_budget` | Actor i gets the commitment budget `B_i = budget_base + κ · m_i`. An actor that exceeds its budget is throttled by an extra wait of `⌊ρ · overshoot · wait_scale⌋`. |
-| `hybrid` | Budget constraint as above **plus** preference-sensitive routing priority; ρ governs both. The priority rule is **undefined** in v0.1-ext (see below). |
+| `hybrid` | **Reserved.** In v0.1-ext it has the same effect as `commitment_budget` (see below). |
 
 The quantities in the table are defined as follows.
 
@@ -103,9 +103,13 @@ The quantities in the table are defined as follows.
 - The extra wait `⌊ρ · overshoot · wait_scale⌋` is counted in retry
   ticks of the runtime's dispatcher and is added to the wait the actor
   would have anyway before its next routing attempt.
-- "Preference-sensitive routing priority" (`hybrid`) is **undefined** in
-  v0.1-ext: no formula is given, and the reference simulator applies
-  only the budget constraint, so `hybrid` behaves as `commitment_budget`.
+- `hybrid` is **reserved** for a model that adds a preference-sensitive
+  routing priority to the budget constraint. v0.1-ext defines no rule
+  for that priority. A processor MUST accept `model: hybrid` and MUST
+  treat it as `commitment_budget`; the reference simulator does so. A
+  later version of the extension may define the priority rule, so a
+  file that needs only the budget constraint SHOULD say
+  `commitment_budget`.
 
 Effective sensitivity is `ρ · 𝟙[model ≠ "none"]`; when `model = "none"`
 the runtime MUST ignore `rho`.
@@ -124,7 +128,7 @@ sos:
     agent:
       profile: linear
     governance:
-      model: hybrid
+      model: commitment_budget
       rho: 0.6
       kappa: 5.0
       budget_base: 3
