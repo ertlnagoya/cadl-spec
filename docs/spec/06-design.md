@@ -86,7 +86,9 @@ Type checking verifies the following: (1) Actor reference existence
 confirmation, (2) Detection of duplicate/missing contract parties, (3)
 Protocol step senders/receivers match actor definitions, (4) Information
 sharing declarations refer to defined actors, (5) Value constraints for
-institutional parameters (0 ≤ α, β, λ ≤ 1). Checking information sharing
+institutional parameters (0 ≤ α, β, λ ≤ 1), (6) from `cadl` 0.3.10, the
+static semantics of the SoS-DSL extension
+([Appendix E, Section E.4](./appendix-e-sos-dsl.md#e4-static-semantics)). Checking information sharing
 declarations against the actual message exchanges is planned.
 
 ### 6.2.3 Other Commands

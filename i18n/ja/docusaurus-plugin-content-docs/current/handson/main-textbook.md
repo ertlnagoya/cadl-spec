@@ -755,6 +755,7 @@ $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
   size   : 153 lines
 
 == Step 1/4 — parse + type-check (cadl check) ==
+  [WARNING]: The monitor 'collision_watch' of contract 'DELIVERY_SLA' observes 'OBSTACLES.positions', but 'OBSTACLES' is not a declared actor (M-1)
   OK
 
 == Step 2/4 — emit Sim-IR JSON (cadl sim-ir) ==
@@ -764,6 +765,7 @@ $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
   monitors  : 3
 
 == Step 3/4 — codegen Unity C# (cadl codegen --target unity-csharp) ==
+  [WARNING]: The monitor 'collision_watch' of contract 'DELIVERY_SLA' observes 'OBSTACLES.positions', but 'OBSTACLES' is not a declared actor (M-1)
   output    : output/sos_dsl_handson/unity-csharp
   runtime   : 5 files
   generated : 3 files
@@ -784,6 +786,8 @@ Next steps for the student:
 See the hands-on textbook for the full walkthrough:
   https://www.ertl.jp/cadl-spec/docs/handson/main-textbook
 ```
+
+Step 1 と Step 3 の `[WARNING]` の行は、cadl 0.3.10 以降では想定どおりの出力です。同梱の例にはモニタ `collision_watch` があり、`OBSTACLES.positions` を観測していますが、`OBSTACLES` は宣言されたアクターではありません（[Appendix E](../spec/appendix-e-sos-dsl.md#e4-static-semantics) の規則 M-1）。エラーではなく警告なので、スクリプトは先へ進みます。自分で書いた `my_delivery.cadl` には `battery_guard` しかないので、警告は出ません。
 
 生成されたツリーを確認：
 

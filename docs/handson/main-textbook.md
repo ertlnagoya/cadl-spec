@@ -755,6 +755,7 @@ $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
   size   : 153 lines
 
 == Step 1/4 — parse + type-check (cadl check) ==
+  [WARNING]: The monitor 'collision_watch' of contract 'DELIVERY_SLA' observes 'OBSTACLES.positions', but 'OBSTACLES' is not a declared actor (M-1)
   OK
 
 == Step 2/4 — emit Sim-IR JSON (cadl sim-ir) ==
@@ -764,6 +765,7 @@ $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
   monitors  : 3
 
 == Step 3/4 — codegen Unity C# (cadl codegen --target unity-csharp) ==
+  [WARNING]: The monitor 'collision_watch' of contract 'DELIVERY_SLA' observes 'OBSTACLES.positions', but 'OBSTACLES' is not a declared actor (M-1)
   output    : output/sos_dsl_handson/unity-csharp
   runtime   : 5 files
   generated : 3 files
@@ -784,6 +786,8 @@ Next steps for the student:
 See the hands-on textbook for the full walkthrough:
   https://www.ertl.jp/cadl-spec/docs/handson/main-textbook
 ```
+
+The `[WARNING]` line in Steps 1 and 3 is expected with cadl 0.3.10 or later: the bundled example has a monitor, `collision_watch`, that observes `OBSTACLES.positions`, and `OBSTACLES` is not one of the declared actors (rule M-1 of [Appendix E](../spec/appendix-e-sos-dsl.md#e4-static-semantics)). It is a warning, not an error, so the script goes on. Your own `my_delivery.cadl` has only `battery_guard` and prints no warning.
 
 Look at the generated tree:
 
