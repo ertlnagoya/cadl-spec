@@ -197,17 +197,19 @@ a violation of L-1, L-2, L-3, L-5, or M-3 is an error, as are a
 lifecycle without an initial state, a duplicate transition or monitor
 id, a monitor without a `rule:`, an undeclared actor in a
 `message_event` of `on:`, and a state name, transition id, monitor id,
-or violation label that is not an identifier. Three findings are
-warnings and leave the file valid: a `deadline:` without an
-`on_violation:` block (the SHOULD of L-4), an `observe:` entry whose
-object is not a declared actor (M-1), and an `on:`, `when:`, or `rule:`
-that is not a `rule` of E.3, which is then kept as text. Reporting M-1
-as a warning deviates from the MUST of that rule: the example in E.6
-passes with one warning, because `collision_watch` observes
-`OBSTACLES.positions`, an environment quantity that is not an attribute
-of a declared actor. An `observe:` entry that is a bare name is
-accepted, since it cannot be told from a message name, and the actors
-named inside a `rule:` or `when:` are not checked. From `cadl` 0.3.7
+or violation label that is not an identifier. From `cadl` 0.3.11 a
+violation of M-1 is an error as well: an `observe:` entry whose object
+is not a declared actor, or that is neither an attribute of an actor
+nor a name. `cadl` 0.3.10 reported it as a warning, because the example
+of E.6 then observed `OBSTACLES.positions` although no actor
+`OBSTACLES` is declared; the example now observes
+`DISPATCHER.obstacle_positions` and passes without a diagnostic. Two
+findings are warnings and leave the file valid: a `deadline:` without
+an `on_violation:` block (the SHOULD of L-4), and an `on:`, `when:`, or
+`rule:` that is not a `rule` of E.3, which is then kept as text. An
+`observe:` entry that is a bare name is accepted, since it cannot be
+told from a message name, and the actors named inside a `rule:` or
+`when:` are not checked. From `cadl` 0.3.7
 `cadl check` reports a `severity:` other than `Minor`, `Major`, or
 `Critical` as an error. `sampling:` and `deadline:` values are not
 validated: an unrecognised `sampling:` is read as `event`, and a
@@ -311,9 +313,9 @@ contracts:
           transition: Violated
           severity:   Major
       - id: collision_watch
-        observe: ["ROBOT[i].position", "OBSTACLES.positions"]
+        observe: ["ROBOT[i].position", "DISPATCHER.obstacle_positions"]
         sampling: periodic(100ms)
-        rule: "min_dist(ROBOT[i].position, OBSTACLES.positions) < 0.05"
+        rule: "min_dist(ROBOT[i].position, DISPATCHER.obstacle_positions) < 0.05"
         on_match:
           violation: collision
           severity:  Critical

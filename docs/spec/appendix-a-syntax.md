@@ -405,7 +405,7 @@ parties, governance parameters outside `[0, 1]`, a `severity:`
 other than `Minor`, `Major`, or `Critical`, an `autonomy:` other than
 `low`, `medium`, or `high`, an id or regime name that
 is not an identifier, a malformed `sharing:` entry, and a violation of
-rules L-1, L-2, L-3, L-5, or M-3 of
+rules L-1, L-2, L-3, L-5, M-1 (from `cadl` 0.3.11), or M-3 of
 [Appendix E](./appendix-e-sos-dsl.md#e4-static-semantics) as errors. In an item of
 `assume:` or `guarantee:`, a name counts as an actor reference, and
 must be declared, when it is indexed (`ROBOT[i]`) or is the object of a

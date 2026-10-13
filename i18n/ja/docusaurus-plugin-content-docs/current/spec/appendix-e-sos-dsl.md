@@ -175,13 +175,14 @@ Unity C#ジェネレータと一致する。このジェネレータは，その
 `cadl` 0.3.10からは，`cadl check` が上記の規則を適用する。L-1，L-2，L-3，L-5，M-3への違反は
 エラーとなる。初期状態のないライフサイクル，遷移やモニターのidの重複，`rule:` のないモニター，
 `on:` の `message_event` に現れる未宣言のアクター，および識別子でない状態名，遷移のid，
-モニターのid，違反ラベルも，同じくエラーとなる。次の3つは警告であり，ファイルは有効なままである。
-`on_violation:` ブロックのない `deadline:`（L-4の「望ましい」），対象が宣言済みのアクターでない
-`observe:` の項目（M-1），およびE.3の `rule` として読めない `on:`，`when:`，`rule:` である。
-最後のものはテキストのまま保持される。M-1を警告として報告することは，この規則の
-「しなければならない」と相違する。E.6の例は，`collision_watch` が `OBSTACLES.positions` を
-観測しているため，警告を1つ伴って検査を通る。これは環境の量であり，宣言済みのアクターの
-属性ではない。単独の名前である `observe:` の項目は，メッセージ名と区別できないため受理される。
+モニターのid，違反ラベルも，同じくエラーとなる。`cadl` 0.3.11からは，M-1への違反もエラーとなる。
+対象が宣言済みのアクターでない `observe:` の項目，およびアクターの属性でも名前でもない
+`observe:` の項目がこれにあたる。`cadl` 0.3.10は，これを警告として報告していた。当時のE.6の例が，
+アクター `OBSTACLES` を宣言しないまま `OBSTACLES.positions` を観測していたためである。
+現在の例は `DISPATCHER.obstacle_positions` を観測し，診断なしで検査を通る。
+次の2つは警告であり，ファイルは有効なままである。`on_violation:` ブロックのない `deadline:`
+（L-4の「望ましい」），およびE.3の `rule` として読めない `on:`，`when:`，`rule:` である。
+後者はテキストのまま保持される。単独の名前である `observe:` の項目は，メッセージ名と区別できないため受理される。
 `rule:` と `when:` の中に現れるアクターは検査されない。`cadl` 0.3.7からは，`cadl check` が
 `Minor`，`Major`，`Critical` 以外の `severity:` をエラーとして報告する。`sampling:` と `deadline:` の値の
 妥当性は検査しない。認識できない `sampling:` は `event` として読まれ，読み取れない
@@ -278,9 +279,9 @@ contracts:
           transition: Violated
           severity:   Major
       - id: collision_watch
-        observe: ["ROBOT[i].position", "OBSTACLES.positions"]
+        observe: ["ROBOT[i].position", "DISPATCHER.obstacle_positions"]
         sampling: periodic(100ms)
-        rule: "min_dist(ROBOT[i].position, OBSTACLES.positions) < 0.05"
+        rule: "min_dist(ROBOT[i].position, DISPATCHER.obstacle_positions) < 0.05"
         on_match:
           violation: collision
           severity:  Critical
