@@ -375,7 +375,7 @@ AND    OR    NOT    true    false    for all    exists    in
 当事者のない契約，`[0, 1]` の範囲外のガバナンスパラメータ，`Minor`，`Major`，
 `Critical` 以外の `severity:`，`low`，`medium`，`high` 以外の `autonomy:`，
 識別子でないidや運用モードの名前，形式に合わない `sharing:` の要素，
-および[付録E](./appendix-e-sos-dsl.md#e4-static-semantics)の規則L-1，L-2，L-3，L-5，M-3への違反を
+および[付録E](./appendix-e-sos-dsl.md#e4-static-semantics)の規則L-1，L-2，L-3，L-5，M-1（`cadl` 0.3.11から），M-3への違反を
 エラーとして報告する。`assume:` または `guarantee:` の
 項目の中では，名前が添字付きである（`ROBOT[i]`）か，メンバーアクセスの対象である
 （`ROBOT.battery`）とき，添字の中に現れる場合も含めて，その名前はアクターへの参照と
