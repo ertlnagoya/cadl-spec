@@ -406,7 +406,8 @@ other than `Minor`, `Major`, or `Critical`, an `autonomy:` other than
 `low`, `medium`, or `high`, an id or regime name that
 is not an identifier, a malformed `sharing:` entry, and a violation of
 rules L-1, L-2, L-3, L-5, M-1 (from `cadl` 0.3.11), or M-3 of
-[Appendix E](./appendix-e-sos-dsl.md#e4-static-semantics) as errors. In an item of
+[Appendix E](./appendix-e-sos-dsl.md#e4-static-semantics), and (from `cadl` 0.3.12) a `deadline:` or
+`sampling:` value that cannot be read, as errors. In an item of
 `assume:` or `guarantee:`, a name counts as an actor reference, and
 must be declared, when it is indexed (`ROBOT[i]`) or is the object of a
 member access (`ROBOT.battery`), including inside an index; a name
@@ -414,9 +415,9 @@ standing alone is taken as a state variable and is not checked. The
 predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
 and monitor `rule:` are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. `cadl` 0.3
-deviates from this appendix as follows (checked against `cadl` 0.3.10).
+deviates from this appendix as follows (checked against `cadl` 0.3.12).
 
-- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.10; no
+- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.12; no
   deviation is known.
 - **Identifiers.** From `cadl` 0.3.9, `cadl check` reports as an error
   an actor, contract, protocol, or metric id, or a regime name, that is
@@ -435,9 +436,11 @@ deviates from this appendix as follows (checked against `cadl` 0.3.10).
   written with a type constructor (for example `Range(1, 4)`) is kept
   as text.
 - **Lenient forms.** The parser also accepts `parties:` written as one
-  string (`"[A, B]"`), a numeric `deadline:` (read as seconds),
-  `sampling:` written as a mapping with `kind` and `period_ms`, and a
-  `method:` in any letter case. These forms are not part of this
+  string (`"[A, B]"`), a non-negative numeric `deadline:`, possibly
+  fractional (read as seconds), a duration or period with a space before
+  its unit (`5 s`, `periodic( 500ms )`), `sampling:` written as the
+  mapping `{kind: periodic, period_ms: <non-negative integer>}` or
+  `{kind: event}`, and a `method:` in any letter case. These forms are not part of this
   appendix.
 - **Steps.** From `cadl` 0.3.10 the `else:` branch of a
   `conditional_step` and the condition of a `barrier_step` are

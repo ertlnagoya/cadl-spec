@@ -211,10 +211,13 @@ an `on_violation:` block (the SHOULD of L-4), and an `on:`, `when:`, or
 told from a message name, and the actors named inside a `rule:` or
 `when:` are not checked. From `cadl` 0.3.7
 `cadl check` reports a `severity:` other than `Minor`, `Major`, or
-`Critical` as an error. `sampling:` and `deadline:` values are not
-validated: an unrecognised `sampling:` is read as `event`, and a
-`deadline:` it cannot read is dropped. Releases before 0.3.10 did not
-check rules L-1 to M-3.
+`Critical` as an error. From `cadl` 0.3.12 it also reports as an error a
+`deadline:` that is not a `duration_lit` (a non-negative number of
+seconds is accepted as a lenient form, [Appendix A §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)) and a
+`sampling:` that is not a `sampling_spec` (or the mapping form of
+A.12); earlier releases dropped such a `deadline:`, so that the IR had
+no deadline, and read such a `sampling:` as `event`. Releases before
+0.3.10 did not check rules L-1 to M-3.
 
 ## E.5 Dynamic semantics (informative)
 
