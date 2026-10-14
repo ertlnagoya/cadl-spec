@@ -375,16 +375,16 @@ AND    OR    NOT    true    false    for all    exists    in
 当事者のない契約，`[0, 1]` の範囲外のガバナンスパラメータ，`Minor`，`Major`，
 `Critical` 以外の `severity:`，`low`，`medium`，`high` 以外の `autonomy:`，
 識別子でないidや運用モードの名前，形式に合わない `sharing:` の要素，
-および[付録E](./appendix-e-sos-dsl.md#e4-static-semantics)の規則L-1，L-2，L-3，L-5，M-1（`cadl` 0.3.11から），M-3への違反を
+および[付録E](./appendix-e-sos-dsl.md#e4-static-semantics)の規則L-1，L-2，L-3，L-5，M-1（`cadl` 0.3.11から），M-3への違反，および（`cadl` 0.3.12から）読み取れない `deadline:` と `sampling:` の値を
 エラーとして報告する。`assume:` または `guarantee:` の
 項目の中では，名前が添字付きである（`ROBOT[i]`）か，メンバーアクセスの対象である
 （`ROBOT.battery`）とき，添字の中に現れる場合も含めて，その名前はアクターへの参照と
 みなされ，宣言されていなければならない。単独で現れる名前は状態変数とみなされ，
 検査されない。`condition:`，`safety_invariant:`，`formula:`，`expr:`，およびモニターの
 `rule:` の述語については，未宣言のアクターの検査を行わない。それ以外の必須キーが
-欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.10で確認）。
+欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.12で確認）。
 
-- **式。** `cadl` 0.3.10では，式はA.10とA.11に従う。既知の相違はない。
+- **式。** `cadl` 0.3.12では，式はA.10とA.11に従う。既知の相違はない。
 - **識別子。** `cadl` 0.3.9からは，`cadl check` は，アクター，契約，プロトコル，メトリクスのid，
   および運用モードの名前が，A.1の識別子でない場合（たとえば非ASCII文字やハイフンを含む場合），
   またはA.11の予約語か[付録E](./appendix-e-sos-dsl.md)の `IN` である場合に，エラーとして報告する。
@@ -396,8 +396,9 @@ AND    OR    NOT    true    false    for all    exists    in
 - **型。** [5.2.1節](./05-language-spec.md)の型は検査されない。型構成子を用いて書いた値（たとえば `Range(1, 4)`）は，
   テキストのまま保持される。
 - **寛容な形式。** パーサは，1つの文字列として書いた `parties:`（`"[A, B]"`），
-  数値の `deadline:`（秒として読まれる），`kind` と `period_ms` を持つマッピングとして
-  書いた `sampling:`，および大文字と小文字を問わない `method:` も受理する。
+  負でない数値の `deadline:`（小数でもよく，秒として読まれる），単位の前に空白を含む期間
+  （`5 s`，`periodic( 500ms )`），マッピング `{kind: periodic, period_ms: <負でない整数>}` または
+  `{kind: event}` として書いた `sampling:`，および大文字と小文字を問わない `method:` も受理する。
   これらの形式は本付録の一部ではない。
 - **ステップ。** `cadl` 0.3.10からは，`conditional_step` の `else:` の分岐と，`barrier_step` の条件が
   保持される。したがって，`else:` の分岐に現れるアクターは検査され，どちらもシミュレータIRに

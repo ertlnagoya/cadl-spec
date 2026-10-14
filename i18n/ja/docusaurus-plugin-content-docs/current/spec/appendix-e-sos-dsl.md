@@ -184,9 +184,11 @@ Unity C#ジェネレータと一致する。このジェネレータは，その
 （L-4の「望ましい」），およびE.3の `rule` として読めない `on:`，`when:`，`rule:` である。
 後者はテキストのまま保持される。単独の名前である `observe:` の項目は，メッセージ名と区別できないため受理される。
 `rule:` と `when:` の中に現れるアクターは検査されない。`cadl` 0.3.7からは，`cadl check` が
-`Minor`，`Major`，`Critical` 以外の `severity:` をエラーとして報告する。`sampling:` と `deadline:` の値の
-妥当性は検査しない。認識できない `sampling:` は `event` として読まれ，読み取れない
-`deadline:` は捨てられる。0.3.10より前のリリースは，規則L-1からM-3までを検査しなかった。
+`Minor`，`Major`，`Critical` 以外の `severity:` をエラーとして報告する。`cadl` 0.3.12からは，
+`duration_lit` でない `deadline:`（負でない秒数は寛容な形式として受理する。[付録A §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)）と，
+`sampling_spec`（またはA.12のマッピング形式）でない `sampling:` もエラーとして報告する。
+それより前のリリースは，そのような `deadline:` を捨てて期限のないIRにし，そのような `sampling:` を
+`event` として読んでいた。0.3.10より前のリリースは，規則L-1からM-3までを検査しなかった。
 
 ## E.5 動的意味論（参考） {/* #e5-dynamic-semantics-informative */}
 
