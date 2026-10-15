@@ -6,7 +6,9 @@ title: "第 2 章 — ツールチェインと準備"
 
 # 第 2 章 — ツールチェインと準備
 
-## 全体像
+この章では、CADL のファイルからどのような道筋で図やコードや実行結果が作られるか（ツールチェイン）と、それを構成する 4 つのリポジトリを説明し、手元にツールを準備します（Step 0）。
+
+## 2.1 全体像
 
 書くのは一番左のボックス（CADL ファイル）だけです。右側はすべて、ツールチェインのコマンドがこのファイルから生成します。
 
@@ -42,22 +44,67 @@ title: "第 2 章 — ツールチェインと準備"
                              └──────────────────────────┘
 ```
 
+登場するのは「仕様を書く側」と「仕様が動く側」の 2 つの世界と、その間をつなぐコンパイラです。
+
 ```mermaid
 flowchart LR
-  CADL[my_delivery.cadl<br/>自分で書く]
-  IR[Sim-IR JSON<br/>中間表現]
-  EXPL[Lifecycle View<br/>状態機械図]
-  CSH[Unity C# ツリー<br/>Runtime + Generated]
-  UNITY[Unity シーン<br/>Console イベント]
-  CADL -->|cadl sim-ir| IR
-  IR -->|cadl-explorer| EXPL
-  IR -->|cadl codegen<br/>--target unity-csharp| CSH
-  CSH -->|Assets/ に配置| UNITY
+  subgraph A["書く側"]
+    CADL[".cadl ファイル<br/>（人が書く唯一のもの）"]
+  end
+  subgraph B["コンパイラ（cadl_repo）"]
+    CHECK[cadl check<br/>検査]
+    IR["Sim-IR JSON<br/>中間表現"]
+    GEN[cadl codegen<br/>C# 生成]
+  end
+  subgraph C["動く側（cadl-raspimouse-simulator）"]
+    PY["Python 参照ランタイム<br/>engine.py"]
+    UN["Unity C# ランタイム<br/>SoSDsl/"]
+    SIM["ロボット群のシミュレーション<br/>Pilot_CSoS + arbitrator + NATS"]
+  end
+  CADL --> CHECK --> IR
+  IR --> PY
+  IR --> GEN --> UN
+  SIM -->|観測| UN
 ```
+
+押さえておく点は 3 つです。
+
+1. **契約のロジックとして人が書くのは `.cadl` ファイルだけ**です。IR、C# の契約クラス、図は、ツールチェインのコマンドがそこから生成します。
+2. **同じ IR を 2 つのランタイムが同じ意味で実行**します。C# の契約コードは IR から生成されます。一方、Python 参照ランタイムは IR を直接読み込む手書きのインタプリタで、答え合わせに使います。
+3. **ロボットの制御コードと契約のコードは分かれています。** 契約はロボットを観測するだけです。ロボットの制御コード `Pilot_CSoS.cs` には契約のロジックは入っておらず、手で書くのは、ロボットの状態の変化を契約のイベントに変換する薄い橋渡し（`PilotContractBridge.cs`）だけです。
+
+本書で使うツールと、それを使う章は次のとおりです。
+
+| ツール | すること | 使う章 |
+| --- | --- | --- |
+| `cadl check` | 構文、型、SoS-DSL の静的な規則を検査する | 第 4・5 章 |
+| `cadl verify` | `cadl check` に加え、SMT ソルバ（Z3）で前提と保証の矛盾や、プロトコルのデッドロックを検査する | 第 3 章で紹介 |
+| `cadl sim-ir` | ファイルを 3 層の中間表現（IR）の JSON に変換する | 第 5〜7 章 |
+| cadl-explorer | IR から状態機械の図（Lifecycle View）を描く | 第 6 章 |
+| `cadl codegen --target unity-csharp` | IR から Unity の C# コードを生成する | 第 7 章 |
+| Python 参照ランタイム | IR を読み込んで、契約の状態の移り変わりを再現する | 第 7・9 章 |
+| Unity と arbitrator | ロボット群のシミュレーションの中で、生成した契約コードを動かす | 第 8 章 |
 
 ---
 
-## 準備するもの
+## 2.2 4 つのリポジトリ
+
+CADL のツールチェインは、各部分が独立して開発を進められるよう、4 つのリポジトリに分かれています。どれも公開しており、本書はすべて公開リポジトリだけで進められます。
+
+| リポジトリ | 役割 | 使うブランチ | 本書での使い方 |
+| --- | --- | --- | --- |
+| `cadl-spec` | 言語仕様書と、本書を含む教材サイト（Docusaurus） | `main`（既定） | 読むだけ（手元で表示するのは任意） |
+| `cadl`（`cadl_repo` としてクローン） | コンパイラ（パーサ、検査、IR、コード生成） | `master`（既定） | コマンドとして使う |
+| `cadl-explorer` | CADL の編集と検査、状態機械の図の描画、ガバナンス設計の比較をする Streamlit アプリ | `main`（既定） | Web アプリとして使う（第 6 章） |
+| `cadl-raspimouse-simulator` | Unity プロジェクト、Go の arbitrator、Python 参照ランタイムをまとめたシミュレータ | `main`（既定） | 第 7〜9 章で主に触る |
+
+シミュレータは、Unity プロジェクト（`unity/`）、Go の arbitrator（`arbitrator/`）、Python 参照ランタイム（`cadl/runtime/`）を 1 つのリポジトリにまとめています。
+
+名前について補足します。Unity のシーン（`C-SoS.unity`）、ロボットの制御コード（`Pilot_CSoS`）、arbitrator のディレクトリ（`C-SoS/`）に付いている「C-SoS」は、シミュレータの側では Collaborative SoS の略で（設定ファイルでは `sosType: collaborative`）、本書で使う動作モードの名前です。このモードでは、ロボットが配送を申し出て、`arbitrator/C-SoS` の arbitrator がどのロボットに任せるかを決めます。リポジトリには参考用に `D-SoS.unity` シーンも入っていますが、その arbitrator は含まれていません。このラベルはシミュレータの側で決まるもので、CADL ファイルの `type:` とは関係しません。本書の CADL ファイルは `type: Acknowledged` と宣言しており、本書がロボット配送 SoS の類型を述べるときは、この宣言を指しています（第 1 章 1.4 節）。
+
+---
+
+## 2.3 準備するもの
 
 | ツール | バージョン | 用途 |
 | --- | --- | --- |
@@ -82,18 +129,7 @@ brew install python@3.11 go nats-server node
 
 ### 背景
 
-CADL ツールチェインは、各部分が独立して進化できるよう 4 つのリポジトリに分かれています。
-
-| リポジトリ | 役割 | 使うブランチ |
-| --- | --- | --- |
-| `cadl-spec`            | 言語仕様書とこのハンズオンサイト（Docusaurus） | `main`（既定） |
-| `cadl`（`cadl_repo` としてクローン） | コンパイラ本体（パーサ・IR・コード生成器） | `master`（既定） |
-| `cadl-explorer`        | CADL を可視化・編集する Streamlit アプリ | `main`（既定） |
-| `cadl-raspimouse-simulator` | Step 5〜6 で使うシミュレータ。Unity プロジェクト・Go arbitrator・Python 参照ランタイムを 1 つのリポジトリにまとめたもの | `main`（既定） |
-
-:::info[リポジトリの公開状況]
-`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）、`cadl-raspimouse-simulator`（シミュレータ）は公開しています。コース A はすべての Step を公開リポジトリだけで進められます。コース B で使う `mobility-sos-exercise` は**現時点では非公開**です。
-:::
+2.2 節の 4 つのリポジトリを `~/program` の下にクローンし、`cadl` コマンドを使えるようにします。
 
 ### 手順
 
@@ -142,9 +178,9 @@ positional arguments:
 
 ### おさらい
 
-セットアップを終えて分かるのは、CADL が「仕様サイト・コンパイラ・可視化・シミュレータ」という 4 つのリポジトリが噛み合って動く仕組みだ、ということです。そして以降のすべては、**各リポジトリが上の表のブランチになっている**（すべて `main`。`cadl_repo` だけは `master`）、という前提の上に成り立ちます。この段階でのつまずきの大半は、ブランチ違いです。
+セットアップを終えて分かるのは、CADL が「仕様サイト・コンパイラ・可視化・シミュレータ」という 4 つのリポジトリが噛み合って動く仕組みだ、ということです。そして以降のすべては、**各リポジトリが 2.2 節の表のブランチになっている**（すべて `main`。`cadl_repo` だけは `master`）、という前提の上に成り立ちます。この段階でのつまずきの大半は、ブランチ違いです。
 
-### 🛠 セットアップのトラブルシューティング
+### セットアップのトラブルシューティング
 
 **ブランチを確認する（最頻のつまずき）。** 4 つのリポジトリは、すべて既定ブランチ（`main`。`cadl_repo` だけは `master`）のまま使います。ここで説明しているページやコマンドが見つからない場合は、まず古いブランチに切り替えていないかを確認してください。次のコマンドで確認できます。
 
