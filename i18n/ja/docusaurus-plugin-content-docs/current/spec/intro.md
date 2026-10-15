@@ -167,7 +167,7 @@ Version 0.2 は，Version 0.1 の記述をリファレンス実装に合わせ�
 [動機拡張](./appendix-c-motivation.md)は，独自のラベル v0.1-ext のままです。
 
 仕様書とリファレンス実装の版は，独立に番号を付けています。本仕様書は Version 0.2 であり，
-内容の確認に用いたリファレンス実装は `cadl` 0.3.13 です。
+内容の確認に用いたリファレンス実装は `cadl` 0.3.14 です。
 
 フィードバックや議論は[GitHub Issues](https://github.com/ertlnagoya/cadl/issues)で歓迎します。
 仕様書や本サイトの問題は，[cadl-specのIssues](https://github.com/ertlnagoya/cadl-spec/issues)で報告できます。
