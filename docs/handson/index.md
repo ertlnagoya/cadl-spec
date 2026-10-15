@@ -11,8 +11,8 @@ The materials fall into **two tracks**. Pick the one that matches your role.
 
 | Your role | What you do | Where to start |
 |---|---|---|
-| 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | [Why SoS-DSL?](academic-background.md) → [Code Walkthrough](code-walkthrough.md) (recommended before Course A) → [Course A](main-textbook.md) → B / D → C |
-| 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim [Why SoS-DSL?](academic-background.md) then jump to [Course C](exercises.md#course-c) |
+| 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | [Why SoS-DSL?](academic-background.md) → [Code Walkthrough](code-walkthrough.md) (recommended before Course A) → [Course A (Textbook)](../textbook/index.md) → B / D → C |
+| 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim [Why SoS-DSL?](academic-background.md) then jump to [Course C](own-sos.md) |
 
 :::info[Repository availability]
 `cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI), `cadl-explorer` (visualisation) and `cadl-raspimouse-simulator` (simulator) are public, so every step of Course A can be followed with public repositories. `cadl-robot-town`, used by Course D, is public too. `mobility-sos-exercise`, used by Course B, is **not publicly available at present**.
@@ -27,8 +27,8 @@ never asked to write code cold.
 | Stage | What you do | Materials | Rough time |
 |---|---|---|---|
 | **① Understand** | Grasp the overall structure (four repositories; the spec → IR → codegen flow) and what each key program does | [Why SoS-DSL?](academic-background.md) (skimming is fine), then the [Architecture & Code Walkthrough](code-walkthrough.md) (recommended before Course A) | 0.5–1 day |
-| **② Practise with templates** | Copy the provided skeletons and fill them in while going once around the loop: write a contract → check → visualise → run the simulation | [Course A (main textbook)](main-textbook.md) Steps 0–6, then the ★ / ★★ exercises of [the exercises booklet](exercises.md) Part 1 | 1–2 weeks |
-| **③ Build from scratch** | Add features with no template: new monitors and states (★★★), model a new domain (Part 2), or the LLM contract-generation loop (advanced exercise) | ★★★ / advanced exercise / Part 2 of [the exercises booklet](exercises.md) | as your interest dictates |
+| **② Practise with templates** | Copy the provided skeletons and fill them in while going once around the loop: write a contract → check → visualise → run the simulation | [Course A (Textbook)](../textbook/index.md) Chapters 1–8, then the ★ / ★★ exercises at the end of Chapters 4–9 | 1–2 weeks |
+| **③ Build from scratch** | Add features with no template: new monitors and states (★★★), model a new domain (Course C), or the LLM contract-generation loop (advanced exercise) | ★★★ exercises and Chapter 10 of the [Textbook](../textbook/index.md), then [Course C](own-sos.md) | as your interest dictates |
 
 ---
 
@@ -56,10 +56,9 @@ it gives you the vocabulary the courses will rely on.
 | **Prerequisite** | None — open to CADL beginners |
 | **You will learn** | CADL syntax / actors / contract / lifecycle / monitors / cadl-explorer / Unity integration |
 
-→ [Course A — Robot Delivery](main-textbook.md)
+Course A is a self-contained **Textbook** with its own navigation tab. Its Chapters 4–9 end with the exercises of a five-session class (19 exercises graded ★ to ★★★).
 
-After finishing, practice with the extra exercises:
-→ [Course A — Exercises](exercises.md) — 5 sessions, 19 exercises graded ★ to ★★★ (Part 1 of the exercises booklet)
+→ [Textbook — Course A: Robot Delivery](../textbook/index.md)
 
 ### Course B — Urban Mobility (applied)
 
@@ -97,8 +96,7 @@ After finishing, practice with the extra exercises:
 | **Prerequisite** | Course A + B |
 | **You will learn** | Designing actors / contracts / lifecycle / monitors **on your own** for a new domain, then choosing your own runtime |
 
-Course C is deliberately open-ended: the brief is an outline, not a step-by-step tutorial. It is **Part 2** of the exercises booklet:
-→ [Exercises booklet — Part 2 (Course C)](exercises.md#course-c)
+Course C is deliberately open-ended: the brief is an outline, not a step-by-step tutorial. → [Course C — Your own SoS](own-sos.md)
 
 ---
 
@@ -112,13 +110,13 @@ cd ~/program/cadl_repo
 ./scripts/sos_dsl_handson_e2e.sh
 ```
 
-This assumes the setup in Step 0 of [Course A](main-textbook.md) is done (the `cadl` repository cloned as
+This assumes the setup in [Chapter 2 of the Textbook](../textbook/02-toolchain-setup.md) (Step 0) is done (the `cadl` repository cloned as
 `~/program/cadl_repo`). The script runs the end-to-end pipeline (parse → IR → codegen) on the bundled
 `examples/sos_dsl_robot_delivery.cadl` and prints what to do next. Its last stage copies the generated C#
 into the Unity project of `cadl-raspimouse-simulator` (expected next to `cadl_repo`); if you have not
 cloned it yet, run `./scripts/sos_dsl_handson_e2e.sh --unity ""` instead, which stops after code generation.
 
-After that, start with **[Why SoS-DSL?](academic-background.md)** and then **[Course A](main-textbook.md)**.
+After that, start with **[Why SoS-DSL?](academic-background.md)** and then **[Course A (Textbook)](../textbook/index.md)**.
 
 ---
 
@@ -127,8 +125,7 @@ After that, start with **[Why SoS-DSL?](academic-background.md)** and then **[Co
 | Role | Document |
 |---|---|
 | Background read (learner's first) | [Why SoS-DSL?](academic-background.md) |
-| Course A — main textbook | [Robot Delivery](main-textbook.md) |
-| Course A — extra problems | [Exercises](exercises.md) |
+| Course A — Textbook (with exercises) | [Robot Delivery](../textbook/index.md) |
 | Course B — mobility tutorial | [Urban Mobility](mobility-sos-tutorial.md) |
 | Course D — rules a community amends | [Robot Town](robot-town-tutorial.md) |
-| Course C — your own SoS | [Exercises Part 2](exercises.md#course-c) |
+| Course C — your own SoS | [Your own SoS](own-sos.md) |

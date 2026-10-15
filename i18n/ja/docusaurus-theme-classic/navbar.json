@@ -11,6 +11,10 @@
     "message": "仕様書",
     "description": "Navbar item with label Specification"
   },
+  "item.label.Textbook": {
+    "message": "テキストブック",
+    "description": "Navbar item with label Textbook"
+  },
   "item.label.Hands-on": {
     "message": "ハンズオン",
     "description": "Navbar item with label Hands-on"

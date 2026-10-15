@@ -124,4 +124,4 @@ flowchart LR
 4. `PilotContractBridge.cs` を読む（10 分）— 「観測→イベント」の翻訳がどれだけ薄いかを確認
 5. 余裕があれば `engine.py` の `ContractRuntime.tick`（10 分）
 
-ここまで読めたら、[コース A（メイン教材）](main-textbook.md) の Step 0 へ進んでください。
+ここまで読めたら、[コース A（メイン教材）](../textbook/02-toolchain-setup.md) の Step 0 へ進んでください。
