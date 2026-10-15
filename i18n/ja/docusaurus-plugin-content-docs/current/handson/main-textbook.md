@@ -159,6 +159,7 @@ git clone https://github.com/ertlnagoya/cadl-raspimouse-simulator
 # 2) 編集モードで cadl CLI を install。変更が即反映されます。
 cd ~/program/cadl_repo
 python3 -m venv .venv && source .venv/bin/activate
+python3 -m pip install --upgrade pip   # 編集モードの install には pip 21.3 以上が必要
 pip install -e .
 cd ~/program
 ```
@@ -204,6 +205,17 @@ echo "simulator:     $(git -C cadl-raspimouse-simulator branch --show-current)" 
 ```
 
 ブランチが違うリポジトリがあれば、`git -C ~/program/<repo> checkout <branch>` で切り替えます。
+
+**`pip install -e .` が `File "setup.py" or "setup.cfg" not found` で失敗する。** 仮想環境の pip が古いことが原因です。macOS の `/usr/bin/python3`（Command Line Tools 付属の Python 3.9）で作った仮想環境には pip 21.2.4 が入り、このバージョンは `cadl` のように `pyproject.toml` だけを持つプロジェクトを編集モードで install できません。仮想環境の中で pip を更新してから、もう一度 install します。
+
+```bash
+cd ~/program/cadl_repo
+source .venv/bin/activate
+python3 -m pip install --upgrade pip
+pip install -e .
+```
+
+**`cadl` が `bad interpreter` を出す、または `cadl --help` のコマンド一覧が古い。** シェルが `cadl_repo/.venv` 以外の `cadl` を見つけています。`which cadl` で確認します。`~/program/cadl_repo/.venv/bin/cadl` と表示されれば正しい状態です。新しいターミナルでは、最初に `source ~/program/cadl_repo/.venv/bin/activate` を実行します。仮想環境そのものが `bad interpreter` を出す場合（作成に使った Python が削除された場合）は、`.venv` を削除して手順 2) をやり直します。
 
 ---
 
