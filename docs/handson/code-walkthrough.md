@@ -58,13 +58,13 @@ Using the textbook example `sos_dsl_robot_delivery.cadl` (153 lines), let's foll
 
 **(1) Spec → IR.** The `deadline: 5s` in your `.cadl` file is parsed by `cadl_repo/src/cadl/parser.py`, and once `sim/lower.py` lowers it into the IR it becomes the JSON `"deadline_ms": 5000` (the whole IR is 245 lines). The IR is an intermediate representation that discards the "human-friendly notation" and keeps only the "form that machines can easily execute".
 
-**(2) IR → C#.** `codegen/unity_csharp/contract_emitter.py` reads the IR and generates three files per contract: the state enum (`DeliverySlaState.cs`), the state machine itself (`DeliverySlaContract.cs`), and the monitoring rules (`DeliverySlaMonitors.cs`). Together with 5 shared runtime files (described below), a total of 770 lines is placed under `unity/Assets/Scripts/SoSDsl/`.
+**(2) IR → C#.** `codegen/unity_csharp/contract_emitter.py` reads the IR and generates three files per contract: the state enum (`DeliverySlaState.cs`), the state machine itself (`DeliverySlaContract.cs`), and the monitoring rules (`DeliverySlaMonitors.cs`). Together with 5 shared runtime files (described below), a total of 783 lines is placed under `unity/Assets/Scripts/SoSDsl/`.
 
-**(3) The C# runs in Unity.** The `ContractRuntimeHost` in the scene calls `Runtime.Tick(now)` every frame, evaluating deadline expirations and monitoring rules. A `PilotContractBridge` attached to each robot translates the robot's state changes (won a delivery bid, finished a delivery) into **contract events** (`route_assignment`, `Delivered`) and feeds them in. Violations and state transitions appear line by line in the Console:
+**(3) The C# runs in Unity.** The `ContractRuntimeHost` in the scene calls `Runtime.Tick(now)` every frame, evaluating deadline expirations and monitoring rules. A `PilotContractBridge` attached to each robot translates the robot's state changes (won a delivery bid, finished a delivery) into **contract events** (`route_assignment`, `Delivered`) and feeds them to that robot's own contract instance. Violations and state transitions appear line by line in the Console:
 
 ```
-[lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned (assign, event) @ 2050ms]
-[violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard @ 2150ms]
+[lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned (assign, event) @ 16112ms]
+[violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard @ 16112ms]
 ```
 
 ## 4. Key files explained
@@ -73,7 +73,7 @@ Using the textbook example `sos_dsl_robot_delivery.cadl` (153 lines), let's foll
 
 | File | What it contains | Approx. lines |
 | --- | --- | --- |
-| `Runtime/ContractRuntime.cs` | Instance registration, event delivery, the `Tick` loop. The heart of the system | ~90 |
+| `Runtime/ContractRuntime.cs` | Instance registration, event delivery (to one instance or to all), the `Tick` loop. The heart of the system | ~100 |
 | `Runtime/PredicateEvaluator.cs` | Evaluator for predicate strings like `"battery < 20 AND state == Assigned"` | ~250 |
 | `Runtime/ContractEvent.cs` | Shared struct for lifecycle / violation events. The Console lines come from its `ToString()` | ~40 |
 | `Runtime/EventBus.cs` / `Severity.cs` | Lightweight pub-sub and the severity enum | Small |

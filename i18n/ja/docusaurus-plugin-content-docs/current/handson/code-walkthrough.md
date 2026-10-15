@@ -58,13 +58,13 @@ flowchart LR
 
 **(1) 仕様 → IR**。`.cadl` の `deadline: 5s` は、`cadl_repo/src/cadl/parser.py` が構文解析し、`sim/lower.py` が IR に落とすと `"deadline_ms": 5000` という JSON になります（IR 全体で 245 行）。IR は「人間向けの書き方」を捨てて「機械が実行しやすい形」だけを残した中間表現です。
 
-**(2) IR → C#**。`codegen/unity_csharp/contract_emitter.py` が IR を読んで、契約 1 つにつき 3 ファイルを生成します：状態の列挙（`DeliverySlaState.cs`）、状態機械本体（`DeliverySlaContract.cs`）、監視ルール（`DeliverySlaMonitors.cs`）。これに共有ランタイム 5 ファイル（後述）を足した計 770 行が `unity/Assets/Scripts/SoSDsl/` に配置されます。
+**(2) IR → C#**。`codegen/unity_csharp/contract_emitter.py` が IR を読んで、契約 1 つにつき 3 ファイルを生成します：状態の列挙（`DeliverySlaState.cs`）、状態機械本体（`DeliverySlaContract.cs`）、監視ルール（`DeliverySlaMonitors.cs`）。これに共有ランタイム 5 ファイル（後述）を足した計 783 行が `unity/Assets/Scripts/SoSDsl/` に配置されます。
 
-**(3) C# が Unity で動く**。シーン上の `ContractRuntimeHost` が毎フレーム `Runtime.Tick(now)` を呼び、期限切れと監視ルールを評価します。各ロボットに付けた `PilotContractBridge` が、ロボットの状態変化（配送を落札した・配達を終えた）を**契約イベント**（`route_assignment` や `Delivered`）に翻訳して流し込みます。違反や状態遷移は Console に 1 行ずつ出ます：
+**(3) C# が Unity で動く**。シーン上の `ContractRuntimeHost` が毎フレーム `Runtime.Tick(now)` を呼び、期限切れと監視ルールを評価します。各ロボットに付けた `PilotContractBridge` が、ロボットの状態変化（配送を落札した・配達を終えた）を**契約イベント**（`route_assignment` や `Delivered`）に翻訳し、そのロボット自身の契約インスタンスに流し込みます。違反や状態遷移は Console に 1 行ずつ出ます：
 
 ```
-[lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned (assign, event) @ 2050ms]
-[violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard @ 2150ms]
+[lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned (assign, event) @ 16112ms]
+[violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard @ 16112ms]
 ```
 
 ## 4. 主要ファイル解説
@@ -73,7 +73,7 @@ flowchart LR
 
 | ファイル | 中身 | 行数の目安 |
 | --- | --- | --- |
-| `Runtime/ContractRuntime.cs` | インスタンス登録・イベント配送・`Tick` ループ。心臓部 | 約 90 |
+| `Runtime/ContractRuntime.cs` | インスタンス登録・イベント配送（1 インスタンス宛て、または全インスタンス）・`Tick` ループ。心臓部 | 約 100 |
 | `Runtime/PredicateEvaluator.cs` | `"battery < 20 AND state == Assigned"` のような述語文字列の評価器 | 約 250 |
 | `Runtime/ContractEvent.cs` | lifecycle / violation イベントの共通構造体。Console の行はここの `ToString()` | 約 40 |
 | `Runtime/EventBus.cs` / `Severity.cs` | 軽量 pub-sub と深刻度 enum | 小 |

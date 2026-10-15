@@ -779,7 +779,7 @@ $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
   output    : output/sos_dsl_handson/unity-csharp
   runtime   : 5 files
   generated : 3 files
-  total lines : 770
+  total lines : 783
 
 == Step 4/4 — drop into ../cadl-raspimouse-simulator/unity/Assets/Scripts/SoSDsl/ ==
   installed: .../Runtime, .../Generated
@@ -889,7 +889,7 @@ These nine tests catch the structural bugs that would prevent Unity from compili
 You now have:
 
 - A 245-line Sim-IR JSON (for the bundled example).
-- A 770-line Unity-ready C# tree, dropped into the Unity project.
+- A 783-line Unity-ready C# tree, dropped into the Unity project.
 - A Python proof-of-concept showing what the C# trace **must** look like once it runs.
 
 ----
@@ -1018,7 +1018,7 @@ In the Console, lines like the following should appear continuously. You can fil
 
 ![Unity in Play mode: robots on the road network in the Scene view, and the Console filtered on DELIVERY_SLA showing lifecycle events](/img/handson/unity-play-console.jpg)
 
-The screenshot was taken a few seconds into Play, with `DELIVERY_SLA` typed in the Console search box and the Scene tab selected. In this capture the Hierarchy still lists the object of step 6.3 as "New Game Object" although the Inspector shows its name, `ContractRuntimeHost`; on your screen both show `ContractRuntimeHost`.
+The screenshot was taken about 22 seconds into Play, with `DELIVERY_SLA` typed in the Console search box and the Scene tab selected: robot-2-1 (battery 15) has just been moved to `Violated` by `battery_guard`, and robot-1-1 has been assigned five seconds later. During Play the host is listed as `ContractRuntimeHost` under `DontDestroyOnLoad`; in this capture the scene part of the Hierarchy still shows the object of step 6.3 as "New Game Object", although the Inspector shows its name.
 
 A closer look at the road during the same run, with the five robots on their way:
 
@@ -1029,17 +1029,17 @@ The Game view during Play: the camera follows robot `m1`, and the small picture 
 ![The Game view during Play: the camera follows a robot on the road, with the robot's own camera view in the lower-right corner](/img/handson/unity-game-view.jpg)
 
 ```
-[lifecycle DELIVERY_SLA/robot-0-1 Proposed -> Assigned     (assign,        event)   @ 1234ms]
-[lifecycle DELIVERY_SLA/robot-0-1 Assigned -> Accepted     (accept,        event)   @ 1934ms]
-[lifecycle DELIVERY_SLA/robot-0-1 Accepted -> Delivering   (start_delivery,event)   @ 1980ms]
-[lifecycle DELIVERY_SLA/robot-0-1 Delivering-> Completed   (complete,      event)   @ 8341ms]
+[lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned (assign, event) @ 16112ms]
+[violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard @ 16112ms]
+[lifecycle DELIVERY_SLA/robot-2-1 Assigned -> Violated (<jump>, monitor) @ 16112ms]
 
-[lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned     (assign,        event)   @ 2050ms]
-[violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard         @ 2150ms]
-[lifecycle DELIVERY_SLA/robot-2-1 Assigned -> Violated     (<jump>,        monitor) @ 2150ms]
+[lifecycle DELIVERY_SLA/robot-1-1 Proposed -> Assigned (assign, event) @ 21675ms]
+[lifecycle DELIVERY_SLA/robot-1-1 Assigned -> Accepted (accept, event) @ 22479ms]
+[lifecycle DELIVERY_SLA/robot-1-1 Accepted -> Delivering (start_delivery, event) @ 22479ms]
+[lifecycle DELIVERY_SLA/robot-1-1 Delivering -> Completed (complete, event) @ 46361ms]
 ```
 
-Note the 700 ms between `assign` and `accept` for `robot-0-1`: that is the `Assigned Dwell Ms` set in 6.4.
+Each robot's contract moves only on that robot's own events. The arbitrator hands out one delivery about every 5 seconds, so the robots reach `Assigned` one after another (in this run at about 5, 11, 16, 22 and 27 seconds). Note the 700 to 800 ms between `assign` and `accept` for `robot-1-1`: that is the `Assigned Dwell Ms` set in 6.4. `robot-2-1`, with battery 15, is caught by `battery_guard` in the same frame as its `assign`.
 
 ### Check 6
 
@@ -1050,7 +1050,8 @@ Confirm all of these:
 | There are `[lifecycle ... robot-{id}-1 ...]` events for **all five robots** | Yes |
 | The robot with battery 15 has a `monitor:battery_guard` violation | Yes |
 | Every robot's first transition is `Proposed -> Assigned` | Yes |
-| Each robot gets from `Proposed` to `Assigned` within roughly 10 seconds (not instantly — there is a claim delay) | Yes |
+| The robots reach `Assigned` one at a time, about every 5 seconds (the arbitrator hands out one delivery at a time), so the last one takes about 25–30 seconds | Yes |
+| A robot's contract reaches `Completed` when **that** robot finishes its delivery; the other robots' contracts do not move with it | Yes |
 | The **same kinds of events** as Step 5's Python run (lifecycle transitions, violations) appear with the same meaning | Yes |
 
 ### Common mistakes
@@ -1078,7 +1079,7 @@ You have just witnessed the **end-to-end story of an SoS contract**: written in 
 | Spec | a CADL file of about 100 lines (Steps 2 & 3) | nothing — the spec was the only source |
 | IR | nothing | generated JSON (245 lines for the bundled example) |
 | Visualisation | nothing | the Lifecycle View page |
-| Implementation | nothing | generated Unity C# (770 lines for the bundled example) |
+| Implementation | nothing | generated Unity C# (783 lines for the bundled example) |
 | Runtime semantics | nothing | a working state machine + monitors + deadline timers |
 
 Why does this matter for SoS? **The same specification powers everything**: the docs, the diagram, the simulation, the code. When the specification changes — say, you tighten the deadline from 5s to 3s — you edit one file and re-run the generation commands (`cadl sim-ir`, `cadl codegen`, or the e2e script); the IR, the diagram and the generated C# then all follow from that single source, with no second copy of the rule to edit by hand. Keeping one source for all of them helps keep a large SoS design maintainable.
