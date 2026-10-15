@@ -779,7 +779,7 @@ $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
   output    : output/sos_dsl_handson/unity-csharp
   runtime   : 5 files
   generated : 3 files
-  total lines : 770
+  total lines : 783
 
 == Step 4/4 — drop into ../cadl-raspimouse-simulator/unity/Assets/Scripts/SoSDsl/ ==
   installed: .../Runtime, .../Generated
@@ -889,7 +889,7 @@ PYTHONPATH=src python3 -m pytest tests/test_unity_csharp_structural.py -q
 今あるもの：
 
 - 245 行の Sim-IR JSON（同梱の例の場合）。
-- 770 行の Unity に貼れる C# ツリー（Unity プロジェクトに配置済み）。
+- 783 行の Unity に貼れる C# ツリー（Unity プロジェクトに配置済み）。
 - C# トレースが **どうなるべきか** を示す Python のリファレンス実装。
 
 ---
@@ -1018,7 +1018,7 @@ Console に以下のような行が連続的に出ます。Console の検索欄�
 
 ![Play 中の Unity：Scene ビューに経路網上のロボット、Console に DELIVERY_SLA で絞り込んだライフサイクルイベント](/img/handson/unity-play-console.jpg)
 
-このスクリーンショットは Play 開始から数秒後のもので、Console の検索欄に `DELIVERY_SLA` と入力し、Scene タブを選んだ状態です。この画像では、手順 6.3 のオブジェクトが Hierarchy では「New Game Object」のままになっていますが、Inspector には名前 `ContractRuntimeHost` が出ています。実際の画面では、どちらも `ContractRuntimeHost` と表示されます。
+このスクリーンショットは Play 開始から約 22 秒後のもので、Console の検索欄に `DELIVERY_SLA` と入力し、Scene タブを選んだ状態です。バッテリ 15 の robot-2-1 が `battery_guard` で `Violated` になり、その 5 秒後に robot-1-1 が割り当てられたところです。Play 中、host は Hierarchy の `DontDestroyOnLoad` の下に `ContractRuntimeHost` として表示されます。この画像では、シーン側の Hierarchy に手順 6.3 のオブジェクトが「New Game Object」のまま残っていますが、Inspector には名前が出ています。
 
 同じ実行中の経路網を拡大したものです。5 台のロボットが走行しています。
 
@@ -1029,17 +1029,17 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 ![Play 中の Game ビュー。カメラが経路網上のロボットを追いかけ、右下にロボット自身のカメラの映像が出ている](/img/handson/unity-game-view.jpg)
 
 ```
-[lifecycle DELIVERY_SLA/robot-0-1 Proposed -> Assigned     (assign,        event)   @ 1234ms]
-[lifecycle DELIVERY_SLA/robot-0-1 Assigned -> Accepted     (accept,        event)   @ 1934ms]
-[lifecycle DELIVERY_SLA/robot-0-1 Accepted -> Delivering   (start_delivery,event)   @ 1980ms]
-[lifecycle DELIVERY_SLA/robot-0-1 Delivering-> Completed   (complete,      event)   @ 8341ms]
+[lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned (assign, event) @ 16112ms]
+[violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard @ 16112ms]
+[lifecycle DELIVERY_SLA/robot-2-1 Assigned -> Violated (<jump>, monitor) @ 16112ms]
 
-[lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned     (assign,        event)   @ 2050ms]
-[violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard         @ 2150ms]
-[lifecycle DELIVERY_SLA/robot-2-1 Assigned -> Violated     (<jump>,        monitor) @ 2150ms]
+[lifecycle DELIVERY_SLA/robot-1-1 Proposed -> Assigned (assign, event) @ 21675ms]
+[lifecycle DELIVERY_SLA/robot-1-1 Assigned -> Accepted (accept, event) @ 22479ms]
+[lifecycle DELIVERY_SLA/robot-1-1 Accepted -> Delivering (start_delivery, event) @ 22479ms]
+[lifecycle DELIVERY_SLA/robot-1-1 Delivering -> Completed (complete, event) @ 46361ms]
 ```
 
-`robot-0-1` の `assign` と `accept` の間が 700 ms 空いているのは、6.4 で設定した `Assigned Dwell Ms` によるものです。
+各ロボットの契約は、そのロボット自身のイベントでだけ進みます。調停器は約 5 秒ごとに 1 件ずつ配達を割り当てるので、ロボットは順番に `Assigned` になります（この実行では約 5・11・16・22・27 秒）。`robot-1-1` の `assign` と `accept` の間が 700〜800 ms 空いているのは、6.4 で設定した `Assigned Dwell Ms` によるものです。バッテリ 15 の `robot-2-1` は、`assign` と同じフレームで `battery_guard` に検出されています。
 
 ### チェック 6
 
@@ -1050,7 +1050,8 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 | `[lifecycle ... robot-{id}-1 ...]` イベントが **5 体すべて** に出る | はい |
 | Battery 15 のロボットには `monitor:battery_guard` の violation が出る | はい |
 | 各ロボットの最初の遷移は `Proposed -> Assigned` | はい |
-| 各ロボットが 10 秒程度までに `Proposed -> Assigned` に進む（claim 待ちがあるので即時ではない） | はい |
+| ロボットは約 5 秒ごとに 1 台ずつ `Assigned` になる（調停器が 1 件ずつ配達を割り当てる）ので、最後の 1 台までは 25〜30 秒ほどかかる | はい |
+| ロボットの契約が `Completed` になるのは、**そのロボット**が配達を終えたときで、他のロボットの契約は一緒に動かない | はい |
 | Step 5 の Python と **同じ種類のイベント**（lifecycle 遷移・violation）が同じ意味で出ている | はい |
 
 ### よくある間違い
@@ -1078,7 +1079,7 @@ CADL で仕様を書き、IR に変換し、C# を生成し、リアルタイム
 | 仕様 | 約 100 行の CADL ファイル（Step 2 と 3） | なし — 仕様こそが唯一の source of truth |
 | IR | なし | 生成された JSON（同梱の例で 245 行） |
 | 可視化 | なし | Lifecycle View ページ |
-| 実装 | なし | 生成された Unity C#（同梱の例で 770 行） |
+| 実装 | なし | 生成された Unity C#（同梱の例で 783 行） |
 | ランタイム意味論 | なし | 動く状態機械 + monitors + deadline timers |
 
 これは SoS にとってなぜ重要なのか？ **同じ仕様がすべての成果物を駆動する** — ドキュメント、図、シミュレーション、コード。仕様を変える（例えば期限を 5s から 3s にする）ときは、1 つのファイルを編集して生成コマンド（`cadl sim-ir`、`cadl codegen`、または e2e スクリプト）を再実行します。すると IR も図も生成 C# も同じ出典から作り直され、同じ規則を別の場所で手作業で書き直す必要がありません。出典を 1 つに保てることが、大規模な SoS 設計の保守を助けます。
