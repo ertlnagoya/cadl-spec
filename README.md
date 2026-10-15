@@ -28,10 +28,11 @@ A self-paced workshop of about 95 minutes and a 5-session exercise course that w
 | Course A — Robot Delivery (main textbook) | [main-textbook](https://www.ertl.jp/cadl-spec/docs/handson/main-textbook) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/main-textbook) |
 | Course A — Exercises | [exercises](https://www.ertl.jp/cadl-spec/docs/handson/exercises) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/exercises) |
 | Course B — Urban Mobility (CADL × SUMO) | [mobility-sos-tutorial](https://www.ertl.jp/cadl-spec/docs/handson/mobility-sos-tutorial) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/mobility-sos-tutorial) |
+| Course D — Robot Town (rules a community amends itself) | [robot-town-tutorial](https://www.ertl.jp/cadl-spec/docs/handson/robot-town-tutorial) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/robot-town-tutorial) |
 
 Sources live under [`docs/handson/`](docs/handson/) (English) and [`i18n/ja/docusaurus-plugin-content-docs/current/handson/`](i18n/ja/docusaurus-plugin-content-docs/current/handson/) (Japanese).
 
-The runnable toolchain referenced by the hands-on lives in the companion repositories: [`cadl`](https://github.com/ertlnagoya/cadl) (compiler / CLI) and [`cadl-explorer`](https://github.com/ertlnagoya/cadl-explorer) (visualisation). The simulator used in Course A Steps 5–6 is [`cadl-raspimouse-simulator`](https://github.com/ertlnagoya/cadl-raspimouse-simulator) (Unity scene + arbitrator + Python runtime).
+The runnable toolchain referenced by the hands-on lives in the companion repositories: [`cadl`](https://github.com/ertlnagoya/cadl) (compiler / CLI) and [`cadl-explorer`](https://github.com/ertlnagoya/cadl-explorer) (visualisation). The simulator used in Course A Steps 5–6 is [`cadl-raspimouse-simulator`](https://github.com/ertlnagoya/cadl-raspimouse-simulator) (Unity scene + arbitrator + Python runtime). Course D's exercise is [`cadl-robot-town`](https://github.com/ertlnagoya/cadl-robot-town).
 
 ## Development
 
