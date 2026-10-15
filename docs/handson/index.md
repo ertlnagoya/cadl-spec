@@ -11,11 +11,11 @@ The materials fall into **two tracks**. Pick the one that matches your role.
 
 | Your role | What you do | Where to start |
 |---|---|---|
-| 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | [Why SoS-DSL?](academic-background.md) → [Code Walkthrough](code-walkthrough.md) (recommended before Course A) → [Course A](main-textbook.md) → B → C |
+| 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | [Why SoS-DSL?](academic-background.md) → [Code Walkthrough](code-walkthrough.md) (recommended before Course A) → [Course A](main-textbook.md) → B / D → C |
 | 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim [Why SoS-DSL?](academic-background.md) then jump to [Course C](exercises.md#course-c) |
 
 :::info[Repository availability]
-`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI), `cadl-explorer` (visualisation) and `cadl-raspimouse-simulator` (simulator) are public, so every step of Course A can be followed with public repositories. `mobility-sos-exercise`, used by Course B, is **not publicly available at present**.
+`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI), `cadl-explorer` (visualisation) and `cadl-raspimouse-simulator` (simulator) are public, so every step of Course A can be followed with public repositories. `cadl-robot-town`, used by Course D, is public too. `mobility-sos-exercise`, used by Course B, is **not publicly available at present**.
 :::
 
 ## 🗺️ First time here? A three-stage path
@@ -32,10 +32,11 @@ never asked to write code cold.
 
 ---
 
-## 🧑‍🎓 For learners — three courses
+## 🧑‍🎓 For learners — four courses
 
 All courses share the **same CADL/SoS-DSL syntax**; only the domain and target runtime change.
-Take them in order: A → B → C.
+Start with A. B and D are independent applied courses that both build on A; take either or both.
+Finish with C.
 
 ### Before you start: Why SoS-DSL?
 
@@ -73,6 +74,18 @@ After finishing, practice with the extra exercises:
 → [Course B — Urban Mobility](mobility-sos-tutorial.md)
 
 > Contrast with Course A: see what happens when you swap the domain *and* the codegen target while keeping the CADL syntax untouched.
+
+### Course D — Robot Town (applied)
+
+| Item | Details |
+|---|---|
+| **Domain** | Three delivery companies sharing the road network of the Raspberry Pi Mouse simulator |
+| **Target runtime** | A small Python simulation; norms judged by the Course A reference runtime (no Unity, no SUMO) |
+| **Time** | 90–120 min |
+| **Prerequisite** | Course A |
+| **You will learn** | **Amending a contract while the system runs**: a council (rule-based or an LLM) proposes new versions of the rules, which are adopted only through verification, a constitution, measured improvement and a vote; operating-mode switching with a safety invariant; how self-interested votes and a badly chosen objective steer the rules |
+
+→ [Course D — Robot Town](robot-town-tutorial.md)
 
 ### Course C — Model your own SoS (advanced)
 
@@ -117,4 +130,5 @@ After that, start with **[Why SoS-DSL?](academic-background.md)** and then **[Co
 | Course A — main textbook | [Robot Delivery](main-textbook.md) |
 | Course A — extra problems | [Exercises](exercises.md) |
 | Course B — mobility tutorial | [Urban Mobility](mobility-sos-tutorial.md) |
+| Course D — rules a community amends | [Robot Town](robot-town-tutorial.md) |
 | Course C — your own SoS | [Exercises Part 2](exercises.md#course-c) |
