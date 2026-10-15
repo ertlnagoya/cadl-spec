@@ -125,7 +125,7 @@ cadl sim-ir cadl/mobility_sos.cadl --format json \
 
 ## 3. 契約 (lifecycle + monitors) を読む（10 分）
 
-同じファイルの契約部分です（抜粋。各遷移の `on:` トリガ、残りの遷移、残りの monitor は省略し、`# ...` で示しています）。
+同じファイルの契約部分です（抜粋。`assume:` と `incentives:` のブロック、`accept` より後の遷移、monitor の `waiting_too_long` と `detour_guard` は省略し、各リスト末尾の `# ...` が省略した要素を表します。コメントは削除し、`on_violation:` / `on_match:` はフロー形式で書いています）。
 
 ```yaml
 contracts:

@@ -19,7 +19,7 @@ the tool. They are independent, so either can come first.
 
 No installation is required if you use
 **[CADL Explorer](https://cadl-explorer.streamlit.app/)**.
-The steps below describe CADL Explorer v0.5.1 (the hosted app shows its version in the sidebar, below the list of pages).
+The steps below describe CADL Explorer v0.5.3 (the hosted app shows its version in the sidebar, below the list of pages).
 
 ### A-1. Open CADL Explorer
 
@@ -146,7 +146,7 @@ lifecycles, monitors), use the **Designer** page.
 ## Path B — Write and check with the CLI {/* #path-b */}
 
 The reference implementation is the `cadl` command-line tool, distributed
-on PyPI as `cadl-lang`. The output below is from cadl 0.3.12.
+on PyPI as `cadl-lang`. The output below is from cadl 0.3.13.
 
 ### B-1. Install
 

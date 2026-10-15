@@ -15,7 +15,7 @@ title: "クイックスタート"
 
 ## 経路 A — ブラウザで試す（CADL Explorer） {/* #path-a */}
 
-**[CADL Explorer](https://cadl-explorer.streamlit.app/)** を使えばインストールは不要です。以下の手順は CADL Explorer v0.5.1 の画面にもとづいています（公開アプリでは，サイドバーのページ一覧の下に版が表示されます）。
+**[CADL Explorer](https://cadl-explorer.streamlit.app/)** を使えばインストールは不要です。以下の手順は CADL Explorer v0.5.3 の画面にもとづいています（公開アプリでは，サイドバーのページ一覧の下に版が表示されます）。
 
 ### A-1. CADL Explorer を開く
 
@@ -136,7 +136,7 @@ motivation:
 
 ## 経路 B — CLI で書いて検査する {/* #path-b */}
 
-リファレンス実装はコマンドラインツール `cadl` で，PyPI では `cadl-lang` という名前で配布しています。以下の出力は cadl 0.3.12 のものです。
+リファレンス実装はコマンドラインツール `cadl` で，PyPI では `cadl-lang` という名前で配布しています。以下の出力は cadl 0.3.13 のものです。
 
 ### B-1. インストール
 

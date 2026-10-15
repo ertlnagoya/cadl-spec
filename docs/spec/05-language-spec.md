@@ -186,7 +186,7 @@ the same indentation as `protocols:`.
       expr: "weekly_reward >= 0 AND weekly_reward <= 400"
 ```
 
-With this block appended, `cadl verify` (`cadl` 0.3.12) accepts the file and
+With this block appended, `cadl verify` (`cadl` 0.3.13) accepts the file and
 reports both entries as passed. For the entry with `expr:` it checks
 only that the predicate is satisfiable; it does not prove it against
 the model
@@ -352,8 +352,9 @@ five kinds of step.
 - **`barrier:`** — a synchronisation point: the protocol continues only
   when the given condition holds.
 
-The reference implementation (`cadl` 0.3) does not retain the `else:` branch
-or the barrier condition ([Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)).
+From `cadl` 0.3.10 the reference implementation retains the `else:` branch
+and the barrier condition; earlier releases discarded them
+([Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)).
 
 ```yaml
 protocols:

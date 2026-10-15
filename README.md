@@ -65,19 +65,15 @@ This command generates static content into the `build` directory and can be serv
 
 ### Deployment
 
-Using SSH:
+The site is published from the `gh-pages` branch with GitHub Pages and is
+served at <https://www.ertl.jp/cadl-spec/>. `npm run deploy` builds both
+locales and pushes the result to that branch:
 
 ```bash
-USE_SSH=true npm run deploy
+GIT_USER=<your GitHub username> npm run deploy
 ```
 
-Not using SSH:
-
-```bash
-GIT_USER=<Your GitHub username> npm run deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+With SSH access, `USE_SSH=true npm run deploy` does the same.
 
 ## License
 

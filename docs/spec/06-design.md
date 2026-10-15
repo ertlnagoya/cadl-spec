@@ -88,7 +88,10 @@ Protocol step senders/receivers match actor definitions, (4) Information
 sharing declarations refer to defined actors, (5) Value constraints for
 institutional parameters (0 ≤ α, β, λ ≤ 1), (6) from `cadl` 0.3.10, the
 static semantics of the SoS-DSL extension
-([Appendix E, Section E.4](./appendix-e-sos-dsl.md#e4-static-semantics)). Checking information sharing
+([Appendix E, Section E.4](./appendix-e-sos-dsl.md#e4-static-semantics)), (7) further checks of ids and values —
+duplicate ids, identifiers, `sharing:` entries, `autonomy:`, `severity:`, and the
+`deadline:` / `sampling:` values — listed in
+[Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03). Checking information sharing
 declarations against the actual message exchanges is planned.
 
 ### 6.2.3 Other Commands

@@ -40,7 +40,10 @@ explanations and examples, see
   Defined in [Section 5.2.2](./05-language-spec.md#522-actor-model) and
   [Appendix A, §A.3](./appendix-a-syntax.md#a3-context-actors-metrics).
 - **`autonomy`** — Actor attribute: `low`, `medium`, or `high` (default
-  `medium`). A descriptive label; it is not checked.
+  `medium`). From `cadl` 0.3.10 a value other than these three is an
+  error; the value is not checked against β or anything else.
+  `cadl sim-gen -t go` uses it to give the actor only the central
+  algorithm (`low`), only the local one (`high`), or both (`medium`).
 - **Contract** — Assume-guarantee constraint attached to a set of
   parties and an authority. The formal unit of institutional design.
   Defined in [Section 5.2.3](./05-language-spec.md#523-contract-model) and

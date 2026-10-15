@@ -413,11 +413,12 @@ must be declared, when it is indexed (`ROBOT[i]`) or is the object of a
 member access (`ROBOT.battery`), including inside an index; a name
 standing alone is taken as a state variable and is not checked. The
 predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
-and monitor `rule:` are not checked for undeclared actors. Other
+monitor `rule:`, lifecycle `when:`, and an `on:` that is not a message
+event are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. `cadl` 0.3
-deviates from this appendix as follows (checked against `cadl` 0.3.12).
+deviates from this appendix as follows (checked against `cadl` 0.3.13).
 
-- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.12; no
+- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.13; no
   deviation is known.
 - **Identifiers.** From `cadl` 0.3.9, `cadl check` reports as an error
   an actor, contract, protocol, or metric id, or a regime name, that is
@@ -426,7 +427,9 @@ deviates from this appendix as follows (checked against `cadl` 0.3.12).
   [Appendix E](./appendix-e-sos-dsl.md). From `cadl` 0.3.10 the same
   check applies to the names of lifecycle states, the ids of lifecycle
   transitions and monitors, and the violation labels of monitors. The
-  ids of verification entries are not checked.
+  ids of verification entries are not checked. Up to `cadl` 0.3.12 an
+  unquoted `true` or `false` used as such a name or as a regime name was
+  read by YAML as a boolean, became `True` / `False`, and was accepted.
 - **Ranges.** A range with a symbolic bound (`"TAXI[1..N]"`) is kept as
   written. `N` is not looked up in `environment:`, and an index is not
   checked against the declared range. `cadl sim-gen` writes a `count`
