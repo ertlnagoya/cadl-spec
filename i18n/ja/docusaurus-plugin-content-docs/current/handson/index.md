@@ -11,7 +11,7 @@ CADL と SoS-DSL のハンズオン教材は、目的別に 2 つのトラック
 
 | 読み手 | やること | 入口 |
 |---|---|---|
-| 🧑‍🎓 学習者 | 自分で CADL を書いて動かす | [なぜ SoS-DSL なのか？](academic-background.md) → [コード解説](code-walkthrough.md)（コース A の前に読むのを推奨） → [コース A（テキストブック）](../textbook/index.md) → B / D → C |
+| 🧑‍🎓 学習者 | 自分で CADL を書いて動かす | [コース A（テキストブック）](../textbook/index.md)（背景と全体構造も本文で説明しています） → B / D → C |
 | 🧑‍🔬 研究者 | 教材を自分の SoS の試作に流用する | [なぜ SoS-DSL なのか？](academic-background.md)を流し読み → [コース C](own-sos.md) |
 
 :::info[リポジトリの公開状況]
@@ -24,7 +24,7 @@ CADL と SoS-DSL のハンズオン教材は、目的別に 2 つのトラック
 
 | 段階 | 何をするか | 使う教材 | 目安 |
 |---|---|---|---|
-| **① 理解する** | 全体の構造（4 リポジトリ・仕様→IR→コード生成の流れ）と主要プログラムの役割を把握する | [なぜ SoS-DSL なのか？](academic-background.md)（流し読み可） → [全体構造とコード解説](code-walkthrough.md)（コース A の前に読むのを推奨） | 0.5〜1 日 |
+| **① 理解する** | 全体の構造（4 リポジトリ・仕様→IR→コード生成の流れ）と主要プログラムの役割を把握する | [テキストブック](../textbook/index.md)の第 1〜3 章（SoS の背景、ツールチェインと 4 つのリポジトリ、CADL 言語の要点）。背景をさらに知るには[なぜ SoS-DSL なのか？](academic-background.md) | 0.5〜1 日 |
 | **② 雛形で練習する** | 用意された骨組みをコピーして埋めながら、契約の記述 → 検査 → 可視化 → シミュレーション実行を一周する | [コース A（テキストブック）](../textbook/index.md) 第 1〜8 章 → 第 4〜9 章の終わりの ★・★★ 演習 | 1〜2 週間 |
 | **③ ゼロから作る** | 雛形なしで機能を追加する：新しい監視・状態の追加（★★★）、別ドメインのモデリング（コース C）、LLM による契約生成ループ（発展課題） | [テキストブック](../textbook/index.md)の ★★★ 演習と第 10 章 → [コース C](own-sos.md) | 興味に応じて |
 
@@ -111,7 +111,7 @@ cd ~/program/cadl_repo
 ./scripts/sos_dsl_handson_e2e.sh
 ```
 
-[テキストブック第 2 章](../textbook/02-toolchain-setup.md)（Step 0）のセットアップ（`cadl` リポジトリを `~/program/cadl_repo` としてクローン）が済んでいることが前提です。
+[テキストブック 2.4 節](../textbook/02-toolchain-setup.md)のセットアップ（`cadl` リポジトリを `~/program/cadl_repo` としてクローン）が済んでいることが前提です。
 スクリプトは同梱の `examples/sos_dsl_robot_delivery.cadl` に対して parse → IR → codegen を一気に通し、続きの案内を出します。
 最後の段階では、生成した C# を `cadl-raspimouse-simulator`（`cadl_repo` の隣にある想定）の Unity プロジェクトにコピーします。まだクローンしていない場合は、代わりに `./scripts/sos_dsl_handson_e2e.sh --unity ""` を実行してください。コード生成までで終了します。
 このあとは [なぜ SoS-DSL なのか？](academic-background.md) → [コース A（テキストブック）](../textbook/index.md) の順で本編に入るのが自然です。

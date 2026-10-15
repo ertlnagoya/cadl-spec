@@ -6,7 +6,7 @@ title: "Chapter 2 — The toolchain and setup"
 
 # Chapter 2 — The toolchain and setup
 
-This chapter explains the path by which diagrams, code and execution results are produced from a CADL file (the toolchain) and the four repositories it consists of, and then sets the tools up on your machine (Step 0).
+This chapter explains the path by which diagrams, code and execution results are produced from a CADL file (the toolchain) and the four repositories it consists of, and then sets the tools up on your machine (Section 2.4).
 
 ## 2.1 The big picture
 
@@ -14,7 +14,7 @@ You only need to write the leftmost box (a CADL file). Everything to its right i
 
 ```
    ┌────────────────────────┐
-   │  Your CADL source      │   ← You write this in Step 2 & 3
+   │  Your CADL source      │   ← You write this in Chapters 4 & 5
    │  my_delivery.cadl      │
    └──────────┬─────────────┘
               │
@@ -122,7 +122,7 @@ brew install python@3.11 go nats-server node
 
 ---
 
-## Step 0 — Setup (5 min)
+## 2.4 Setup (5 min)
 
 ### What you'll learn
 - The repositories that make up the toolchain and which branch of each one to use.
@@ -172,7 +172,7 @@ positional arguments:
     ...
 ```
 
-### Check 0
+### Check
 
 If `cadl codegen --help` lists `unity-csharp` among the `--target` choices (`{python,solidity,opa,unity-csharp}`), your install is correct.
 

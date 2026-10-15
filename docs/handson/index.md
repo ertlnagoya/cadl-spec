@@ -11,7 +11,7 @@ The materials fall into **two tracks**. Pick the one that matches your role.
 
 | Your role | What you do | Where to start |
 |---|---|---|
-| 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | [Why SoS-DSL?](academic-background.md) → [Code Walkthrough](code-walkthrough.md) (recommended before Course A) → [Course A (Textbook)](../textbook/index.md) → B / D → C |
+| 🧑‍🎓 **Learner** | Write CADL with your own hands and watch it run | [Course A (Textbook)](../textbook/index.md), which explains the background and the architecture itself → B / D → C |
 | 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim [Why SoS-DSL?](academic-background.md) then jump to [Course C](own-sos.md) |
 
 :::info[Repository availability]
@@ -26,7 +26,7 @@ never asked to write code cold.
 
 | Stage | What you do | Materials | Rough time |
 |---|---|---|---|
-| **① Understand** | Grasp the overall structure (four repositories; the spec → IR → codegen flow) and what each key program does | [Why SoS-DSL?](academic-background.md) (skimming is fine), then the [Architecture & Code Walkthrough](code-walkthrough.md) (recommended before Course A) | 0.5–1 day |
+| **① Understand** | Grasp the overall structure (four repositories; the spec → IR → codegen flow) and what each key program does | Chapters 1–3 of the [Textbook](../textbook/index.md) (the SoS background, the toolchain and its four repositories, the essentials of CADL); [Why SoS-DSL?](academic-background.md) for more background | 0.5–1 day |
 | **② Practise with templates** | Copy the provided skeletons and fill them in while going once around the loop: write a contract → check → visualise → run the simulation | [Course A (Textbook)](../textbook/index.md) Chapters 1–8, then the ★ / ★★ exercises at the end of Chapters 4–9 | 1–2 weeks |
 | **③ Build from scratch** | Add features with no template: new monitors and states (★★★), model a new domain (Course C), or the LLM contract-generation loop (advanced exercise) | ★★★ exercises and Chapter 10 of the [Textbook](../textbook/index.md), then [Course C](own-sos.md) | as your interest dictates |
 
@@ -110,7 +110,7 @@ cd ~/program/cadl_repo
 ./scripts/sos_dsl_handson_e2e.sh
 ```
 
-This assumes the setup in [Chapter 2 of the Textbook](../textbook/02-toolchain-setup.md) (Step 0) is done (the `cadl` repository cloned as
+This assumes the setup in [Section 2.4 of the Textbook](../textbook/02-toolchain-setup.md) is done (the `cadl` repository cloned as
 `~/program/cadl_repo`). The script runs the end-to-end pipeline (parse → IR → codegen) on the bundled
 `examples/sos_dsl_robot_delivery.cadl` and prints what to do next. Its last stage copies the generated C#
 into the Unity project of `cadl-raspimouse-simulator` (expected next to `cadl_repo`); if you have not

@@ -6,19 +6,17 @@ title: "Chapter 9 — Improving the specification"
 
 # Chapter 9 — Improving the specification
 
-## Session 5 — Improvement
+This chapter decides, from the results observed in Chapter 7, where to change the specification, and checks the change by running it again. The chapter consists of exercises only.
 
-### Learning objectives
+## 9.1 What you'll learn
 
 - Use observations from simulation to identify *which knob to turn*.
 - Adjust the spec at the right layer (deadline / monitor / lifecycle / actor / runtime).
 - Validate the change with a re-run.
 
-### Prerequisites
+## 9.2 Background
 
-- All deliverables from Sessions 1–4.
-
-### Concept introduction (~30 min)
+### Which layer fixes which symptom
 
 Each layer of the design has its own kind of fix:
 
@@ -32,22 +30,22 @@ Each layer of the design has its own kind of fix:
 
 This is a small but useful *typology of regressions* in normative SoS specs.
 
-### Exercises (~50 min in class + homework)
+## 9.3 Exercises
 
-#### Exercise 5.1 (★) — Diagnose one failure
+### Exercise 9.1 (★) — Diagnose one failure
 
-**Goal**: Pick *one* violation from your Session 4 traces. Explain in 1 paragraph: which layer would you change, and how.
+**Goal**: Pick *one* violation from your Chapter 7 traces. Explain in 1 paragraph: which layer would you change, and how.
 
 **Submit**: `session5_diagnosis.md` (1 page).
 
-#### Exercise 5.2 (★★) — Apply the fix
+### Exercise 9.2 (★★) — Apply the fix
 
 **Goal**: Implement your diagnosis. Save the fixed spec as `my_delivery_v3.cadl`.
 
 **Procedure**:
 
 1. Make the change you diagnosed in 5.1.
-2. Generate the IR of the new file and re-run the demo against it, as in Exercise 4.2:
+2. Generate the IR of the new file and re-run the demo against it, as in Exercise 7.2:
 
    ```bash
    cd ~/program/cadl_repo
@@ -60,14 +58,14 @@ This is a small but useful *typology of regressions* in normative SoS specs.
 
 **Submit**: `my_delivery_v3.cadl` + diff against v2.
 
-#### Exercise 5.3 (★★★) — Implement reward execution
+### Exercise 9.3 (★★★) — Implement reward execution
 
 **Goal**: Currently a reward is *written* in the spec (`incentives.rules`) but never *applied* — and the rule text does not even reach the runtime. When the spec is lowered to the IR (`cadl_repo/src/cadl/sim/lower.py`), only `lambda` and `incentive_type` are kept, under the contract's `governance`; the `rules` list is dropped. Make the Python runtime maintain a per-actor balance and credit a reward when a contract reaches `Completed`.
 
 **Procedure**:
 
 1. Extend `ContractRuntime` with `balances: dict[str, float]`, accessor `runtime.balance(actor_id)`, and a way to receive the rules, for example `ContractRuntime(ir, log_path=None, reward_rules=[...])`.
-2. Get the rules. Because the IR does not carry them, read them from the `.cadl` source with the cadl parser **in a separate script that writes them to JSON** (if your file has no `incentives:` block, add the one from Step 2 of the main textbook):
+2. Get the rules. Because the IR does not carry them, read them from the `.cadl` source with the cadl parser **in a separate script that writes them to JSON** (if your file has no `incentives:` block, add the one from Chapter 4):
 
    ```python
    # dump_rules.py — run with the Python environment where cadl-lang is installed
@@ -97,7 +95,7 @@ This is a small but useful *typology of regressions* in normative SoS specs.
 
 **Reflection**: The CADL spec already says `reward(ROBOT[i], 10) when on_time_delivery`, but until this exercise the runtime ignored it — the IR did not even carry it. **Where is the line between "the spec says so" and "the runtime does so"?**
 
-#### Exercise 5.4 (★★★) — Final report
+### Exercise 9.4 (★★★) — Final report
 
 **Goal**: A 3-page report covering the entire course.
 
@@ -107,9 +105,15 @@ This is a small but useful *typology of regressions* in normative SoS specs.
 | 2 | Simulation results — baseline vs your modifications. Tables and at least one screenshot from cadl-explorer. |
 | 3 | Reflection: what did *adding norms* buy you? What did *running the simulation* teach you that the spec alone could not? Where do you think SoS-DSL could go next? |
 
-### Wrap-up
+### Using this chapter in a class
 
-**Submit by end of Session 5**:
+**Before the session.**
+
+- All deliverables from Chapters 4–7.
+
+**Wrap-up and homework.**
+
+**Submit by the end of the last session (Chapter 9)**:
 
 - `my_delivery_v1.cadl` / `v2.cadl` / `v3.cadl`.
 - `session5_diagnosis.md` + final report (3 pages).

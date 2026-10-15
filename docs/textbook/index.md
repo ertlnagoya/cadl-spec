@@ -16,7 +16,7 @@ title: "Introduction"
 
 ## How this textbook is organised
 
-This textbook combines the Course A hands-on (Steps 0–6) with the exercises of a five-session class on the same robot-delivery system.
+This textbook is Course A of the CADL hands-on materials. It walks once through the whole toolchain on a robot-delivery system and adds, at the end of Chapters 4–9, the exercises of a five-session class on the same system.
 
 | Part | Chapters |
 | --- | --- |

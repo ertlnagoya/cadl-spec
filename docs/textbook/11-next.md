@@ -6,11 +6,11 @@ title: "Chapter 11 — Where to go next"
 
 # Chapter 11 — Where to go next
 
-## Wrap-up — What did we just learn?
+## 11.1 What you learned
 
 | Layer | We wrote | We didn't write |
 | --- | --- | --- |
-| Spec | a CADL file of about 100 lines (Steps 2 & 3) | nothing — the spec was the only source |
+| Spec | a CADL file of about 100 lines (Chapters 4 and 5) | nothing — the spec was the only source |
 | IR | nothing | generated JSON (245 lines for the bundled example) |
 | Visualisation | nothing | the Lifecycle View page |
 | Implementation | nothing | generated Unity C# (783 lines for the bundled example) |
@@ -20,7 +20,7 @@ Why does this matter for SoS? **The same specification powers everything**: the 
 
 ---
 
-## What's next?
+## 11.2 What's next
 
 Each chapter from 4 to 9 ends with the exercises of one class session (19 exercises in total, graded ★ to ★★★), and Chapter 10 adds one optional advanced exercise. They rebuild and then modify the system you just built one axis at a time — tighter deadlines, new monitors, new lifecycle states, reward execution, a violation-trace view. [Appendix B](appendix-b-teaching.md) shows how to run them as a 5-session (or 3-session) class.
 

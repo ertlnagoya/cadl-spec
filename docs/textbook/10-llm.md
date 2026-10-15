@@ -6,9 +6,9 @@ title: "Chapter 10 — Generating contracts with an LLM"
 
 # Chapter 10 — Generating contracts with an LLM
 
-## Advanced exercise (optional, ★★★) — LLM-generated contracts: the propose-and-check loop
+## 10.1 Advanced exercise (optional, ★★★): the propose-and-check loop
 
-**Overview.** In Part 1 you wrote the contracts by hand. In this
+**Overview.** In Chapters 4–9 you wrote the contracts by hand. In this
 advanced exercise you build and evaluate a loop in which an **LLM
 generates the CADL contract from natural-language operating rules**
 ("respond within 5 seconds", "never assign a low-battery robot") and is
@@ -23,7 +23,7 @@ not that its deadlines and rules are the right ones.
 
 - A draft that passes the check is **not necessarily what you meant**.
   Compare the accepted draft's `deadline` values and monitor rules
-  against the contract you hand-wrote in Step 3 — noticing that
+  against the contract you hand-wrote in Chapter 5 — noticing that
   "passes ≠ matches intent" is the single biggest lesson here.
 - Feed failure diagnostics back to the LLM **verbatim**. Record what
   it managed to fix and what it could not.

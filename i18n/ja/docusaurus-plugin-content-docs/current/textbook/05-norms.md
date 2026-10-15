@@ -6,16 +6,25 @@ title: "第 5 章 — 規範を書く"
 
 # 第 5 章 — 規範を書く
 
-## Step 3 — SoS-DSL の契約 (lifecycle + monitors) を追加する (15 分)
+この章では、第 4 章で書いた契約に、SoS-DSL 拡張のライフサイクルと監視ルールを加えます（約 15 分）。演習では、状態や監視ルールを足し、2 つの契約を共存させます。
 
-### 学ぶこと
+## 5.1 学ぶこと
+
+**手順で：**
+
 - 契約インスタンスが取りうる **7 つのライフサイクル状態**。
 - 遷移に期限を付け、期限切れのときにインスタンスをどの状態へ移すかを指定する `deadline` + `on_violation` の書き方。
 - ワールドスナップショットの述語で動く周期的 `monitor` の書き方。
 
-### 背景
+**演習で：**
 
-クラスレベルの契約仕様（Step 2）は **合意** を記述しますが、実際の SoS では同じ合意の **複数の同時インスタンス** が存在します — 配送要求 1 件につき 1 インスタンス。各インスタンスは独自の状態を持ち、時間とともに進行します。
+- 構造的な契約に、インスタンスごとの `lifecycle:` を追加できる。
+- 述語とサンプリング指定を持つ宣言的 `monitors:` を追加できる。
+- `cadl sim-ir` の JSON 出力を読み、自分が追加した部分を特定できる。
+
+## 5.2 背景
+
+クラスレベルの契約仕様（第 4 章）は **合意** を記述しますが、実際の SoS では同じ合意の **複数の同時インスタンス** が存在します — 配送要求 1 件につき 1 インスタンス。各インスタンスは独自の状態を持ち、時間とともに進行します。
 
 ```mermaid
 stateDiagram-v2
@@ -35,7 +44,29 @@ stateDiagram-v2
 
 **同じライフサイクル** が全配送要求に再利用され、データ（どのロボット、どの顧客）だけが異なります。
 
-### 手順
+### クラスとインスタンス
+
+クラスレベルの契約仕様は「私たちが結ぶ合意の*種類*」を語ります。しかし、各具体的な配送はその合意の **インスタンス** であり、次のように進行します：
+
+```mermaid
+stateDiagram-v2
+  [*] --> Proposed
+  Proposed --> Assigned: assign
+  Assigned --> Accepted: 期限内に ack
+  Assigned --> Violated: 期限切れ
+  Accepted --> Delivering: status==InTransit
+  Delivering --> Completed: status==Delivered
+  Delivering --> Violated: monitor 発火
+  Completed --> [*]
+  Violated --> [*]
+```
+
+これを明示的に書けるようにするキーが 2 つあります。
+
+- `lifecycle:` — 状態、初期 / 終端マーカー、`deadline` + `on_violation` 付き遷移
+- `monitors:` — 周期的またはイベント駆動で評価される宣言的な観測者。`rule` が成立すると、違反を記録する（`on_match.violation`）、契約インスタンスを指定した状態（`on_match.transition`、例：`Violated`）へ移す、またはその両方を行う
+
+## 5.3 手順
 
 まず `my_delivery.cadl` の先頭付近で、このファイルが SoS-DSL 拡張を使うことを宣言します。[Appendix E](../spec/appendix-e-sos-dsl.md) はこの宣言を求めており（SHOULD）、同梱の例にも入っています。
 
@@ -122,7 +153,7 @@ sos:
 cadl check my_delivery.cadl
 ```
 
-### 期待される出力
+## 5.4 期待される出力
 
 ```
 $ cadl check my_delivery.cadl
@@ -151,75 +182,38 @@ monitors[0].id    : battery_guard
   rule            : ROBOT[i].battery < 20 AND state == Assigned
 ```
 
-### チェック 3
+## 5.5 チェック
 
-1. Step 2 と Step 3 の差分は **`extensions:` の宣言と新ブロック 2 つだけ**。アクターは変更なし。
+1. 第 4 章と第 5 章の差分は **`extensions:` の宣言と新ブロック 2 つだけ**。アクターは変更なし。
 2. IR の `"lifecycle": null` がオブジェクトになり、`"monitors": []` が要素 1 のリストになった。
 
-### よくある間違い
+## 5.6 よくある間違い
 
 | 症状 | 原因 |
 | --- | --- |
-| `cadl check` は通るが，IR が `"lifecycle": null` になり，Step 4 で状態が表示されない | `lifecycle:` ブロックのインデントが違い，契約の一部として読まれていない。`lifecycle:` は `assume:` / `guarantee:` と同じレベルに置き，`states:` はその 1 段下に書く。チェッカはこの誤りを報告しない。 |
+| `cadl check` は通るが，IR が `"lifecycle": null` になり，第 6 章で状態が表示されない | `lifecycle:` ブロックのインデントが違い，契約の一部として読まれていない。`lifecycle:` は `assume:` / `guarantee:` と同じレベルに置き，`states:` はその 1 段下に書く。チェッカはこの誤りを報告しない。 |
 | `on:` がブール値として解釈されてしまう | YAML 1.1 の癖。CADL のパーサは内部に `_yaml_on_key` の回避策を持っているので同梱の例は正しく動く。自分でパーサを書くときは注意。 |
 | `monitor.rule` が常に false | `state == Assigned` の右辺は **裸の識別子** で OK（CADL の慣習）。`"Assigned"` のように quote すると意味が変わる。 |
 
-### おさらい
+## 5.7 おさらい
 
-同じファイルで構造（Step 2）と規範（Step 3）の両方を記述しました。IR はもう「構造のみ」ではなく、ランタイムを構築できる情報を持っています。
+同じファイルで構造（第 4 章）と規範（第 5 章）の両方を記述しました。IR はもう「構造のみ」ではなく、ランタイムを構築できる情報を持っています。
 
----
+## 5.8 演習
 
-## 第 2 回 — DSL 設計
+### 演習 5.1 (★) — 基本的なライフサイクルを追加
 
-### 学習目標
-
-- 構造的な契約に、インスタンスごとの `lifecycle:` を追加できる。
-- 述語とサンプリング指定を持つ宣言的 `monitors:` を追加できる。
-- `cadl sim-ir` の JSON 出力を読み、自分が追加した部分を特定できる。
-
-### 前提
-
-- 第 1 回の `my_delivery_v1.cadl`
-- 事前読書 30 分：cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)。
-
-### 概念導入（約 30 分）
-
-クラスレベルの契約仕様は「私たちが結ぶ合意の*種類*」を語ります。しかし、各具体的な配送はその合意の **インスタンス** であり、次のように進行します：
-
-```mermaid
-stateDiagram-v2
-  [*] --> Proposed
-  Proposed --> Assigned: assign
-  Assigned --> Accepted: 期限内に ack
-  Assigned --> Violated: 期限切れ
-  Accepted --> Delivering: status==InTransit
-  Delivering --> Completed: status==Delivered
-  Delivering --> Violated: monitor 発火
-  Completed --> [*]
-  Violated --> [*]
-```
-
-これを明示的に書けるようにするキーが 2 つあります。
-
-- `lifecycle:` — 状態、初期 / 終端マーカー、`deadline` + `on_violation` 付き遷移
-- `monitors:` — 周期的またはイベント駆動で評価される宣言的な観測者。`rule` が成立すると、違反を記録する（`on_match.violation`）、契約インスタンスを指定した状態（`on_match.transition`、例：`Violated`）へ移す、またはその両方を行う
-
-### 演習（授業 50 分 + 宿題）
-
-#### 演習 2.1 (★) — 基本的なライフサイクルを追加
-
-**目的**: `my_delivery_v1.cadl` を `my_delivery_v2.cadl` として保存し、`DELIVERY_SLA` にメイン教材の 7 状態を持つ `lifecycle:` ブロックを追加。
+**目的**: `my_delivery_v1.cadl` を `my_delivery_v2.cadl` として保存し、`DELIVERY_SLA` に5.3 節の 7 状態を持つ `lifecycle:` ブロックを追加。
 
 **手順**:
 
 1. `v1` → `v2` をコピー。
 2. `lifecycle.states`、`lifecycle.initial`、`lifecycle.terminal` と 4 つの遷移（`assign`、`accept`、`start_delivery`、`complete`）を追加。
-3. `accept` に `deadline: 5s` と `on_violation.transition: Violated` を設定（値は移動先の状態名）。あわせて、メイン教材の Step 3 と同じく `sos:` の下に `extensions: [sos-dsl: 0.1]` を宣言する。
-4. `cadl check my_delivery_v2.cadl` を実行し、続けて `cadl sim-ir my_delivery_v2.cadl --format json | grep -n -A3 '"lifecycle"'` を実行（`"lifecycle"` キーは IR のかなり後ろにある。メイン教材のファイルでは 86 行目、第 1 回でアクターや契約を追加していればさらに後ろになるので、`head` では途中で切れて見えない）。
-5. 出力で `"lifecycle"` が `null` でなくなったことを確認：行が `"lifecycle": {` になり、続いて `"states": [` と最初の状態名が並ぶ。演習 1.2 で `MAINTENANCE_SLA` を追加している場合、`grep` はその契約の分も出力し、そちらは `"lifecycle": null` のままになる。lifecycle を持つのは `DELIVERY_SLA` だけなので、これで正しい。
+3. `accept` に `deadline: 5s` と `on_violation.transition: Violated` を設定（値は移動先の状態名）。あわせて、5.3 節と同じく `sos:` の下に `extensions: [sos-dsl: 0.1]` を宣言する。
+4. `cadl check my_delivery_v2.cadl` を実行し、続けて `cadl sim-ir my_delivery_v2.cadl --format json | grep -n -A3 '"lifecycle"'` を実行（`"lifecycle"` キーは IR のかなり後ろにある。5.3 節のファイルでは 86 行目、第 4 章でアクターや契約を追加していればさらに後ろになるので、`head` では途中で切れて見えない）。
+5. 出力で `"lifecycle"` が `null` でなくなったことを確認：行が `"lifecycle": {` になり、続いて `"states": [` と最初の状態名が並ぶ。演習 4.2 で `MAINTENANCE_SLA` を追加している場合、`grep` はその契約の分も出力し、そちらは `"lifecycle": null` のままになる。lifecycle を持つのは `DELIVERY_SLA` だけなので、これで正しい。
 
-#### 演習 2.2 (★★) — 過速度モニターを追加
+### 演習 5.2 (★★) — 過速度モニターを追加
 
 **目的**: 配送中に 1.5 m/s を超えて走るロボットを検出し、severity `Critical` で `Violated` へ強制遷移させる。
 
@@ -237,7 +231,7 @@ stateDiagram-v2
 
 **振り返り**: ロボットの制御コード（Unity 側の `Pilot_CSoS.cs`）を 1 行も変えずに *新しい規範ルール* を追加しました。これは構造コードと規範仕様の分離について何を語っていますか？（[Maier 1998] の条件 (4)「創発的振る舞い」と比べてみてください。ここでは規範が、構成要素を再設計することなく創発的振る舞いを *制約* しています）
 
-#### 演習 2.3 (★★) — Cancelled 状態を追加
+### 演習 5.3 (★★) — Cancelled 状態を追加
 
 **目的**: ロボットがまだ `Assigned` の段階で顧客が配送をキャンセルできるようにし、新しい `Cancelled` 終端状態にルーティングする。
 
@@ -249,7 +243,7 @@ stateDiagram-v2
 
 **振り返り**: `Cancelled` を追加したとき、既存のシミュレーションは壊れましたか？ なぜですか？ （状態追加は後方互換だが、deadline 追加は違う。）
 
-#### 演習 2.4 (★★★) — 2 つの契約を共存させる
+### 演習 5.4 (★★★) — 2 つの契約を共存させる
 
 **目的**: `DELIVERY_SLA` とは別に `FLEET_SAFETY` 契約を新設する。そのライフサイクルは個別の配送とは独立していて、ロボットが稼働している間はずっと有効な契約。
 
@@ -261,9 +255,16 @@ stateDiagram-v2
 
 **振り返り**: 同じロボットが *両方の* 契約の当事者になり得ます。一方が「進めてよい」と言い、もう一方が「停止せよ」と言うとき、どんな意味論を望みますか？
 
-### まとめ + 宿題
+### 授業で使う場合
 
-**第 3 回に持参**:
+**授業の前に。**
+
+- 第 4 章の `my_delivery_v1.cadl`
+- 事前読書 30 分：本書の 3.7〜3.9 節（さらに詳しくは仕様書の [付録 E](../spec/appendix-e-sos-dsl.md)）。
+
+**まとめと宿題。**
+
+**次の授業（第 6 章）に持参**:
 
 - `my_delivery_v2.cadl`（最低限 2.1〜2.3 を完了）
 - IR JSON スナップショット `my_delivery_v2.ir.json`（`cadl sim-ir … --format json > my_delivery_v2.ir.json`）

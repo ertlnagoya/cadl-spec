@@ -6,15 +6,38 @@ title: "Chapter 6 — Visualising the lifecycle"
 
 # Chapter 6 — Visualising the lifecycle
 
-## Step 4 — Visualise the lifecycle (15 min)
+This chapter draws the lifecycle of the contract with cadl-explorer and reads the diagram (about 15 minutes). In the exercises you compare the specification before and after adding the norms, and build a page that shows violations on a timeline.
 
-### What you'll learn
-- How to read the **Contract Lifecycle** page of cadl-explorer (this course calls what it shows the *Lifecycle View*).
+## 6.1 What you'll learn
+
+**In the procedure:**
+
+- How to read the **Contract Lifecycle** page of cadl-explorer (this textbook calls what it shows the *Lifecycle View*).
 - How visual conventions (double circle, dashed border, red edge) map to the spec.
 
-### Procedure
+**In the exercises:**
 
-Install into the virtual environment you activated in Step 0 (`cadl_repo/.venv`); `requirements.txt` asks for the same `cadl-lang` package that Step 0 installed from the clone, so nothing is replaced.
+- Explain the visual conventions to an audience that does not know CADL.
+- Compare two specs (v1 vs v2) using diagrams.
+
+## 6.2 Background
+
+### Reading the Lifecycle View
+
+Software engineers debug code. SoS engineers debug **diagrams** — because the system is too distributed to step through with a debugger. The Lifecycle View is your debugger.
+
+| Visual element | What it means |
+| --- | --- |
+| Double circle | `lifecycle.initial` |
+| Dashed box, green fill | terminal state `Completed` |
+| Dashed box, red fill | terminal state `Violated` |
+| Dashed box, grey fill | other terminal states (e.g., `Terminated`, `Cancelled`) |
+| Solid edge with `Δ 5s` | transition with a `deadline` |
+| Red dashed edge | the forced move to the `on_violation` target state |
+
+## 6.3 Procedure
+
+Install into the virtual environment you activated in Chapter 2 (`cadl_repo/.venv`); `requirements.txt` asks for the same `cadl-lang` package that Chapter 2 installed from the clone, so nothing is replaced.
 
 ```bash
 cd ~/program/cadl-explorer
@@ -32,7 +55,7 @@ Two ways to load IR JSON:
 
 > **Shortcut.** The **Designer** page draws the same diagram straight from a `.cadl` file, without the `cadl sim-ir` step: open the file under **Open an existing CADL file** and switch the view to **Lifecycle**. It can also step through one contract instance. This step uses the IR on purpose, because the IR is what the simulator and the generated runtime read.
 
-### What you should see
+## 6.4 What you should see
 
 The screenshot below shows the page with **(b), the bundled example**: the sidebar with the uploader and the example selector on the left, the lifecycle diagram in the middle, and the lifecycle metadata on the right.
 
@@ -96,7 +119,7 @@ Visual conventions:
 | Solid edge, label `Δ 5s` | transition with `deadline_ms = 5000` |
 | **Red dashed edge** with label `violation Major` | the forced move to the `on_violation` target state |
 
-### Check 4
+## 6.5 Check
 
 Take a screenshot of your lifecycle (or just look carefully) and confirm:
 
@@ -104,42 +127,13 @@ Take a screenshot of your lifecycle (or just look carefully) and confirm:
 - There is exactly one **red dashed edge** going from `Assigned` to `Violated`. That is the forced move to `Violated` when the `accept` deadline expires. (The bundled example also draws three solid `now > request.deadline` edges into `Violated`, one for each state the `late_failure` transition can leave.)
 - The monitors table shows `battery_guard` with sampling `periodic(500ms)` and severity `Major`.
 
-### Recap
+## 6.6 Recap
 
 The diagram is generated **directly from the IR JSON** with zero hand-coding. If you change `deadline: 5s` to `deadline: 10s` in your CADL file, regenerate the IR, refresh the page — the edge label will read `Δ 10s`.
 
----
+## 6.7 Exercises
 
-## Session 3 — Visualisation
-
-### Learning objectives
-
-- Use cadl-explorer's Lifecycle View to read a contract spec at a glance.
-- Identify the visual conventions and explain what they mean to a non-CADL audience.
-- Compare two specs (v1 vs v2) using diagrams.
-
-### Prerequisites
-
-- `my_delivery_v2.cadl` from Session 2.
-- `my_delivery_v2.ir.json`.
-- (Optional) Step 4 of the main hands-on if you have not yet opened cadl-explorer.
-
-### Concept introduction (~30 min)
-
-Software engineers debug code. SoS engineers debug **diagrams** — because the system is too distributed to step through with a debugger. The Lifecycle View is your debugger.
-
-| Visual element | What it means |
-| --- | --- |
-| Double circle | `lifecycle.initial` |
-| Dashed box, green fill | terminal state `Completed` |
-| Dashed box, red fill | terminal state `Violated` |
-| Dashed box, grey fill | other terminal states (e.g., `Terminated`, `Cancelled`) |
-| Solid edge with `Δ 5s` | transition with a `deadline` |
-| Red dashed edge | the forced move to the `on_violation` target state |
-
-### Exercises (~50 min in class + homework)
-
-#### Exercise 3.1 (★) — Visualise both v1 and v2
+### Exercise 6.1 (★) — Visualise both v1 and v2
 
 **Goal**: Open cadl-explorer and load both `v1` and `v2` IR files. Identify *exactly* what the Lifecycle View shows for v1 vs v2.
 
@@ -150,11 +144,11 @@ Software engineers debug code. SoS engineers debug **diagrams** — because the 
 3. Open the **Contract Lifecycle** page (in the list of pages at the top of the sidebar). Upload v1 first, then v2.
 4. Take screenshots.
 
-**Check**: For v1, the page should display a warning that the contract has no lifecycle. For v2, it should render a state machine with 8 states (7 if you skipped Exercise 2.3, which adds `Cancelled`).
+**Check**: For v1, the page should display a warning that the contract has no lifecycle. For v2, it should render a state machine with 8 states (7 if you skipped Exercise 5.3, which adds `Cancelled`).
 
-#### Exercise 3.2 (★★) — A/B comparison report
+### Exercise 6.2 (★★) — A/B comparison report
 
-**Goal**: Write a 1-page A/B comparison report: *the same contract, before and after Session 2's normative additions*.
+**Goal**: Write a 1-page A/B comparison report: *the same contract, before and after Chapter 5's normative additions*.
 
 **Procedure**: A 1-page Markdown document, with:
 
@@ -165,9 +159,9 @@ Software engineers debug code. SoS engineers debug **diagrams** — because the 
 
 **Submit**: `session3_comparison.md` + the two screenshots.
 
-#### Exercise 3.3 (★★★) — Build a Violation Trace View
+### Exercise 6.3 (★★★) — Build a Violation Trace View
 
-**Goal**: Add a new Streamlit page to cadl-explorer that ingests an NDJSON log produced by `multi_robot_demo --log <path>` (you'll have one in Session 4) and displays it as a Gantt-style timeline.
+**Goal**: Add a new Streamlit page to cadl-explorer that ingests an NDJSON log produced by `multi_robot_demo --log <path>` (you'll have one in Chapter 7) and displays it as a Gantt-style timeline.
 
 **Procedure**:
 
@@ -189,11 +183,19 @@ Software engineers debug code. SoS engineers debug **diagrams** — because the 
 
 With the baseline log you should get five rows, `robot-0-1` to `robot-4-1`, and three red markers.
 
-This builds on what you would expect to see *in advance* — by the time Session 4 runs simulation, you'll have a viewer ready for its output.
+This builds on what you would expect to see *in advance* — by the time Chapter 7 runs simulation, you'll have a viewer ready for its output.
 
-### Wrap-up + homework
+### Using this chapter in a class
 
-**Bring to Session 4**:
+**Before the session.**
+
+- `my_delivery_v2.cadl` from Chapter 5.
+- `my_delivery_v2.ir.json`.
+- (Optional) Sections 6.1–6.6 if you have not yet opened cadl-explorer.
+
+**Wrap-up and homework.**
+
+**Bring to the next session (Chapter 7)**:
 
 - `session3_comparison.md` + 2 screenshots.
 - (Optional) The `violation_trace_view.py` code from 3.3.

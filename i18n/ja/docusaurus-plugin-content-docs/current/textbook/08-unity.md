@@ -6,13 +6,16 @@ title: "第 8 章 — Unity でシミュレーションを動かす"
 
 # 第 8 章 — Unity でシミュレーションを動かす
 
-## Step 6 — Unity でシミュレーションを動かす (15 分)
+この章では、生成した契約コードを Unity のロボット群シミュレーションに組み込み、動いているシミュレーションの中で違反が検出されるのを確かめます（約 15 分）。
 
-### 学ぶこと
+## 8.1 学ぶこと
+
 - 既存シーンに `ContractRuntimeHost` と `PilotContractBridge` を組み込む方法。
 - Unity Console でリアルタイムの contract イベントを読む方法。
 
-### 6.1 NATS と arbitrator を起動
+## 8.2 手順
+
+### NATS と arbitrator を起動
 
 **2 つ**の別 Terminal で：
 
@@ -54,7 +57,7 @@ go run .
 >
 > 起動直後に `[Config] … taskArbitration.enabled=true …` が表示されれば config を読めています。
 
-### 6.2 C-SoS シーンを開く
+### C-SoS シーンを開く
 
 1. Unity Hub を起動。`~/program/cadl-raspimouse-simulator/unity` を **Unity 6000.2.9f1 (Unity 6.2)** で開く。
 2. 初回オープンはパッケージの取得と Library の構築で数分かかる。
@@ -68,11 +71,11 @@ Scene ビューで経路網が小さく見える場合は、Hierarchy で `road`
 
 > #### 🛠 Unity のバージョンに注意
 >
-> このプロジェクトは **Unity 6000.2.9f1** で保存されており（`ProjectSettings/ProjectVersion.txt` に記録）、本コースの動作確認もこのバージョンで行っています。Unity Hub からインストールしてください。プロジェクトを追加したときに対応する Editor が無ければ、Unity Hub がインストールを案内します。
+> このプロジェクトは **Unity 6000.2.9f1** で保存されており（`ProjectSettings/ProjectVersion.txt` に記録）、本書の動作確認もこのバージョンで行っています。Unity Hub からインストールしてください。プロジェクトを追加したときに対応する Editor が無ければ、Unity Hub がインストールを案内します。
 >
-> Unity 2022.3 以前では開かないでください。`Packages/manifest.json` には Unity 6 にしか無いパッケージが含まれています。より新しい Unity 6 で開くと初回にプロジェクトのアップグレードを求められますが、本コースでは未確認です。
+> Unity 2022.3 以前では開かないでください。`Packages/manifest.json` には Unity 6 にしか無いパッケージが含まれています。より新しい Unity 6 で開くと初回にプロジェクトのアップグレードを求められますが、本書では未確認です。
 
-### 6.3 ContractRuntimeHost を追加（シーンに 1 つだけ）
+### ContractRuntimeHost を追加（シーンに 1 つだけ）
 
 ```
 Hierarchy ▸ 右クリック ▸ Create Empty
@@ -90,7 +93,7 @@ Contract Runtime Host (Script)
 
 ![Hierarchy で ContractRuntimeHost を選択した Unity エディタ。Inspector に Contract Runtime Host コンポーネントが表示され、Log To Console にチェックが入っている](/img/handson/unity-contract-runtime-host.jpg)
 
-### 6.4 各ロボットに PilotContractBridge を追加
+### 各ロボットに PilotContractBridge を追加
 
 Hierarchy 上部の検索欄に `Pilot_CSoS` と入れると、5 体のロボットだけに絞り込めます。
 
@@ -120,11 +123,11 @@ Pilot Contract Bridge (Script)
 
 シーンを保存（`Cmd+S` / `Ctrl+S`）。
 
-### 6.5 Play を押す
+### Play を押す
 
 Editor 上部の ▶ をクリック。
 
-### 表示されるもの
+## 8.3 表示されるもの
 
 Console に以下のような行が連続的に出ます。Console の検索欄に `lifecycle DELIVERY_SLA` または `violation` と入れて絞り込めます。
 
@@ -153,7 +156,49 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 
 各ロボットの契約は、そのロボット自身のイベントでだけ進みます。調停器は約 5 秒ごとに 1 件ずつ配達を割り当てるので、ロボットは順番に `Assigned` になります（この実行では約 5・11・16・22・27 秒）。`robot-1-1` の `assign` と `accept` の間が 700〜800 ms 空いているのは、6.4 で設定した `Assigned Dwell Ms` によるものです。バッテリ 15 の `robot-2-1` は、`assign` と同じフレームで `battery_guard` に検出されています。
 
-### チェック 6
+## 8.4 シーンの中の部品
+
+**C# が Unity で動く**。シーン上の `ContractRuntimeHost` が毎フレーム `Runtime.Tick(now)` を呼び、期限切れと監視ルールを評価します。各ロボットに付けた `PilotContractBridge` が、ロボットの状態変化（配送を落札した・配達を終えた）を**契約イベント**（`route_assignment` や `Delivered`）に翻訳し、そのロボット自身の契約インスタンスに流し込みます。違反や状態遷移は Console に 1 行ずつ出ます：
+
+```
+[lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned (assign, event) @ 16112ms]
+[violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard @ 16112ms]
+```
+
+### 手書きの橋渡し — `SoSDsl/Demo/`
+
+| ファイル | 中身 |
+| --- | --- |
+| `ContractRuntimeHost.cs` | シーンに 1 つ。ランタイムを保持し、毎フレーム Tick し、イベントを Console に印字 |
+| `PilotContractBridge.cs` | ロボットごとに 1 つ。`Pilot_CSoS` を**観測**して契約イベントに翻訳。`Assigned Dwell Ms`（700ms）は周期監視が Assigned 状態を見逃さないための待ち時間 |
+
+### シミュレータ本体（契約とは独立に動く）
+
+| ファイル | 中身 |
+| --- | --- |
+| `LineTrace/Pilot_CSoS.cs` | ロボットの頭脳。経路追従・配送の入札（claim）・落札・完了。**契約のことは何も知らない** |
+| `arbitrator/C-SoS/main/main.go` | Go 製のアービトレータ（配送の割当係）。NATS で配送を配り、早い者勝ち（FCFS）で落札を決める |
+| `Assets/streamingAssets/cadl_config.json` | グラフ（11 ノード・17 エッジ）・ロボット台数・NATS 設定。両側が読み込む：アービトレータ起動時の `[Config]` 行（Terminal 2）と、Unity の Console に出る `[GraphDefinition] Loaded from CADL config` の行は、このファイルに由来する |
+
+### どこを触ると何が変わるか
+
+改造したくなったとき、目的ごとに触るべき場所は 1 か所です（他は生成物か、手で編集しない場所です）。
+
+| やりたいこと | 触る場所 |
+| --- | --- |
+| 期限を変える・監視を増やす・状態を足す | **`.cadl` ファイル**（→ e2e スクリプトで再生成） |
+| ロボットの動き方を変える | `Pilot_CSoS.cs`（ブリッジが観測するイベントが変わらない限り、契約側の変更は不要） |
+| 契約イベントへの翻訳を変える | `PilotContractBridge.cs` |
+| 生成される C# の形を変える | `contract_emitter.py`（上級者向け） |
+| ロボット台数・地図を変える | `cadl_config.json` |
+
+**触ってはいけない場所**：`Generated/` と `Runtime/` の中身の手編集。次に e2e スクリプトを実行すると上書きされます（直したいなら生成器を直す）。
+
+### コードを読む（任意、約 10 分）
+
+`PilotContractBridge.cs` を読み、「観測→イベント」の翻訳がどれだけ薄いかを確かめます。
+
+## 8.5 チェック
 
 すべて確認：
 
@@ -164,13 +209,13 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 | 各ロボットの最初の遷移は `Proposed -> Assigned` | はい |
 | ロボットは約 5 秒ごとに 1 台ずつ `Assigned` になる（調停器が 1 件ずつ配達を割り当てる）ので、最後の 1 台までは 25〜30 秒ほどかかる | はい |
 | ロボットの契約が `Completed` になるのは、**そのロボット**が配達を終えたときで、他のロボットの契約は一緒に動かない | はい |
-| Step 5 の Python と **同じ種類のイベント**（lifecycle 遷移・violation）が同じ意味で出ている | はい |
+| 第 7 章の Python と **同じ種類のイベント**（lifecycle 遷移・violation）が同じ意味で出ている | はい |
 
-### よくある間違い
+## 8.6 よくある間違い
 
 | 症状 | 対処 |
 | --- | --- |
-| Console: `[PilotContractBridge X] ContractRuntimeHost.Instance is null` | host を置き忘れ。Step 6.3 をやり直す。 |
+| Console: `[PilotContractBridge X] ContractRuntimeHost.Instance is null` | host を置き忘れ。8.2 節の「ContractRuntimeHost を追加」をやり直す。 |
 | Console に contract イベントが何も出ない | NATS / arbitrator が起動していない。Terminal 1 に `Server is ready`、Terminal 2 に `[Config] … taskArbitration.enabled=true …` が出ているか確認。 |
 | 配送が一切割り当てられない（`WON delivery` が出ない） | arbitrator が設定を読めていない可能性。`-config` に `cadl_config.json` の**絶対パス**を渡して起動し直し、`taskArbitration.enabled=true` の表示を確認する（同梱の config は既定で `true`）。 |
 | Play 後 Console に `The name 'CADL.SosDsl.Demo.ContractRuntimeHost' could not be found` | Generated/Runtime ファイルが認識されていない。e2e スクリプトを再実行、または Unity で `Assets ▸ Reimport All`。 |
@@ -178,16 +223,14 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 | **コンパイルエラー `... already contains a definition for ...`（パスが `Generated/Generated/…` や `Runtime/Runtime/…`）** | 生成ツリーが入れ子に二重コピーされている。`Assets/Scripts/SoSDsl/Generated/Generated` と `Runtime/Runtime` を削除（最新の e2e スクリプトは自動で掃除する）。 |
 | **Battery 15 の車も違反せず `Completed` まで進む** | bridge が `assign` と `accept` を同一フレームで撃ち、`Assigned` に留まらないため periodic な `battery_guard` がサンプリングできない。同梱の `PilotContractBridge` は `assignedDwellMs`（既定 700ms）で対策済み。bridge を差し替えた場合はこの値を monitor 周期より大きく保つ。 |
 
-### おさらい
+## 8.7 おさらい
 
 CADL で仕様を書き、IR に変換し、C# を生成し、リアルタイムシミュレーションとして実行するところまでを通しで体験し、期限切れやバッテリ規則への違反が検出され、該当する契約インスタンスが `Violated` に移る様子を確認しました（ランタイムが行うのは違反の検出と記録であり、ロボットの逸脱そのものを防ぐわけではありません）。
 
----
+## 8.8 演習
 
-## 演習 4.4（第 4 回より）
-
-### 演習 4.4 (★★★) — Unity シーンを動かす
+### 演習 8.1 (★★★) — Unity シーンを動かす
 
 **目的**: C# ランタイムが Python と同じトレース形を出すことを検証する。
 
-**手順**: メイン教材の Step 6 に従う。Console 出力を Python の `session4_baseline.ndjson` と比較し、イベントの形式が同じであることを確認する（終端状態の内訳まで Python 側のシナリオと一致するわけではありません）。
+**手順**: 8.2〜8.3 節に従う。Console 出力を Python の `session4_baseline.ndjson` と比較し、イベントの形式が同じであることを確認する（終端状態の内訳まで Python 側のシナリオと一致するわけではありません）。
