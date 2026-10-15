@@ -159,6 +159,7 @@ git clone https://github.com/ertlnagoya/cadl-raspimouse-simulator
 # 2) Install the cadl CLI in editable mode so changes are picked up.
 cd ~/program/cadl_repo
 python3 -m venv .venv && source .venv/bin/activate
+python3 -m pip install --upgrade pip   # editable install needs pip 21.3 or later
 pip install -e .
 cd ~/program
 ```
@@ -204,6 +205,17 @@ echo "simulator:     $(git -C cadl-raspimouse-simulator branch --show-current)" 
 ```
 
 For any repository on the wrong branch, switch with `git -C ~/program/<repo> checkout <branch>`.
+
+**`pip install -e .` fails with `File "setup.py" or "setup.cfg" not found`.** The pip in the venv is too old. On macOS, `/usr/bin/python3` (Python 3.9 from the Command Line Tools) creates venvs with pip 21.2.4, which cannot do an editable install of a `pyproject.toml`-only project such as `cadl`. Upgrade pip inside the venv and install again:
+
+```bash
+cd ~/program/cadl_repo
+source .venv/bin/activate
+python3 -m pip install --upgrade pip
+pip install -e .
+```
+
+**`cadl` reports `bad interpreter`, or `cadl --help` shows an older command list.** The shell found a different `cadl` than the one in `cadl_repo/.venv`. Check with `which cadl`; it should print `~/program/cadl_repo/.venv/bin/cadl`. In a new terminal, run `source ~/program/cadl_repo/.venv/bin/activate` first. If the venv itself reports `bad interpreter` (the Python it was built with has been removed), delete `.venv` and repeat step 2.
 
 ---
 

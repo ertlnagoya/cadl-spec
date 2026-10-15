@@ -63,6 +63,7 @@ cd ~/program
 cd mobility-sos-exercise
 python3 -m venv .venv
 source .venv/bin/activate
+python3 -m pip install --upgrade pip
 pip install -r requirements.txt
 
 # SUMO（どの OS でも pip 経由が手軽）
