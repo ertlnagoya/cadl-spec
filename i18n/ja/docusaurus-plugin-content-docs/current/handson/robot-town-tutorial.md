@@ -351,11 +351,12 @@ python -m town.council --proposer llm --mode DISTRIBUTED --rounds 2 --name llm-d
 
 ## 10. 仕様でまだ書けないこと
 
-この演習を作る過程で、CADL 0.2 / `cadl` 0.3.8 の不足が 3 つ見つかりました。
+この演習を作る過程で、CADL 0.2 / `cadl` 0.3.13 に残る不足が 2 つ見つかりました。
 
 - `cadl sim-ir` は `sos.transitions[*].safety_invariant` を IR に出力しません（`cadl check` は式として検査します）。演習では、検査を通ったソースファイルから読んでいます。
 - 運用モード（regime）は名前だけで、パラメータの値や契約を結びつける構文がありません。集中モードで何が変わるか（待避所、エッジの専有）は、シミュレータの側で決めています。
-- `deadline: soon` も `cadl check` を通り、IR では `null` になります。演習では、街を動かすのに必要な値が IR にそろわない規則を却下しています。
+
+`cadl` 0.3.11 までは、`deadline: soon` のような読めない値も `cadl check` を通り、IR では `null` になっていました。0.3.12 からはエラーです。演習では、街を動かすのに必要な値が IR にそろわない規則も却下するので、古いコンパイラでも検査の関門は働きます。
 
 ---
 

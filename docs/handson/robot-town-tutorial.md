@@ -391,14 +391,16 @@ check gate, at the constitution gate, and at the vote, respectively.
 
 ## 10. What the specification cannot say yet
 
-Building this exercise exposed three gaps in CADL 0.2 / `cadl` 0.3.8:
+Building this exercise exposed two gaps that remain in CADL 0.2 / `cadl` 0.3.13:
 
 - `cadl sim-ir` does not carry `sos.transitions[*].safety_invariant` into the IR (`cadl check`
   does check it as an expression). The exercise reads it from the checked source file.
 - A regime is only a name; there is no syntax to attach parameter values or contracts to it. What
   changes in centralized operation (bays, exclusive edges) is decided by the simulator.
-- `deadline: soon` passes `cadl check` and becomes `null` in the IR. The exercise rejects rules
-  whose IR lacks a value the town needs.
+
+Up to `cadl` 0.3.11, an unreadable value such as `deadline: soon` also passed `cadl check` and
+became `null` in the IR; from 0.3.12 it is an error. The exercise additionally rejects any rules
+whose IR lacks a value the town needs, so the check gate holds with older compilers too.
 
 ---
 
