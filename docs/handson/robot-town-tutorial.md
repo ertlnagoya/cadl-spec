@@ -158,6 +158,7 @@ python -m town.period --mode DISTRIBUTED
    B     0.94   2.6              38.0             849    0.9   38.9
    C     1.00   0.0              39.6             203   14.8   28.8
   違反（原因別，シード平均）: deadline:dropoff=2.6, deadline:pickup=7.8, deadline:release=23.0, monitor:blocking_guard=2.8
+  運用モード: 集中の時間 0%  切替 0.0 回（切替中の合計 0s，管理者による退去 0.0 台，安全条件の違反 0.0 回）
 ```
 
 The columns are: on-time rate, late deliveries, times waited on the road, seconds blocked by
@@ -165,9 +166,10 @@ stopped robots, sanction points, and utility (on-time deliveries minus sanction 
 numbers are averages over five random seeds.
 
 C waits on the road, reaches every customer on time, and pays 14.8 sanction points for it; A, which
-never blocks anyone, is blocked for 1352 s and loses 7.8 deliveries. Every violation in the last
-line was detected by the contract runtime from the IR: `deadline:*` by lifecycle deadlines,
-`monitor:blocking_guard` by the monitor.
+never blocks anyone, is blocked for 1352 s and loses 7.8 deliveries. Every violation in the
+second-to-last line was detected by the contract runtime from the IR: `deadline:*` by lifecycle
+deadlines, `monitor:blocking_guard` by the monitor. The last line records the operating mode;
+§7 returns to it.
 
 ---
 
