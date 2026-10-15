@@ -72,6 +72,7 @@ cd ~/program
 cd mobility-sos-exercise
 python3 -m venv .venv
 source .venv/bin/activate
+python3 -m pip install --upgrade pip
 pip install -r requirements.txt
 
 # SUMO (pip is the simplest cross-platform way)
