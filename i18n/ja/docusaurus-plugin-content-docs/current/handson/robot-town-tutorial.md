@@ -6,9 +6,9 @@ title: "コース D — ロボットの街（規則を自分たちで直す）"
 
 # コース D — ロボットの街：規則を自分たちで直す
 
-⬅ [コース A — ロボット配送](main-textbook.md) に戻る
+⬅ [コース A — ロボット配送](../textbook/index.md) に戻る
 
-- 対象：[コース A](main-textbook.md)（CADL/SoS-DSL の基礎）を済ませた方。コース B は不要です
+- 対象：[コース A](../textbook/index.md)（CADL/SoS-DSL の基礎）を済ませた方。コース B は不要です
 - 所要時間：90〜120 分（改造課題は別）
 - 完成すると手元に残るもの：委員会が期ごとに改正した CADL の道路規則、版として残った改正の履歴（`.cadl` ファイル）、自己利益で投票する当事者・選び方を誤った目標・LLM による改正案が、それぞれ規則をどう動かすかを自分で確かめた記録
 
@@ -371,7 +371,7 @@ python -m town.council --proposer llm --mode DISTRIBUTED --rounds 2 --name llm-d
 
 ## 参考資料
 
-- メイン教材（ロボット配送）: [`main-textbook.md`](main-textbook.md)
+- メイン教材（ロボット配送）: [テキストブック](../textbook/index.md)
 - コース B（都市モビリティ）: [`mobility-sos-tutorial.md`](mobility-sos-tutorial.md)
 - SoS-DSL 仕様: cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)
 - 演習リポジトリ: https://github.com/ertlnagoya/cadl-robot-town

@@ -135,7 +135,7 @@ Recommended order:
 1. **Course A — Robot Delivery** ─ a minimal example covering actors → contracts → lifecycle → monitors → codegen → execution in about 95 minutes.
 2. **Course B — Urban Mobility** ─ keep the same CADL syntax, swap domain and runtime.
 3. **Course D — Robot Town** ─ amend the contract while the system runs, through verification, a constitution and a vote. B and D each build only on A; take them in either order.
-4. **Course C — Your own SoS** ─ apply the concepts to a domain you choose (food delivery, emergency response, power grid…). Course C is Part 2 of the [exercises booklet](exercises.md).
+4. **Course C — Your own SoS** ─ apply the concepts to a domain you choose (food delivery, emergency response, power grid…). Course C has [its own page](own-sos.md).
 
 > The material on this page (the five criteria, four types, what CADL adds) is presupposed by every course.
 > Come back here whenever you forget what something means.
@@ -228,5 +228,5 @@ so the same spec serves as the common source for Unity, SUMO, and the Python ref
 ## What to read next
 
 - Recommended before Course A → [Architecture & Code Walkthrough](code-walkthrough.md)
-- Start **Course A** → [Course A — Robot Delivery](main-textbook.md)
+- Start **Course A** → [Course A — Robot Delivery](../textbook/index.md)
 - Back to the index → [Hands-on Index](index.md)

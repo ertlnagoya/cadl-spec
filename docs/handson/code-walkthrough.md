@@ -124,4 +124,4 @@ When you feel like modifying things, there is one place to touch per goal (every
 4. Read `PilotContractBridge.cs` (10 min) — see how thin the "observation → event" translation really is
 5. If you have time left, `ContractRuntime.tick` in `engine.py` (10 min)
 
-Once you have read this far, head to Step 0 of [Course A (main textbook)](main-textbook.md).
+Once you have read this far, head to Step 0 of [Course A (main textbook)](../textbook/02-toolchain-setup.md).

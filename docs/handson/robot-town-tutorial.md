@@ -6,9 +6,9 @@ title: "Course D — Robot Town (rules a community amends itself)"
 
 # Course D — Robot Town: Rules a Community Amends Itself
 
-> ⬅ Back to Course A → [Course A — Robot Delivery](main-textbook.md)
+> ⬅ Back to Course A → [Course A — Robot Delivery](../textbook/index.md)
 
-> **Audience**: Students who have completed [Course A](main-textbook.md) (CADL/SoS-DSL basics).
+> **Audience**: Students who have completed [Course A](../textbook/index.md) (CADL/SoS-DSL basics).
 > Course B is not required.
 >
 > **Time**: 90–120 minutes, plus optional stretch goals.
@@ -419,7 +419,7 @@ whose IR lacks a value the town needs, so the check gate holds with older compil
 
 ## References
 
-- Main textbook (robot delivery): [`main-textbook.md`](main-textbook.md)
+- Main textbook (robot delivery): [Textbook](../textbook/index.md)
 - Course B (urban mobility): [`mobility-sos-tutorial.md`](mobility-sos-tutorial.md)
 - SoS-DSL spec: cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)
 - Exercise repository: https://github.com/ertlnagoya/cadl-robot-town

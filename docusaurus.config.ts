@@ -82,6 +82,8 @@ const config: Config = {
         // /docs/ and /docs/spec/ have no page of their own.
         redirects: [
           {from: ['/docs', '/docs/spec'], to: '/docs/spec/intro'},
+          // Course A and its exercises booklet became the Textbook.
+          {from: ['/docs/handson/main-textbook', '/docs/handson/exercises'], to: '/docs/textbook/'},
         ],
       },
     ],
@@ -105,6 +107,12 @@ const config: Config = {
           sidebarId: 'specSidebar',
           position: 'left',
           label: 'Specification',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'textbookSidebar',
+          position: 'left',
+          label: 'Textbook',
         },
         {
           type: 'docSidebar',

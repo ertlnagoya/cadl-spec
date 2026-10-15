@@ -209,7 +209,7 @@ function WhatIsHandson() {
               の順に進みます。
             </p>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              教科書，難易度別の課題を収めた全5回の演習集，学術的背景（Maier の5条件，ISO/IEC/IEEE 21839・21840・21841）を用意しています。
+              各章の終わりに全5回の授業向けの難易度別の演習を収めた教科書，別のドメインを扱うコース，学術的背景（Maier の5条件，ISO/IEC/IEEE 21839・21840・21841）を用意しています。
             </p>
             <Link className="button button--primary button--lg" to="/docs/handson/">
               ハンズオン入口へ →
@@ -226,8 +226,8 @@ function WhatIsHandson() {
             }}>
               <div style={{fontWeight: '600', marginBottom: '0.75rem'}}>教材の構成</div>
               <ul style={{paddingLeft: '1.2rem', marginBottom: '0'}}>
-                <li><strong>教科書</strong> — 6ステップ × 15分</li>
-                <li><strong>演習集</strong> — 全5回，ルーブリック付き</li>
+                <li><strong>教科書</strong> — 6ステップ × 15分，全5回の授業向けの演習とルーブリック付き</li>
+                <li><strong>コース B〜D</strong> — 都市モビリティ，規則を自分たちで直す街，自分の SoS</li>
                 <li><strong>学術的背景</strong> — Maier の5条件，ISO 21839・21840・21841，参考文献</li>
               </ul>
             </div>

@@ -6,10 +6,10 @@ title: "Course B — Urban Mobility (CADL × SUMO)"
 
 # Course B — Urban Mobility: Designing an SoS with CADL × SUMO
 
-> ⬅ Back to Course A → [Course A — Robot Delivery](main-textbook.md)
+> ⬅ Back to Course A → [Course A — Robot Delivery](../textbook/index.md)
 
 > **Audience**: Students who have completed the
-> [main hands-on textbook](main-textbook.md) (CADL/SoS-DSL basics).
+> [main hands-on textbook](../textbook/index.md) (CADL/SoS-DSL basics).
 >
 > **Time**: 60–90 minutes.
 >
@@ -446,7 +446,6 @@ python scripts/cadl_to_sumo.py
 
 ## References
 
-- Main textbook (robot delivery): [`main-textbook.md`](main-textbook.md)
-- Exercises: [`exercises.md`](exercises.md)
+- Main textbook (robot delivery): [Textbook](../textbook/index.md)
 - SoS-DSL spec: cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)
 - SUMO project: https://eclipse.dev/sumo/

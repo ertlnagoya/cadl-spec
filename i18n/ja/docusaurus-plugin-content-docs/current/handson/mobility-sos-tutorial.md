@@ -6,9 +6,9 @@ title: "コース B — 都市モビリティ (CADL × SUMO)"
 
 # コース B — 都市モビリティ：CADL × SUMO で SoS を設計する
 
-⬅ [コース A — ロボット配送](main-textbook.md) に戻る
+⬅ [コース A — ロボット配送](../textbook/index.md) に戻る
 
-- 対象：[コース A](main-textbook.md)（CADL/SoS-DSL の基礎）を済ませた方
+- 対象：[コース A](../textbook/index.md)（CADL/SoS-DSL の基礎）を済ませた方
 - 所要時間：60〜90 分
 - 完成すると手元に残るもの：タクシー需要を題材に自分で手を入れた `mobility_sos.cadl`、SUMO で走るシミュレーション、シミュレーション結果を CADL 契約の `guarantee` 節に照らして判定したレポート
 
@@ -415,7 +415,6 @@ CADL の guarantee を書き換えて解析をやり直せば、再シミュレ�
 
 ## 参考
 
-- コース A（ロボット配送）: [main-textbook.md](main-textbook.md)
-- 演習問題集: [exercises.md](exercises.md)
+- コース A（ロボット配送）: [テキストブック](../textbook/index.md)
 - SoS-DSL 仕様: cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)
 - SUMO 公式: https://eclipse.dev/sumo/
