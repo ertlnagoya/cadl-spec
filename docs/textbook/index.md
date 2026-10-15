@@ -12,7 +12,7 @@ title: "Introduction"
 >
 > **What you take home**: A working CADL specification you wrote yourself, a generated Unity C# implementation, and a running 5-robot delivery simulation in which missed deadlines and battery-rule violations are detected and the affected contract instances are moved to `Violated`.
 >
-> **First time here?** The recommended order is [Why SoS-DSL?](../handson/academic-background.md) → [Architecture & Code Walkthrough](../handson/code-walkthrough.md) → this course. Reading the walkthrough before you start is recommended: it shows which part of the system each Step touches.
+> **First time here?** Read from Chapter 1 in order. The textbook explains everything it uses, so you do not need to read other pages first.
 
 ## How this textbook is organised
 
