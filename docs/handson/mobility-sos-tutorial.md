@@ -138,8 +138,10 @@ That gap — structure alone cannot express deadlines, violations, or consequenc
 
 ## 3. Read the contract (10 min)
 
-The contract in the same file (an excerpt: the `on:` trigger of each transition, the remaining
-transitions and the remaining monitors are omitted and marked `# ...`):
+The contract in the same file (an excerpt: the `assume:` and `incentives:` blocks, the transitions after `accept`, and the
+monitors `waiting_too_long` and `detour_guard` are omitted; the `# ...` at the end of each list
+stands for its omitted entries; comments are removed and `on_violation:` / `on_match:` are
+written in flow style):
 
 ```yaml
 contracts:

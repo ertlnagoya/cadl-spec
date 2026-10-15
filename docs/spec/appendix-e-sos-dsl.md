@@ -215,8 +215,10 @@ told from a message name, and the actors named inside a `rule:` or
 `deadline:` that is not a `duration_lit` (a non-negative number of
 seconds is accepted as a lenient form, [Appendix A §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)) and a
 `sampling:` that is not a `sampling_spec` (or the mapping form of
-A.12); earlier releases dropped such a `deadline:`, so that the IR had
-no deadline, and read such a `sampling:` as `event`. Releases before
+A.12); earlier releases accepted such a `deadline:` and put no deadline
+in the IR or, for `yes` / `no` and negative numbers, a meaningless one
+(1000, 0 and -5000 ms for `yes`, `no` and `-5`), and read such a
+`sampling:` as `event`. Releases before
 0.3.10 did not check rules L-1 to M-3.
 
 ## E.5 Dynamic semantics (informative)
@@ -357,6 +359,8 @@ generators that read it field-by-field):
         "assume": [...],
         "guarantee": [...],
         "governance": {...},
+        "violation_detect": "...",
+        "violation_action": "...",
         "lifecycle": {
           "states":   ["Proposed", "Assigned", "Accepted", "Delivering",
                        "Completed", "Violated", "Terminated"],

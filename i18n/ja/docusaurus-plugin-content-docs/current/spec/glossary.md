@@ -39,7 +39,9 @@ CADLおよび周辺の研究プログラムで用いる作業語彙をまとめ�
   定義は[5.2.2節](./05-language-spec.md#522-アクターモデル)と
   [付録AのA.3節](./appendix-a-syntax.md#a3-context-actors-metrics)にある。
 - **`autonomy`** — アクターの属性。`low`，`medium`，`high` のいずれか
-  （既定値は `medium`）。説明のためのラベルであり，検査されない。
+  （既定値は `medium`）。`cadl` 0.3.10からは，この3つ以外の値はエラーになる。
+  値をβなどと照合することはない。`cadl sim-gen -t go` は，この値に応じて，アクターに
+  中央のアルゴリズムだけ（`low`），局所のアルゴリズムだけ（`high`），または両方（`medium`）を割り当てる。
 - **Contract（契約）** — 当事者集合と権限に紐づく
   assume-guarantee 制約。制度設計における形式単位である。
   定義は[5.2.3節](./05-language-spec.md#523-契約モデル)と

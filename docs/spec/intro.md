@@ -182,7 +182,7 @@ v0.1-ext.
 
 The specification and the reference implementation are numbered
 independently: this specification is Version 0.2, and the reference
-implementation it was checked against is `cadl` 0.3.12.
+implementation it was checked against is `cadl` 0.3.13.
 
 Feedback and discussion are welcome via [GitHub Issues](https://github.com/ertlnagoya/cadl/issues).
 Problems with the specification or this site can be reported at

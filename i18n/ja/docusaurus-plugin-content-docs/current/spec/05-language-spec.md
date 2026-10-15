@@ -158,7 +158,7 @@ sos:
       expr: "weekly_reward >= 0 AND weekly_reward <= 400"
 ```
 
-このブロックを追加したファイルを，`cadl verify`（`cadl` 0.3.12）は受理し，2つの項目をどちらも合格と報告する。`expr:` を持つ項目については，述語が充足可能であることだけを検査し，モデルに対して証明することはしない（[付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)）。
+このブロックを追加したファイルを，`cadl verify`（`cadl` 0.3.13）は受理し，2つの項目をどちらも合格と報告する。`expr:` を持つ項目については，述語が充足可能であることだけを検査し，モデルに対して証明することはしない（[付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)）。
 
 [7.1節](./07-examples.md)は，検証レベルが目指す矛盾検出を例示する（[1.2節の目的2](./01-introduction.md#目的2-sosの制度違反や矛盾を計算できるようにする)）。7.1節の記述例は概念的なものであり，A.8節のキーとは異なるキーを用いている（第7章冒頭の注記を参照）。このように，同一の制度が利用者のニーズに応じて異なる粒度で記述でき，AIが概要レベルから設計・検証レベルへの精緻化を支援する。
 
@@ -289,7 +289,7 @@ contracts:
 - **`parallel:`** — その下に並べたステップは互いの順序が定まっておらず，それらがすべて完了するとプロトコルは先へ進む。
 - **`barrier:`** — 同期点である。与えた条件が成り立つときにだけ，プロトコルは先へ進む。
 
-リファレンス実装（`cadl` 0.3）は，`else:` の分岐とバリアの条件を保持しない（[付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)）。
+`cadl` 0.3.10からは，リファレンス実装は `else:` の分岐とバリアの条件を保持する。それより前のリリースは，これらを捨てていた（[付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)）。
 
 ```yaml
 protocols:

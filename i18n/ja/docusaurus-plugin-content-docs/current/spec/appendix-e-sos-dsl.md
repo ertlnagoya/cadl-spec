@@ -187,8 +187,7 @@ Unity C#ジェネレータと一致する。このジェネレータは，その
 `Minor`，`Major`，`Critical` 以外の `severity:` をエラーとして報告する。`cadl` 0.3.12からは，
 `duration_lit` でない `deadline:`（負でない秒数は寛容な形式として受理する。[付録A §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)）と，
 `sampling_spec`（またはA.12のマッピング形式）でない `sampling:` もエラーとして報告する。
-それより前のリリースは，そのような `deadline:` を捨てて期限のないIRにし，そのような `sampling:` を
-`event` として読んでいた。0.3.10より前のリリースは，規則L-1からM-3までを検査しなかった。
+それより前のリリースは，そのような `deadline:` を受理し，IRに期限を書かないか，`yes` / `no` や負の数では意味のない期限（`yes`，`no`，`-5` に対してそれぞれ1000 ms，0 ms，-5000 ms）を書いていた。また，そのような `sampling:` を `event` として読んでいた。0.3.10より前のリリースは，規則L-1からM-3までを検査しなかった。
 
 ## E.5 動的意味論（参考） {/* #e5-dynamic-semantics-informative */}
 
@@ -319,6 +318,8 @@ IRは表層構文を正規化し，入れ子になった `on_violation` / `on_ma
         "assume": [...],
         "guarantee": [...],
         "governance": {...},
+        "violation_detect": "...",
+        "violation_action": "...",
         "lifecycle": {
           "states":   ["Proposed", "Assigned", "Accepted", "Delivering",
                        "Completed", "Violated", "Terminated"],
