@@ -1,14 +1,14 @@
 ---
-sidebar_position: 21
-sidebar_label: "App. B — Using this textbook in a class"
-title: "Appendix B — Using this textbook in a class"
+sidebar_position: 22
+sidebar_label: "App. C — Using this textbook in a class"
+title: "Appendix C — Using this textbook in a class"
 ---
 
-# Appendix B — Using this textbook in a class
+# Appendix C — Using this textbook in a class
 
 This appendix shows how to teach Chapters 4–9 as a five-session class (or a three-session one). Students who have read Chapters 1–3 and done the setup of Section 2.4 can start with Session 1.
 
-## B.1 Course at a glance
+## C.1 Course at a glance
 
 | Session | Chapter | Title | Theme | Deliverable |
 | --- | --- | --- | --- | --- |
@@ -63,7 +63,7 @@ The instructor can use this for grading; the student can self-check.
 
 ---
 
-## B.2 Final deliverable summary
+## C.2 Final deliverable summary
 
 By the end of Session 5, every student should have:
 

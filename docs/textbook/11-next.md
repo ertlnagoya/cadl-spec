@@ -22,7 +22,7 @@ Why does this matter for SoS? **The same specification powers everything**: the 
 
 ## 11.2 What's next
 
-Each chapter from 4 to 9 ends with the exercises of one class session (19 exercises in total, graded ★ to ★★★), and Chapter 10 adds one optional advanced exercise. They rebuild and then modify the system you just built one axis at a time — tighter deadlines, new monitors, new lifecycle states, reward execution, a violation-trace view. [Appendix B](appendix-b-teaching.md) shows how to run them as a 5-session (or 3-session) class.
+Each chapter from 4 to 9 ends with the exercises of one class session (19 exercises in total, graded ★ to ★★★), and Chapter 10 adds one optional advanced exercise. They rebuild and then modify the system you just built one axis at a time — tighter deadlines, new monitors, new lifecycle states, reward execution, a violation-trace view. [Appendix C](appendix-c-teaching.md) shows how to run them as a 5-session (or 3-session) class.
 
 To try the workflow on a fresh problem, go on to the other courses of the [hands-on materials](../handson/index.md):
 

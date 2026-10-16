@@ -35,7 +35,7 @@ The behaviour of the whole — "the food arrives within 30 minutes" — is not d
 
 ## 1.3 Telling whether something is an SoS: Maier's five criteria
 
-Whether something can be called an SoS is usually decided with Maier's (1998) five criteria. The classification of SoS itself is standardised in ISO/IEC/IEEE 21841:2019.
+Whether something can be called an SoS is usually decided with Maier's (1998) five criteria [[1]](appendix-d-references.md). The classification of SoS itself is standardised in ISO/IEC/IEEE 21841:2019 [[2]](appendix-d-references.md).
 
 | # | Criterion | What to check | In food delivery |
 | --- | --- | --- | --- |
@@ -61,7 +61,7 @@ Because (2) is weak, this subject sits closer to a problem of controlling severa
 
 ## 1.4 The four types of SoS
 
-SoS differ by how strong their central authority is. ISO/IEC/IEEE 21841 defines four types.
+SoS differ by how strong their central authority is. ISO/IEC/IEEE 21841 [[2]](appendix-d-references.md) defines four types: the three types Maier proposed (Directed, Collaborative, Virtual) [[1]](appendix-d-references.md) and Acknowledged, added by Dahmann and Baldwin [[3]](appendix-d-references.md).
 
 | Type | Central authority | Examples |
 |---|---|---|
@@ -125,5 +125,5 @@ An SoS is a set of independently operated systems that together do something non
 
 You can go on with this textbook alone. For more background, see:
 
-- International standards for SoS (ISO/IEC/IEEE 21839 / 21840 / 21841 / 15288 / 42010), related research areas, and a reading list: "[Why SoS-DSL?](../handson/academic-background.md)" in the hands-on materials.
+- International standards for SoS (ISO/IEC/IEEE 21839 [[4]](appendix-d-references.md), 21840 [[5]](appendix-d-references.md), 21841 [[2]](appendix-d-references.md), 15288 [[6]](appendix-d-references.md) and 42010 [[7]](appendix-d-references.md)), related research areas, and a reading list: "[Why SoS-DSL?](../handson/academic-background.md)" in the hands-on materials.
 - Comparison with existing languages: [Chapter 3](../spec/03-comparison.md) of the specification.
