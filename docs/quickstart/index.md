@@ -19,7 +19,7 @@ the tool. They are independent, so either can come first.
 
 No installation is required if you use
 **[CADL Explorer](https://cadl-explorer.streamlit.app/)**.
-The steps below describe CADL Explorer v0.5.3 (the hosted app shows its version in the sidebar, below the list of pages).
+The steps below describe CADL Explorer v0.5.4 (the hosted app shows its version in the sidebar, below the list of pages).
 
 ### A-1. Open CADL Explorer
 
