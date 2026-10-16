@@ -17,7 +17,7 @@ CADLファイルは**YAML 1.2文書** [[Ben-Kiki+, 2021]](./appendix-b-reference
 受理することが期待される。`cadl` 0.3における既知の相違は
 [A.12](#a12-reference-implementation-status-v03)に示す。
 
-この文法を試すには，リファレンス実装をインストールし（`pip install cadl-lang`），
+この文法を試すには，リファレンス実装をインストールし（[クイックスタートの経路 B](../quickstart/index.md#path-b)を参照），
 `cadl parse` または `cadl check` を実行する。実行できるファイルは，
 [cadlリポジトリ](https://github.com/ertlnagoya/cadl)の `examples/` ディレクトリにある。
 

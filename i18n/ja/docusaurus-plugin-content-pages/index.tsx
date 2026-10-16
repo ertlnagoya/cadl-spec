@@ -21,14 +21,20 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/spec/intro">
-            仕様書を読む
+            to="/docs/quickstart/">
+            クイックスタート
           </Link>
           <Link
             className="button button--secondary button--lg"
             style={{marginLeft: '1rem'}}
-            to="/docs/handson/">
-            ハンズオンを始める
+            to="/docs/textbook/">
+            テキストブックを読む
+          </Link>
+          <Link
+            className="button button--secondary button--lg"
+            style={{marginLeft: '1rem'}}
+            to="/docs/spec/intro">
+            仕様書を読む
           </Link>
           <Link
             className="button button--secondary button--lg"
@@ -106,7 +112,7 @@ function GetStarted() {
               PyPI からインストールし，サンプルを取得して，検査を実行します。
             </p>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              コマンドの一覧は <Link href="https://github.com/ertlnagoya/cadl#readme">cadl リポジトリの README</Link> にあります。手順を追って学ぶには <Link to="/docs/handson/">ハンズオン講座</Link> をご利用ください。
+              コマンドの一覧は <Link href="https://github.com/ertlnagoya/cadl#readme">cadl リポジトリの README</Link> にあります。手順は <Link to="/docs/quickstart/">クイックスタート</Link> に，ツールチェイン全体を学ぶ教材は <Link to="/docs/textbook/">テキストブック</Link> にあります。
             </p>
             <Link className="button button--primary" href="https://github.com/ertlnagoya/cadl">
               GitHub のソース

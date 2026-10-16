@@ -55,6 +55,8 @@ python3 -m pip install --upgrade pip
 pip install -e ~/program/cadl_repo     # cadl コマンドと PyYAML が入る
 ```
 
+インストールに失敗した場合は、[テキストブック 2.4 節](../textbook/02-toolchain-setup.md)のセットアップのトラブルシューティングを参照してください。
+
 Anthropic の SDK と API キーが必要なのは、§8 で LLM を実際に呼ぶときだけです。§8 はそれらがなくても進められます。
 
 ```bash

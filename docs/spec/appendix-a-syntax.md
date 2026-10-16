@@ -19,8 +19,8 @@ reference implementation ([`cadl`](https://github.com/ertlnagoya/cadl))
 is expected to accept exactly this syntax; known deviations of `cadl` 0.3 are
 listed in [A.12](#a12-reference-implementation-status-v03).
 
-To try the grammar, install the reference implementation
-(`pip install cadl-lang`) and run `cadl parse` or `cadl check`; runnable
+To try the grammar, install the reference implementation (see
+[Path B of the Quick Start](../quickstart/index.md#path-b)) and run `cadl parse` or `cadl check`; runnable
 files are in the `examples/` directory of the
 [cadl repository](https://github.com/ertlnagoya/cadl).
 

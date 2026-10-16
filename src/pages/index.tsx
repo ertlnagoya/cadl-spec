@@ -22,14 +22,20 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/spec/intro">
-            Read the Specification
+            to="/docs/quickstart/">
+            Quick Start
           </Link>
           <Link
             className="button button--secondary button--lg"
             style={{marginLeft: '1rem'}}
-            to="/docs/handson/">
-            Take the Hands-on
+            to="/docs/textbook/">
+            Read the Textbook
+          </Link>
+          <Link
+            className="button button--secondary button--lg"
+            style={{marginLeft: '1rem'}}
+            to="/docs/spec/intro">
+            Read the Specification
           </Link>
           <Link
             className="button button--secondary button--lg"
@@ -107,7 +113,7 @@ function GetStarted() {
               Install it from PyPI, fetch the examples, and check one:
             </p>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              All commands are listed in the <Link href="https://github.com/ertlnagoya/cadl#readme">README of the cadl repository</Link>. For a guided walkthrough, take the <Link to="/docs/handson/">hands-on course</Link>.
+              All commands are listed in the <Link href="https://github.com/ertlnagoya/cadl#readme">README of the cadl repository</Link>. For step-by-step instructions, follow <Link to="/docs/quickstart/">the Quick Start</Link>; to learn the whole toolchain, read <Link to="/docs/textbook/">the Textbook</Link>.
             </p>
             <Link className="button button--primary" href="https://github.com/ertlnagoya/cadl">
               Source on GitHub

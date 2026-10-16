@@ -63,6 +63,8 @@ python3 -m pip install --upgrade pip
 pip install -e ~/program/cadl_repo     # the cadl command and PyYAML
 ```
 
+If the install fails, see the setup troubleshooting in [Section 2.4 of the Textbook](../textbook/02-toolchain-setup.md).
+
 Only §8 (the LLM council, live) needs the Anthropic SDK and an API key; §8 can also be followed
 without them.
 

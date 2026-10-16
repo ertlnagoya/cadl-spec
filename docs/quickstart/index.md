@@ -251,7 +251,7 @@ configs from the same file; all commands are listed in the
 
 ## Next steps
 
-- **To learn by doing → [the Hands-on index](../handson/index.md)** (includes a three-stage path for beginners).
+- **To learn by doing → the [Textbook](../textbook/index.md)** (Course A), then the other courses of the [Hands-on index](../handson/index.md), which gives the order in which to take them.
 - Read the [Specification Introduction](../spec/intro.md) for the language as a
   whole.
 - Chapter [5. Language Specification](../spec/05-language-spec.md) covers the

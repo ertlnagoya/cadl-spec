@@ -130,12 +130,7 @@ When you add `lifecycle:` / `monitors:` in Chapter 5 of the Textbook (Course A) 
 
 ## 4. How to read the rest of the materials
 
-Recommended order:
-
-1. **Course A — Robot Delivery** ─ a minimal example covering actors → contracts → lifecycle → monitors → codegen → execution in about 95 minutes.
-2. **Course B — Urban Mobility** ─ keep the same CADL syntax, swap domain and runtime.
-3. **Course D — Robot Town** ─ amend the contract while the system runs, through verification, a constitution and a vote. B and D each build only on A; take them in either order.
-4. **Course C — Your own SoS** ─ apply the concepts to a domain you choose (food delivery, emergency response, power grid…). Course C has [its own page](own-sos.md).
+The order in which to take the courses is given in the [Hands-on Index](index.md): start with Course A, the [Textbook](../textbook/index.md), whose Chapter 1 also covers the SoS basics of this page.
 
 > The material on this page (the five criteria, four types, what CADL adds) is presupposed by every course.
 > Come back here whenever you forget what something means.
