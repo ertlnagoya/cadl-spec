@@ -83,7 +83,7 @@ pip install eclipse-sumo
 pip install -e ~/program/cadl_repo
 cadl --version
 
-# cadl-explorer: same as Course A, Step 4
+# cadl-explorer: same as Chapter 6 of the Textbook (Course A)
 ```
 
 > If `z3-solver` fails to build during `pip install -e ~/program/cadl_repo`, fall back

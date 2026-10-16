@@ -6,13 +6,16 @@ title: "Chapter 8 — Running the simulation in Unity"
 
 # Chapter 8 — Running the simulation in Unity
 
-## Step 6 — Run the simulation in Unity (15 min)
+This chapter puts the generated contract code into the Unity robot-swarm simulation and watches violations being detected in the running simulation (about 15 minutes).
 
-### What you'll learn
+## 8.1 What you'll learn
+
 - How to wire `ContractRuntimeHost` and `PilotContractBridge` into an existing scene.
 - How to read live contract events in the Unity Console.
 
-### 6.1 Start NATS and the arbitrator
+## 8.2 Procedure
+
+### Start NATS and the arbitrator
 
 In **two** separate terminals:
 
@@ -54,7 +57,7 @@ If that third line reads `taskArbitration.enabled=true`, the arbitrator has load
 >
 > If `[Config] … taskArbitration.enabled=true …` prints at startup, the config loaded correctly.
 
-### 6.2 Open the C-SoS scene
+### Open the C-SoS scene
 
 1. Launch Unity Hub. Open `~/program/cadl-raspimouse-simulator/unity` with **Unity 6000.2.9f1 (Unity 6.2)**.
 2. First open takes several minutes (package download and Library import).
@@ -68,11 +71,11 @@ If the road looks small in the Scene view, select `road` in the Hierarchy, move 
 
 > #### 🛠 Mind the Unity version
 >
-> The project is saved with **Unity 6000.2.9f1** (recorded in `ProjectSettings/ProjectVersion.txt`), and this course is checked with that version. Install it from Unity Hub; when you add the project, Unity Hub offers to install the matching Editor if it is missing.
+> The project is saved with **Unity 6000.2.9f1** (recorded in `ProjectSettings/ProjectVersion.txt`), and this textbook is checked with that version. Install it from Unity Hub; when you add the project, Unity Hub offers to install the matching Editor if it is missing.
 >
-> Do not open the project with Unity 2022.3 or older: `Packages/manifest.json` lists packages that exist only in Unity 6. A newer Unity 6 release will ask to upgrade the project on first open; that has not been checked for this course.
+> Do not open the project with Unity 2022.3 or older: `Packages/manifest.json` lists packages that exist only in Unity 6. A newer Unity 6 release will ask to upgrade the project on first open; that has not been checked for this textbook.
 
-### 6.3 Add ContractRuntimeHost (one per scene)
+### Add ContractRuntimeHost (one per scene)
 
 ```
 Hierarchy ▸ Right-click ▸ Create Empty
@@ -90,7 +93,7 @@ Contract Runtime Host (Script)
 
 ![Unity Editor with ContractRuntimeHost selected in the Hierarchy; the Inspector shows the Contract Runtime Host component with Log To Console checked](/img/handson/unity-contract-runtime-host.jpg)
 
-### 6.4 Add PilotContractBridge to every robot
+### Add PilotContractBridge to every robot
 
 In the Hierarchy search box type `Pilot_CSoS`. Five robots will be filtered.
 
@@ -120,11 +123,11 @@ The Editor then looks like this, with the robot `m2` selected and its `Pilot Con
 
 Save the scene (`Cmd+S` / `Ctrl+S`).
 
-### 6.5 Press Play
+### Press Play
 
 Click ▶ at the top of the Editor.
 
-### What you should see
+## 8.3 What you should see
 
 In the Console, lines like the following should appear continuously. You can filter them by typing `lifecycle DELIVERY_SLA` or `violation` in the Console search box.
 
@@ -153,7 +156,49 @@ The Game view during Play: the camera follows robot `m1`, and the small picture 
 
 Each robot's contract moves only on that robot's own events. The arbitrator hands out one delivery about every 5 seconds, so the robots reach `Assigned` one after another (in this run at about 5, 11, 16, 22 and 27 seconds). Note the 700 to 800 ms between `assign` and `accept` for `robot-1-1`: that is the `Assigned Dwell Ms` set in 6.4. `robot-2-1`, with battery 15, is caught by `battery_guard` in the same frame as its `assign`.
 
-### Check 6
+## 8.4 The parts in the scene
+
+**The C# runs in Unity.** The `ContractRuntimeHost` in the scene calls `Runtime.Tick(now)` every frame, evaluating deadline expirations and monitoring rules. A `PilotContractBridge` attached to each robot translates the robot's state changes (won a delivery bid, finished a delivery) into **contract events** (`route_assignment`, `Delivered`) and feeds them to that robot's own contract instance. Violations and state transitions appear line by line in the Console:
+
+```
+[lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned (assign, event) @ 16112ms]
+[violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard @ 16112ms]
+```
+
+### Hand-written glue — `SoSDsl/Demo/`
+
+| File | What it contains |
+| --- | --- |
+| `ContractRuntimeHost.cs` | One per scene. Holds the runtime, ticks it every frame, and prints events to the Console |
+| `PilotContractBridge.cs` | One per robot. **Observes** `Pilot_CSoS` and translates into contract events. `Assigned Dwell Ms` (700ms) is a wait time so that the periodic monitors don't miss the Assigned state |
+
+### The simulator itself (runs independently of the contracts)
+
+| File | What it contains |
+| --- | --- |
+| `LineTrace/Pilot_CSoS.cs` | The robot's brain. Path following, bidding on deliveries (claim), winning bids, completion. **Knows nothing about contracts** |
+| `arbitrator/C-SoS/main/main.go` | The arbitrator (task dispatcher) written in Go. Distributes deliveries over NATS and awards them first-come-first-served (FCFS) |
+| `Assets/streamingAssets/cadl_config.json` | The graph (11 nodes / 17 edges), robot count, NATS settings. Read by both sides: the arbitrator's `[Config]` startup lines (Terminal 2) and Unity's `[GraphDefinition] Loaded from CADL config` line in the Console come from it |
+
+### What to touch to change what
+
+When you feel like modifying things, there is one place to touch per goal (everything else is either generated or should not be edited by hand).
+
+| What you want to do | What to touch |
+| --- | --- |
+| Change a deadline, add a monitor, add a state | **The `.cadl` file** (→ regenerate with the e2e script) |
+| Change how robots move | `Pilot_CSoS.cs` (the contract side needs no change as long as the events the bridge observes stay the same) |
+| Change the translation into contract events | `PilotContractBridge.cs` |
+| Change the shape of the generated C# | `contract_emitter.py` (advanced) |
+| Change the robot count or the map | `cadl_config.json` |
+
+**Places you must not touch**: hand-editing the contents of `Generated/` and `Runtime/`. The next run of the e2e script will overwrite them (if something needs fixing, fix the generator).
+
+### Reading the code (optional, about 10 minutes)
+
+Read `PilotContractBridge.cs` and see how thin the translation from observation to event is.
+
+## 8.5 Check
 
 Confirm all of these:
 
@@ -164,13 +209,13 @@ Confirm all of these:
 | Every robot's first transition is `Proposed -> Assigned` | Yes |
 | The robots reach `Assigned` one at a time, about every 5 seconds (the arbitrator hands out one delivery at a time), so the last one takes about 25–30 seconds | Yes |
 | A robot's contract reaches `Completed` when **that** robot finishes its delivery; the other robots' contracts do not move with it | Yes |
-| The **same kinds of events** as Step 5's Python run (lifecycle transitions, violations) appear with the same meaning | Yes |
+| The **same kinds of events** as Chapter 7's Python run (lifecycle transitions, violations) appear with the same meaning | Yes |
 
-### Common mistakes
+## 8.6 Common mistakes
 
 | Symptom | Fix |
 | --- | --- |
-| Console: `[PilotContractBridge X] ContractRuntimeHost.Instance is null` | You forgot to place the host. Redo Step 6.3. |
+| Console: `[PilotContractBridge X] ContractRuntimeHost.Instance is null` | You forgot to place the host. Redo "Add ContractRuntimeHost" in Section 8.2. |
 | Console silent — no contract events at all | NATS or arbitrator not running. Check that Terminal 1 shows `Server is ready` and Terminal 2 shows the `[Config] … taskArbitration.enabled=true …` line. |
 | No delivery is ever assigned (no `WON delivery` in the Console) | The arbitrator probably did not load its config. Restart it passing the **absolute path** of `cadl_config.json` via `-config`, and confirm `taskArbitration.enabled=true` in its startup output (the shipped config already has it `true`). |
 | Compile error in Console after Play: `The name 'CADL.SosDsl.Demo.ContractRuntimeHost' could not be found` | Generated/Runtime files not picked up. Re-run the e2e script. Or in Unity, `Assets ▸ Reimport All`. |
@@ -178,16 +223,14 @@ Confirm all of these:
 | **Compile error `... already contains a definition for ...` with paths under `Generated/Generated/…` or `Runtime/Runtime/…`** | The generated tree was copied nested (duplicated). Delete `Assets/Scripts/SoSDsl/Generated/Generated` and `Runtime/Runtime` (the current e2e script self-heals this). |
 | **The battery=15 robot also completes instead of violating** | The bridge fired `assign` and `accept` in the same frame, so the contract never dwells in `Assigned` long enough for the periodic `battery_guard` to sample. The shipped `PilotContractBridge` fixes this via `assignedDwellMs` (default 700 ms); if you replace the bridge, keep it above the monitor period. |
 
-### Recap
+## 8.7 Recap
 
 You have just witnessed the **end-to-end story of an SoS contract**: written in CADL, lowered to IR, generated to C#, executed in a real-time simulation, and observed detecting missed deadlines and battery-rule violations and moving the affected contract instances to `Violated`. (The runtime detects and records violations; it does not prevent the robots from misbehaving.)
 
----
+## 8.8 Exercises
 
-## Exercise 4.4 (from Session 4)
-
-### Exercise 4.4 (★★★) — Run the Unity scene
+### Exercise 8.1 (★★★) — Run the Unity scene
 
 **Goal**: Validate that the C# runtime produces the same trace shape as the Python one.
 
-**Procedure**: Follow Step 6 of the main hands-on. Compare the Console output to your Python `session4_baseline.ndjson` and confirm that the *event format* is the same. (The per-robot breakdown of terminal states will not match the Python scenario — only the shape of the events does.)
+**Procedure**: Follow Sections 8.2–8.3. Compare the Console output to your Python `session4_baseline.ndjson` and confirm that the *event format* is the same. (The per-robot breakdown of terminal states will not match the Python scenario — only the shape of the events does.)

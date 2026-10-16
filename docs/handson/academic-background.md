@@ -123,7 +123,7 @@ The `lifecycle:` and `monitors:` features live in a CADL extension called **SoS-
 It's an "extension" because they elevate **norms** (rules to obey) to first-class concepts ─
 core CADL alone (actors / contract skeleton) doesn't include them.
 
-When you add `lifecycle:` / `monitors:` in Step 3 of Course A (or read them in §3 of Course B),
+When you add `lifecycle:` / `monitors:` in Chapter 5 of the Textbook (Course A) (or read them in §3 of Course B),
 **you are using SoS-DSL for the first time**.
 
 ---
@@ -227,6 +227,5 @@ so the same spec serves as the common source for Unity, SUMO, and the Python ref
 
 ## What to read next
 
-- Recommended before Course A → [Architecture & Code Walkthrough](code-walkthrough.md)
 - Start **Course A** → [Course A — Robot Delivery](../textbook/index.md)
 - Back to the index → [Hands-on Index](index.md)

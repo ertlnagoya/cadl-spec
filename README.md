@@ -25,7 +25,6 @@ A self-paced workshop of about 95 minutes and a 5-session exercise course that w
 | --- | --- | --- |
 | Hands-on index | [docs/handson](https://www.ertl.jp/cadl-spec/docs/handson/) | [ja/docs/handson](https://www.ertl.jp/cadl-spec/ja/docs/handson/) |
 | Why SoS-DSL? (background for learners) | [academic-background](https://www.ertl.jp/cadl-spec/docs/handson/academic-background) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/academic-background) |
-| Code walkthrough (recommended before Course A) | [code-walkthrough](https://www.ertl.jp/cadl-spec/docs/handson/code-walkthrough/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/code-walkthrough/) |
 | Textbook — Course A: Robot Delivery (with the exercises of a 5-session class) | [textbook](https://www.ertl.jp/cadl-spec/docs/textbook/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/textbook/) |
 | Course B — Urban Mobility (CADL × SUMO) | [mobility-sos-tutorial](https://www.ertl.jp/cadl-spec/docs/handson/mobility-sos-tutorial) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/mobility-sos-tutorial) |
 | Course D — Robot Town (rules a community amends itself) | [robot-town-tutorial](https://www.ertl.jp/cadl-spec/docs/handson/robot-town-tutorial) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/robot-town-tutorial) |

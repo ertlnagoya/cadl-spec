@@ -84,6 +84,8 @@ const config: Config = {
           {from: ['/docs', '/docs/spec'], to: '/docs/spec/intro'},
           // Course A and its exercises booklet became the Textbook.
           {from: ['/docs/handson/main-textbook', '/docs/handson/exercises'], to: '/docs/textbook/'},
+          // The code walkthrough became Sections 2.1-2.2, 7.6 and 8.4 of the Textbook.
+          {from: '/docs/handson/code-walkthrough', to: '/docs/textbook/toolchain-setup/'},
         ],
       },
     ],

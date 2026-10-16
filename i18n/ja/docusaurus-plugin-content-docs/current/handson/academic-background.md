@@ -119,7 +119,7 @@ CADL（Contract Architecture Description Language）は、複数のシステム�
 `lifecycle:` と `monitors:` は CADL 本体ではなく、SoS-DSL 拡張（cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)）にあります。
 拡張になっているのは、これらが「規範（守るべきルール）」を一級の概念として扱うパーツで、構造（actors / contracts のスケルトン）だけを書きたい場合は本体だけで十分だからです。
 
-コース A の Step 3 で `lifecycle:` と `monitors:` を書き足した時点（コース B では §3 でそれらを読んだ時点）で、SoS-DSL を実際に使っていることになります。
+テキストブック（コース A）の第 5 章で `lifecycle:` と `monitors:` を書き足した時点（コース B では §3 でそれらを読んだ時点）で、SoS-DSL を実際に使っていることになります。
 
 ---
 
@@ -221,6 +221,5 @@ CADL は仕様レベルに留まり、コードはターゲットごとに生成
 
 ## 次に読むもの
 
-- コース A の前に読むのを推奨 → [全体構造とコード解説](code-walkthrough.md)
 - [コース A — ロボット配送](../textbook/index.md) から本編へ
 - [ハンズオン入口](index.md) に戻る

@@ -6,13 +6,21 @@ title: "Chapter 4 — Writing the structure"
 
 # Chapter 4 — Writing the structure
 
-## Step 2 — Write CADL for Robot Delivery (15 min)
+This chapter writes the structure of the robot-delivery SoS (its actors and contract) in CADL and checks it with `cadl check` and `cadl sim-ir` (about 15 minutes). In the exercises at the end you add an actor and a protocol, and write the structure of a domain you do not know yet.
 
-### What you'll learn
+## 4.1 What you'll learn
+
+**In the procedure:**
+
 - How to declare actors with `id`, `role`, `autonomy`, `interface`.
 - How to declare a contract's parties, A/G clauses (`assume` / `guarantee`), incentives.
 
-### Background
+**In the exercises:**
+
+- Identify the actors of an SoS and declare them yourself, including one for a domain you do not know yet.
+- Run `cadl check` and explain its diagnostics.
+
+## 4.2 Background
 
 Think of a CADL `actors:` block as a UML class diagram for the SoS — each actor type has ports (`interface.input` / `interface.output`) and a degree of self-direction (`autonomy: low | medium | high`). The `contracts:` block is the *agreement* between named subsets of those actors.
 
@@ -30,13 +38,30 @@ flowchart LR
   SLA -.- D
 ```
 
-### Procedure
+### The building blocks of a structure
 
-Create a new file `my_delivery.cadl` in the root of `cadl_repo` (that is, `~/program/cadl_repo/my_delivery.cadl`; the bundled example it resembles is `examples/sos_dsl_robot_delivery.cadl`), and paste the skeleton below. The commands in Steps 2–4 are run from `~/program/cadl_repo`. Read the comments — they explain what each block does.
+A CADL file says **who** participates and **what they expect from each other**, before saying anything about *when* or *how often*. The structural building blocks are:
+
+```mermaid
+flowchart LR
+  A[actors:<br/>WHO is in the SoS]
+  P[protocols:<br/>HOW they talk]
+  C[contracts:<br/>WHAT they agree on]
+  T[transitions:<br/>WHEN they switch regimes]
+  A --> C
+  A --> P
+  C --> T
+```
+
+In this chapter you only touch **actors** and **contracts**. `protocols` and `transitions` are optional stretch material.
+
+## 4.3 Procedure
+
+Create a new file `my_delivery.cadl` in the root of `cadl_repo` (that is, `~/program/cadl_repo/my_delivery.cadl`; the bundled example it resembles is `examples/sos_dsl_robot_delivery.cadl`), and paste the skeleton below. The commands in Chapters 4–6 are run from `~/program/cadl_repo`. Read the comments — they explain what each block does.
 
 ```yaml
 # my_delivery.cadl ─── My first SoS specification
-# (this file just describes structure; norms come in Step 3)
+# (this file just describes structure; norms come in Chapter 5)
 
 sos:
   name: "MyDelivery"
@@ -97,7 +122,7 @@ cd ~/program/cadl_repo
 cadl check my_delivery.cadl
 ```
 
-### Expected output
+## 4.4 Expected output
 
 ```
 $ cadl check my_delivery.cadl
@@ -136,7 +161,7 @@ cadl sim-ir my_delivery.cadl --format json
   },
 ```
 
-### Check 2
+## 4.5 Check
 
 Verify both:
 
@@ -152,9 +177,9 @@ Verify both:
    87-        "monitors": []
    ```
 
-These two `null` / `[]` are **the gap we will fill in Step 3** — they are why the structure-only specification cannot say "the robot must ack within 5 seconds".
+These two `null` / `[]` are **the gap we will fill in Chapter 5** — they are why the structure-only specification cannot say "the robot must ack within 5 seconds".
 
-### Common mistakes
+## 4.6 Common mistakes
 
 | Symptom | Cause |
 | --- | --- |
@@ -162,47 +187,15 @@ These two `null` / `[]` are **the gap we will fill in Step 3** — they are why 
 | `Parse error: Invalid SoS type: 'Centralized'. Must be one of: Directed, Acknowledged, Collaborative, Virtual` | CADL accepts only these four values for `type:`. |
 | `[ERROR]: Undefined actor 'CUSTMER' referenced in contract 'DELIVERY_SLA' parties` | A name under `parties:` (or inside a predicate, e.g. `CUSTMER[i].x`) is not declared under `actors:`. Usually a typo. An actor declared as `CUSTOMER[1..M]` is referred to as `"CUSTOMER[*]"` (all) or `CUSTOMER[i]` (one). |
 
-### Recap
+## 4.7 Recap
 
 You now have a CADL file that describes the **structure** of your SoS. It compiles, it lowers to IR, and the IR confirms there is exactly one contract called `DELIVERY_SLA`. Next we add the norms that let a runtime check that contract.
 
----
+## 4.8 Exercises
 
-## Session 1 — CADL Modelling
+### Exercise 4.1 (★) — Build the baseline structural model
 
-### Learning objectives
-
-- Identify the actors in an SoS and declare them in CADL with `id`, `role`, `autonomy`, `interface`.
-- Write a structural contract with `parties`, `assume`, `guarantee`, `incentives`.
-- Run `cadl check` and explain its diagnostics.
-
-### Prerequisites
-
-- Steps 0 and 1 of the main hands-on textbook (repositories cloned; the chapters listed in Step 1 read — Introduction, Language Specification, Appendix E, Examples).
-- 30 min of pre-reading: cadl-spec Chapter 5 — *Language Specification*.
-
-### Concept introduction (~30 min)
-
-A CADL file says **who** participates and **what they expect from each other**, before saying anything about *when* or *how often*. The structural building blocks are:
-
-```mermaid
-flowchart LR
-  A[actors:<br/>WHO is in the SoS]
-  P[protocols:<br/>HOW they talk]
-  C[contracts:<br/>WHAT they agree on]
-  T[transitions:<br/>WHEN they switch regimes]
-  A --> C
-  A --> P
-  C --> T
-```
-
-For Session 1 you will only touch **actors** and **contracts**. `protocols` and `transitions` are optional stretch material.
-
-### Exercises (~50 min in class + homework)
-
-#### Exercise 1.1 (★) — Build the baseline structural model
-
-**Goal**: Reproduce the example actor / contract from the main hands-on, by hand, into a fresh file `my_delivery_v1.cadl`.
+**Goal**: Reproduce the example actor / contract from Section 4.3, by hand, into a fresh file `my_delivery_v1.cadl`.
 
 **Procedure**:
 
@@ -213,7 +206,7 @@ For Session 1 you will only touch **actors** and **contracts**. `protocols` and 
 
 **Check**: The file passes the type check, and the IR JSON shows 3 actors and 1 contract.
 
-#### Exercise 1.2 (★★) — Add a fourth actor
+### Exercise 4.2 (★★) — Add a fourth actor
 
 **Goal**: Introduce a `MAINTENANCE` actor that periodically inspects robots, and declare a separate contract `MAINTENANCE_SLA` between `MAINTENANCE` and `ROBOT[*]`.
 
@@ -226,7 +219,7 @@ For Session 1 you will only touch **actors** and **contracts**. `protocols` and 
 
 **Reflection**: When you have *two* contracts on the same actor, which `assume` clauses apply? (Hint: both must hold simultaneously — this is exactly the *interdependency* concern that Dahmann (2014) calls out as SoS pain point #5.)
 
-#### Exercise 1.3 (★★) — Add a protocol
+### Exercise 4.3 (★★) — Add a protocol
 
 **Goal**: Move beyond the structural skeleton: write a `protocols:` section describing the delivery flow as a sequence of message exchanges.
 
@@ -251,7 +244,7 @@ For Session 1 you will only touch **actors** and **contracts**. `protocols` and 
 
 **Reflection**: Why is the protocol described as a sequence of *messages*, not as code? What does this give you that a Python function would not? (Hint: think about who *implements* each step.)
 
-#### Exercise 1.4 (★★★) — Write a domain you don't know yet
+### Exercise 4.4 (★★★) — Write a domain you don't know yet
 
 **Goal**: Without copying any existing file, write a CADL skeleton for a **delivery drone fleet** (instead of ground robots). Same domain shape, different actors and capabilities.
 
@@ -263,9 +256,16 @@ For Session 1 you will only touch **actors** and **contracts**. `protocols` and 
 
 **Reflection**: How much of your file is *the same* as the robot delivery one, and how much is genuinely different? The same lifecycle could be reused with minor modifications — that is exactly the design intent of SoS-DSL.
 
-### Wrap-up + homework
+### Using this chapter in a class
 
-**Bring to Session 2**:
+**Before the session.**
+
+- Chapter 2 done (repositories cloned, `cadl` installed).
+- 30 min of pre-reading: Chapter 3 of this textbook.
+
+**Wrap-up and homework.**
+
+**Bring to the next session (Chapter 5)**:
 
 - `my_delivery_v1.cadl` (compiles cleanly).
 - A short note (3–5 lines) describing what is missing in v1 — i.e., what the structural-only file *cannot* express. (Hint: timing, what counts as a violation, what the consequences are.)

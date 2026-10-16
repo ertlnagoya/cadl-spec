@@ -6,13 +6,21 @@ title: "第 4 章 — 構造を書く"
 
 # 第 4 章 — 構造を書く
 
-## Step 2 — ロボット配送を CADL で書く (15 分)
+この章では、ロボット配送 SoS の構造（アクターと契約）を CADL で書き、`cadl check` と `cadl sim-ir` で確かめます（約 15 分）。章の終わりの演習では、アクターやプロトコルを足し、知らないドメインの構造を書きます。
 
-### 学ぶこと
+## 4.1 学ぶこと
+
+**手順で：**
+
 - アクターを `id`, `role`, `autonomy`, `interface` で宣言する方法。
 - 契約の parties, A/G clauses (`assume` / `guarantee`), incentives の宣言方法。
 
-### 背景
+**演習で：**
+
+- SoS のアクターを同定し、自分で宣言できる（知らないドメインを含む）。
+- `cadl check` を実行し、その診断メッセージを説明できる。
+
+## 4.2 背景
 
 CADL の `actors:` ブロックは SoS の UML クラス図のようなものです。各アクター型はポート（`interface.input` / `interface.output`）と自律度（`autonomy: low | medium | high`）を持ちます。`contracts:` ブロックは、指定したアクターサブセットの間の *合意* です。
 
@@ -30,13 +38,30 @@ flowchart LR
   SLA -.- D
 ```
 
-### 手順
+### 構造を組み立てる部品
 
-`cadl_repo` の直下に `my_delivery.cadl` を新規作成し（`~/program/cadl_repo/my_delivery.cadl`。手本になる同梱の例は `examples/sos_dsl_robot_delivery.cadl` です）、下の骨組みを貼り付けます。Step 2〜4 のコマンドは `~/program/cadl_repo` で実行します。コメントを読みながら、各ブロックが何をしているかを確かめてください。
+CADL ファイルは「**誰が**参加し、**お互いに何を期待しているか**」を、「いつ」「どれくらいの頻度で」よりも先に述べます。構造を組み立てる部品は次のとおりです。
+
+```mermaid
+flowchart LR
+  A[actors:<br/>SoS に参加する者]
+  P[protocols:<br/>会話の仕方]
+  C[contracts:<br/>合意内容]
+  T[transitions:<br/>運用モードの切替条件]
+  A --> C
+  A --> P
+  C --> T
+```
+
+この章では **actors** と **contracts** だけを扱います。`protocols` と `transitions` は発展課題に回します。
+
+## 4.3 手順
+
+`cadl_repo` の直下に `my_delivery.cadl` を新規作成し（`~/program/cadl_repo/my_delivery.cadl`。手本になる同梱の例は `examples/sos_dsl_robot_delivery.cadl` です）、下の骨組みを貼り付けます。第 4〜6 章のコマンドは `~/program/cadl_repo` で実行します。コメントを読みながら、各ブロックが何をしているかを確かめてください。
 
 ```yaml
 # my_delivery.cadl ─── 私の最初の SoS 仕様
-# (このファイルは構造のみを記述します。規範は Step 3 で追加します)
+# (このファイルは構造のみを記述します。規範は第 5 章で追加します)
 
 sos:
   name: "MyDelivery"
@@ -97,7 +122,7 @@ cd ~/program/cadl_repo
 cadl check my_delivery.cadl
 ```
 
-### 期待される出力
+## 4.4 期待される出力
 
 ```
 $ cadl check my_delivery.cadl
@@ -136,7 +161,7 @@ cadl sim-ir my_delivery.cadl --format json
   },
 ```
 
-### チェック 2
+## 4.5 チェック
 
 両方とも確認：
 
@@ -152,9 +177,9 @@ cadl sim-ir my_delivery.cadl --format json
    87-        "monitors": []
    ```
 
-この `null` と `[]` こそが **Step 3 で埋めるギャップ** です。構造だけの仕様では「ロボットは 5 秒以内に ack せよ」と言えない理由がこれです。
+この `null` と `[]` こそが **第 5 章で埋めるギャップ** です。構造だけの仕様では「ロボットは 5 秒以内に ack せよ」と言えない理由がこれです。
 
-### よくある間違い
+## 4.6 よくある間違い
 
 | 症状 | 原因 |
 | --- | --- |
@@ -162,47 +187,15 @@ cadl sim-ir my_delivery.cadl --format json
 | `Parse error: Invalid SoS type: 'Centralized'. Must be one of: Directed, Acknowledged, Collaborative, Virtual` | `type:` に書けるのはこの 4 つだけ。 |
 | `[ERROR]: Undefined actor 'CUSTMER' referenced in contract 'DELIVERY_SLA' parties` | `parties:`（または述語の中。例：`CUSTMER[i].x`）に書いた名前が `actors:` で宣言されていない。多くは打ち間違い。`CUSTOMER[1..M]` と宣言したアクターは，`"CUSTOMER[*]"`（全員）または `CUSTOMER[i]`（1 人）で参照する。 |
 
-### おさらい
+## 4.7 おさらい
 
 SoS の **構造** を記述する CADL ファイルが完成しました。コンパイルでき、IR に変換でき、IR の中に契約 `DELIVERY_SLA` が 1 つあることも確認できました。次は、ランタイムがこの契約への違反を検出できるように、規範を書き加えます。
 
----
+## 4.8 演習
 
-## 第 1 回 — CADL モデリング
+### 演習 4.1 (★) — 構造モデルのベースラインを作る
 
-### 学習目標
-
-- SoS のアクターを同定し、CADL の `id`, `role`, `autonomy`, `interface` で宣言できる。
-- 構造的な契約を `parties`, `assume`, `guarantee`, `incentives` で書ける。
-- `cadl check` を実行し、その診断メッセージを説明できる。
-
-### 前提
-
-- メイン教材の Step 0 と Step 1 を完了（リポジトリのクローンと、Step 1 に挙げた章 — Introduction、Language Specification、Appendix E、Examples — の通読）。
-- 事前読書 30 分：cadl-spec 第 5 章 *Language Specification*。
-
-### 概念導入（約 30 分）
-
-CADL ファイルは「**誰が**参加し、**お互いに何を期待しているか**」を、「いつ」「どれくらいの頻度で」よりも先に述べます。構造を組み立てる部品は次のとおりです。
-
-```mermaid
-flowchart LR
-  A[actors:<br/>SoS に参加する者]
-  P[protocols:<br/>会話の仕方]
-  C[contracts:<br/>合意内容]
-  T[transitions:<br/>運用モードの切替条件]
-  A --> C
-  A --> P
-  C --> T
-```
-
-第 1 回では **actors** と **contracts** だけを扱います。`protocols` と `transitions` は発展課題に回します。
-
-### 演習（授業 50 分 + 宿題）
-
-#### 演習 1.1 (★) — 構造モデルのベースラインを作る
-
-**目的**: メイン教材のアクター / 契約例を、ゼロから書き起こした新ファイル `my_delivery_v1.cadl` に再現する。
+**目的**: 4.3 節のアクター / 契約例を、ゼロから書き起こした新ファイル `my_delivery_v1.cadl` に再現する。
 
 **手順**:
 
@@ -213,7 +206,7 @@ flowchart LR
 
 **確認**: ファイルが型検査を通り、IR JSON にアクター 3 つ、契約 1 つが見える。
 
-#### 演習 1.2 (★★) — 4 番目のアクターを追加する
+### 演習 4.2 (★★) — 4 番目のアクターを追加する
 
 **目的**: 定期的にロボットを点検する `MAINTENANCE` アクターを追加し、`MAINTENANCE` と `ROBOT[*]` の間に別の契約 `MAINTENANCE_SLA` を宣言する。
 
@@ -226,7 +219,7 @@ flowchart LR
 
 **振り返り**: 同じアクターに *2 つの* 契約があるとき、`assume` 節はどう作用しますか？（ヒント：両方が同時に成り立つ必要がある — これがまさに Dahmann (2014) が SoS pain point #5 として挙げた *相互依存* の問題です。）
 
-#### 演習 1.3 (★★) — プロトコルを追加する
+### 演習 4.3 (★★) — プロトコルを追加する
 
 **目的**: 構造の骨格を超えて、配送フローを `protocols:` セクションでメッセージ交換のシーケンスとして書く。
 
@@ -251,7 +244,7 @@ flowchart LR
 
 **振り返り**: なぜプロトコルは *メッセージ* の列として書かれ、コードとして書かれないのでしょうか？ Python 関数では得られないどんな利点があるでしょうか？（ヒント：各ステップを *誰が実装するか* を考える。）
 
-#### 演習 1.4 (★★★) — 知らないドメインを書いてみる
+### 演習 4.4 (★★★) — 知らないドメインを書いてみる
 
 **目的**: 既存ファイルを一切コピーせず、**配送ドローンの群**（地上ロボットではなく）の CADL 骨格をゼロから書く。ドメインの形は同じだが、アクターと capabilities は異なる。
 
@@ -263,9 +256,16 @@ flowchart LR
 
 **振り返り**: 自分のファイルのうち、ロボット配送と *同じ* 部分はどれくらいで、本当に違う部分はどれくらいですか？ 同じライフサイクルが小修正で再利用できる — これがまさに SoS-DSL の設計意図です。
 
-### まとめ + 宿題
+### 授業で使う場合
 
-**第 2 回に持参**:
+**授業の前に。**
+
+- 第 2 章を完了（リポジトリのクローンと `cadl` のインストール）。
+- 事前読書 30 分：本書の第 3 章。
+
+**まとめと宿題。**
+
+**次の授業（第 5 章）に持参**:
 
 - `my_delivery_v1.cadl`（クリーンにコンパイルされる）
 - v1 で表現できないものを 3〜5 行のメモで列挙（ヒント：タイミング、何を違反とみなすか、その帰結）。

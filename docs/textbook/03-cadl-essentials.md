@@ -6,16 +6,14 @@ title: "Chapter 3 — Essentials of CADL"
 
 # Chapter 3 — Essentials of CADL
 
-This chapter explains how to write the CADL files of Chapter 4 onwards, limited to what this textbook uses. The specification defines the whole language, but you do not need to read it to follow this textbook. Each section ends with the sections of the specification to read if you want the details.
+This chapter explains how to write the CADL files of Chapter 4 onwards, limited to what this textbook uses. The specification defines the whole language, but you do not need to read it to follow this textbook. Each section ends with the sections of the specification to read if you want the details. Reading the chapter takes about 15 minutes.
 
-## Step 1 — Learn the essentials of CADL (15 min)
-
-### What you'll learn
+## 3.1 What you'll learn
 - A CADL file consists of a **structure layer** (actors / contracts / protocols) and a **norms layer** (lifecycle / monitors).
 - By which rules an individual agreement (a contract instance) moves between states, and when it becomes a violation.
 - What `cadl check` and `cadl verify` check.
 
-### Background: the structure layer and the norms layer
+## 3.2 Background: the structure layer and the norms layer
 
 A specification of an SoS has two jobs:
 
@@ -24,7 +22,7 @@ A specification of an SoS has two jobs:
 
 CADL covers (1) in the core language. The SoS-DSL extension adds (2) on top of (1). The extension adds only two keys, `lifecycle:` and `monitors:`, placed inside a contract and written in the same way as the core.
 
-### The skeleton of a file
+## 3.3 The skeleton of a file
 
 A CADL file is written in YAML and has a single `sos:` at the top level. The keys used in this textbook are:
 
@@ -49,7 +47,7 @@ sos:
 
 Details: [Chapter 5](../spec/05-language-spec.md), Section 5.1, and [Appendix A](../spec/appendix-a-syntax.md), Section A.2, of the specification.
 
-### Actors
+## 3.4 Actors
 
 An actor is a participant of the SoS.
 
@@ -80,7 +78,7 @@ Elsewhere in the file, `ROBOT[*]` refers to the whole set and `ROBOT[i]` to one 
 
 Details: [Chapter 5](../spec/05-language-spec.md), Section 5.2.2, of the specification.
 
-### Contracts
+## 3.5 Contracts
 
 A contract is an agreement between actors. A CADL contract is written in the form **as long as the assumptions (`assume`) hold, the parties keep the guarantees (`guarantee`)** (assume-guarantee form). If an assumption fails, the parties are not bound by the guarantees.
 
@@ -113,7 +111,7 @@ A contract so far describes a **class**: "this is the kind of agreement we make"
 
 Details: [Chapter 5](../spec/05-language-spec.md), Sections 5.2.3 and 5.4.1, of the specification.
 
-### Protocols
+## 3.6 Protocols
 
 A protocol is the procedure of an interaction between actors.
 
@@ -133,7 +131,7 @@ Each line of `steps` is one step. `A -> B : m` means "A sends the message `m` to
 
 Details: [Chapter 5](../spec/05-language-spec.md), Section 5.2.4, of the specification.
 
-### The norms layer (1): contract instances and the lifecycle
+## 3.7 The norms layer (1): contract instances and the lifecycle
 
 The basic idea of the norms layer is the **contract instance**. Every time a delivery order arrives, one instance of the `DELIVERY_SLA` contract is created, and that instance moves from state to state. Instances are created by the application that runs the contracts (in this textbook, the simulator).
 
@@ -165,7 +163,7 @@ A transition (one item of `transitions`) works as follows.
 
 Details: [Appendix E](../spec/appendix-e-sos-dsl.md), Sections E.3 and E.5, of the specification.
 
-### The norms layer (2): monitors
+## 3.8 The norms layer (2): monitors
 
 `monitors:` holds rules that are watched while a contract instance is running.
 
@@ -193,7 +191,7 @@ The values of `on:`, `when:` and `rule:`, and of `observe:` entries that contain
 
 Details: [Appendix E](../spec/appendix-e-sos-dsl.md), Sections E.3–E.5, of the specification.
 
-### What cadl check and cadl verify check
+## 3.9 What cadl check and cadl verify check
 
 Besides syntax and types, `cadl check` reports mistakes in the norms layer such as the following as **errors**. With even one error it prints `Type check failed`.
 
@@ -226,7 +224,7 @@ The procedures of this textbook do not use `cadl verify`, but you can use it to 
 
 Details: [Appendix E](../spec/appendix-e-sos-dsl.md), Section E.4, and [Chapter 6](../spec/06-design.md), Section 6.3, of the specification.
 
-### Reading an example
+## 3.10 Reading an example
 
 With what you have read so far, read the contract of robot delivery. It is the example of Section E.6 of Appendix E of the specification, cut down to one transition and one monitor. In Chapter 5 you will write something very similar yourself.
 
@@ -263,7 +261,7 @@ contracts:
           severity:   Major
 ```
 
-### Check 1
+## 3.11 Check
 
 Without looking at the example, can you answer these four questions aloud?
 
@@ -274,11 +272,11 @@ Without looking at the example, can you answer these four questions aloud?
 
 If you can answer all four, you know enough to start writing in Chapter 4.
 
-### Recap
+## 3.12 Recap
 
 A CADL file has two floors: the **structure layer** (actors / contracts / protocols), which says what exists, and the **norms layer** (lifecycle / monitors inside a contract), which says what must be kept. A contract is a class of agreement written in assume-guarantee form; the contract instance created for each order moves between states following the transitions, deadlines and monitors of the lifecycle. A missed deadline or a monitor whose condition holds is a violation and forces the instance to the state named in `transition:`. `cadl check` checks the file you wrote, and `cadl verify` looks for contradictions between assumptions and guarantees.
 
-### Where the specification covers this
+## 3.13 Where the specification covers this
 
 To look up these constructs, including the parts this textbook does not use, read:
 
