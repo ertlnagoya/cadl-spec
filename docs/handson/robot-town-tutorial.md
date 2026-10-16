@@ -200,7 +200,7 @@ behind it), raises on-time deliveries from 121.8 to 131.0 — and is voted down 
 council adopts a smaller amendment that all three accept. The adopted rules are saved as
 `runs/<name>/v2.cadl`. To compare `v1.cadl` and `v2.cadl`, use the **Designer** page of cadl-explorer
 (v0.5.4 or later): open `v1.cadl` under **Open an existing CADL file**, switch the view to **Versions**
-and save it with **Save as …**, then open `v2.cadl`. **Compare two designs** then shows the saved `v1`
+and save it with **Save as a version**, then open `v2.cadl`. **Compare two designs** then shows the saved `v1`
 as **A — baseline** and the current design (`v2`) as **B — compared**. Edit these files in **Source**,
 not with **Forms**: applying a form rewrites the file without comments and so removes the `# @amend:`
 marks that the council reads (cadl-explorer warns about this). The starting rules are also offered as
