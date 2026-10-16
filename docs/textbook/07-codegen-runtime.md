@@ -91,8 +91,8 @@ Next steps for the student:
   4. Attach PilotContractBridge to each robot that has Pilot_CSoS
   5. Press Play and watch the Console for [lifecycle ...] / [violation ...]
 
-See the hands-on textbook for the full walkthrough:
-  https://www.ertl.jp/cadl-spec/docs/handson/main-textbook
+See the textbook for the full walkthrough (Chapter 8 covers these steps):
+  https://www.ertl.jp/cadl-spec/docs/textbook/
 ```
 
 Look at the generated tree:
