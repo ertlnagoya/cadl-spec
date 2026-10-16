@@ -23,9 +23,9 @@ title: "はじめに"
 | 第 I 部 基礎 | [第 1 章 SoS とは何か](01-what-is-sos.md) · [第 2 章ツールチェインと準備](02-toolchain-setup.md) · [第 3 章 CADL 言語の要点](03-cadl-essentials.md) |
 | 第 II 部 実践 | [第 4 章構造を書く](04-structure.md) · [第 5 章規範を書く](05-norms.md) · [第 6 章ライフサイクルを可視化する](06-visualise.md) · [第 7 章コードを生成し、参照ランタイムで動かす](07-codegen-runtime.md) · [第 8 章 Unity でシミュレーションを動かす](08-unity.md) · [第 9 章仕様を改善する](09-improve.md) |
 | 第 III 部 発展 | [第 10 章 LLM で契約を生成する](10-llm.md) · [第 11 章次に進む](11-next.md) |
-| 付録 | [付録 A 用語集](appendix-a-glossary.md) · [付録 B 授業での使い方](appendix-b-teaching.md) |
+| 付録 | [付録 A 用語集](appendix-a-glossary.md) · [付録 B 記法の早見表](appendix-b-quick-reference.md) · [付録 C 授業での使い方](appendix-c-teaching.md) · [付録 D 参考文献](appendix-d-references.md) |
 
 使い方は 2 通りです。
 
 - **自習（約 95 分）**：第 1〜8 章の本文を順に進めます。各章の終わりの演習は飛ばしてかまいません。
-- **授業（5 回、または 3 回）**：第 4〜9 章の 1 章が授業 1 回に当たります。各章の終わりの演習を、授業と宿題で進めます。[付録 B](appendix-b-teaching.md) を参照してください。
+- **授業（5 回、または 3 回）**：第 4〜9 章が 5 回の授業に当たります。各章の終わりの演習を、授業と宿題で進めます。[付録 C](appendix-c-teaching.md) を参照してください。

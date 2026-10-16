@@ -214,7 +214,7 @@ Type check failed: 1 error(s), 0 warning(s)
 
 `deadline:` を書いたのに `on_violation:` がない遷移は、**警告**になります。警告だけならファイルは有効で、`Type check passed` と表示されます。
 
-`cadl verify` は、`cadl check` に加えて、SMT ソルバ（Z3）で契約の前提と保証を調べます。たとえば、前提に `ROBOT[i].battery > 20` と `ROBOT[i].battery < 10` を並べると、2 つが同時に成り立つことはないので、「この契約はどんな場合にも適用されない」と報告します。
+`cadl verify` は、`cadl check` に加えて、SMT ソルバ（Z3 [[8]](appendix-d-references.md)）で契約の前提と保証を調べます。たとえば、前提に `ROBOT[i].battery > 20` と `ROBOT[i].battery < 10` を並べると、2 つが同時に成り立つことはないので、「この契約はどんな場合にも適用されない」と報告します。
 
 ```text
   [FAIL] Contract 'DELIVERY_SLA' assumptions: Assumptions contradict each other; the contract can never apply

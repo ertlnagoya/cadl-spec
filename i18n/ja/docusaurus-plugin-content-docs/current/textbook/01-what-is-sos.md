@@ -35,7 +35,7 @@ SoS を設計する人の仕事は、構成するシステムのコードをす�
 
 ## 1.3 SoS かどうかを見分ける：Maier の 5 条件
 
-ある対象を SoS と呼べるかどうかは、Maier（1998）の 5 条件で判定するのが一般的です。SoS の分類そのものは、国際規格 ISO/IEC/IEEE 21841:2019 で定められています。
+ある対象を SoS と呼べるかどうかは、Maier（1998）の 5 条件 [[1]](appendix-d-references.md) で判定するのが一般的です。SoS の分類そのものは、国際規格 ISO/IEC/IEEE 21841:2019 [[2]](appendix-d-references.md) で定められています。
 
 | # | 条件 | 確かめること | 食事配達では |
 | --- | --- | --- | --- |
@@ -61,7 +61,7 @@ SoS を設計する人の仕事は、構成するシステムのコードをす�
 
 ## 1.4 SoS の 4 類型
 
-同じ SoS でも、中央の指揮権の強さによって性質が変わります。ISO/IEC/IEEE 21841 は、次の 4 類型を定めています。
+同じ SoS でも、中央の指揮権の強さによって性質が変わります。ISO/IEC/IEEE 21841 [[2]](appendix-d-references.md) は、次の 4 類型を定めています。Maier が示した Directed、Collaborative、Virtual の 3 類型 [[1]](appendix-d-references.md) に、Dahmann と Baldwin が Acknowledged を加えたもの [[3]](appendix-d-references.md) です。
 
 | 類型 | 中央の指揮権 | 例 |
 |---|---|---|
@@ -125,5 +125,5 @@ SoS は、独立に運用されるシステムが集まって、どのシステ�
 
 本書だけで先に進めますが、背景をさらに知りたい場合は次を参照してください。
 
-- SoS に関する国際規格（ISO/IEC/IEEE 21839 / 21840 / 21841 / 15288 / 42010）、関連する研究領域、推薦文献：ハンズオンの「[なぜ SoS-DSL なのか？](../handson/academic-background.md)」
+- SoS に関する国際規格（ISO/IEC/IEEE 21839 [[4]](appendix-d-references.md)、21840 [[5]](appendix-d-references.md)、21841 [[2]](appendix-d-references.md)、15288 [[6]](appendix-d-references.md)、42010 [[7]](appendix-d-references.md)）、関連する研究領域、推薦文献：ハンズオンの「[なぜ SoS-DSL なのか？](../handson/academic-background.md)」
 - 既存の言語との比較：仕様書の[第 3 章](../spec/03-comparison.md)

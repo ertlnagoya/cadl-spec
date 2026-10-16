@@ -23,9 +23,9 @@ This textbook is Course A of the CADL hands-on materials. It walks once through 
 | I. Foundations | [1. What is an SoS?](01-what-is-sos.md) · [2. The toolchain and setup](02-toolchain-setup.md) · [3. Essentials of CADL](03-cadl-essentials.md) |
 | II. Practice | [4. Writing the structure](04-structure.md) · [5. Writing the norms](05-norms.md) · [6. Visualising the lifecycle](06-visualise.md) · [7. Generating code and running the reference runtime](07-codegen-runtime.md) · [8. Running the simulation in Unity](08-unity.md) · [9. Improving the specification](09-improve.md) |
 | III. Going further | [10. Generating contracts with an LLM](10-llm.md) · [11. Where to go next](11-next.md) |
-| Appendices | [A. Glossary](appendix-a-glossary.md) · [B. Using this textbook in a class](appendix-b-teaching.md) |
+| Appendices | [A. Glossary](appendix-a-glossary.md) · [B. Notation quick reference](appendix-b-quick-reference.md) · [C. Using this textbook in a class](appendix-c-teaching.md) · [D. References](appendix-d-references.md) |
 
 There are two ways to use it:
 
 - **Self-study (about 95 minutes)**: follow Chapters 1–8 and skip the exercises at the end of each chapter.
-- **A class (five sessions, or three)**: each of Chapters 4–9 is one session; the exercises at the end of the chapter are done in class and as homework. See [Appendix B](appendix-b-teaching.md).
+- **A class (five sessions, or three)**: Chapters 4–9 make up the five sessions; the exercises at the end of each chapter are done in class and as homework. See [Appendix C](appendix-c-teaching.md).

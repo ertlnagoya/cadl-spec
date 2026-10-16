@@ -78,7 +78,7 @@ The tools used in this textbook, and the chapters that use them:
 | Tool | What it does | Chapters |
 | --- | --- | --- |
 | `cadl check` | Checks the syntax, the types and the static rules of the SoS-DSL extension | 4, 5 |
-| `cadl verify` | Does what `cadl check` does, and in addition uses an SMT solver (Z3) to find contradictions between assumptions and guarantees and deadlocks in protocols | introduced in 3 |
+| `cadl verify` | Does what `cadl check` does, and in addition uses an SMT solver (Z3 [[8]](appendix-d-references.md)) to find contradictions between assumptions and guarantees and deadlocks in protocols | introduced in 3 |
 | `cadl sim-ir` | Turns the file into the JSON of the three-layer intermediate representation (IR) | 5–7 |
 | cadl-explorer | Draws the state machine (Lifecycle View) from the IR | 6 |
 | `cadl codegen --target unity-csharp` | Generates Unity C# code from the IR | 7 |

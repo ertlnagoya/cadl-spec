@@ -217,7 +217,7 @@ You now have a CADL file that describes the **structure** of your SoS. It compil
 3. Decide whether `assume` should include `ROBOT[i].battery > 0` or something stronger.
 4. Re-run `cadl check`.
 
-**Reflection**: When you have *two* contracts on the same actor, which `assume` clauses apply? (Hint: both must hold simultaneously — this is exactly the *interdependency* concern that Dahmann (2014) calls out as SoS pain point #5.)
+**Reflection**: When you have *two* contracts on the same actor, which `assume` clauses apply? (Hint: both must hold simultaneously — this is exactly the *interdependency* concern that Dahmann (2014) [[9]](appendix-d-references.md) calls out as SoS pain point #5.)
 
 ### Exercise 4.3 (★★) — Add a protocol
 

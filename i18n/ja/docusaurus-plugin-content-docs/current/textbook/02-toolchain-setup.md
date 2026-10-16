@@ -78,7 +78,7 @@ flowchart LR
 | ツール | すること | 使う章 |
 | --- | --- | --- |
 | `cadl check` | 構文、型、SoS-DSL の静的な規則を検査する | 第 4・5 章 |
-| `cadl verify` | `cadl check` に加え、SMT ソルバ（Z3）で前提と保証の矛盾や、プロトコルのデッドロックを検査する | 第 3 章で紹介 |
+| `cadl verify` | `cadl check` に加え、SMT ソルバ（Z3 [[8]](appendix-d-references.md)）で前提と保証の矛盾や、プロトコルのデッドロックを検査する | 第 3 章で紹介 |
 | `cadl sim-ir` | ファイルを 3 層の中間表現（IR）の JSON に変換する | 第 5〜7 章 |
 | cadl-explorer | IR から状態機械の図（Lifecycle View）を描く | 第 6 章 |
 | `cadl codegen --target unity-csharp` | IR から Unity の C# コードを生成する | 第 7 章 |

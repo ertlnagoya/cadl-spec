@@ -214,7 +214,7 @@ Type check failed: 1 error(s), 0 warning(s)
 
 A transition with a `deadline:` but no `on_violation:` gives a **warning**. With warnings only, the file is valid and `Type check passed` is printed.
 
-`cadl verify` does what `cadl check` does and, in addition, examines the assumptions and guarantees of each contract with an SMT solver (Z3). If the assumptions list both `ROBOT[i].battery > 20` and `ROBOT[i].battery < 10`, which can never hold together, it reports that the contract can never apply:
+`cadl verify` does what `cadl check` does and, in addition, examines the assumptions and guarantees of each contract with an SMT solver (Z3 [[8]](appendix-d-references.md)). If the assumptions list both `ROBOT[i].battery > 20` and `ROBOT[i].battery < 10`, which can never hold together, it reports that the contract can never apply:
 
 ```text
   [FAIL] Contract 'DELIVERY_SLA' assumptions: Assumptions contradict each other; the contract can never apply
