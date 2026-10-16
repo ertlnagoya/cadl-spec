@@ -176,7 +176,7 @@ python -m town.council --mode DISTRIBUTED
 
 町全体に最もよい案は `block_k 3 → 2`（後ろで 2 台が待った時点で退去させる）で、定時配達は 121.8 から 131.0 に増えます。
 しかし B 社と C 社の反対で否決され、全社が賛成する小さな改正が採択されます。
-採択された規則は `runs/<名前>/v2.cadl` に保存されます。コース B の改造課題と同じように、cadl-explorer の **Designer → Versions** で `v1.cadl` と `v2.cadl` を比べられます。
+採択された規則は `runs/<名前>/v2.cadl` に保存されます。`v1.cadl` と `v2.cadl` は、cadl-explorer（v0.5.4 以降）の **Designer** ページで比べられます。**Open an existing CADL file** で `v1.cadl` を開き、表示を **Versions** に切り替えて **Save as …** で保存してから、`v2.cadl` を開きます。すると **Compare two designs** の **A — baseline** に保存した `v1`、**B — compared** に現在の設計（`v2`）が入り、差分が表示されます。これらのファイルは **Forms** ではなく **Source** で編集してください。フォームを適用するとコメントを除いてファイルを書き直すので、委員会が読む `# @amend:` の印が消えます（cadl-explorer も警告を出します）。初期の規則は、例題の設計 **robot town** としても用意されています。
 
 ### 演習 4-1
 
