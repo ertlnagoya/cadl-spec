@@ -107,32 +107,26 @@ the order below, but each chapter is also self-contained.
 
 ## Suggested Reading Paths
 
-- **First-time readers** — Read Chapters 1–2, skim Chapter 5, then look at
-  Chapter 7 for concrete examples. The Chapter 7 listings are conceptual;
-  runnable examples are in the
+- **First-time readers** — To try the language first, start with the
+  [Quick Start](../quickstart/index.md); to learn it step by step, with the
+  [Textbook](../textbook/index.md). To read this specification itself, read
+  Chapters 1–2, skim Chapter 5, then look at Chapter 7 for concrete examples.
+  The Chapter 7 listings are conceptual; runnable examples are in the
   [`examples/` directory](https://github.com/ertlnagoya/cadl/tree/master/examples)
-  of the cadl repository and in the [hands-on course](../handson/index.md).
+  of the cadl repository.
 - **Implementers / tool builders** — Focus on Chapters 5, 6, and Appendix A.
 - **Researchers** — Chapters 3, 9, and 10 give the broader context and
   open problems.
 
 ## Getting the tool
 
-The reference implementation is [`cadl`](https://github.com/ertlnagoya/cadl).
-It is installed with `pip install cadl-lang` (Python 3.9+); the command is
-`cadl`. A first check is:
-
-```bash
-pip install cadl-lang
-cadl --version
-```
-
-Then, with a `.cadl` file such as those in the repository's
-[`examples/` directory](https://github.com/ertlnagoya/cadl/tree/master/examples),
-run `cadl check <file>.cadl` and `cadl verify <file>.cadl`. See the
-[repository README](https://github.com/ertlnagoya/cadl#readme) for all
-commands and the [hands-on course](../handson/index.md) for a guided
-walkthrough.
+The reference implementation is [`cadl`](https://github.com/ertlnagoya/cadl),
+published on PyPI as `cadl-lang`; the command is `cadl`. To install it and
+check a first example, follow [Path B of the Quick Start](../quickstart/index.md#path-b).
+To work with a clone of the repository (an editable install, as the
+hands-on materials do), follow [Section 2.4 of the Textbook](../textbook/02-toolchain-setup.md).
+The [repository README](https://github.com/ertlnagoya/cadl#readme) lists all
+commands.
 
 ## Related Tools
 
@@ -147,7 +141,7 @@ walkthrough.
 
 ## Learning by doing
 
-To write and run the language rather than only read about it, see the [hands-on materials](../handson/index.md): starting from robot delivery, they walk through authoring a spec, generating code, and running the simulation.
+To write and run the language rather than only read about it, see the [Textbook](../textbook/index.md): starting from robot delivery, it walks through authoring a spec, generating code, and running the simulation. The [hands-on materials](../handson/index.md) add courses on other domains.
 
 ## Status
 
@@ -181,8 +175,10 @@ The [motivation extension](./appendix-c-motivation.md) keeps its own label,
 v0.1-ext.
 
 The specification and the reference implementation are numbered
-independently: this specification is Version 0.2, and the reference
-implementation it was checked against is `cadl` 0.3.14.
+independently: this specification is Version 0.2. The release of the
+reference implementation it was checked against, and how that release
+deviates from the grammar, are given in
+[Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03).
 
 Feedback and discussion are welcome via [GitHub Issues](https://github.com/ertlnagoya/cadl/issues).
 Problems with the specification or this site can be reported at

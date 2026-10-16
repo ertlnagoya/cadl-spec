@@ -80,6 +80,7 @@ cadl --version
 > `pip install -e ~/program/cadl_repo` の途中で `z3-solver` のビルドに失敗する場合は、
 > `pip install --no-deps -e ~/program/cadl_repo` のあとに `pip install lark pyyaml` を実行してください。
 > 本ハンズオンで使うのは `cadl check` と `cadl sim-ir` だけなので Z3 は不要です。
+> そのほかのインストールの失敗は、[テキストブック 2.4 節](../textbook/02-toolchain-setup.md)のセットアップのトラブルシューティングを参照してください。
 
 ---
 

@@ -98,29 +98,22 @@ flowchart LR
 
 ## 推奨される読み順
 
-- **はじめて読む方** — 1〜2章を読み，5章をざっと眺めてから7章で具体例を確認。
+- **はじめて読む方** — まず試すなら[クイックスタート](../quickstart/index.md)から，
+  順を追って学ぶなら[テキストブック](../textbook/index.md)から始めてください。
+  本仕様書そのものは，1〜2章を読み，5章をざっと眺めてから7章で具体例を確認。
   7章の記述例は概念的なものです。実行できる例は，cadlリポジトリの
-  [`examples/` ディレクトリ](https://github.com/ertlnagoya/cadl/tree/master/examples)と
-  [ハンズオン教材](../handson/index.md)にあります。
+  [`examples/` ディレクトリ](https://github.com/ertlnagoya/cadl/tree/master/examples)にあります。
 - **実装者・ツール開発者** — 5章，6章，付録Aを中心に。
 - **研究者** — 3章，9章，10章で全体的な文脈と未解決問題を把握。
 
 ## ツールの入手
 
-リファレンス実装は [`cadl`](https://github.com/ertlnagoya/cadl) です。
-`pip install cadl-lang` でインストールします（Python 3.9以上）。コマンド名は `cadl` です。
-まず，次のように確認します。
-
-```bash
-pip install cadl-lang
-cadl --version
-```
-
-続いて，リポジトリの
-[`examples/` ディレクトリ](https://github.com/ertlnagoya/cadl/tree/master/examples)にあるような
-`.cadl` ファイルに対して，`cadl check <file>.cadl` と `cadl verify <file>.cadl` を実行します。
-すべてのコマンドは[リポジトリのREADME](https://github.com/ertlnagoya/cadl#readme)を，
-手順を追った説明は[ハンズオン教材](../handson/index.md)を参照してください。
+リファレンス実装は [`cadl`](https://github.com/ertlnagoya/cadl) で，PyPIでは `cadl-lang`
+として公開しています。コマンド名は `cadl` です。インストールして最初の例題を検査する手順は，
+[クイックスタートの経路 B](../quickstart/index.md#path-b)にあります。リポジトリをクローンして
+使う場合（ハンズオン教材と同じ編集モードのインストール）は，
+[テキストブックの2.4節](../textbook/02-toolchain-setup.md)の手順に従ってください。
+すべてのコマンドは[リポジトリのREADME](https://github.com/ertlnagoya/cadl#readme)にあります。
 
 ## 関連ツール
 
@@ -136,7 +129,7 @@ cadl --version
 
 ## 手を動かして学ぶ
 
-仕様を読むだけでなく実際に書いて動かしたい場合は，[ハンズオン教材](../handson/index.md)を参照してください。ロボット配送を題材に，仕様の記述からコード生成・シミュレーション実行までを一通り体験できます。
+仕様を読むだけでなく実際に書いて動かしたい場合は，[テキストブック](../textbook/index.md)を参照してください。ロボット配送を題材に，仕様の記述からコード生成・シミュレーション実行までを一通り体験できます。他のドメインを扱うコースは[ハンズオン教材](../handson/index.md)にあります。
 
 ## ステータス
 
@@ -166,8 +159,9 @@ Version 0.2 は，Version 0.1 の記述をリファレンス実装に合わせ�
 
 [動機拡張](./appendix-c-motivation.md)は，独自のラベル v0.1-ext のままです。
 
-仕様書とリファレンス実装の版は，独立に番号を付けています。本仕様書は Version 0.2 であり，
-内容の確認に用いたリファレンス実装は `cadl` 0.3.14 です。
+仕様書とリファレンス実装の版は，独立に番号を付けています。本仕様書は Version 0.2 です。
+内容の確認に用いたリファレンス実装の版と，その版の文法との違いは，
+[付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)に示します。
 
 フィードバックや議論は[GitHub Issues](https://github.com/ertlnagoya/cadl/issues)で歓迎します。
 仕様書や本サイトの問題は，[cadl-specのIssues](https://github.com/ertlnagoya/cadl-spec/issues)で報告できます。

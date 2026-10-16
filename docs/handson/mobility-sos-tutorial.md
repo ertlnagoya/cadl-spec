@@ -89,7 +89,8 @@ cadl --version
 > If `z3-solver` fails to build during `pip install -e ~/program/cadl_repo`, fall back
 > to `pip install --no-deps -e ~/program/cadl_repo` followed by `pip install lark pyyaml`.
 > This tutorial only needs `cadl check` and `cadl sim-ir`, neither of
-> which uses Z3.
+> which uses Z3. For other install failures, see the setup troubleshooting in
+> [Section 2.4 of the Textbook](../textbook/02-toolchain-setup.md).
 
 ---
 
