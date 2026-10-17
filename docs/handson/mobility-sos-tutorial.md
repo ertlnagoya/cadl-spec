@@ -21,7 +21,7 @@ title: "Course B — Urban Mobility (CADL × SUMO)"
 
 ## 0. What this tutorial demonstrates
 
-The main textbook used a robot-delivery SoS as the running example and
+Course A, the [Textbook](../textbook/index.md), used a robot-delivery SoS as the running example and
 generated **Unity C#**. This tutorial swaps both axes:
 
 - **Domain**: urban mobility (taxis + passengers + a matching platform)
@@ -60,7 +60,7 @@ The reference implementation lives in the `mobility-sos-exercise` repository.
 
 ## 1. Setup
 
-Same as the main textbook for `cadl_repo` and `cadl-explorer`.
+Same as Course A for `cadl_repo` and `cadl-explorer` ([Section 2.4 of the Textbook](../textbook/02-toolchain-setup.md)).
 The new requirement is **SUMO**:
 
 ```bash

@@ -16,7 +16,7 @@ title: "コース B — 都市モビリティ (CADL × SUMO)"
 
 ## 0. このコースで何が起きるか
 
-メイン教材（コース A）はロボット配送 SoS を題材に CADL → SoS-DSL → Unity C# を扱いました。
+コース A（[テキストブック](../textbook/index.md)）はロボット配送 SoS を題材に CADL → SoS-DSL → Unity C# を扱いました。
 コース B では題材を都市モビリティ（タクシー）に、コード生成のターゲットを SUMO に差し替えます。
 CADL/SoS-DSL の文法はそのままです。
 
@@ -51,7 +51,7 @@ mobility_sos.cadl
 
 ## 1. セットアップ
 
-`cadl_repo` と `cadl-explorer` の準備はコース A と同じです。
+`cadl_repo` と `cadl-explorer` の準備はコース A と同じです（[テキストブック 2.4 節](../textbook/02-toolchain-setup.md)）。
 コース B で新しく必要になるのは SUMO だけです。
 
 ```bash

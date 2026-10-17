@@ -373,7 +373,7 @@ python -m town.council --proposer llm --mode DISTRIBUTED --rounds 2 --name llm-d
 
 ## 参考資料
 
-- メイン教材（ロボット配送）: [テキストブック](../textbook/index.md)
+- コース A（ロボット配送）: [テキストブック](../textbook/index.md)
 - コース B（都市モビリティ）: [`mobility-sos-tutorial.md`](mobility-sos-tutorial.md)
 - SoS-DSL 仕様: cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)
 - 演習リポジトリ: https://github.com/ertlnagoya/cadl-robot-town
