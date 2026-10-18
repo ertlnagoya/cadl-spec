@@ -15,7 +15,7 @@ The materials fall into **two tracks**. Pick the one that matches your role.
 | 🧑‍🔬 **Researcher** | Already comfortable with the field; reuse the courses for your own SoS | Skim [Why SoS-DSL?](academic-background.md) then jump to [Course C](own-sos.md) |
 
 :::info[Repository availability]
-`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI), `cadl-explorer` (visualisation) and `cadl-raspimouse-simulator` (simulator) are public, so every step of Course A can be followed with public repositories. `cadl-robot-town`, used by Course D, is public too. `mobility-sos-exercise`, used by Course B, is **not publicly available at present**.
+`cadl-spec` (this specification and hands-on site), `cadl` (compiler / CLI), `cadl-explorer` (visualisation) and `cadl-raspimouse-simulator` (simulator) are public, so every step of Course A can be followed with public repositories. `cadl-robot-town`, used by Course D, is public too. `cadl-mobility-sos-exercise`, used by Course B, is a private repository and **not publicly available at present**.
 :::
 
 ## 🗺️ First time here? A three-stage path

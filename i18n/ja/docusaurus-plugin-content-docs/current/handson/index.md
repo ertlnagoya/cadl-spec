@@ -15,7 +15,7 @@ CADL と SoS-DSL のハンズオン教材は、目的別に 2 つのトラック
 | 🧑‍🔬 研究者 | 教材を自分の SoS の試作に流用する | [なぜ SoS-DSL なのか？](academic-background.md)を流し読み → [コース C](own-sos.md) |
 
 :::info[リポジトリの公開状況]
-`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）、`cadl-raspimouse-simulator`（シミュレータ）は公開しています。コース A はすべての Step を公開リポジトリだけで進められます。コース D で使う `cadl-robot-town` も公開しています。コース B で使う `mobility-sos-exercise` は**現時点では非公開**です。
+`cadl-spec`（本仕様・ハンズオンサイト）、`cadl`（コンパイラ / CLI）、`cadl-explorer`（可視化）、`cadl-raspimouse-simulator`（シミュレータ）は公開しています。コース A（テキストブック）は、すべての章を公開リポジトリだけで進められます。コース D で使う `cadl-robot-town` も公開しています。コース B で使う `cadl-mobility-sos-exercise` は非公開のリポジトリで、**現時点では公開していません**。
 :::
 
 ## 🗺️ 初めての人へ：3 段階の進め方

@@ -426,7 +426,7 @@ whose IR lacks a value the town needs, so the check gate holds with older compil
 
 ## References
 
-- Main textbook (robot delivery): [Textbook](../textbook/index.md)
+- Course A (robot delivery): [Textbook](../textbook/index.md)
 - Course B (urban mobility): [`mobility-sos-tutorial.md`](mobility-sos-tutorial.md)
 - SoS-DSL spec: cadl-spec [Appendix E](../spec/appendix-e-sos-dsl.md)
 - Exercise repository: https://github.com/ertlnagoya/cadl-robot-town

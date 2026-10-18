@@ -16,7 +16,7 @@ title: "コース B — 都市モビリティ (CADL × SUMO)"
 
 ## 0. このコースで何が起きるか
 
-メイン教材（コース A）はロボット配送 SoS を題材に CADL → SoS-DSL → Unity C# を扱いました。
+コース A（[テキストブック](../textbook/index.md)）はロボット配送 SoS を題材に CADL → SoS-DSL → Unity C# を扱いました。
 コース B では題材を都市モビリティ（タクシー）に、コード生成のターゲットを SUMO に差し替えます。
 CADL/SoS-DSL の文法はそのままです。
 
@@ -41,26 +41,27 @@ mobility_sos.cadl
                        繰り返し：CADL の guarantee / deadline を改訂
 ```
 
-参照実装は `mobility-sos-exercise` リポジトリにあります。
+参照実装は `cadl-mobility-sos-exercise` リポジトリにあります。
 
 :::info[リポジトリの公開状況]
-`mobility-sos-exercise` は**現時点では非公開**です。以下のコマンドは、このリポジトリへのアクセス権があることを前提にしています。アクセス権がない場合も、本ページは CADL をモビリティ SoS に適用する事例として読めます。
+`cadl-mobility-sos-exercise` は GitHub 上の**非公開**のリポジトリで、現時点では公開していません。アクセス権がある場合は、下のセットアップのとおりクローンします。ない場合は、提供されたコピーを `~/program/cadl-mobility-sos-exercise` に置きます。どちらもない場合も、本ページは CADL をモビリティ SoS に適用する事例として読めます。
 :::
 
 ---
 
 ## 1. セットアップ
 
-`cadl_repo` と `cadl-explorer` の準備はコース A と同じです。
+`cadl_repo` と `cadl-explorer` の準備はコース A と同じです（[テキストブック 2.4 節](../textbook/02-toolchain-setup.md)）。
 コース B で新しく必要になるのは SUMO だけです。
 
 ```bash
-# 演習リポジトリは現時点では非公開です。
-# 提供されたコピーを ~/program/mobility-sos-exercise に置いてください。
 cd ~/program
+# 非公開リポジトリへのアクセス権がある場合
+git clone https://github.com/ertlnagoya/cadl-mobility-sos-exercise
+# ない場合は、提供されたコピーを ~/program/cadl-mobility-sos-exercise に置く
 
 # 演習用 venv
-cd mobility-sos-exercise
+cd cadl-mobility-sos-exercise
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install --upgrade pip
@@ -112,7 +113,7 @@ sos:
 ファイルを検査し、契約の規範部分が IR にどれだけ入っているかを表示してみます。
 
 ```bash
-cd ~/program/mobility-sos-exercise
+cd ~/program/cadl-mobility-sos-exercise
 cadl check  cadl/mobility_sos.cadl        # → Type check passed: cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json \
    | python3 -c "import sys, json; c=json.load(sys.stdin)['institution']['contracts'][0]; print('lifecycle =', 'present' if c['lifecycle'] else None, '/ monitors =', len(c['monitors']))"
@@ -181,7 +182,7 @@ contracts:
 ファイルにこの 2 つのブロックがあるので、cadl-explorer に意味のある図が出ます。
 
 ```bash
-cd ~/program/mobility-sos-exercise
+cd ~/program/cadl-mobility-sos-exercise
 cadl check  cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json > cadl/mobility_sos.ir.json
 
@@ -224,7 +225,7 @@ streamlit run app.py
 コース A の `cadl codegen --target unity-csharp` に相当する、SUMO 向けのコード生成ステップです。
 
 ```bash
-cd ~/program/mobility-sos-exercise
+cd ~/program/cadl-mobility-sos-exercise
 python scripts/cadl_to_sumo.py
 ```
 
