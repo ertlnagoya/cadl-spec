@@ -50,10 +50,10 @@ mobility_sos.cadl
                        Iterate: revise CADL guarantees / deadlines
 ```
 
-The reference implementation lives in the `mobility-sos-exercise` repository.
+The reference implementation lives in the `cadl-mobility-sos-exercise` repository.
 
 :::info[Repository availability]
-`mobility-sos-exercise` is **not publicly available at present**. The commands below assume you have been given access to it; without it, this page can still be read as a worked example of applying CADL to a mobility SoS.
+`cadl-mobility-sos-exercise` is a **private** repository on GitHub and is not publicly available at present. If you have been given access, clone it as in the setup below; otherwise, place the copy you were given at `~/program/cadl-mobility-sos-exercise`. Without either, this page can still be read as a worked example of applying CADL to a mobility SoS.
 :::
 
 ---
@@ -64,12 +64,13 @@ Same as Course A for `cadl_repo` and `cadl-explorer` ([Section 2.4 of the Textbo
 The new requirement is **SUMO**:
 
 ```bash
-# The exercise repository is not publicly available at present.
-# Place the copy you were given at ~/program/mobility-sos-exercise.
 cd ~/program
+# With access to the private repository:
+git clone https://github.com/ertlnagoya/cadl-mobility-sos-exercise
+# Without it, place the copy you were given at ~/program/cadl-mobility-sos-exercise.
 
 # Exercise venv
-cd mobility-sos-exercise
+cd cadl-mobility-sos-exercise
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install --upgrade pip
@@ -121,7 +122,7 @@ So far you have read only the **structure** (the actors). Check the file, and pr
 contract's normative part the IR carries:
 
 ```bash
-cd ~/program/mobility-sos-exercise
+cd ~/program/cadl-mobility-sos-exercise
 cadl check  cadl/mobility_sos.cadl        # → Type check passed: cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json \
    | python3 -c "import sys, json; c=json.load(sys.stdin)['institution']['contracts'][0]; print('lifecycle =', 'present' if c['lifecycle'] else None, '/ monitors =', len(c['monitors']))"
@@ -196,7 +197,7 @@ In §3 you read the `lifecycle:` and `monitors:` blocks of the CADL source.
 Because the file contains them, cadl-explorer renders a **meaningful** picture.
 
 ```bash
-cd ~/program/mobility-sos-exercise
+cd ~/program/cadl-mobility-sos-exercise
 cadl check  cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json > cadl/mobility_sos.ir.json
 
@@ -241,7 +242,7 @@ and upload it again. The edge label should change from `Δ 30s` to `Δ 60s`.
 emits SUMO configuration plus a contract-constraints JSON.
 
 ```bash
-cd ~/program/mobility-sos-exercise
+cd ~/program/cadl-mobility-sos-exercise
 python scripts/cadl_to_sumo.py
 ```
 
