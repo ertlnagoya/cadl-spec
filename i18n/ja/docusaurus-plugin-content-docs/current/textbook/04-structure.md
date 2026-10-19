@@ -81,7 +81,7 @@ sos:
       autonomy: low                            # 方針に従う、自由行動なし
       capabilities: [assign_tasks]
       interface:
-        input:  [position_report, task_completion]
+        input:  [position_report, task_completion, ack]
         output: [route_assignment]
 
     - id: "ROBOT[1..N]"                        # パラメトリック: N コピー
@@ -90,7 +90,7 @@ sos:
       capabilities: [follow_path, pick_up, deliver]
       interface:
         input:  [route_assignment]
-        output: [position_report, task_completion]
+        output: [position_report, task_completion, ack]
 
     - id: "CUSTOMER[1..M]"
       role: "service_requester"
@@ -226,7 +226,7 @@ SoS の **構造** を記述する CADL ファイルが完成しました。コ�
 **手順**:
 
 1. `sos:` の下（`contracts:` と同じインデント）に `protocols:` セクションを追加し、プロトコル `DeliveryProposal` を 1 つ書く。`trigger` を付ける。プロトコルに参加者の一覧を書くキーはない。誰が参加するかは `steps` に書いた送信者と受信者で決まる。
-2. `steps:` に 3 ステップを、それぞれクオートした文字列で列挙：`"DISPATCHER -> ROBOT[i] : route_assignment"`、`"ROBOT[i] -> DISPATCHER : ack"`、`"ROBOT[i] -> DISPATCHER : completion"`。
+2. `steps:` に 3 ステップを、それぞれクオートした文字列で列挙：`"DISPATCHER -> ROBOT[i] : route_assignment"`、`"ROBOT[i] -> DISPATCHER : ack"`、`"ROBOT[i] -> DISPATCHER : task_completion"`。
 3. 思いつくなら `precondition` / `postcondition` を追加（ほかに任意のキーとして `safety_invariant` と `timing` がある）。
 4. `cadl check my_delivery_v1.cadl` を実行し、続けてプロトコルが IR に入ったことを確認：`cadl sim-ir my_delivery_v1.cadl --format json | grep -n -A6 '"protocols"'` に `"id": "DeliveryProposal"` が出る。ここでは `cadl check` だけに頼らないこと。`cadl check` は知らないキーを黙って無視するので、キー名を間違えても（`pre:`、`participants:` など）検査は通ってしまう。
 
@@ -238,7 +238,7 @@ SoS の **構造** を記述する CADL ファイルが完成しました。コ�
       steps:
         - "DISPATCHER -> ROBOT[i] : route_assignment"
         - "ROBOT[i] -> DISPATCHER : ack"
-        - "ROBOT[i] -> DISPATCHER : completion"
+        - "ROBOT[i] -> DISPATCHER : task_completion"
       postcondition: "ROBOT[i].status == Delivered"
 ```
 

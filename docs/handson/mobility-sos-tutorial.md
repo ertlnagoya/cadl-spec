@@ -132,8 +132,10 @@ The file you are reading is the complete specification: its contract already car
 `lifecycle:` and `monitors:` blocks that §3 walks through, so the command should report a lifecycle.
 To see what the **structure alone** would give, make a scratch copy, delete the `lifecycle:` and
 `monitors:` blocks from it, and run the same two commands on the copy: `cadl check` still passes, but
-the IR has `"lifecycle": null` and no monitors, and cadl-explorer shows no diagram: only a warning that the
-contract does not declare a `lifecycle:` section, and a note that it declares no monitors.
+the IR has `"lifecycle": null` and no monitors, and the **Contract Lifecycle** page of cadl-explorer shows no diagram:
+only a warning that the contract does not declare a `lifecycle:` section, and a note that it declares no monitors.
+The **Structure** view of the **Designer** page (cadl-explorer v0.5.5 or later) has nothing to draw either: it takes
+messages from protocol steps, lifecycle events and information sharing, and the copy has none of them.
 That gap — structure alone cannot express deadlines, violations, or consequences — is what the blocks you read in §3 fill.
 :::
 
