@@ -11,7 +11,7 @@ title: "Chapter 11 — Where to go next"
 | Layer | We wrote | We didn't write |
 | --- | --- | --- |
 | Spec | a CADL file of about 100 lines (Chapters 4 and 5) | nothing — the spec was the only source |
-| IR | nothing | generated JSON (245 lines for the bundled example) |
+| IR | nothing | generated JSON (297 lines for the bundled example) |
 | Visualisation | nothing | the Lifecycle View page |
 | Implementation | nothing | generated Unity C# (783 lines for the bundled example) |
 | Runtime semantics | nothing | a working state machine + monitors + deadline timers |
