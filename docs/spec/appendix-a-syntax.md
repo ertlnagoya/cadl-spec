@@ -321,6 +321,7 @@ quantified_expr  = ( "for all" | "exists" ) , identifier , "in" ,
 arith_expr       = term , { ( "+" | "-" ) , term } ;
 term             = factor , { ( "*" | "/" ) , factor } ;
 factor           = "(" , predicate , ")"
+                 | "-" , factor
                  | function_call
                  | member_access
                  | literal
@@ -336,7 +337,9 @@ indexed_ref      = identifier ,
 ```
 
 Operators bind, from loosest to tightest: `OR`, `AND`, `NOT`, comparison,
-`+` `-`, `*` `/`. Binary operators of equal precedence associate to the
+`+` `-`, `*` `/`, unary `-`. A unary `-` in front of a numeric literal
+gives a negative number (`permit_state == -2`); in front of any other
+factor, `-x` has the value of `0 - x`. Binary operators of equal precedence associate to the
 left. A comparison is not associative (`a < b < c` is not a predicate).
 A quantifier extends as far to the right as possible. White space
 between tokens is ignored.
@@ -416,10 +419,13 @@ predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
 monitor `rule:`, lifecycle `when:`, and an `on:` that is not a message
 event are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. `cadl` 0.3
-deviates from this appendix as follows (checked against `cadl` 0.3.17).
+deviates from this appendix as follows (checked against `cadl` 0.3.18).
 
-- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.17; no
-  deviation is known.
+- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.18; no
+  deviation is known. Up to `cadl` 0.3.17 the unary `-` of `factor` was
+  not accepted: an item that used it was kept as an opaque predicate,
+  and for a lifecycle `on:` or `when:` or a monitor `rule:`, `cadl check`
+  gave a warning.
 - **Identifiers.** From `cadl` 0.3.9, `cadl check` reports as an error
   an actor, contract, protocol, or metric id, or a regime name, that is
   not an identifier of A.1 (for example one with non-ASCII characters
