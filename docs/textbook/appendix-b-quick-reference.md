@@ -6,7 +6,7 @@ title: "Appendix B — Notation quick reference"
 
 # Appendix B — Notation quick reference
 
-The CADL notation, the commands and the file locations used in this textbook, on one page. Chapter 3 explains what each construct means. The CADL listings of this appendix fit together into one file, which passes `cadl check` and `cadl verify` of `cadl` 0.3.14.
+The CADL notation, the commands and the file locations used in this textbook, on one page. Chapter 3 explains what each construct means. The CADL listings of this appendix fit together into one file, which passes `cadl check` and `cadl verify` of `cadl` 0.3.17.
 
 ## B.1 The skeleton of a file
 
