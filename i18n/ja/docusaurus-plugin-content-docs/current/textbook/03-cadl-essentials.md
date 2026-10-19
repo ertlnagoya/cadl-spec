@@ -205,7 +205,7 @@ protocols:
 | `on:` のメッセージに、宣言していないアクターが出てくる | `"ROBOT[i] -> HUB : ack"` で `HUB` が未宣言 |
 | `observe:` が、宣言したアクターの属性でもメッセージの名前でもない | `DRONE.battery` で `DRONE` が未宣言 |
 
-たとえば、`on_violation` の `transition:` に遷移の `id` を書くと、`cadl` 0.3.14 は次のように報告します。
+たとえば、`on_violation` の `transition:` に遷移の `id` を書くと、`cadl` 0.3.17 は次のように報告します。
 
 ```text
   [ERROR]: on_violation.transition 'accept' of the lifecycle transition 'accept' of contract 'DELIVERY_SLA' is not a state listed in states (L-5); it names the target state, not a transition id
