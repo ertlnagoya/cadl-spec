@@ -34,7 +34,7 @@ sos:
       autonomy: low               # low / medium / high（省略時 medium）
       capabilities: [assign_tasks]
       interface:
-        input:  [position_report]
+        input:  [position_report, ack]
         output: [route_assignment]
     - id: "ROBOT[1..N]"           # 同じ種類のアクターの集まり
       role: "delivery_agent"

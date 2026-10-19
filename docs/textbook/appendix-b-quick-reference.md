@@ -34,7 +34,7 @@ sos:
       autonomy: low               # low / medium / high (medium when omitted)
       capabilities: [assign_tasks]
       interface:
-        input:  [position_report]
+        input:  [position_report, ack]
         output: [route_assignment]
     - id: "ROBOT[1..N]"           # a set of actors of the same kind
       role: "delivery_agent"

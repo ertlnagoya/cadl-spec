@@ -81,7 +81,7 @@ sos:
       autonomy: low                            # follows policy, no roaming
       capabilities: [assign_tasks]
       interface:
-        input:  [position_report, task_completion]
+        input:  [position_report, task_completion, ack]
         output: [route_assignment]
 
     - id: "ROBOT[1..N]"                        # parametric: N copies
@@ -90,7 +90,7 @@ sos:
       capabilities: [follow_path, pick_up, deliver]
       interface:
         input:  [route_assignment]
-        output: [position_report, task_completion]
+        output: [position_report, task_completion, ack]
 
     - id: "CUSTOMER[1..M]"
       role: "service_requester"
@@ -226,7 +226,7 @@ You now have a CADL file that describes the **structure** of your SoS. It compil
 **Procedure**:
 
 1. Add a `protocols:` section under `sos:` (same indentation as `contracts:`) with one protocol, `DeliveryProposal`. Give it a `trigger`. A protocol has no separate list of participants: who takes part follows from the senders and receivers named in `steps`.
-2. List 3 steps under `steps:`, each written as a quoted string: `"DISPATCHER -> ROBOT[i] : route_assignment"`, `"ROBOT[i] -> DISPATCHER : ack"`, `"ROBOT[i] -> DISPATCHER : completion"`.
+2. List 3 steps under `steps:`, each written as a quoted string: `"DISPATCHER -> ROBOT[i] : route_assignment"`, `"ROBOT[i] -> DISPATCHER : ack"`, `"ROBOT[i] -> DISPATCHER : task_completion"`.
 3. Add a `precondition` / `postcondition` if you can think of any (the other optional keys are `safety_invariant` and `timing`).
 4. Run `cadl check my_delivery_v1.cadl`, then confirm that the protocol really reached the IR: `cadl sim-ir my_delivery_v1.cadl --format json | grep -n -A6 '"protocols"'` should show `"id": "DeliveryProposal"`. Do not rely on `cadl check` alone here — it silently ignores keys it does not know, so a misspelt key (`pre:`, `participants:` …) still passes.
 
@@ -238,7 +238,7 @@ You now have a CADL file that describes the **structure** of your SoS. It compil
       steps:
         - "DISPATCHER -> ROBOT[i] : route_assignment"
         - "ROBOT[i] -> DISPATCHER : ack"
-        - "ROBOT[i] -> DISPATCHER : completion"
+        - "ROBOT[i] -> DISPATCHER : task_completion"
       postcondition: "ROBOT[i].status == Delivered"
 ```
 

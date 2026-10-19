@@ -58,7 +58,7 @@ actors:
     autonomy: low
     capabilities: [assign_tasks]
     interface:
-      input:  [position_report, task_completion]
+      input:  [position_report, task_completion, ack]
       output: [route_assignment]
 
   - id: "ROBOT[1..N]"           # 同じ種類のアクターを N 台
@@ -123,7 +123,7 @@ protocols:
     steps:
       - "DISPATCHER -> ROBOT[i] : route_assignment"  # DISPATCHER が ROBOT[i] に route_assignment を送る
       - "ROBOT[i] -> DISPATCHER : ack"
-      - "ROBOT[i] -> DISPATCHER : completion"
+      - "ROBOT[i] -> DISPATCHER : task_completion"
     postcondition: "ROBOT[i].status == Delivered"    # 終わったときに成り立つ条件
 ```
 
