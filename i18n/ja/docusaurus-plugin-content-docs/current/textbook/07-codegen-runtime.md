@@ -62,7 +62,7 @@ $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
 
 == INPUT ==
   source : .../examples/sos_dsl_robot_delivery.cadl
-  size   : 153 lines
+  size   : 166 lines
 
 == Step 1/4 — parse + type-check (cadl check) ==
   OK
@@ -173,9 +173,9 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
 
 ## 7.6 生成されたコードと参照ランタイムの中身
 
-同梱の例題 `examples/sos_dsl_robot_delivery.cadl`（153 行）を例に、自分の書いた 1 行がどこへ流れていくかを追います。手順を進めるのには必要ありません。コマンドが何を作ったのかを知りたくなったときに読んでください。
+同梱の例題 `examples/sos_dsl_robot_delivery.cadl`（166 行）を例に、自分の書いた 1 行がどこへ流れていくかを追います。手順を進めるのには必要ありません。コマンドが何を作ったのかを知りたくなったときに読んでください。
 
-**(1) 仕様 → IR**。`.cadl` の `deadline: 5s` は、`cadl_repo/src/cadl/parser.py` が構文解析し、`sim/lower.py` が IR に落とすと `"deadline_ms": 5000` という JSON になります（IR 全体で 245 行）。IR は「人間向けの書き方」を捨てて「機械が実行しやすい形」だけを残した中間表現です。
+**(1) 仕様 → IR**。`.cadl` の `deadline: 5s` は、`cadl_repo/src/cadl/parser.py` が構文解析し、`sim/lower.py` が IR に落とすと `"deadline_ms": 5000` という JSON になります（IR 全体で 297 行）。IR は「人間向けの書き方」を捨てて「機械が実行しやすい形」だけを残した中間表現です。
 
 **(2) IR → C#**。`codegen/unity_csharp/contract_emitter.py` が IR を読んで、契約 1 つにつき 3 ファイルを生成します：状態の列挙（`DeliverySlaState.cs`）、状態機械本体（`DeliverySlaContract.cs`）、監視ルール（`DeliverySlaMonitors.cs`）。これに共有ランタイム 5 ファイル（下の表）を足した計 783 行が `unity/Assets/Scripts/SoSDsl/` に配置されます。
 
@@ -218,7 +218,7 @@ PYTHONPATH=src python3 -m pytest tests/test_unity_csharp_structural.py -q
 
 今あるもの：
 
-- 245 行の Sim-IR JSON（同梱の例の場合）。
+- 297 行の Sim-IR JSON（同梱の例の場合）。
 - 783 行の Unity に貼れる C# ツリー（Unity プロジェクトに配置済み）。
 - C# トレースが **どうなるべきか** を示す Python のリファレンス実装。
 

@@ -62,7 +62,7 @@ $ ./scripts/sos_dsl_handson_e2e.sh examples/sos_dsl_robot_delivery.cadl \
 
 == INPUT ==
   source : .../examples/sos_dsl_robot_delivery.cadl
-  size   : 153 lines
+  size   : 166 lines
 
 == Step 1/4 — parse + type-check (cadl check) ==
   OK
@@ -173,9 +173,9 @@ The Unity run in Chapter 8 assigns deliveries at different times and gives the r
 
 ## 7.6 Inside the generated code and the reference runtime
 
-Following the bundled example `examples/sos_dsl_robot_delivery.cadl` (153 lines), this section traces where one line you write ends up. You do not need it to follow the procedure; read it when you want to know what the commands produced.
+Following the bundled example `examples/sos_dsl_robot_delivery.cadl` (166 lines), this section traces where one line you write ends up. You do not need it to follow the procedure; read it when you want to know what the commands produced.
 
-**(1) Spec → IR.** The `deadline: 5s` in your `.cadl` file is parsed by `cadl_repo/src/cadl/parser.py`, and once `sim/lower.py` lowers it into the IR it becomes the JSON `"deadline_ms": 5000` (the whole IR is 245 lines). The IR is an intermediate representation that discards the "human-friendly notation" and keeps only the "form that machines can easily execute".
+**(1) Spec → IR.** The `deadline: 5s` in your `.cadl` file is parsed by `cadl_repo/src/cadl/parser.py`, and once `sim/lower.py` lowers it into the IR it becomes the JSON `"deadline_ms": 5000` (the whole IR is 297 lines). The IR is an intermediate representation that discards the "human-friendly notation" and keeps only the "form that machines can easily execute".
 
 **(2) IR → C#.** `codegen/unity_csharp/contract_emitter.py` reads the IR and generates three files per contract: the state enum (`DeliverySlaState.cs`), the state machine itself (`DeliverySlaContract.cs`), and the monitoring rules (`DeliverySlaMonitors.cs`). Together with 5 shared runtime files (listed below), a total of 783 lines is placed under `unity/Assets/Scripts/SoSDsl/`.
 
@@ -218,7 +218,7 @@ These nine tests catch the structural bugs that would prevent Unity from compili
 
 You now have:
 
-- A 245-line Sim-IR JSON (for the bundled example).
+- A 297-line Sim-IR JSON (for the bundled example).
 - A 783-line Unity-ready C# tree, dropped into the Unity project.
 - A Python proof-of-concept showing what the C# trace **must** look like once it runs.
 
