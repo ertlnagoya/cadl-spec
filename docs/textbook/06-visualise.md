@@ -119,6 +119,8 @@ Visual conventions:
 | Solid edge, label `Δ 5s` | transition with `deadline_ms = 5000` |
 | **Red dashed edge** with label `violation Major` | the forced move to the `on_violation` target state |
 
+`Terminated` stands alone in the diagram: both (a) and (b) declare it as a terminal state, but no transition leads to it. If you open either file on the **Designer** page, the same fact is reported as a Lifecycle warning (`State 'Terminated' cannot be reached from the initial state 'Proposed'.`). It is a warning, not an error: `cadl check` passes, because a lifecycle only needs one terminal state that can be reached.
+
 ## 6.5 Check
 
 Take a screenshot of your lifecycle (or just look carefully) and confirm:
