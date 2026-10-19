@@ -306,7 +306,7 @@ python -m town.period --rush 1200 2400 25 --no-quiescence
 LLM には、その期の観測、これまでの改正履歴、憲法、現行の規則を渡し、改正案を最大 3 件返させます。各案は、題名と理由つきの**規則ファイル全体**です。
 LLM が「何を変えたか」をどう説明しても信用しません。返ってきたファイルを同じ関門にかけ、憲法の関門では現行の規則と 1 行ずつ比べて、`@amend` 行の数値以外が変わっていないことも確かめます。
 
-API キーがなくても、実際の実行を再生できます。`examples/llm-distributed/` には、2026-10-15 に Claude が書いた 2 期分の案（`--mode DISTRIBUTED --rounds 2`）が入っています。
+API キーがなくても、実際の実行を再生できます。`examples/llm-distributed/` には、2026-10-15 に Claude が書いた 2 期分の案（`--mode DISTRIBUTED --rounds 2`）が入っています。2026-10-19 に、初期の規則の `AMEND` プロトコルに 2 つのステップ（`TOWN_STEWARD -> COUNCIL : violation_report` と `COUNCIL -> TOWN_STEWARD : rule_update`）と、それに合わせた interface の項目を加えました。憲法の関門は規則を 1 行ずつ比べるので、記録済みの案すべて（`examples/llm-replay/` も含む）に、同じ行を機械的に入れてあります。案のほかの部分は変えておらず、再生の結果も変わりません。各ファイルの `edits` にこのことを記録しています。
 
 ```bash
 python -m town.council --proposer replay --replay-dir examples/llm-distributed --mode DISTRIBUTED --rounds 2
