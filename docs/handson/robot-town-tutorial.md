@@ -347,7 +347,12 @@ trusted: every file goes through the same gates, and the constitution gate also 
 with the current rules line by line, allowing only the `@amend` numbers to change.
 
 You can replay a real run without an API key. `examples/llm-distributed/` holds two periods
-Claude wrote on 2026-10-15 (`--mode DISTRIBUTED --rounds 2`):
+Claude wrote on 2026-10-15 (`--mode DISTRIBUTED --rounds 2`). On 2026-10-19 the starting rules
+gained two steps of the `AMEND` protocol (`TOWN_STEWARD -> COUNCIL : violation_report` and
+`COUNCIL -> TOWN_STEWARD : rule_update`) and the matching interface entries; because of the
+line-by-line comparison above, the same lines were inserted mechanically into every recorded
+proposal (in `examples/llm-replay/` too). Nothing else in the proposals changed, and the replay
+prints the same results as before; each file says so in its `edits` field.
 
 ```bash
 python -m town.council --proposer replay --replay-dir examples/llm-distributed --mode DISTRIBUTED --rounds 2
