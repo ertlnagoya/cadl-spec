@@ -119,6 +119,8 @@ IR JSON のロード方法は 2 通り：
 | 実線エッジ + ラベル `Δ 5s` | `deadline_ms = 5000` を持つ遷移 |
 | **赤い破線エッジ** + `violation Major` | `on_violation` による強制遷移 |
 
+図の中で `Terminated` はどこともつながっていません。(a) も (b) も `Terminated` を終端状態として宣言していますが、そこへ入る遷移を書いていないためです。どちらかのファイルを **Designer** ページで開くと、同じことが Lifecycle の警告（`State 'Terminated' cannot be reached from the initial state 'Proposed'.`）として表示されます。これはエラーではなく警告です。ライフサイクルには到達できる終端状態が 1 つあればよいので、`cadl check` は通ります。
+
 ## 6.5 チェック
 
 ライフサイクルのスクリーンショットを撮るか、よく見て確認：
