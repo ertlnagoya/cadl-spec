@@ -210,7 +210,7 @@ monitors[0].id    : battery_guard
 1. `v1` → `v2` をコピー。
 2. `lifecycle.states`、`lifecycle.initial`、`lifecycle.terminal` と 4 つの遷移（`assign`、`accept`、`start_delivery`、`complete`）を追加。
 3. `accept` に `deadline: 5s` と `on_violation.transition: Violated` を設定（値は移動先の状態名）。あわせて、5.3 節と同じく `sos:` の下に `extensions: [sos-dsl: 0.1]` を宣言する。
-4. `cadl check my_delivery_v2.cadl` を実行し、続けて `cadl sim-ir my_delivery_v2.cadl --format json | grep -n -A3 '"lifecycle"'` を実行（`"lifecycle"` キーは IR のかなり後ろにある。5.3 節のファイルでは 88 行目、第 4 章でアクターや契約を追加していればさらに後ろになるので、`head` では途中で切れて見えない）。
+4. `cadl check my_delivery_v2.cadl` を実行し、続けて `cadl sim-ir my_delivery_v2.cadl --format json | grep -n -A3 '"lifecycle"'` を実行（`"lifecycle"` キーは IR のかなり後ろにある。5.3 節のファイルでは 90 行目、第 4 章でアクターや契約を追加していればさらに後ろになるので、`head` では途中で切れて見えない）。
 5. 出力で `"lifecycle"` が `null` でなくなったことを確認：行が `"lifecycle": {` になり、続いて `"states": [` と最初の状態名が並ぶ。演習 4.2 で `MAINTENANCE_SLA` を追加している場合、`grep` はその契約の分も出力し、そちらは `"lifecycle": null` のままになる。lifecycle を持つのは `DELIVERY_SLA` だけなので、これで正しい。
 
 ### 演習 5.2 (★★) — 過速度モニターを追加

@@ -6,7 +6,7 @@ title: "第 4 章 — 構造を書く"
 
 # 第 4 章 — 構造を書く
 
-この章では、ロボット配送 SoS の構造（アクターと契約）を CADL で書き、`cadl check` と `cadl sim-ir` で確かめます（約 15 分）。章の終わりの演習では、アクターやプロトコルを足し、知らないドメインの構造を書きます。
+この章では、ロボット配送 SoS の構造（アクター、契約、プロトコル）を CADL で書き、`cadl check` と `cadl sim-ir` で確かめます（約 15 分）。章の終わりの演習では、アクターを足し、プロトコルに条件を加え、知らないドメインの構造を書きます。
 
 ## 4.1 学ぶこと
 
@@ -14,6 +14,7 @@ title: "第 4 章 — 構造を書く"
 
 - アクターを `id`, `role`, `autonomy`, `interface` で宣言する方法。
 - 契約の parties, A/G clauses (`assume` / `guarantee`), incentives の宣言方法。
+- プロトコルの宣言方法。1 件の注文で交わすメッセージを、`送信者 -> 受信者 : メッセージ` のステップの列として書く。
 
 **演習で：**
 
@@ -53,7 +54,7 @@ flowchart LR
   C --> T
 ```
 
-この章では **actors** と **contracts** だけを扱います。`protocols` と `transitions` は発展課題に回します。
+この章では **actors** と **contracts**、それにプロトコルを 1 つ（**protocols**）書きます。`transitions` は発展課題に回します。
 
 ## 4.3 手順
 
@@ -81,8 +82,8 @@ sos:
       autonomy: low                            # 方針に従う、自由行動なし
       capabilities: [assign_tasks]
       interface:
-        input:  [position_report, task_completion, ack]
-        output: [route_assignment]
+        input:  [delivery_request, position_report, task_completion, ack]
+        output: [route_assignment, delivery_notification]
 
     - id: "ROBOT[1..N]"                        # パラメトリック: N コピー
       role: "delivery_agent"
@@ -113,6 +114,17 @@ sos:
         lambda: 0.5
         rules:
           - "reward(ROBOT[i], 10) when on_time_delivery"
+
+  # ── 会話の仕方：1 件の注文で交わすメッセージ ───────────────
+  protocols:
+    - id: DeliveryOrder
+      trigger: "new_delivery_request(CUSTOMER[j])"
+      steps:                                   # "送信者 -> 受信者 : メッセージ"
+        - "CUSTOMER[j] -> DISPATCHER : delivery_request"
+        - "DISPATCHER -> ROBOT[i] : route_assignment"
+        - "ROBOT[i] -> DISPATCHER : ack"
+        - "ROBOT[i] -> DISPATCHER : task_completion"
+        - "DISPATCHER -> CUSTOMER[j] : delivery_notification"
 ```
 
 型チェッカを実行：
@@ -129,7 +141,7 @@ $ cadl check my_delivery.cadl
 Type check passed: my_delivery.cadl
 ```
 
-IR JSON に変換します。出力は 100 行ほどあります。下の表示は、ここで見るべき部分だけを抜粋したものです：
+IR JSON に変換します。出力は 150 行ほどあります。下の表示は、ここで見るべき部分だけを抜粋したものです：
 
 ```bash
 cadl sim-ir my_delivery.cadl --format json
@@ -166,15 +178,15 @@ cadl sim-ir my_delivery.cadl --format json
 両方とも確認：
 
 1. `cadl check my_delivery.cadl` が `Type check passed: my_delivery.cadl` と表示され、`[ERROR]` の行がない。
-2. IR JSON で `"lifecycle": null` と `"monitors": []` になっている。この 2 行は契約の末尾（出力の 86 行目あたり）にある。この 2 行だけを表示するには：
+2. IR JSON で `"lifecycle": null` と `"monitors": []` になっている。この 2 行は契約の末尾（出力の 90 行目あたり）にある。この 2 行だけを表示するには：
 
    ```bash
    cadl sim-ir my_delivery.cadl --format json | grep -n -A1 '"lifecycle"'
    ```
 
    ```
-   86:        "lifecycle": null,
-   87-        "monitors": []
+   90:        "lifecycle": null,
+   91-        "monitors": []
    ```
 
 この `null` と `[]` こそが **第 5 章で埋めるギャップ** です。構造だけの仕様では「ロボットは 5 秒以内に ack せよ」と言えない理由がこれです。
@@ -189,22 +201,23 @@ cadl sim-ir my_delivery.cadl --format json
 
 ## 4.7 おさらい
 
-SoS の **構造** を記述する CADL ファイルが完成しました。コンパイルでき、IR に変換でき、IR の中に契約 `DELIVERY_SLA` が 1 つあることも確認できました。次は、ランタイムがこの契約への違反を検出できるように、規範を書き加えます。
+SoS の **構造** を記述する CADL ファイルが完成しました。コンパイルでき、IR に変換でき、IR の中に契約 `DELIVERY_SLA` とプロトコル `DeliveryOrder` が 1 つずつあることも確認できました。次は、ランタイムがこの契約への違反を検出できるように、規範を書き加えます。
 
 ## 4.8 演習
 
 ### 演習 4.1 (★) — 構造モデルのベースラインを作る
 
-**目的**: 4.3 節のアクター / 契約例を、ゼロから書き起こした新ファイル `my_delivery_v1.cadl` に再現する。
+**目的**: 4.3 節のアクター、契約、プロトコルを、ゼロから書き起こした新ファイル `my_delivery_v1.cadl` に再現する。
 
 **手順**:
 
 1. `cadl_repo` の直下に `my_delivery_v1.cadl` を作成し（見比べる同梱の例は `examples/sos_dsl_robot_delivery.cadl`）、以下のコマンドはそのディレクトリで実行する。
 2. 3 つのアクターを宣言：`DISPATCHER`、`ROBOT[1..N]`、`CUSTOMER[1..M]`。それぞれに妥当な `autonomy` レベルを選ぶ。
 3. 1 つの契約 `DELIVERY_SLA` を宣言：`parties: [DISPATCHER, "ROBOT[*]", "CUSTOMER[*]"]`、`assume: ["ROBOT[i].battery > 20"]`、`guarantee: ["delivery_time <= 300s"]`。
-4. `cadl check my_delivery_v1.cadl` を実行し、`Type check passed: my_delivery_v1.cadl` と表示されることを確認。
+4. プロトコル `DeliveryOrder` を 4.3 節の 5 ステップで宣言し、各メッセージを送信者の `interface` の `output` と受信者の `input` に書く。
+5. `cadl check my_delivery_v1.cadl` を実行し、`Type check passed: my_delivery_v1.cadl` と表示されることを確認。
 
-**確認**: ファイルが型検査を通り、IR JSON にアクター 3 つ、契約 1 つが見える。
+**確認**: ファイルが型検査を通り、IR JSON にアクター 3 つ、契約 1 つ、プロトコル 1 つが見える。
 
 ### 演習 4.2 (★★) — 4 番目のアクターを追加する
 
@@ -219,26 +232,27 @@ SoS の **構造** を記述する CADL ファイルが完成しました。コ�
 
 **振り返り**: 同じアクターに *2 つの* 契約があるとき、`assume` 節はどう作用しますか？（ヒント：両方が同時に成り立つ必要がある — これがまさに Dahmann (2014) [[9]](appendix-d-references.md) が SoS pain point #5 として挙げた *相互依存* の問題です。）
 
-### 演習 4.3 (★★) — プロトコルを追加する
+### 演習 4.3 (★★) — プロトコルに条件を加える
 
-**目的**: 構造の骨格を超えて、配送フローを `protocols:` セクションでメッセージ交換のシーケンスとして書く。
+**目的**: `my_delivery_v1.cadl` のプロトコル `DeliveryOrder` に、始まる前に成り立つべき条件と、終わったときに成り立つ条件を加え、両方が IR に入ったことを確かめる。
 
 **手順**:
 
-1. `sos:` の下（`contracts:` と同じインデント）に `protocols:` セクションを追加し、プロトコル `DeliveryProposal` を 1 つ書く。`trigger` を付ける。プロトコルに参加者の一覧を書くキーはない。誰が参加するかは `steps` に書いた送信者と受信者で決まる。
-2. `steps:` に 3 ステップを、それぞれクオートした文字列で列挙：`"DISPATCHER -> ROBOT[i] : route_assignment"`、`"ROBOT[i] -> DISPATCHER : ack"`、`"ROBOT[i] -> DISPATCHER : task_completion"`。
-3. 思いつくなら `precondition` / `postcondition` を追加（ほかに任意のキーとして `safety_invariant` と `timing` がある）。
-4. `cadl check my_delivery_v1.cadl` を実行し、続けてプロトコルが IR に入ったことを確認：`cadl sim-ir my_delivery_v1.cadl --format json | grep -n -A6 '"protocols"'` に `"id": "DeliveryProposal"` が出る。ここでは `cadl check` だけに頼らないこと。`cadl check` は知らないキーを黙って無視するので、キー名を間違えても（`pre:`、`participants:` など）検査は通ってしまう。
+1. `protocols:` の下の `DeliveryOrder` を見つける。プロトコルに参加者の一覧を書くキーはない。誰が参加するかは `steps` に書いた送信者と受信者で決まる。
+2. `steps:` の上に `precondition: "ROBOT[i].battery > 20"` を、下に `postcondition: "ROBOT[i].status == Delivered"` を加える（ほかに任意のキーとして `safety_invariant` と `timing` がある）。
+3. `cadl check my_delivery_v1.cadl` を実行し、続けて 2 つの条件が IR に入ったことを確認：`cadl sim-ir my_delivery_v1.cadl --format json | grep -n -E '"(precondition|postcondition)"'` が 2 行を表示する。ここでは `cadl check` だけに頼らないこと。`cadl check` は知らないキーを黙って無視するので、キー名を間違えても（`pre:`、`post_condition:` など）検査は通ってしまう。
 
 ```yaml
   protocols:
-    - id: DeliveryProposal
-      trigger: "new_delivery_request(CUSTOMER[i])"
+    - id: DeliveryOrder
+      trigger: "new_delivery_request(CUSTOMER[j])"
       precondition: "ROBOT[i].battery > 20"
       steps:
+        - "CUSTOMER[j] -> DISPATCHER : delivery_request"
         - "DISPATCHER -> ROBOT[i] : route_assignment"
         - "ROBOT[i] -> DISPATCHER : ack"
         - "ROBOT[i] -> DISPATCHER : task_completion"
+        - "DISPATCHER -> CUSTOMER[j] : delivery_notification"
       postcondition: "ROBOT[i].status == Delivered"
 ```
 

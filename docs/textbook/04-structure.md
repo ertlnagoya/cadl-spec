@@ -6,7 +6,7 @@ title: "Chapter 4 — Writing the structure"
 
 # Chapter 4 — Writing the structure
 
-This chapter writes the structure of the robot-delivery SoS (its actors and contract) in CADL and checks it with `cadl check` and `cadl sim-ir` (about 15 minutes). In the exercises at the end you add an actor and a protocol, and write the structure of a domain you do not know yet.
+This chapter writes the structure of the robot-delivery SoS (its actors, contract and protocol) in CADL and checks it with `cadl check` and `cadl sim-ir` (about 15 minutes). In the exercises at the end you add an actor, give the protocol conditions, and write the structure of a domain you do not know yet.
 
 ## 4.1 What you'll learn
 
@@ -14,6 +14,7 @@ This chapter writes the structure of the robot-delivery SoS (its actors and cont
 
 - How to declare actors with `id`, `role`, `autonomy`, `interface`.
 - How to declare a contract's parties, A/G clauses (`assume` / `guarantee`), incentives.
+- How to declare a protocol: the messages of one order, as a sequence of `sender -> receiver : message` steps.
 
 **In the exercises:**
 
@@ -53,7 +54,7 @@ flowchart LR
   C --> T
 ```
 
-In this chapter you only touch **actors** and **contracts**. `protocols` and `transitions` are optional stretch material.
+In this chapter you write **actors**, **contracts** and one **protocol**. `transitions` are optional stretch material.
 
 ## 4.3 Procedure
 
@@ -81,8 +82,8 @@ sos:
       autonomy: low                            # follows policy, no roaming
       capabilities: [assign_tasks]
       interface:
-        input:  [position_report, task_completion, ack]
-        output: [route_assignment]
+        input:  [delivery_request, position_report, task_completion, ack]
+        output: [route_assignment, delivery_notification]
 
     - id: "ROBOT[1..N]"                        # parametric: N copies
       role: "delivery_agent"
@@ -113,6 +114,17 @@ sos:
         lambda: 0.5
         rules:
           - "reward(ROBOT[i], 10) when on_time_delivery"
+
+  # ── HOW they talk: the messages of one order ─────────────────
+  protocols:
+    - id: DeliveryOrder
+      trigger: "new_delivery_request(CUSTOMER[j])"
+      steps:                                   # "sender -> receiver : message"
+        - "CUSTOMER[j] -> DISPATCHER : delivery_request"
+        - "DISPATCHER -> ROBOT[i] : route_assignment"
+        - "ROBOT[i] -> DISPATCHER : ack"
+        - "ROBOT[i] -> DISPATCHER : task_completion"
+        - "DISPATCHER -> CUSTOMER[j] : delivery_notification"
 ```
 
 Run the type-checker:
@@ -129,7 +141,7 @@ $ cadl check my_delivery.cadl
 Type check passed: my_delivery.cadl
 ```
 
-Now lower it to IR JSON. The output is about 100 lines long; the listing below is abridged to the parts that matter here:
+Now lower it to IR JSON. The output is about 150 lines long; the listing below is abridged to the parts that matter here:
 
 ```bash
 cadl sim-ir my_delivery.cadl --format json
@@ -166,15 +178,15 @@ cadl sim-ir my_delivery.cadl --format json
 Verify both:
 
 1. `cadl check my_delivery.cadl` prints `Type check passed: my_delivery.cadl` (and no `[ERROR]` lines).
-2. The IR JSON has `"lifecycle": null` and `"monitors": []`. These two lines sit at the end of the contract (around line 86 of the output). To print just them:
+2. The IR JSON has `"lifecycle": null` and `"monitors": []`. These two lines sit at the end of the contract (around line 90 of the output). To print just them:
 
    ```bash
    cadl sim-ir my_delivery.cadl --format json | grep -n -A1 '"lifecycle"'
    ```
 
    ```
-   86:        "lifecycle": null,
-   87-        "monitors": []
+   90:        "lifecycle": null,
+   91-        "monitors": []
    ```
 
 These two `null` / `[]` are **the gap we will fill in Chapter 5** — they are why the structure-only specification cannot say "the robot must ack within 5 seconds".
@@ -189,22 +201,23 @@ These two `null` / `[]` are **the gap we will fill in Chapter 5** — they are w
 
 ## 4.7 Recap
 
-You now have a CADL file that describes the **structure** of your SoS. It compiles, it lowers to IR, and the IR confirms there is exactly one contract called `DELIVERY_SLA`. Next we add the norms that let a runtime check that contract.
+You now have a CADL file that describes the **structure** of your SoS. It compiles, it lowers to IR, and the IR confirms there is exactly one contract called `DELIVERY_SLA` and one protocol, `DeliveryOrder`. Next we add the norms that let a runtime check that contract.
 
 ## 4.8 Exercises
 
 ### Exercise 4.1 (★) — Build the baseline structural model
 
-**Goal**: Reproduce the example actor / contract from Section 4.3, by hand, into a fresh file `my_delivery_v1.cadl`.
+**Goal**: Reproduce the actors, contract and protocol of Section 4.3, by hand, into a fresh file `my_delivery_v1.cadl`.
 
 **Procedure**:
 
 1. Create `my_delivery_v1.cadl` in the root of `cadl_repo` (the bundled example to compare with is `examples/sos_dsl_robot_delivery.cadl`), and run the commands below from that directory.
 2. Declare three actors: `DISPATCHER`, `ROBOT[1..N]`, `CUSTOMER[1..M]`. Choose sensible `autonomy` levels for each.
 3. Declare one contract `DELIVERY_SLA` with `parties: [DISPATCHER, "ROBOT[*]", "CUSTOMER[*]"]`, `assume: ["ROBOT[i].battery > 20"]`, `guarantee: ["delivery_time <= 300s"]`.
-4. Run `cadl check my_delivery_v1.cadl` and confirm it prints `Type check passed: my_delivery_v1.cadl`.
+4. Declare the protocol `DeliveryOrder` with the five steps of Section 4.3, and list each message in the `interface` of its sender (`output`) and its receiver (`input`).
+5. Run `cadl check my_delivery_v1.cadl` and confirm it prints `Type check passed: my_delivery_v1.cadl`.
 
-**Check**: The file passes the type check, and the IR JSON shows 3 actors and 1 contract.
+**Check**: The file passes the type check, and the IR JSON shows 3 actors, 1 contract and 1 protocol.
 
 ### Exercise 4.2 (★★) — Add a fourth actor
 
@@ -219,26 +232,27 @@ You now have a CADL file that describes the **structure** of your SoS. It compil
 
 **Reflection**: When you have *two* contracts on the same actor, which `assume` clauses apply? (Hint: both must hold simultaneously — this is exactly the *interdependency* concern that Dahmann (2014) [[9]](appendix-d-references.md) calls out as SoS pain point #5.)
 
-### Exercise 4.3 (★★) — Add a protocol
+### Exercise 4.3 (★★) — Give the protocol conditions
 
-**Goal**: Move beyond the structural skeleton: write a `protocols:` section describing the delivery flow as a sequence of message exchanges.
+**Goal**: Extend the protocol `DeliveryOrder` of `my_delivery_v1.cadl` with a condition that must hold before it starts and one that holds when it ends, and confirm that both reach the IR.
 
 **Procedure**:
 
-1. Add a `protocols:` section under `sos:` (same indentation as `contracts:`) with one protocol, `DeliveryProposal`. Give it a `trigger`. A protocol has no separate list of participants: who takes part follows from the senders and receivers named in `steps`.
-2. List 3 steps under `steps:`, each written as a quoted string: `"DISPATCHER -> ROBOT[i] : route_assignment"`, `"ROBOT[i] -> DISPATCHER : ack"`, `"ROBOT[i] -> DISPATCHER : task_completion"`.
-3. Add a `precondition` / `postcondition` if you can think of any (the other optional keys are `safety_invariant` and `timing`).
-4. Run `cadl check my_delivery_v1.cadl`, then confirm that the protocol really reached the IR: `cadl sim-ir my_delivery_v1.cadl --format json | grep -n -A6 '"protocols"'` should show `"id": "DeliveryProposal"`. Do not rely on `cadl check` alone here — it silently ignores keys it does not know, so a misspelt key (`pre:`, `participants:` …) still passes.
+1. Find `DeliveryOrder` under `protocols:`. A protocol has no separate list of participants: who takes part follows from the senders and receivers named in `steps`.
+2. Add `precondition: "ROBOT[i].battery > 20"` above `steps:` and `postcondition: "ROBOT[i].status == Delivered"` below them (the other optional keys are `safety_invariant` and `timing`).
+3. Run `cadl check my_delivery_v1.cadl`, then confirm that the two conditions really reached the IR: `cadl sim-ir my_delivery_v1.cadl --format json | grep -n -E '"(precondition|postcondition)"'` should print two lines. Do not rely on `cadl check` alone here — it silently ignores keys it does not know, so a misspelt key (`pre:`, `post_condition:` …) still passes.
 
 ```yaml
   protocols:
-    - id: DeliveryProposal
-      trigger: "new_delivery_request(CUSTOMER[i])"
+    - id: DeliveryOrder
+      trigger: "new_delivery_request(CUSTOMER[j])"
       precondition: "ROBOT[i].battery > 20"
       steps:
+        - "CUSTOMER[j] -> DISPATCHER : delivery_request"
         - "DISPATCHER -> ROBOT[i] : route_assignment"
         - "ROBOT[i] -> DISPATCHER : ack"
         - "ROBOT[i] -> DISPATCHER : task_completion"
+        - "DISPATCHER -> CUSTOMER[j] : delivery_notification"
       postcondition: "ROBOT[i].status == Delivered"
 ```
 
