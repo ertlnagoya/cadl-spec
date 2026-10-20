@@ -200,6 +200,6 @@ IR JSON のロード方法は 2 通り：
 **次の授業（第 7 章）に持参**:
 
 - `session3_comparison.md` + 2 枚のスクリーンショット
-- （任意）3.3 で書いた `violation_trace_view.py`
+- （任意）演習 6.3 で書いた `violation_trace_view.py`
 
 **事前ディスカッション**: 1 文で — シミュレーション結果で *何があれば驚くか*？

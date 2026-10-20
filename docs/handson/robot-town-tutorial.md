@@ -387,7 +387,7 @@ python -m town.council --proposer llm --mode DISTRIBUTED --rounds 2 --name llm-d
 ```
 
 `examples/llm-replay/` holds three hand-written proposals (not model output) that stop at the
-check gate, at the constitution gate, and at the vote, respectively.
+vote, at the constitution gate, and at the check gate, respectively.
 
 ---
 

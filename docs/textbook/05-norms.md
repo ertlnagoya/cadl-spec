@@ -191,9 +191,9 @@ monitors[0].id    : battery_guard
 
 | Symptom | Why |
 | --- | --- |
-| `cadl check` passes, but the IR has `"lifecycle": null` and Chapter 6 shows no states | The `lifecycle:` block has wrong indentation, so it is not read as part of the contract. `lifecycle:` must sit at the same level as `assume:` / `guarantee:`, with `states:` one level below it. The checker does not report this. |
+| `cadl check` passes, but the IR has `"lifecycle": null` and Chapter 6 shows no states | The `lifecycle:` block has wrong indentation, so it is not read as part of the contract. `lifecycle:` must sit at the same level as `assume:` / `guarantee:`, with `states:` one level below it. The checker does not report the indentation itself; it reports it only indirectly, when a monitor names a lifecycle state (an M-3 error, because the contract then has no lifecycle). |
 | Parser silently treats `on:` as a boolean | YAML 1.1 quirk; the example file works because the parser has a workaround (`_yaml_on_key`). If you're writing your own parser, watch for this. |
-| `monitor.rule` "always false" | The right-hand side of `state == Assigned` is a **bare identifier** by CADL convention. Quoting `"Assigned"` changes the meaning. |
+| `monitor.rule` "always false" | The right-hand side of `state == Assigned` is a **bare identifier** by CADL convention; `\"Assigned\"` in double quotes means the same. Single quotes (`'Assigned'`) are not part of the rule grammar: `cadl check` warns that the rule "is not a valid rule (Appendix E.3) and is kept as text", and the monitor never fires. |
 
 ## 5.7 Recap
 
@@ -209,7 +209,7 @@ The same file now describes both the structure (Chapter 4) and the rules (Chapte
 
 1. Copy `v1` → `v2`.
 2. Add `lifecycle.states`, `lifecycle.initial`, `lifecycle.terminal`, and 4 transitions (`assign`, `accept`, `start_delivery`, `complete`).
-3. On `accept`, set `deadline: 5s` and `on_violation.transition: Violated` (the value is the target state). Also declare `extensions: [sos-dsl: 0.1]` under `sos:`, as in Section 5.3.
+3. On `accept`, set `deadline: 5s` and `on_violation.transition: Violated` (the value is the target state). Also declare `extensions: [sos-dsl: 0.1]` under `sos:`, and copy the `monitors:` block (`battery_guard`) of Section 5.3: Chapter 7 runs the v2 of this exercise and expects that monitor.
 4. Run `cadl check my_delivery_v2.cadl`, then `cadl sim-ir my_delivery_v2.cadl --format json | grep -n -A3 '"lifecycle"'` (the `"lifecycle"` key sits well past the first screen of the IR — line 90 for the file of Section 5.3, later if you added actors or contracts in Chapter 4 — so `head` would cut it off).
 5. Confirm in the output that `"lifecycle"` is no longer `null`: the line now reads `"lifecycle": {`, followed by `"states": [` and the first state names. If you added `MAINTENANCE_SLA` in Exercise 4.2, `grep` prints a second match for that contract, which still reads `"lifecycle": null`; that is expected, because only `DELIVERY_SLA` has a lifecycle.
 
@@ -266,6 +266,6 @@ The same file now describes both the structure (Chapter 4) and the rules (Chapte
 
 **Bring to the next session (Chapter 6)**:
 
-- `my_delivery_v2.cadl` (with at minimum exercises 2.1–5.3 done).
+- `my_delivery_v2.cadl` (with at minimum Exercises 5.1–5.3 done).
 - The IR JSON snapshot saved as `my_delivery_v2.ir.json` (run `cadl sim-ir … --format json > my_delivery_v2.ir.json`).
-- (Optional) `my_delivery_v2_with_safety.cadl` if you tackled 2.4.
+- (Optional) `my_delivery_v2_with_safety.cadl` if you tackled Exercise 5.4.

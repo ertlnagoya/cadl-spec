@@ -222,8 +222,6 @@ You now have:
 - A 783-line Unity-ready C# tree, dropped into the Unity project.
 - A Python proof-of-concept showing what the C# trace **must** look like once it runs.
 
--
-
 ## 7.9 Exercises
 
 ### Exercise 7.1 (★) — Capture the baseline

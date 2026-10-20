@@ -72,11 +72,11 @@ Even within the umbrella term "SoS", systems differ by how strong the central au
 |---|---|---|
 | **Directed** | Strong, top-down | Air-defense network |
 | **Acknowledged** | SoS-level authority recognised, but components keep ownership | International space missions, **Course A's robot delivery** (as modelled in its CADL files; see the note above), **Course B's taxi dispatch** |
-| **Collaborative** | No single authority; participants cooperate via shared agreements (protocols, conventions) | The Internet, peer-to-peer-leaning food-delivery cooperatives |
+| **Collaborative** | No single authority; participants cooperate via shared agreements (protocols, conventions) | The Internet, peer-to-peer-leaning food-delivery cooperatives, **Course D's robot town** (three companies agree on the town's rules) |
 | **Virtual** | No central management, no agreed common goal; coordination is emergent | The World Wide Web; the first hours of a major disaster, before any incident command has formed |
 
 > 💡 **Course A and B are both declared `type: Acknowledged`; only the domain changes.**
-> Course C asks you to pick your own domain and classify it yourself.
+> Course D's town is declared `type: Collaborative`. Course C asks you to pick your own domain and classify it yourself.
 
 ---
 

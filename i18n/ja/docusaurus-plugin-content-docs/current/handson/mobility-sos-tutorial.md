@@ -75,7 +75,10 @@ pip install eclipse-sumo
 pip install -e ~/program/cadl_repo
 cadl --version
 
-# cadl-explorer：テキストブック（コース A）の第 6 章と同じ
+# cadl-explorer（テキストブック（コース A）の第 6 章でクローンしたもの）：
+# §4 で `streamlit` をこのシェルから起動できるよう、この venv にも requirements を入れる。
+# 第 6 章と同じく、上で入れた cadl はそのまま使われる。
+pip install -r ~/program/cadl-explorer/requirements.txt
 ```
 
 > `pip install -e ~/program/cadl_repo` の途中で `z3-solver` のビルドに失敗する場合は、
@@ -207,7 +210,7 @@ streamlit run app.py
 図の中で `Terminated` はどこともつながっていません。契約は `Terminated` を終端状態として宣言していますが、そこへ入る遷移を書いていないためです。`mobility_sos.cadl` を **Designer** ページで開くと、同じことが Lifecycle の警告（`State 'Terminated' cannot be reached from the initial state 'Requested'`）として表示されます。`cadl check` はこの状態でも通ります。
 
 :::info[このパターンは何度も出てきます]
-このコースでは「CADL を編集 → `cadl sim-ir` で IR を再生成 → cadl-explorer をリロード」という 3 ステップを、節目（構造を読んだ後、契約を読んだ後、コード生成後、シミュレーション後、契約改訂後）でそのつど繰り返します。
+このコースでは「CADL を編集 → `cadl sim-ir` で IR を再生成 → IR を cadl-explorer にアップロードし直す」という 3 ステップ（ブラウザでページを再読み込みすると、アップロードしたファイルは消える）を、節目（構造を読んだ後、契約を読んだ後、コード生成後、シミュレーション後、契約改訂後）でそのつど繰り返します。
 コードと図が連動して動く感触をつかむのが、このコースの主目的です。
 :::
 
@@ -251,12 +254,12 @@ python scripts/cadl_to_sumo.py
 生成されるもの：
 
 - `sumo/config/midtown.cadl.sumocfg` — `step-length` が CADL の `time_step_ms` から、
-  `end` は「`sumo/routes/midtown.rou.xml` の最後の `depart` ＋（1800 秒と `ride_time` guarantee の大きいほう）＋ 60 秒」で決まる（サンプルデータでは 3060 + 1800 + 60 = 4920）。経路ファイルがまだない場合は 3600 秒になる。§6 では `generate_sumo_routes.py` のあと、`run_sumo.py` の前にこのスクリプトを再実行するので、4920 秒になる。§8 のように `ride_time` を厳しくしても `end` は短くならない
+  `end` は「`sumo/routes/midtown.rou.xml` の最後の `depart` ＋（1800 秒と `ride_time` guarantee の大きいほう）＋ 60 秒」で決まる（サンプルデータでは 3060 + 1800 + 60 = 4920）。リポジトリには `sumo/routes/midtown.rou.xml` が同梱されているので、この最初の実行ですでに 4920 秒になる（経路ファイルがなければ 3600 秒）。§6 では `generate_sumo_routes.py` のあと、`run_sumo.py` の前にこのスクリプトを再実行するので、`end` は生成した経路に合わせて決まる。§8 のように `ride_time` を厳しくしても `end` は短くならない
 - `sumo/cadl_constraints.json` — `analyze_results.py` が読む契約条件（guarantees / deadlines / monitors）
 
 :::tip[🔍 可視化チェックポイント 2 — コード生成しても CADL ソースは変わらない]
 `cadl_to_sumo.py` は IR を読んで SUMO の設定ファイルを書き出すだけで、`cadl/mobility_sos.cadl` の `lifecycle:` / `monitors:` には触れません（§3 のときと 1 バイトも変わりません）。
-ここで cadl-explorer をリロードしても、§4 と同じ図が出るだけのはずです。
+ここで `cadl/mobility_sos.ir.json` を cadl-explorer にアップロードし直しても、§4 と同じ図が出るだけのはずです。
 
 「コード生成は仕様を書き換えない」というこの性質があるおかげで、CADL を仕様の唯一の出典として扱えます。
 :::
@@ -353,7 +356,7 @@ python scripts/cadl_to_sumo.py
 python scripts/analyze_results.py | grep -E "OK|VIOLATED"
 ```
 
-期待される結果（SUMO 1.28.0 では違反 12 件。違反件数と該当タクシーの並びは、乱数シードや SUMO のバージョンによって変わります。着目すべきは `waiting_time` が `OK` で `ride_time` が `VIOLATED` になる、という**内訳の形**です）：
+期待される結果（SUMO 1.28.0 では違反 12 件。実行は決定的なので、同じ SUMO の版ならそのまま再現します。別の版では、違反件数と該当タクシーの並びが変わることがあります。着目すべきは `waiting_time` が `OK` で `ride_time` が `VIOLATED` になる、という**内訳の形**です）：
 
 ```text
       [OK          ] waiting_time <= 300s  (tripinfo.waitingTime)
@@ -364,7 +367,7 @@ OK: 分析完了。
 最後の行はスクリプトの終了メッセージです。`OK` で始まるので `grep` のパターンに一致します。
 
 :::tip[🔍 可視化チェックポイント 4 — 改訂後（このコースの山場）]
-`analyze_results.py` を実行する前に、cadl-explorer をリロードしてみてください。
+作り直した `cadl/mobility_sos.ir.json`（上のコマンドで書き出し済み）を、cadl-explorer にアップロードし直してみてください。
 
 今回書き換えたのは guarantee の値（`ride_time <= 1800s` から `100s`）だけで、`lifecycle:` や `monitors:` には触れていません。
 そのため、状態機械の図そのものは §4 と同じです（状態数も遷移数も `Δ` ラベルも変化なし）。

@@ -25,9 +25,10 @@ nats-server -p 4222
 ```
 
 ```
-[INFO] Starting nats-server
-[INFO] Server is ready
-[INFO] Listening for client connections on 0.0.0.0:4222
+[…] [INF] Starting nats-server
+…
+[…] [INF] Listening for client connections on 0.0.0.0:4222
+[…] [INF] Server is ready
 ```
 
 ```bash
@@ -133,7 +134,7 @@ Console に以下のような行が連続的に出ます。Console の検索欄�
 
 ![Play 中の Unity：Scene ビューに経路網上のロボット、Console に DELIVERY_SLA で絞り込んだライフサイクルイベント](/img/handson/unity-play-console.jpg)
 
-このスクリーンショットは Play 開始から約 22 秒後のもので、Console の検索欄に `DELIVERY_SLA` と入力し、Scene タブを選んだ状態です。バッテリ 15 の robot-2-1 が `battery_guard` で `Violated` になり、その 5 秒後に robot-1-1 が割り当てられたところです。Play 中、host は Hierarchy の `DontDestroyOnLoad` の下に `ContractRuntimeHost` として表示されます。この画像では、シーン側の Hierarchy に手順 6.3 のオブジェクトが「New Game Object」のまま残っていますが、Inspector には名前が出ています。
+このスクリーンショットは Play 開始から約 22 秒後のもので、Console の検索欄に `DELIVERY_SLA` と入力し、Scene タブを選んだ状態です。バッテリ 15 の robot-2-1 が `battery_guard` で `Violated` になり、その 5 秒後に robot-1-1 が割り当てられたところです。Play 中、host は Hierarchy の `DontDestroyOnLoad` の下に `ContractRuntimeHost` として表示されます。この画像では、シーン側の Hierarchy に 8.2 節「ContractRuntimeHost を追加」のオブジェクトが「New Game Object」のまま残っていますが、Inspector には名前が出ています。
 
 同じ実行中の経路網を拡大したものです。5 台のロボットが走行しています。
 
@@ -154,7 +155,7 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 [lifecycle DELIVERY_SLA/robot-1-1 Delivering -> Completed (complete, event) @ 46361ms]
 ```
 
-各ロボットの契約は、そのロボット自身のイベントでだけ進みます。調停器は約 5 秒ごとに 1 件ずつ配達を割り当てるので、ロボットは順番に `Assigned` になります（この実行では約 5・11・16・22・27 秒）。`robot-1-1` の `assign` と `accept` の間が 700〜800 ms 空いているのは、6.4 で設定した `Assigned Dwell Ms` によるものです。バッテリ 15 の `robot-2-1` は、`assign` と同じフレームで `battery_guard` に検出されています。
+各ロボットの契約は、そのロボット自身のイベントでだけ進みます。調停器は約 5 秒ごとに 1 件ずつ配達を割り当てるので、ロボットは順番に `Assigned` になります（この実行では約 5・11・16・22・27 秒）。`robot-1-1` の `assign` と `accept` の間が 700〜800 ms 空いているのは、8.2 節「各ロボットに PilotContractBridge を追加」で設定した `Assigned Dwell Ms` によるものです。バッテリ 15 の `robot-2-1` は、`assign` と同じフレームで `battery_guard` に検出されています。
 
 ## 8.4 シーンの中の部品
 
@@ -219,7 +220,7 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 | Console に contract イベントが何も出ない | NATS / arbitrator が起動していない。Terminal 1 に `Server is ready`、Terminal 2 に `[Config] … taskArbitration.enabled=true …` が出ているか確認。 |
 | 配送が一切割り当てられない（`WON delivery` が出ない） | arbitrator が設定を読めていない可能性。`-config` に `cadl_config.json` の**絶対パス**を渡して起動し直し、`taskArbitration.enabled=true` の表示を確認する（同梱の config は既定で `true`）。 |
 | Play 後 Console に `The name 'CADL.SosDsl.Demo.ContractRuntimeHost' could not be found` | Generated/Runtime ファイルが認識されていない。e2e スクリプトを再実行、または Unity で `Assets ▸ Reimport All`。 |
-| **全車が `Proposed` のまま、約 5 分後に `deadline_watch` で `Violated`** | arbitrator が前回 Play の状態を持ち越している（落札が来ない）。Play を止め、**arbitrator を再起動**（必要なら NATS も）してから再生。**Play のたびに再起動が必要**（6.1 の注記参照）。 |
+| **全車が `Proposed` のまま、約 5 分後に `deadline_watch` で `Violated`** | arbitrator が前回 Play の状態を持ち越している（落札が来ない）。Play を止め、**arbitrator を再起動**（必要なら NATS も）してから再生。**Play のたびに再起動が必要**（8.2 節の注記「Play のたびに arbitrator を再起動する」参照）。 |
 | **コンパイルエラー `... already contains a definition for ...`（パスが `Generated/Generated/…` や `Runtime/Runtime/…`）** | 生成ツリーが入れ子に二重コピーされている。`Assets/Scripts/SoSDsl/Generated/Generated` と `Runtime/Runtime` を削除（最新の e2e スクリプトは自動で掃除する）。 |
 | **Battery 15 の車も違反せず `Completed` まで進む** | bridge が `assign` と `accept` を同一フレームで撃ち、`Assigned` に留まらないため periodic な `battery_guard` がサンプリングできない。同梱の `PilotContractBridge` は `assignedDwellMs`（既定 700ms）で対策済み。bridge を差し替えた場合はこの値を monitor 周期より大きく保つ。 |
 

@@ -93,7 +93,7 @@ Course A is a self-contained **Textbook** with its own navigation tab. Its Chapt
 | **Domain** | Anything you choose (food delivery, emergency response, power grid…) |
 | **Target runtime** | Your choice. The suggested default is a lightweight Python discrete-event harness such as SimPy; Unity is not required |
 | **Time** | A few hours to a few weeks (a self-directed mini-project) |
-| **Prerequisite** | Course A + B |
+| **Prerequisite** | Course A, plus Course B or D |
 | **You will learn** | Designing actors / contracts / lifecycle / monitors **on your own** for a new domain, then choosing your own runtime |
 
 Course C is deliberately open-ended: the brief is an outline, not a step-by-step tutorial. → [Course C — Your own SoS](own-sos.md)
