@@ -13,7 +13,7 @@ Pick a domain other than robot delivery — recommended: **food delivery (modell
 1. Identify actors and contracts (no template is provided).
 2. Decide which SoS type (Maier / ISO/IEC/IEEE 21841) the domain belongs to, and justify the `type:` you declare.
 3. Write `lifecycle:` and `monitors:` from scratch, pass `cadl check`, and inspect the result in cadl-explorer.
-4. Exercise the specification with a runtime of your choice. The suggested default is a lightweight Python discrete-event harness (for example SimPy) that replays the lifecycle from the IR JSON; Unity is not required. No harness is provided — writing it is part of the task.
+4. Exercise the specification with a runtime of your choice. The suggested default is a lightweight Python discrete-event harness (for example SimPy) that replays the lifecycle from the IR JSON (`cadl sim-ir --format json`); Unity is not required. No harness is provided — writing it is part of the task.
 5. Sweep parameters and write a comparison report (the 3-page format of Exercise 9.4 in [Chapter 9 of the textbook](../textbook/09-improve.md) works well).
 
 Course C needs only the public repositories (`cadl`, `cadl-explorer`).

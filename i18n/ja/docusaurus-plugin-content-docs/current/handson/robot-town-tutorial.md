@@ -336,7 +336,7 @@ export ANTHROPIC_API_KEY=...        # 自分のキーを入力する。チャッ
 python -m town.council --proposer llm --mode DISTRIBUTED --rounds 2 --name llm-distributed
 ```
 
-`examples/llm-replay/` には、検査・憲法・投票のそれぞれで止まる 3 件の見本（LLM の出力ではなく、手で書いた案）が入っています。
+`examples/llm-replay/` には、投票・憲法・検査の関門でそれぞれ止まる 3 件の見本（LLM の出力ではなく、手で書いた案）が入っています。
 
 ---
 

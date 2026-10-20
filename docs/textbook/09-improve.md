@@ -44,7 +44,7 @@ This is a small but useful *typology of regressions* in normative SoS specs.
 
 **Procedure**:
 
-1. Make the change you diagnosed in 5.1.
+1. Make the change you diagnosed in Exercise 9.1.
 2. Generate the IR of the new file and re-run the demo against it, as in Exercise 7.2:
 
    ```bash

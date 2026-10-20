@@ -191,9 +191,9 @@ monitors[0].id    : battery_guard
 
 | 症状 | 原因 |
 | --- | --- |
-| `cadl check` は通るが，IR が `"lifecycle": null` になり，第 6 章で状態が表示されない | `lifecycle:` ブロックのインデントが違い，契約の一部として読まれていない。`lifecycle:` は `assume:` / `guarantee:` と同じレベルに置き，`states:` はその 1 段下に書く。チェッカはこの誤りを報告しない。 |
+| `cadl check` は通るが、IR が `"lifecycle": null` になり、第 6 章で状態が表示されない | `lifecycle:` ブロックのインデントが違い、契約の一部として読まれていない。`lifecycle:` は `assume:` / `guarantee:` と同じレベルに置き、`states:` はその 1 段下に書く。チェッカはインデントの誤りそのものは報告しない。モニターがライフサイクルの状態を名指ししているときに限り、契約にライフサイクルがないことが M-3 のエラーとして間接的に報告される。 |
 | `on:` がブール値として解釈されてしまう | YAML 1.1 の癖。CADL のパーサは内部に `_yaml_on_key` の回避策を持っているので同梱の例は正しく動く。自分でパーサを書くときは注意。 |
-| `monitor.rule` が常に false | `state == Assigned` の右辺は **裸の識別子** で OK（CADL の慣習）。`"Assigned"` のように quote すると意味が変わる。 |
+| `monitor.rule` が常に false | `state == Assigned` の右辺は **裸の識別子** で OK（CADL の慣習）。二重引用符で `\"Assigned\"` と書いても意味は同じ。単引用符（`'Assigned'`）はルールの文法にないので、`cadl check` が「is not a valid rule (Appendix E.3) and is kept as text」と警告し、モニターは発火しない。 |
 
 ## 5.7 おさらい
 
@@ -209,7 +209,7 @@ monitors[0].id    : battery_guard
 
 1. `v1` → `v2` をコピー。
 2. `lifecycle.states`、`lifecycle.initial`、`lifecycle.terminal` と 4 つの遷移（`assign`、`accept`、`start_delivery`、`complete`）を追加。
-3. `accept` に `deadline: 5s` と `on_violation.transition: Violated` を設定（値は移動先の状態名）。あわせて、5.3 節と同じく `sos:` の下に `extensions: [sos-dsl: 0.1]` を宣言する。
+3. `accept` に `deadline: 5s` と `on_violation.transition: Violated` を設定（値は移動先の状態名）。あわせて、5.3 節と同じく `sos:` の下に `extensions: [sos-dsl: 0.1]` を宣言し、5.3 節の `monitors:` ブロック（`battery_guard`）も写す。第 7 章はこの演習の v2 を動かし、このモニターがある前提で結果を説明する。
 4. `cadl check my_delivery_v2.cadl` を実行し、続けて `cadl sim-ir my_delivery_v2.cadl --format json | grep -n -A3 '"lifecycle"'` を実行（`"lifecycle"` キーは IR のかなり後ろにある。5.3 節のファイルでは 90 行目、第 4 章でアクターや契約を追加していればさらに後ろになるので、`head` では途中で切れて見えない）。
 5. 出力で `"lifecycle"` が `null` でなくなったことを確認：行が `"lifecycle": {` になり、続いて `"states": [` と最初の状態名が並ぶ。演習 4.2 で `MAINTENANCE_SLA` を追加している場合、`grep` はその契約の分も出力し、そちらは `"lifecycle": null` のままになる。lifecycle を持つのは `DELIVERY_SLA` だけなので、これで正しい。
 
@@ -266,6 +266,6 @@ monitors[0].id    : battery_guard
 
 **次の授業（第 6 章）に持参**:
 
-- `my_delivery_v2.cadl`（最低限 2.1〜2.3 を完了）
+- `my_delivery_v2.cadl`（最低限 演習 5.1〜5.3 を完了）
 - IR JSON スナップショット `my_delivery_v2.ir.json`（`cadl sim-ir … --format json > my_delivery_v2.ir.json`）
-- （任意）2.4 に取り組んだなら `my_delivery_v2_with_safety.cadl`
+- （任意）演習 5.4 に取り組んだなら `my_delivery_v2_with_safety.cadl`

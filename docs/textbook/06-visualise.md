@@ -200,6 +200,6 @@ This builds on what you would expect to see *in advance* — by the time Chapter
 **Bring to the next session (Chapter 7)**:
 
 - `session3_comparison.md` + 2 screenshots.
-- (Optional) The `violation_trace_view.py` code from 3.3.
+- (Optional) The `violation_trace_view.py` code from Exercise 6.3.
 
 **Discussion to prep**: in 1 sentence each — *what would surprise you* in the simulation results?

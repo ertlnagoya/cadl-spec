@@ -84,7 +84,10 @@ pip install eclipse-sumo
 pip install -e ~/program/cadl_repo
 cadl --version
 
-# cadl-explorer: same as Chapter 6 of the Textbook (Course A)
+# cadl-explorer (cloned in Chapter 6 of the Textbook, Course A): install its
+# requirements into this venv too, so that `streamlit` runs in this shell (§4).
+# It keeps the cadl installed above, as in Chapter 6.
+pip install -r ~/program/cadl-explorer/requirements.txt
 ```
 
 > If `z3-solver` fails to build during `pip install -e ~/program/cadl_repo`, fall back
@@ -224,7 +227,7 @@ You should see something like:
 `Terminated` stands alone in the diagram: the contract declares it as a terminal state, but no transition leads to it. If you open `mobility_sos.cadl` on the **Designer** page, the same fact is reported as a Lifecycle warning (`State 'Terminated' cannot be reached from the initial state 'Requested'`). `cadl check` passes regardless.
 
 :::info[This pattern repeats throughout the tutorial]
-You will run **edit CADL → `cadl sim-ir` → reload cadl-explorer** at every milestone:
+You will run **edit CADL → `cadl sim-ir` → upload the IR to cadl-explorer again** at every milestone (reloading the browser page clears the uploaded file):
 after reading the structure, after reading the contract, after codegen, after the simulation, after revising the contract.
 The whole point of the tutorial is to internalize that **the picture changes in lockstep with the code**.
 :::
@@ -270,7 +273,7 @@ Example output (excerpt; the scripts print their progress messages in Japanese):
 Produces:
 
 - `sumo/config/midtown.cadl.sumocfg` — `step-length` from
-  `environment.time_step_ms`, `end` = the last `depart` in `sumo/routes/midtown.rou.xml` + the larger of 1800 s and the `ride_time` guarantee + 60 s (3060 + 1800 + 60 = 4920 with the sample data). If the route file does not exist yet, `end` is 3600 s; §6 re-runs this script after `generate_sumo_routes.py`, before `run_sumo.py`, which gives 4920 s. A tighter `ride_time` (as in §8) does not shorten `end`.
+  `environment.time_step_ms`, `end` = the last `depart` in `sumo/routes/midtown.rou.xml` + the larger of 1800 s and the `ride_time` guarantee + 60 s (3060 + 1800 + 60 = 4920 with the sample data). The repository ships `sumo/routes/midtown.rou.xml`, so this first run already gives 4920 s; without the route file `end` would be 3600 s. §6 re-runs this script after `generate_sumo_routes.py`, before `run_sumo.py`, so `end` follows the routes you generate. A tighter `ride_time` (as in §8) does not shorten `end`.
 - `sumo/cadl_constraints.json` — the contract conditions (guarantees / deadlines / monitors) that
   `analyze_results.py` reads.
 
@@ -278,7 +281,7 @@ Produces:
 `cadl_to_sumo.py` only **reads** the IR and **writes** SUMO config files; it never
 modifies `cadl/mobility_sos.cadl`. The `lifecycle:` and `monitors:` blocks are
 byte-for-byte identical to what they were in §3.
-Reload cadl-explorer now and you should see **the exact same picture** as in §4.
+Upload `cadl/mobility_sos.ir.json` to cadl-explorer again now and you should see **the exact same picture** as in §4.
 
 That invariance is what lets us treat CADL as the **single source of truth**:
 target-specific generators consume the spec without mutating it.
@@ -377,7 +380,7 @@ python scripts/cadl_to_sumo.py
 python scripts/analyze_results.py | grep -E "OK|VIOLATED"
 ```
 
-Output (12 violations with SUMO 1.28.0; the violation count and the taxis listed vary with the random seed and your SUMO
+Output (12 violations with SUMO 1.28.0; the run is deterministic, so the same SUMO version reproduces it exactly; the violation count and the taxis listed can differ with another SUMO
 version — what matters is the *pattern*: `waiting_time` stays `OK` while `ride_time` turns
 `VIOLATED`):
 
@@ -390,7 +393,7 @@ OK: 分析完了。
 The last line is the script's closing message ("analysis complete"); it matches the `grep` pattern because it starts with `OK`.
 
 :::tip[🔍 Visualization Checkpoint 4 — Post-revision (★ highlight)]
-Reload cadl-explorer **before** running `analyze_results.py`.
+Upload the regenerated `cadl/mobility_sos.ir.json` to cadl-explorer again (the commands above already wrote it).
 
 The change you just made touches only a guarantee value (`ride_time <= 1800s` → `100s`).
 You did not touch `lifecycle:` or `monitors:`, so **the state-machine diagram itself is

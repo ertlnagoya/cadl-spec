@@ -25,9 +25,10 @@ nats-server -p 4222
 ```
 
 ```
-[INFO] Starting nats-server
-[INFO] Server is ready
-[INFO] Listening for client connections on 0.0.0.0:4222
+[…] [INF] Starting nats-server
+…
+[…] [INF] Listening for client connections on 0.0.0.0:4222
+[…] [INF] Server is ready
 ```
 
 ```bash
@@ -133,7 +134,7 @@ In the Console, lines like the following should appear continuously. You can fil
 
 ![Unity in Play mode: robots on the road network in the Scene view, and the Console filtered on DELIVERY_SLA showing lifecycle events](/img/handson/unity-play-console.jpg)
 
-The screenshot was taken about 22 seconds into Play, with `DELIVERY_SLA` typed in the Console search box and the Scene tab selected: robot-2-1 (battery 15) has just been moved to `Violated` by `battery_guard`, and robot-1-1 has been assigned five seconds later. During Play the host is listed as `ContractRuntimeHost` under `DontDestroyOnLoad`; in this capture the scene part of the Hierarchy still shows the object of step 6.3 as "New Game Object", although the Inspector shows its name.
+The screenshot was taken about 22 seconds into Play, with `DELIVERY_SLA` typed in the Console search box and the Scene tab selected: robot-2-1 (battery 15) has just been moved to `Violated` by `battery_guard`, and robot-1-1 has been assigned five seconds later. During Play the host is listed as `ContractRuntimeHost` under `DontDestroyOnLoad`; in this capture the scene part of the Hierarchy still shows the object added in "Add ContractRuntimeHost" (Section 8.2) as "New Game Object", although the Inspector shows its name.
 
 A closer look at the road during the same run, with the five robots on their way:
 
@@ -154,7 +155,7 @@ The Game view during Play: the camera follows robot `m1`, and the small picture 
 [lifecycle DELIVERY_SLA/robot-1-1 Delivering -> Completed (complete, event) @ 46361ms]
 ```
 
-Each robot's contract moves only on that robot's own events. The arbitrator hands out one delivery about every 5 seconds, so the robots reach `Assigned` one after another (in this run at about 5, 11, 16, 22 and 27 seconds). Note the 700 to 800 ms between `assign` and `accept` for `robot-1-1`: that is the `Assigned Dwell Ms` set in 6.4. `robot-2-1`, with battery 15, is caught by `battery_guard` in the same frame as its `assign`.
+Each robot's contract moves only on that robot's own events. The arbitrator hands out one delivery about every 5 seconds, so the robots reach `Assigned` one after another (in this run at about 5, 11, 16, 22 and 27 seconds). Note the 700 to 800 ms between `assign` and `accept` for `robot-1-1`: that is the `Assigned Dwell Ms` set in "Add PilotContractBridge to every robot" (Section 8.2). `robot-2-1`, with battery 15, is caught by `battery_guard` in the same frame as its `assign`.
 
 ## 8.4 The parts in the scene
 
@@ -219,7 +220,7 @@ Confirm all of these:
 | Console silent — no contract events at all | NATS or arbitrator not running. Check that Terminal 1 shows `Server is ready` and Terminal 2 shows the `[Config] … taskArbitration.enabled=true …` line. |
 | No delivery is ever assigned (no `WON delivery` in the Console) | The arbitrator probably did not load its config. Restart it passing the **absolute path** of `cadl_config.json` via `-config`, and confirm `taskArbitration.enabled=true` in its startup output (the shipped config already has it `true`). |
 | Compile error in Console after Play: `The name 'CADL.SosDsl.Demo.ContractRuntimeHost' could not be found` | Generated/Runtime files not picked up. Re-run the e2e script. Or in Unity, `Assets ▸ Reimport All`. |
-| **All robots stay `Proposed`, then get `Violated` by `deadline_watch` (~5 min)** | The arbitrator carried over state from the previous Play (no deliveries offered). Stop Play, **restart the arbitrator** (and NATS if unsure), then replay. It must be restarted **before every Play** (see the note in 6.1). |
+| **All robots stay `Proposed`, then get `Violated` by `deadline_watch` (~5 min)** | The arbitrator carried over state from the previous Play (no deliveries offered). Stop Play, **restart the arbitrator** (and NATS if unsure), then replay. It must be restarted **before every Play** (see the note "Restart the arbitrator before every Play" in Section 8.2). |
 | **Compile error `... already contains a definition for ...` with paths under `Generated/Generated/…` or `Runtime/Runtime/…`** | The generated tree was copied nested (duplicated). Delete `Assets/Scripts/SoSDsl/Generated/Generated` and `Runtime/Runtime` (the current e2e script self-heals this). |
 | **The battery=15 robot also completes instead of violating** | The bridge fired `assign` and `accept` in the same frame, so the contract never dwells in `Assigned` long enough for the periodic `battery_guard` to sample. The shipped `PilotContractBridge` fixes this via `assignedDwellMs` (default 700 ms); if you replace the bridge, keep it above the monitor period. |
 
