@@ -405,7 +405,7 @@ vote, at the constitution gate, and at the check gate, respectively.
 
 ## 10. What the specification cannot say yet
 
-Building this exercise exposed two gaps that remain in CADL 0.2 / `cadl` 0.3.18:
+Building this exercise exposed two gaps that remain in CADL 0.3 / `cadl` 0.3.18:
 
 - `cadl sim-ir` does not carry `sos.transitions[*].safety_invariant` into the IR (`cadl check`
   does check it as an expression). The exercise reads it from the checked source file.

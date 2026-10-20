@@ -34,9 +34,7 @@ stateDiagram-v2
   Assigned --> Violated: 期限切れ
   Accepted --> Delivering: status==InTransit
   Delivering --> Completed: status==Delivered
-  Delivering --> Violated: monitor 発火
-  Accepted  --> Violated: monitor 発火
-  Assigned  --> Violated: monitor 発火
+  Assigned  --> Violated: monitor 発火<br/>(battery_guard)
   Completed --> [*]
   Violated  --> [*]
   Terminated --> [*]

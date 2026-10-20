@@ -147,6 +147,9 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
   robot-2-1     state=Violated      violations=[monitor:battery_guard]
   robot-3-1     state=Violated      violations=[monitor:deadline_watch]
   robot-4-1     state=Proposed      violations=[(none)]
+
+  kind counts:  {'lifecycle': 17, 'violation': 3}
+  cause counts: {'open': 5, 'event': 9, 'monitor': 2, 'deadline': 1}
 ```
 
 Five robots, five different outcomes. This is a **scripted Python scenario**, built so that every outcome a contract can reach (normal completion, deadline violation, monitor violation, still unassigned) is visible in a single run.

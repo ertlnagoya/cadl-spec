@@ -354,7 +354,7 @@ python -m town.council --proposer llm --mode DISTRIBUTED --rounds 2 --name llm-d
 
 ## 10. 仕様でまだ書けないこと
 
-この演習を作る過程で、CADL 0.2 / `cadl` 0.3.18 に残る不足が 2 つ見つかりました。
+この演習を作る過程で、CADL 0.3 / `cadl` 0.3.18 に残る不足が 2 つ見つかりました。
 
 - `cadl sim-ir` は `sos.transitions[*].safety_invariant` を IR に出力しません（`cadl check` は式として検査します）。演習では、検査を通ったソースファイルから読んでいます。
 - 運用モード（regime）は名前だけで、パラメータの値や契約を結びつける構文がありません。集中モードで何が変わるか（待避所、エッジの専有）は、シミュレータの側で決めています。

@@ -75,9 +75,9 @@ pip install eclipse-sumo
 pip install -e ~/program/cadl_repo
 cadl --version
 
-# cadl-explorer（テキストブック（コース A）の第 6 章でクローンしたもの）：
+# cadl-explorer（テキストブック（コース A）の 2.4 節でクローンしたもの）：
 # §4 で `streamlit` をこのシェルから起動できるよう、この venv にも requirements を入れる。
-# 第 6 章と同じく、上で入れた cadl はそのまま使われる。
+# テキストブックの第 6 章と同じく、上で入れた cadl はそのまま使われる。
 pip install -r ~/program/cadl-explorer/requirements.txt
 ```
 
@@ -123,7 +123,7 @@ cadl sim-ir cadl/mobility_sos.cadl --format json \
 ```
 
 いま読んでいるファイルは完成した仕様で、契約には §3 で読む `lifecycle:` と `monitors:` がすでに書かれています。そのため、上のコマンドは lifecycle がある、と表示するはずです。
-**構造だけ**だとどうなるかを見るには、作業用のコピーを作り、そこから `lifecycle:` と `monitors:` のブロックを削除して、同じ 2 つのコマンドを実行してください。`cadl check` は通りますが、IR では `"lifecycle": null`、monitors は 0 個になり、cadl-explorer の **Contract Lifecycle** ページには図が出ず、「契約が `lifecycle:` を宣言していない」という警告と、monitor が宣言されていないという案内だけが表示されます。**Designer** ページの **Structure** ビュー（cadl-explorer v0.5.5 以降）にも描くものがありません。このビューはメッセージをプロトコルのステップ、ライフサイクルのイベント、情報共有から取り出しますが、コピーにはそのどれもないからです。
+**構造だけ**だとどうなるかを見るには、作業用のコピーを作り、そこから `lifecycle:` と `monitors:` のブロックを削除して、同じ 2 つのコマンドを実行してください。`cadl check` は通りますが、IR では `"lifecycle": null`、monitors は 0 個になり、cadl-explorer の **Contract Lifecycle** ページには図が出ず、「契約が `lifecycle:` を宣言していない」という警告と、monitor が宣言されていないという案内だけが表示されます。**Designer** ページの **Structure** ビュー（cadl-explorer v0.5.5 以降）の **Message flow** タブにも、「No messages yet」と表示されるだけです。このビューはメッセージをプロトコルのステップ、ライフサイクルのイベント、情報共有から取り出しますが、コピーにはそのどれもないからです。
 構造だけでは「期限」「違反」「帰結」を書けない、というこのギャップを埋めているのが、§3 で読む 2 つのブロックです。
 :::
 
@@ -392,6 +392,7 @@ OK: 分析完了。
 mv cadl/mobility_sos.cadl.bak cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json > cadl/mobility_sos.ir.json
 python scripts/cadl_to_sumo.py
+python scripts/analyze_results.py
 ```
 :::
 
