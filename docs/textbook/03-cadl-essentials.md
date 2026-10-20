@@ -205,7 +205,7 @@ Besides syntax and types, `cadl check` reports mistakes in the norms layer such 
 | A message in `on:` mentions an actor that is not declared | `HUB` in `"ROBOT[i] -> HUB : ack"` is not declared |
 | An `observe:` entry is neither an attribute of a declared actor nor a message name | `DRONE` in `DRONE.battery` is not declared |
 
-For example, when the `transition:` of `on_violation` names a transition `id`, `cadl` 0.3.17 reports:
+For example, when the `transition:` of `on_violation` names a transition `id`, `cadl` 0.3.18 reports:
 
 ```text
   [ERROR]: on_violation.transition 'accept' of the lifecycle transition 'accept' of contract 'DELIVERY_SLA' is not a state listed in states (L-5); it names the target state, not a transition id
