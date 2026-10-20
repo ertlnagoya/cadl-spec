@@ -15,7 +15,7 @@ title: "クイックスタート"
 
 ## 経路 A — ブラウザで試す（CADL Explorer） {/* #path-a */}
 
-**[CADL Explorer](https://cadl-explorer.streamlit.app/)** を使えばインストールは不要です。以下の手順は CADL Explorer v0.5.6 の画面にもとづいています（公開アプリでは，サイドバーのページ一覧の下に版が表示されます）。
+**[CADL Explorer](https://cadl-explorer.streamlit.app/)** を使えばインストールは不要です。以下の手順は CADL Explorer v0.5.7 の画面にもとづいています（公開アプリでは，サイドバーのページ一覧の下に版が表示されます）。
 
 ### A-1. CADL Explorer を開く
 

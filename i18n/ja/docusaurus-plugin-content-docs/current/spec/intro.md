@@ -1,16 +1,16 @@
 ---
 sidebar_position: 0
-title: "CADL仕様書 v0.2"
-description: "CADL言語仕様書 v0.2 の入口ページ。概要，アーキテクチャ全体像，読み方，cadlツールの入手方法，関連ツールを示します。"
+title: "CADL仕様書 v0.3"
+description: "CADL言語仕様書 v0.3 の入口ページ。概要，アーキテクチャ全体像，読み方，cadlツールの入手方法，関連ツールを示します。"
 ---
 
 # CADL: Contract Architecture Description Language
 
-**言語仕様書 — Version 0.2（ドラフト）**
+**言語仕様書 — Version 0.3（ドラフト）**
 
 名古屋大学大学院情報学研究科 ERTL
 
-2026年10月10日
+2026年10月20日
 
 ---
 
@@ -133,11 +133,24 @@ flowchart LR
 
 ## ステータス
 
-本書は**Version 0.2（ドラフト）** です。言語およびツールチェーンは開発中であり，
+本書は**Version 0.3（ドラフト）** です。言語およびツールチェーンは開発中であり，
 構文・意味論は今後のリビジョンで変更される可能性があります。
 
+Version 0.3 は，Version 0.2 に次のものを加えました。Version 0.2 で正しいファイルは
+Version 0.3 でも正しく，同じ意味に読まれます。
+
+- **単項マイナス**：式に単項の `-` を書けます（`permit_state == -2`，`x > -0.5`，
+  `-a * b`）。`*` と `/` より強く結び付き，`-x` は `0 - x` の値を持ちます
+  （[付録A A.10節](./appendix-a-syntax.md#a10-expressions)）。
+- **遷移を検証の対象にする**：`verification:` の要素の `target:` に，遷移を
+  `FROM->TO` の形で書けます（[付録A A.8節](./appendix-a-syntax.md#a8-verification-block)）。
+- **SoS の `name` は文字列**です。識別子である必要はありません
+  （[付録A A.3節](./appendix-a-syntax.md#a3-context-actors-metrics)）。
+- **動機拡張の `model: hybrid` は予約語**です。処理系はこれを受け付け，
+  `commitment_budget` として扱わなければなりません（[付録C](./appendix-c-motivation.md)）。
+
 Version 0.2 は，Version 0.1 の記述をリファレンス実装に合わせて改めたものです。
-既存のファイルの読み方に影響する変更は次のとおりです。
+Version 0.1 のファイルの読み方に影響する変更は次のとおりです。
 
 - **β は意思決定集中度**：0 が完全分散，1 が完全集中です
   （[5.4.2 節](./05-language-spec.md)）。Version 0.1 には，逆の向きで説明している
@@ -159,7 +172,7 @@ Version 0.2 は，Version 0.1 の記述をリファレンス実装に合わせ�
 
 [動機拡張](./appendix-c-motivation.md)は，独自のラベル v0.1-ext のままです。
 
-仕様書とリファレンス実装の版は，独立に番号を付けています。本仕様書は Version 0.2 です。
+仕様書とリファレンス実装の版は，独立に番号を付けています。本仕様書は Version 0.3 です。
 内容の確認に用いたリファレンス実装の版と，その版の文法との違いは，
 [付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)に示します。
 
