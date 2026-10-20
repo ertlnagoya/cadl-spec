@@ -1,16 +1,16 @@
 ---
 sidebar_position: 0
-title: "CADL Specification v0.2"
-description: "Entry page of the CADL language specification v0.2: overview, architecture, reading guide, how to get the cadl tool, and related tools."
+title: "CADL Specification v0.3"
+description: "Entry page of the CADL language specification v0.3: overview, architecture, reading guide, how to get the cadl tool, and related tools."
 ---
 
 # CADL: Contract Architecture Description Language
 
-**Language Specification — Version 0.2 (Draft)**
+**Language Specification — Version 0.3 (Draft)**
 
 Graduate School of Informatics, Nagoya University — ERTL
 
-October 10, 2026
+October 20, 2026
 
 ---
 
@@ -145,11 +145,27 @@ To write and run the language rather than only read about it, see the [Textbook]
 
 ## Status
 
-This is **Version 0.2 (Draft)**. The language and toolchain are under active
+This is **Version 0.3 (Draft)**. The language and toolchain are under active
 development; syntax and semantics may change in future revisions.
 
-Version 0.2 reconciles the text of Version 0.1 with the reference
-implementation. The changes that affect how an existing file is read are:
+Version 0.3 extends Version 0.2 as follows. A file that is valid under
+Version 0.2 is valid under Version 0.3 and is read the same way.
+
+- **Unary minus**: an expression may contain a unary `-`
+  (`permit_state == -2`, `x > -0.5`, `-a * b`); it binds tighter than `*`
+  and `/`, and `-x` has the value of `0 - x`
+  ([Appendix A, §A.10](./appendix-a-syntax.md#a10-expressions)).
+- **Verification target of a transition**: the `target:` of a
+  `verification:` entry may name a transition as `FROM->TO`
+  ([Appendix A, §A.8](./appendix-a-syntax.md#a8-verification-block)).
+- **The SoS `name` is a string**, not an identifier
+  ([Appendix A, §A.3](./appendix-a-syntax.md#a3-context-actors-metrics)).
+- **`model: hybrid` is reserved** in the motivation extension: a
+  processor MUST accept it and treat it as `commitment_budget`
+  ([Appendix C](./appendix-c-motivation.md)).
+
+Version 0.2 reconciled the text of Version 0.1 with the reference
+implementation. The changes that affect how a Version 0.1 file is read are:
 
 - **β is the degree of centralisation of decision-making**: 0 is fully
   decentralised and 1 is fully centralised
@@ -175,7 +191,7 @@ The [motivation extension](./appendix-c-motivation.md) keeps its own label,
 v0.1-ext.
 
 The specification and the reference implementation are numbered
-independently: this specification is Version 0.2. The release of the
+independently: this specification is Version 0.3. The release of the
 reference implementation it was checked against, and how that release
 deviates from the grammar, are given in
 [Appendix A, §A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03).

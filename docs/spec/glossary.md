@@ -148,7 +148,7 @@ governance structure. CADL can describe all four.
 
 - **Regime** (also written *operational mode*) — The complete set of
   institutional settings effective at a given time. As environmental
-  conditions change, the optimal regime also changes. In the v0.2 syntax
+  conditions change, the optimal regime also changes. In the v0.3 syntax
   a regime is a name used in `transitions:`; see
   [Section 5.1](./05-language-spec.md#51-overall-structure) and
   [Appendix A, §A.7](./appendix-a-syntax.md#a7-transitions). *Example:* a normal regime in which the dispatcher manages centrally, and a failure regime in which each robot decides on its own.

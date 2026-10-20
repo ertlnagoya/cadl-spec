@@ -8,7 +8,7 @@ description: "CADL仕様書の目的と範囲，言語設計の動機となっ�
 
 ## 1.1 本文書の目的と範囲
 
-CADL（Contract Architecture Description Language）は，System of Systems（SoS）における制度設計を形式的に記述・検証・配備するためのドメイン固有言語（DSL）である。本文書は，CADLの言語仕様（Version 0.2，ドラフト）として，言語の目的，要求仕様，構文・意味論の定義，処理系の設計方針を示す。
+CADL（Contract Architecture Description Language）は，System of Systems（SoS）における制度設計を形式的に記述・検証・配備するためのドメイン固有言語（DSL）である。本文書は，CADLの言語仕様（Version 0.3，ドラフト）として，言語の目的，要求仕様，構文・意味論の定義，処理系の設計方針を示す。
 
 本文書は，ERTLにおけるSoS研究の調査およびSoSアーキテクチャ設計論の検討に基づき，CADLの実装に向けた仕様を整理したものである。
 
