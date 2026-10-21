@@ -34,9 +34,7 @@ stateDiagram-v2
   Assigned --> Violated: deadline expired
   Accepted --> Delivering: status==InTransit
   Delivering --> Completed: status==Delivered
-  Delivering --> Violated: monitor fires
-  Accepted  --> Violated: monitor fires
-  Assigned  --> Violated: monitor fires
+  Assigned  --> Violated: monitor fires<br/>(battery_guard)
   Completed --> [*]
   Violated  --> [*]
   Terminated --> [*]

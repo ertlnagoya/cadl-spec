@@ -84,9 +84,9 @@ pip install eclipse-sumo
 pip install -e ~/program/cadl_repo
 cadl --version
 
-# cadl-explorer (cloned in Chapter 6 of the Textbook, Course A): install its
+# cadl-explorer (cloned in Section 2.4 of the Textbook, Course A): install its
 # requirements into this venv too, so that `streamlit` runs in this shell (§4).
-# It keeps the cadl installed above, as in Chapter 6.
+# It keeps the cadl installed above, as in Chapter 6 of the Textbook.
 pip install -r ~/program/cadl-explorer/requirements.txt
 ```
 
@@ -137,8 +137,8 @@ To see what the **structure alone** would give, make a scratch copy, delete the 
 `monitors:` blocks from it, and run the same two commands on the copy: `cadl check` still passes, but
 the IR has `"lifecycle": null` and no monitors, and the **Contract Lifecycle** page of cadl-explorer shows no diagram:
 only a warning that the contract does not declare a `lifecycle:` section, and a note that it declares no monitors.
-The **Structure** view of the **Designer** page (cadl-explorer v0.5.5 or later) has nothing to draw either: it takes
-messages from protocol steps, lifecycle events and information sharing, and the copy has none of them.
+On the **Designer** page, the **Message flow** tab of the **Structure** view (cadl-explorer v0.5.5 or later) shows only
+"No messages yet": it takes messages from protocol steps, lifecycle events and information sharing, and the copy has none of them.
 That gap — structure alone cannot express deadlines, violations, or consequences — is what the blocks you read in §3 fill.
 :::
 
@@ -421,6 +421,7 @@ When you're done, restore the original guarantee:
 mv cadl/mobility_sos.cadl.bak cadl/mobility_sos.cadl
 cadl sim-ir cadl/mobility_sos.cadl --format json > cadl/mobility_sos.ir.json
 python scripts/cadl_to_sumo.py
+python scripts/analyze_results.py
 ```
 :::
 

@@ -49,7 +49,7 @@ MUST be quoted inside a flow sequence, where YAML would otherwise read
 it differently. A `sharing_entry` (A.4) MUST be a quoted string
 wherever it is written.
 
-Keys that this appendix does not define are not part of CADL v0.2. A
+Keys that this appendix does not define are not part of CADL v0.3. A
 processor MUST NOT reject a file because of them; the reference
 implementation ignores them.
 

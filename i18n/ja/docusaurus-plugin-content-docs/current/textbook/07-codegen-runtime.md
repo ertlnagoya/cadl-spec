@@ -147,6 +147,9 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
   robot-2-1     state=Violated      violations=[monitor:battery_guard]
   robot-3-1     state=Violated      violations=[monitor:deadline_watch]
   robot-4-1     state=Proposed      violations=[(none)]
+
+  kind counts:  {'lifecycle': 17, 'violation': 3}
+  cause counts: {'open': 5, 'event': 9, 'monitor': 2, 'deadline': 1}
 ```
 
 5 ロボット、5 種類の異なる結末です。これは、契約が取りうる結末（正常完了・期限違反・モニター違反・未割当のまま）を 1 回の実行で一望できるように組んだ **Python 側のシナリオ** です。
