@@ -27,5 +27,5 @@ Each chapter from 4 to 9 ends with the exercises of one class session (19 exerci
 To try the workflow on a fresh problem, go on to the other courses of the [hands-on materials](../handson/index.md):
 
 - **[Course B — Urban Mobility](../handson/mobility-sos-tutorial.md)**: the same CADL syntax with another domain and runtime (SUMO).
-- **[Course D — Robot Town](../handson/robot-town-tutorial.md)**: rules that a community amends while the system runs.
+- **[Course D — Robot Town](../handson/robot-town-tutorial.md)**: rules, regulation and contracts amended toward a KPI while the system runs: a human sets the KPIs and decides what an LLM proposer should not decide alone.
 - **[Course C — Your own SoS](../handson/own-sos.md)**: an open-ended, self-directed track given as an outline. Pick a *different* domain (food delivery, smart traffic, data sharing between organisations, …), write its CADL from a blank page, exercise it with a small simulation harness of your choice (a Python discrete-event harness such as SimPy is the suggested default), and compare results across parameter sweeps.
