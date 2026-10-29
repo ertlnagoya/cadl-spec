@@ -80,9 +80,9 @@ Course A is a self-contained **Textbook** with its own navigation tab. Its Chapt
 |---|---|
 | **Domain** | Three delivery companies sharing the road network of the Raspberry Pi Mouse simulator |
 | **Target runtime** | A small Python simulation; norms judged by the Course A reference runtime (no Unity, no SUMO) |
-| **Time** | 90–120 min |
+| **Time** | 120–150 min |
 | **Prerequisite** | Course A |
-| **You will learn** | **Amending a contract while the system runs**: a council (rule-based or an LLM) proposes new versions of the rules, which are adopted only through verification, a constitution, measured improvement and a vote; operating-mode switching with a safety invariant; how self-interested votes and a badly chosen objective steer the rules |
+| **You will learn** | **Amending rules, regulation and contracts toward a KPI while the system runs**: a human writes the KPIs in natural language and may change them; an LLM proposes amendments and, for what it should not decide alone (stakeholders' agreement, the promise to customers, regulation, safety, conflicts within the KPI, uncertain gains), asks the human with the information the decision needs; the human's reasons are kept in prose and GSN. Amendments pass verification, a constitution, measured improvement and a vote; a KPI that is a proxy, and operating-mode switching with a safety invariant |
 
 → [Course D — Robot Town](robot-town-tutorial.md)
 
@@ -127,5 +127,5 @@ After that, start with **[Why SoS-DSL?](academic-background.md)** and then **[Co
 | Background read (learner's first) | [Why SoS-DSL?](academic-background.md) |
 | Course A — Textbook (with exercises) | [Robot Delivery](../textbook/index.md) |
 | Course B — mobility tutorial | [Urban Mobility](mobility-sos-tutorial.md) |
-| Course D — rules a community amends | [Robot Town](robot-town-tutorial.md) |
+| Course D — amending rules toward a KPI | [Robot Town](robot-town-tutorial.md) |
 | Course C — your own SoS | [Your own SoS](own-sos.md) |
