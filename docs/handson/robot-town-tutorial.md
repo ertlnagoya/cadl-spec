@@ -494,10 +494,11 @@ The rule versions `runs/steward-d-en/v1.cadl` to `v3.cadl` can be compared on th
 4. Under **Compare two designs**, choose v1 as **A** and v2 as **B**. The amended parameter
    (`block_k` 3 → 2) is listed above the structural changes and the source diff.
 
-Explorer checks the values against the constitution with the same rules as the gate of this course:
-only numbers on `# @amend:` lines change, one name at a time, by one step, within the range.
-Amending a value there (the **Amend** field) keeps the comments, but its record lasts only for the
-browser session. The record of this course is `decisions.md` and `gsn.yaml`.
+Explorer checks the values with the same rules as the constitution gate of this course: only numbers
+on `# @amend:` lines change, one name at a time, by one step, within the range. It does not run the
+other gates (the checks of `cadl` aside, it measures no improvement and holds no vote).
+Amending a value there (the **Amend** field) keeps the comments, but its decision record lasts only for
+the browser session unless you download it. The record of this course is `decisions.md` and `gsn.yaml`.
 
 ### Exercise 6-1
 

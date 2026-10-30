@@ -428,7 +428,7 @@ python -m town.steward --mode DISTRIBUTED --rounds 6 --name steward-d \
 3. **History of the amendable values across the versions** を開きます。v2 で `block_k` が 3 から 2 に、v3 で `hold_limit` が 60 から 70 に変わっています。上の表の第 1 期と第 5 期の改正です。
 4. **Compare two designs** で **A** に v1、**B** に v2 を選びます。構造の差分とソースの差分の上に、改正したパラメータ（`block_k` 3 → 2）が示されます。
 
-Explorer は、このコースの関門と同じ規則で、値を憲法に照らします。変えてよいのは `# @amend:` の行の数値だけで、1 回に 1 つを 1 刻み、範囲の中です。Explorer で値を改正する（**Amend** の欄）と、コメントはそのまま残りますが、その記録はブラウザのセッションの間しか残りません。このコースの記録は `decisions.md` と `gsn.yaml` です。
+Explorer は、このコースの憲法の関門と同じ規則で、値を確かめます。変えてよいのは `# @amend:` の行の数値だけで、1 回に 1 つを 1 刻み、範囲の中です。ほかの関門は行いません（`cadl` の検査のほかは、改善を測ることも、投票することもしません）。Explorer で値を改正する（**Amend** の欄）と、コメントはそのまま残りますが、判断の記録は、ダウンロードしない限りブラウザのセッションの間しか残りません。このコースの記録は `decisions.md` と `gsn.yaml` です。
 
 ### 演習 6-1
 
