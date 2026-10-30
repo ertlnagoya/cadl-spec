@@ -478,6 +478,27 @@ Things to notice:
 Open `runs/steward-d-en/gsn.md` to see the tree of six periods of decisions (GitHub and the VS Code
 preview render it as a Mermaid diagram).
 
+### Seeing the versions of the rules in CADL Explorer
+
+The rule versions `runs/steward-d-en/v1.cadl` to `v3.cadl` can be compared on the **Designer** page of
+[CADL Explorer](https://cadl-explorer.streamlit.app/) (v0.5.9 or later).
+
+1. Open `v1.cadl` under **Open an existing CADL file**, switch the view to **Versions**, type `v1` as the
+   name and press **Save as a version**. Do the same for `v2.cadl` and `v3.cadl`.
+2. Under **Amendable parameters**, upload this repository's `constitution.yaml` as the **Constitution**
+   (**Use the Robot Town constitution** loads the same file). The table lists each `# @amend:` name with
+   its value, layer, range, step and *decided by*: the checks for the rule layer, a person for the
+   contract layer and for the safety-related operating-mode rules — the same division as in §2.
+3. Open **History of the amendable values across the versions**. `block_k` changes from 3 to 2 in v2
+   and `hold_limit` from 60 to 70 in v3: the amendments of periods 1 and 5 in the table above.
+4. Under **Compare two designs**, choose v1 as **A** and v2 as **B**. The amended parameter
+   (`block_k` 3 → 2) is listed above the structural changes and the source diff.
+
+Explorer checks the values against the constitution with the same rules as the gate of this course:
+only numbers on `# @amend:` lines change, one name at a time, by one step, within the range.
+Amending a value there (the **Amend** field) keeps the comments, but its record lasts only for the
+browser session. The record of this course is `decisions.md` and `gsn.yaml`.
+
 ### Exercise 6-1
 
 Copy `examples/steward-d-en/answers.yaml`, change D2 to `"2"`, and pass the copy to `--answers`.

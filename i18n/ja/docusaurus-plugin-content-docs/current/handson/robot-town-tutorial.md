@@ -419,6 +419,17 @@ python -m town.steward --mode DISTRIBUTED --rounds 6 --name steward-d \
 
 `runs/steward-d/gsn.md` を開いて、6 期分の判断の木を見てください（GitHub や VS Code のプレビューで Mermaid の図として表示されます）。
 
+### CADL Explorer で規則の版を見る
+
+規則の版 `runs/steward-d/v1.cadl`〜`v3.cadl` は、[CADL Explorer](https://cadl-explorer.streamlit.app/)（v0.5.9 以降）の **Designer** のページで見比べられます。
+
+1. **Open an existing CADL file** から `v1.cadl` を開き、ビューを **Versions** に切り替え、名前に `v1` と入れて **Save as a version** を押します。`v2.cadl`、`v3.cadl` も同じように保存します。
+2. **Amendable parameters** の **Constitution** に、このリポジトリの `constitution.yaml` をアップロードします（**Use the Robot Town constitution** を押しても同じファイルが読み込まれます）。表には、`# @amend:` の名前ごとに、値、層、範囲、刻み、誰が決めるか（*decided by*）が出ます。規則の層は検査（the checks）、契約の層と、安全に関わる運用モードの規則は人（a person）です。§2 と同じ分け方です。
+3. **History of the amendable values across the versions** を開きます。v2 で `block_k` が 3 から 2 に、v3 で `hold_limit` が 60 から 70 に変わっています。上の表の第 1 期と第 5 期の改正です。
+4. **Compare two designs** で **A** に v1、**B** に v2 を選びます。構造の差分とソースの差分の上に、改正したパラメータ（`block_k` 3 → 2）が示されます。
+
+Explorer は、このコースの関門と同じ規則で、値を憲法に照らします。変えてよいのは `# @amend:` の行の数値だけで、1 回に 1 つを 1 刻み、範囲の中です。Explorer で値を改正する（**Amend** の欄）と、コメントはそのまま残りますが、その記録はブラウザのセッションの間しか残りません。このコースの記録は `decisions.md` と `gsn.yaml` です。
+
 ### 演習 6-1
 
 `examples/steward-d/answers.yaml` を複製し、D2 を `"2"` に変えて、`--answers` に渡して回してください。
