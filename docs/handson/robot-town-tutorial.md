@@ -774,7 +774,106 @@ records this in its `edits` field.
 
 ---
 
-## 12. What the specification cannot express yet
+## 12. Research exercise: speed of amendment and transition disruption (optional, several hours)
+
+To reach the KPI sooner, it is tempting to change the rules a lot at once. If the people who follow
+the rules are humans, large sudden changes confuse them, and until they adjust they keep acting on
+the old rules. Robots read the new rules at once and are not confused — but that does not mean the
+transition causes no problems. This exercise asks **how the trade-off between reaching the KPI
+quickly and the size and frequency of rule changes depends on whether humans or robots follow the
+rules**.
+
+The hands-on already gives some clues:
+
+- The constitution's "one parameter by one step per amendment" (`step` in `constitution.yaml`) is an
+  upper limit on the speed of change.
+- In the six periods of the rule-based council used in §8 (`seasons-d`), `hold_limit` went
+  60 → 70 → 80 → 70 → 60 s and back. Faster moves should make such overshoot and oscillation more
+  likely.
+- In §9, switching the operating mode without waiting for the road to clear broke the safety
+  invariant about 1.4 times per period, with robots only. When the rules change, orders and waits
+  begun under the old version are still running.
+
+### Exercise 12-1: size of amendments and speed to the KPI (robots only)
+
+Change `step` in `constitution.yaml` (for example `hold_limit` from 10 to 20 or 30, `block_k` from 1
+to 2) and run the rule-based council for six periods. Choose values so that one step from the
+current value stays within min–max (the council does not generate proposals outside the range). The
+constitution is read from the repository root, so use a different `--name` per condition and restore
+the file afterwards with `git checkout constitution.yaml`.
+
+```bash
+python -m town.council --mode DISTRIBUTED --rounds 6 --name step30
+python -m town.compare runs/step30/v*.cadl --mode DISTRIBUTED      # compare every version on seeds the loop never used
+```
+
+For each condition, tabulate:
+
+| Quantity | How to get it |
+|---|---|
+| Periods to reach the KPI | Fix a target (for example "at most 2 late deliveries in `town.compare`"). In which period was the first version meeting it adopted? |
+| Cumulative amendment | Sum, over the amendments in `history.md`, the amount moved divided by the original `step` |
+| Oscillation | The number of times a parameter was moved in the opposite direction to its previous amendment |
+| Loss during the transition | The sum, over the periods before the target is reached, of the shortfall from the target |
+
+How do the periods to the target, the oscillation and the transition loss change as `step` grows?
+
+### Exercise 12-2: a company with human drivers
+
+Add a company driven by humans to `town/policies.py`. Choose your own model, for example:
+
+- Right after a rule change, with probability p a driver still acts on the old rule (waits up to the
+  old `hold_limit`, and so on); p falls period by period (a learning curve).
+- The larger a change, and the more changes in a row, the larger p and the slower its recovery.
+
+Each company's behaviour is decided only by the rules that `Town` in `town/world.py` reads with
+`self.rules = read_rules(ir)`; it does not know the previous version. Let `Town` take the previous
+version's IR (or rule values) and "periods since the change", and pass them from `evaluate()` in
+`town/period.py` and from `town/council.py`.
+
+Then repeat Exercise 12-1 with three compositions: all three companies robots, one company human,
+all three human. For each composition, plot speed to the KPI against disruption during the
+transition (transition loss and violations), and see how the best `step` changes.
+
+### Exercise 12-3: how changes take effect
+
+Transitions matter even with robots only. Add the following ways of putting a version into effect,
+and compare violations, late deliveries and safety-invariant breaches during the transition:
+
+- **Notice period**: an adopted version takes effect N periods later instead of the next period.
+- **Phased introduction**: a large change takes effect in small steps over several periods.
+- **Transitional provisions**: orders and waits begun before the change keep the old version's
+  deadlines.
+
+Transitional provisions are also a question for the CADL specification: today CADL cannot say which
+version's deadlines and monitors apply to a contract instance that is already running (§13).
+
+### Exercise 12-4: let the human and the LLM choose the speed
+
+With a real LLM (§10), make `town.steward` choose the speed:
+
+- Write a KPI such as "increase on-time deliveries quickly, but avoid sudden changes that would
+  confuse the drivers" in `kpi.en.md`. What measures does the LLM offer, and how does it describe
+  the cost of the transition in its decision requests?
+- Add a condition to `triage()` in `town/steward.py` that asks the human about any proposal that
+  moves a parameter by a large amount at once, and combine it with the large `step` of Exercise 12-1.
+
+Which speed to choose cannot be read off the KPI's numbers; it depends on how the people following
+the rules take the change. Record the human's decisions and reasons in GSN. Six periods with a real
+LLM cost about US$1.3 per run in the §10 records (Claude Opus 5.5).
+
+### Questions to close
+
+- For each composition of followers, what does the Pareto front between speed to the KPI and
+  transition disruption look like?
+- The constitution's `step` resembles the trust region that limits each policy update in
+  reinforcement learning (TRPO, PPO). What is the same, and what differs?
+- Who should set the speed limit? In which layer should it sit: rule (the council or the LLM may
+  change it), regulation (decided by humans), or contract (the promise to customers)?
+
+---
+
+## 13. What the specification cannot express yet
 
 Building this exercise exposed these gaps in CADL 0.3 / `cadl` 0.3.18:
 
@@ -785,6 +884,9 @@ Building this exercise exposed these gaps in CADL 0.3 / `cadl` 0.3.18:
   simulator.
 - Which layer (rule or contract) a parameter belongs to, and who decides its amendment, is written
   in `constitution.yaml` and in `# @amend:` comments, not in CADL.
+- When a new version of the rules takes effect, there is no syntax for which version applies to
+  contract instances already running (transitional provisions), or for when a version takes
+  effect (§12, Exercise 12-3).
 - A `metrics` `target` is a single expression: there is no syntax for a KPI that changes over time,
   or for the choice of how a KPI is measured, and none to link the record of human decisions (GSN)
   to a version of the rules. The exercise keeps `kpi.md`, `decisions.md` and `gsn.yaml` outside the
