@@ -788,10 +788,13 @@ The hands-on already gives some clues:
 - The constitution's "one parameter by one step per amendment" (`step` in `constitution.yaml`) is an
   upper limit on the speed of change.
 - In the six periods of the rule-based council used in §8 (`seasons-d`), `hold_limit` went
-  60 → 70 → 80 → 70 → 60 s and back. Faster moves should make such overshoot and oscillation more
-  likely.
-- In §9, switching the operating mode without waiting for the road to clear broke the safety
-  invariant about 1.4 times per period, with robots only. When the rules change, orders and waits
+  60 → 70 → 80 → 70 → 60 s and back with the default `step` of 10 s. This is not overshoot: it
+  went up in the normal periods and down in the busy ones, following the demand that
+  `scenario.yaml` sets for each period. A rule that tracks a changing environment moves back and
+  forth even when every step is right, so separating tracking from overshoot is part of the
+  exercise.
+- In §9, in a period with a rush, switching the operating mode without waiting for the road to
+  clear broke the safety invariant about 1.4 times per period, with robots only. When the rules change, orders and waits
   begun under the old version are still running.
 
 ### Exercise 12-1: size of amendments and speed to the KPI (robots only)
@@ -801,6 +804,11 @@ to 2) and run the rule-based council for six periods. Choose values so that one 
 current value stays within min–max (the council does not generate proposals outside the range). The
 constitution is read from the repository root, so use a different `--name` per condition and restore
 the file afterwards with `git checkout constitution.yaml`.
+
+The demand changes from period to period (`scenario.yaml`), so a back-and-forth may be the council
+following the demand. To see overshoot itself, also run each condition with every period set to the
+same demand (for example, all six periods busy), and restore the file with
+`git checkout scenario.yaml`.
 
 ```bash
 python -m town.council --mode DISTRIBUTED --rounds 6 --name step30
