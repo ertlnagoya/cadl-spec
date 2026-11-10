@@ -13,7 +13,7 @@ tool already solves part of a problem, we say which part CADL would hand
 to that tool and which question the tool cannot answer.
 
 The starting point is this specification (Version 0.3) and the reference
-implementation `cadl` 0.3.19. It checks the satisfiability of contracts
+implementation `cadl` 0.3.20. It checks the satisfiability of contracts
 with Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), detects
 protocol deadlocks by structural analysis, supports the SoS-DSL extension
 ([Appendix E](./appendix-e-sos-dsl.md): `lifecycle:`, `monitors:`,
@@ -73,7 +73,13 @@ checking proves, region by region, that a probability increases or
 decreases with a parameter [[Spel+, ATVA 2019]](./appendix-b-references.md).
 These tools answer whether one design satisfies a threshold on a region.
 They do not answer which design is best where, which is the question of a
-regime map.
+regime map. The stochastic model extension
+([Appendix H](./appendix-h-stochastic.md), `stochastic` 0.1) is a first
+step on RD-1.3: it lets a file state a parametric Markov model in which
+α, β, and λ appear, defines the regime map as a query whose result is a
+set of certified cells, and fixes an export to the PRISM language.
+Deriving the model from contracts, computing the cells, and the game
+reading of Section 9.7 remain open.
 
 | **ID** | **Challenge** | **Content** |
 | --- | --- | --- |
@@ -353,7 +359,13 @@ What remains open for CADL is the step from organizational contracts
 deterministic enforcement at the protocol level; we found no work that
 takes this step. The institutional designs above are built by hand for
 each case, and `cadl ai` assures only the syntactic validity and
-consistency of what it generates (Section 9.2).
+consistency of what it generates (Section 9.2). The agent governance
+extension ([Appendix G](./appendix-g-agents.md), `agents` 0.1) is a first
+step on RD-8.1, RD-8.2, and RD-8.3: it defines the decision that the
+norms of a contract give for a message at the boundary, delegation with
+a provenance chain, and escalation after a denial. Governance elements
+such as voting and dissent (RD-8.4) and plan-level verification
+(RD-8.5) remain open.
 
 | **ID** | **Challenge** | **Content** |
 | --- | --- | --- |
@@ -366,7 +378,7 @@ consistency of what it generates (Section 9.2).
 ## 9.9 Research Roadmap
 We organize the above research directions along a time axis and present
 a short-, medium-, and long-term research roadmap. The order follows the
-current implementation: items that extend what `cadl` 0.3.19 already
+current implementation: items that extend what `cadl` 0.3.20 already
 provides come first.
 
 | **Period** | **Key Challenges** | **Content** |

@@ -24,6 +24,8 @@ description: "CADL v0.3のコード生成ターゲットの一覧。各ターゲ
 | `unity` | シミュレータ設定 | Unity ベースのシミュレータ用 JSON | `cadl.sim.gen_unity` | `cadl sim-gen -t unity` |
 | `go` | シミュレータ設定 | Go ベースのシミュレータ用 JSON | `cadl.sim.gen_go` | `cadl sim-gen -t go` |
 | `python`（シミュレータ） | シミュレータ設定 | Python ベースのシミュレータ用 YAML | `cadl.sim.gen_python` | `cadl sim-gen -t python` |
+| `agent-rego` | 境界方針 | メッセージに対する[付録G](./appendix-g-agents.md)の許可・拒否・エスカレーションの決定を返すRegoの方針 | `cadl.codegen` | `cadl codegen -t agent-rego` |
+| `agent-cedar` | 境界方針 | [付録G](./appendix-g-agents.md)のうち静的に決まる部分のCedarの方針と付表 | `cadl.codegen` | `cadl codegen -t agent-cedar` |
 | `ros2` | ランタイムノード | ROS 2 [[Macenski+, 2022]](./appendix-b-references.md) ノードの雛形 | `cadl` 0.3 では未実装 | — |
 | その他の名前（ユーザ定義） | プラグイン | プラグインが出力するもの | `cadl` 0.3 にはプラグイン機構がなく，その他のターゲット名はコマンドラインでは拒否され，`codegen:` の項目では警告になる | — |
 
