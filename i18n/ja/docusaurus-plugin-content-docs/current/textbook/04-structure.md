@@ -178,7 +178,7 @@ cadl sim-ir my_delivery.cadl --format json
 両方とも確認：
 
 1. `cadl check my_delivery.cadl` が `Type check passed: my_delivery.cadl` と表示され、`[ERROR]` の行がない。
-2. IR JSON で `"lifecycle": null` と `"monitors": []` になっている。この 2 行は契約の末尾（出力の 90 行目あたり）にある。この 2 行だけを表示するには：
+2. IR JSON で `"lifecycle": null` と `"monitors": []` になっている。この 2 行は契約の終わり近く（出力の 90 行目あたり）にあり，その後に規範拡張の `"norms"` と `"counts_as"` が続く（ここでは空）。この 2 行だけを表示するには：
 
    ```bash
    cadl sim-ir my_delivery.cadl --format json | grep -n -A1 '"lifecycle"'
@@ -186,7 +186,7 @@ cadl sim-ir my_delivery.cadl --format json
 
    ```
    90:        "lifecycle": null,
-   91-        "monitors": []
+   91-        "monitors": [],
    ```
 
 この `null` と `[]` こそが **第 5 章で埋めるギャップ** です。構造だけの仕様では「ロボットは 5 秒以内に ack せよ」と言えない理由がこれです。

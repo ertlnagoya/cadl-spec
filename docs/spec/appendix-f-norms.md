@@ -1,0 +1,652 @@
+---
+sidebar_position: 16
+title: "Appendix F: Norms Extension"
+description: "Norms extension (norms 0.1): obligations, permissions, prohibitions and powers as first-class objects of a contract, counts-as rules, bounded temporal operators, four-valued verdicts, and the continuity of norms across amendments."
+---
+
+# Appendix F — Norms Extension (norms 0.1)
+
+This appendix specifies the **norms extension** to CADL. It adds to the
+`contract_def` production of
+[Appendix A.4](./appendix-a-syntax.md#a4-contracts-institution-layer)
+two keys, `norms:` and `counts_as:`, and adds bounded temporal
+operators to some predicates of a contract. With them, the obligations,
+permissions, prohibitions, and powers that the core language leaves in
+the text of `assume:`, `guarantee:`, and `responsibilities:` become
+objects with a bearer, a deadline, a state over time, and a defined
+consequence of violation.
+
+The core language ([Chapter 5](./05-language-spec.md),
+[Appendix A](./appendix-a-syntax.md)) does **not** mandate these
+blocks; a conforming CADL processor that does not implement the
+extension MUST NOT reject a file because of the new keys. It SHOULD
+accept them syntactically and emit an *informational* diagnostic.
+
+The extension is versioned independently from the core language. Its
+name is `norms` and this appendix describes version `0.1`. Because the
+temporal operators of F.4 change how some predicates are read, a file
+that uses the extension MUST declare it with the `extensions:` key of
+[Appendix A.2](./appendix-a-syntax.md#a2-top-level-structure); F.11
+says what a processor does with an undeclared use.
+
+```yaml
+sos:
+  ...
+  extensions:
+    - norms: 0.1
+```
+
+The extension can be used with or without the SoS-DSL extension
+([Appendix E](./appendix-e-sos-dsl.md)). Where a contract also has a
+`lifecycle:` block, a norm can move the contract instance to a
+lifecycle state on violation (F.3).
+
+## F.1 Motivation
+
+The research directions of [Section 9.6](./09-research.md) identify
+four gaps. Version 0.1 of this extension is a first step on each:
+
+1. **Norms are not first-class.** A guarantee such as
+   `"delivery_time <= 300s"` says what must hold, but not who must make
+   it hold, from when, until when, and what follows when it does not.
+   Deontic contract languages such as Symboleo treat obligations and
+   powers as objects with a lifecycle
+   [[Sharifi+, 2020]](./appendix-b-references.md); CADL contracts did
+   not.
+2. **Predicates have no time.** `assume:` and `guarantee:` are state
+   predicates. Deadlines exist only on lifecycle transitions of the
+   SoS-DSL extension.
+3. **Protocols and contracts are not connected.** Nothing says that a
+   message of a protocol *counts as* an act in a contract, which is how
+   institutions create institutional facts from other facts
+   [[Boella & van der Torre, KR 2004]](./appendix-b-references.md).
+4. **Amendments have no effect on running norms.** When a contract is
+   amended while the SoS runs (as in
+   [Course D](../handson/robot-town-tutorial.md) of the hands-on
+   materials), nothing says what happens to an obligation that is
+   already active.
+
+Norms 0.1 deliberately stays small: it fixes the vocabulary and the
+static and dynamic semantics, so that design-time checking (by
+translation to a model checker) and runtime monitoring can be added by
+processors without changing the language. It does not yet give the
+institutional parameters α, β, and λ a formal meaning for norms (F.7).
+
+## F.2 Concepts
+
+| Concept | Meaning in norms 0.1 |
+| --- | --- |
+| **Norm** | An obligation, permission, prohibition, or power of one bearer, declared in a contract. |
+| **Obligation** | The bearer must bring about its `content` (make a predicate true or make an event occur), by the `deadline:` if one is given. |
+| **Prohibition** | The bearer must not bring about its `content` while the norm is active (and, if a `deadline:` is given, only within that window). |
+| **Permission** | The bearer may bring about its `content`. A permission is never violated; it records what is allowed. |
+| **Power** | The bearer can perform an institutional act (its `content`) that changes the state of other norms of the contract (`effects:`). A power is neither fulfilled nor violated. |
+| **Institutional event** | A named event of a contract that is created by a `counts_as:` rule from a message or a condition, for example "this message counts as a reassignment". |
+| **Contract instance** | One execution of a contract, as in [Appendix E](./appendix-e-sos-dsl.md). F.5 says when it starts and ends. |
+| **Norm instance** | The norm within one contract instance. Each norm has exactly one instance per contract instance in version 0.1. An index such as `i` in `ROBOT[i]` is bound by the contract instance. |
+| **Verdict** | The value of a norm instance or of a temporal guarantee on the trace observed so far: `pending`, `fulfilled`, `violated`, or `excused` (F.5). |
+
+## F.3 Syntax (EBNF additions to A.4)
+
+The grammar uses the notation of
+[Appendix A](./appendix-a-syntax.md). `identifier`, `actor_ref`,
+`duration_lit`, `predicate`, and `text` are defined in Appendix A;
+`message_event` and `severity` in
+[Appendix E, E.3](./appendix-e-sos-dsl.md). `contract_def` gains two
+optional keys:
+
+```ebnf
+contract_def    = ... ,
+                  [ "norms:"     , { "-" , norm_def } ] ,
+                  [ "counts_as:" , { "-" , counts_as_def } ] ;
+
+norm_def        = "id:"           , identifier ,
+                  "kind:"         , norm_kind ,
+                  "bearer:"       , actor_ref ,
+                  [ "counterparty:" , actor_ref ] ,
+                  [ "trigger:"      , norm_event ] ,
+                  [ "until:"        , norm_event ] ,
+                  "content:"      , norm_content ,
+                  [ "deadline:"     , duration_lit ] ,
+                  [ "on_violation:" , norm_violation ] ,
+                  [ "effects:"      , power_effects ] ,
+                  [ "on_amendment:" , amendment_policy ] ;
+norm_kind       = "obligation" | "permission" | "prohibition" | "power" ;
+
+norm_event      = message_event | identifier | predicate ;    (* string *)
+norm_content    = message_event | identifier | tpredicate ;   (* string *)
+
+norm_violation  = [ "severity:"   , severity ] ,
+                  [ "sanction:"   , text ] ,
+                  [ "reparation:" , identifier ] ,
+                  [ "transition:" , identifier ] ;
+
+power_effects   = [ "activate:"  , { "-" , identifier } ] ,
+                  [ "suspend:"   , { "-" , identifier } ] ,
+                  [ "resume:"    , { "-" , identifier } ] ,
+                  [ "discharge:" , { "-" , identifier } ] ;
+
+amendment_policy = "carry_over" | "discharge"
+                 | ( "transform:" , identifier ) ;
+
+counts_as_def   = "when:"    , ( message_event | predicate ) ,
+                  "creates:" , identifier ,
+                  [ "if:"      , predicate ] ;
+```
+
+A `norm_event` or `norm_content` is read as follows. A string of the
+form `A -> B : m` is a `message_event`. A string that consists of a
+single identifier names the institutional event of that name when the
+contract declares one in `counts_as:`; otherwise it is a predicate (a
+state variable, N-8). Any other string is a predicate (`norm_event`) or
+a `tpredicate` (`norm_content`). An institutional event name inside a
+larger predicate (`reassignment AND x > 0`) is a state variable, not the
+event. Values that contain `[`, `]`, `*`, `->`, or `": "` SHOULD be quoted
+and MUST be quoted inside a flow sequence, as for every scalar of
+[Appendix A](./appendix-a-syntax.md).
+
+In these predicates the reserved identifiers of
+[Appendix E, E.4](./appendix-e-sos-dsl.md#e4-static-semantics) are
+available as in a `rule`: `now`, `request`, and, when the contract has a
+`lifecycle:` block, `state`; and so is the membership `x IN [a, b]` of
+E.3.
+
+In `on_violation:`, `reparation:` names another norm of the same
+contract that is activated when this norm is violated (a
+contrary-to-duty norm), `sanction:` describes the sanction in text, and
+`transition:` names a state of the contract's `lifecycle:` block
+([Appendix E](./appendix-e-sos-dsl.md)), to which the contract instance
+moves as with `on_violation.transition` of a lifecycle transition.
+`severity:` defaults to `Major` and `on_amendment:` to `carry_over`.
+`counterparty:` names the party to whom the norm is owed; it is
+informative in version 0.1 and has no effect on the semantics.
+
+The key `until:` and the temporal operator `until(...)` of F.4 are
+different things and may appear in the same norm.
+
+## F.4 Temporal predicates
+
+A `tpredicate` is a `predicate` of
+[Appendix A.10](./appendix-a-syntax.md#a10-expressions) in which three
+bounded temporal operators may appear wherever a `function_call` may.
+They are written as function calls, so the expression grammar of A.10
+is unchanged; the extension gives these three names a meaning:
+
+```ebnf
+tpredicate      = predicate ;     (* in which the calls below have temporal meaning *)
+temporal_call   = "within"     , "(" , duration_lit , "," , tpredicate , ")"
+                | "throughout" , "(" , duration_lit , "," , tpredicate , ")"
+                | "until"      , "(" , tpredicate , "," , tpredicate , "," , duration_lit , ")" ;
+```
+
+| Operator | Holds at time t when | Metric temporal logic |
+| --- | --- | --- |
+| `within(d, p)` | `p` holds at some time in `[t, t + d]` | F<sub>[0,d]</sub> p |
+| `throughout(d, p)` | `p` holds at every time in `[t, t + d]` | G<sub>[0,d]</sub> p |
+| `until(p, q, d)` | `q` holds at some time t′ in `[t, t + d]`, and `p` holds at every time in `[t, t′)` | p U<sub>[0,d]</sub> q |
+
+The operators are evaluated on a **timed trace**: a sequence of
+observations, each a snapshot of the observed quantities with a
+non-decreasing time stamp, as delivered to the monitors of
+[Appendix E](./appendix-e-sos-dsl.md). "At some time" and "at every
+time" range over the observations whose time stamps fall in the
+interval (pointwise semantics); an interval that contains no
+observation makes `within` false and `throughout` true. `d` MUST be a
+`duration_lit` greater than zero; operators may be nested.
+
+**Where they may appear.** With the extension declared, temporal
+operators may appear only in the `assume:` and `guarantee:` items of a
+contract and in the `content:` of a norm. They MUST NOT appear in any
+other predicate or condition of the file in version 0.1 (N-10): among
+others the `trigger:` and `until:` of a norm, the `when:` and `if:` of a
+`counts_as:` rule, monitor `rule:`, lifecycle `when:` and `on:`,
+`condition:`, `safety_invariant:`, `formula:`, `expr:`, and protocol
+conditions. Events and
+conditions are evaluated at a single observation, and a future-time
+operator there would not be decided until later.
+
+**When they are evaluated.** A `tpredicate` in `assume:` or
+`guarantee:` is evaluated at the time the contract instance starts:
+`within(300s, p)` there means "`p` within 300 s of the start of the
+contract instance". To state an invariant, write it with `throughout`.
+A `tpredicate` in `content:` is evaluated at observation times after
+the norm's activation (F.5). A predicate without temporal operators
+keeps the meaning it has in the core language.
+
+A file that does not declare `norms: 0.1` reads `within`, `throughout`,
+and `until` as ordinary function names, as in the core language.
+
+## F.5 Dynamic semantics
+
+### Contract instances
+
+Norms are judged per contract instance. When the contract has a
+`lifecycle:` block, contract instances are those of
+[Appendix E, E.5](./appendix-e-sos-dsl.md): the host application creates
+them, and an instance **ends** when it reaches a terminal state. When
+the contract has no `lifecycle:` block, the host application creates
+and ends contract instances in the same way, without states; with no
+host, a single instance starts at the first observation and ends at the
+last. "Becomes true" means: false at the previous observation of the
+instance, or the first observation of the instance, and true at the
+current one.
+
+### Norm instances
+
+A norm instance is in one of six states:
+
+| State | Meaning |
+| --- | --- |
+| `inactive` | Not yet in force. |
+| `active` | In force; an obligation or prohibition is being judged. |
+| `suspended` | Temporarily not in force (by a power). Its deadline and window clocks stop. |
+| `fulfilled` | An obligation whose content was brought about in time, or a prohibition whose window closed without the content occurring. |
+| `violated` | An obligation whose deadline passed without the content, or a prohibition whose content occurred. |
+| `discharged` | Ended without being fulfilled or violated: by `until:`, by a power, by the end of the contract instance, or by an amendment (F.6). |
+
+`fulfilled`, `violated`, and `discharged` are final: in version 0.1 a
+norm instance is judged at most once per contract instance. A trigger
+that occurs while the norm instance is not `inactive` is ignored, and a
+prohibition reports only its first violation.
+
+1. **Activation.** A norm instance starts `inactive`. It becomes
+   `active`:
+   - when its `trigger:` occurs (a message is sent, an institutional
+     event is created, or a predicate becomes true);
+   - when the contract instance starts, if the norm has no `trigger:`
+     and is neither named as the `reparation:` of another norm nor in
+     the `activate:` effect of a power;
+   - when the norm it repairs is violated (`reparation:`), or when a
+     power activates it (`activate:`).
+
+   The **activation time** is the time stamp of the observation at which
+   the norm becomes active.
+2. **Obligation.** An active obligation becomes `fulfilled` at the
+   first observation, at or after its activation, at which its
+   `content` occurs (a message or an institutional event) or holds (a
+   `tpredicate` evaluated at that observation). It becomes `violated`
+   when its `deadline:`, measured from the activation time without the
+   time spent `suspended`, has passed without that happening; content
+   at exactly the deadline is in time. When the content is a
+   `tpredicate` with temporal operators, its value at an observation may
+   be known only later; the obligation stays `pending` until it is
+   decided, and only observations up to the deadline count.
+3. **Prohibition.** An active prohibition becomes `violated` at the
+   first observation at which its `content` occurs or holds. It becomes
+   `fulfilled` when its `deadline:` window, measured from the activation
+   time without the time spent `suspended`, has closed. A suspended
+   prohibition is not judged.
+4. **Permission and power.** They stay `active` until they are
+   discharged.
+5. **Discharge.** A norm instance that is `active` or `suspended`
+   becomes `discharged` when its `until:` occurs, whatever its
+   deadline, or when a power discharges it.
+6. **End of the contract instance.** When the contract instance ends,
+   every norm instance that is not final is settled: an active or
+   suspended obligation without `deadline:` becomes `violated`; an
+   obligation whose deadline has not yet passed becomes `discharged`; a
+   prohibition becomes `fulfilled`; every other norm instance, including
+   an `inactive` one, becomes `discharged`.
+7. **Powers.** An institutional event created from a message is
+   *performed by* the sender of that message; one created from a
+   predicate has no performer. When the bearer of an active power
+   performs its `content` (an institutional event, or a message the
+   bearer sends), the `effects:` apply to the norm instances of the same
+   contract instance: `activate` makes an inactive norm active,
+   `suspend` makes an active norm suspended, `resume` makes a suspended
+   norm active, and `discharge` makes an active or suspended norm
+   discharged. An effect on a norm in another state does nothing. When
+   the act is performed while no matching power of the performer is
+   active, the effects do not apply (the institutional event itself
+   still exists for other norms); a processor that monitors norms
+   SHOULD record the act as unauthorised.
+8. **Violation.** When a norm instance becomes `violated`, its
+   `on_violation:` applies: a violation with the given `severity:`
+   (default `Major`) and the norm `id` as label is reported, the
+   `reparation:` norm is activated, and the contract instance moves to
+   the `transition:` state if one is given and the instance is not
+   already in a terminal state.
+
+### Counts-as
+
+A `counts_as:` rule creates its institutional event in a contract
+instance when its `when:` occurs (a message is sent, or a predicate
+becomes true) and its `if:` condition, if any, holds at that
+observation. Institutional events are local to the contract instance.
+They exist only as events: they can trigger, end, or fulfil norms, and
+they are the content of powers.
+
+### Order within one observation
+
+One observation can carry a message that creates an institutional
+event, triggers a norm, fulfils another, and fires a lifecycle
+transition. A processor applies the steps in this order, each to the
+state left by the previous one:
+
+1. create the institutional events of the `counts_as:` rules;
+2. apply the effects of powers (item 7);
+3. activate norms whose triggers occurred (item 1);
+4. judge the active norms: fulfilment and violation of obligations and
+   prohibitions, discharge by `until:` (items 2, 3, 5); a norm activated
+   in step 3 is judged in this step too, so content at its activation
+   time counts;
+5. apply `on_violation:` (item 8); a reparation norm activated here is
+   first judged at the next observation;
+6. fire the lifecycle transitions of
+   [Appendix E](./appendix-e-sos-dsl.md), and, if the contract instance
+   has ended, settle its norms (item 6).
+
+### Verdicts
+
+The **verdict** of a norm instance, or of a guarantee with temporal
+operators, on the finite trace observed so far is one of four values:
+
+| Verdict | Norm instance | Guarantee of a contract |
+| --- | --- | --- |
+| `pending` | `inactive`, `active`, or `suspended` | not yet decided on the observed prefix |
+| `fulfilled` | `fulfilled`, or `discharged` | holds on every continuation of the prefix |
+| `violated` | `violated` while no assumption of the contract had failed | fails on every continuation, while no assumption had failed |
+| `excused` | `violated` at or after the observation at which an assumption of the contract failed | fails at or after the observation at which an assumption failed |
+
+An assumption **fails** at the first observation at which its value
+becomes false; an assumption whose value is not yet decided has not
+failed. Once an assumption has failed, every later violation in the
+same contract instance is `excused`; a guarantee or norm becomes
+`excused` only when it itself fails, not when the assumption fails. A
+discharged permission or power has the verdict `fulfilled`, although it
+is not fulfilled in the sense of F.2. When a trace ends, `pending`
+verdicts stay `pending`: a trace that stops before a deadline or the
+end of an interval does not decide it.
+
+`excused` separates "the bearer failed" from "the bearer was not given
+what the contract assumes", which is the basis of assigning blame in
+deontic runtime verification
+[[Kharraz+, ICTAC 2023]](./appendix-b-references.md); taking the
+assumption into account also makes more properties monitorable
+[[Henzinger & Saraç, RV 2020]](./appendix-b-references.md). Version 0.1
+uses this weak reading of assumptions. The strong reading of
+[Section 5.4.1](./05-language-spec.md), under which the guarantee must
+still hold for a short time after an assumption stops holding, is not
+expressed by verdicts in version 0.1. An excused norm still triggers
+its `on_violation:`, because the consequence for the contract instance
+does not depend on blame; the reported violation carries the verdict
+`excused`.
+
+## F.6 Amendments
+
+An **amendment** replaces the definition of a contract by a new version
+with the same contract `id` while contract instances are running. How
+versions are made, approved, and put into effect is outside norms 0.1;
+the [Course D](../handson/robot-town-tutorial.md) hands-on materials show
+one procedure. When the new version takes effect, norm instances are
+treated as follows.
+
+An `active` or `suspended` norm instance follows the `on_amendment:` of
+its norm in the **old** version:
+
+| `on_amendment:` | Effect |
+| --- | --- |
+| `carry_over` (default) | The instance continues under the norm with the same `id` in the new version, keeping its state and the time already elapsed against its deadline. It is `discharged` instead when the new version has no norm with that `id` or when that norm has a different `kind`. If the elapsed time already exceeds the new deadline, the instance becomes `violated` when the new version takes effect. |
+| `discharge` | The instance is `discharged`. |
+| `transform: X` | The instance is `discharged`, and the norm `X` of the new version is activated if it is `inactive`, with the time already elapsed counted against its deadline (for an obligation or prohibition; for a permission or power the time has no effect). If `X` is not `inactive`, nothing more happens. |
+
+An `inactive` norm instance takes the definition of the norm with the
+same `id` in the new version, and is removed when the new version has
+no such norm. A norm that is new in the new version starts `inactive`,
+and becomes active at once if it has no `trigger:` and is not a
+reparation or activation target (F.5, item 1). Final instances
+(`fulfilled`, `violated`, `discharged`) are not affected; in particular,
+a violation stays a violation of the version under which it occurred.
+The `counts_as:` rules of the new version apply from the time it takes
+effect. A regime transition (A.7) does not affect norm instances in
+version 0.1.
+
+A processor that applies amendments SHOULD report, before the new
+version takes effect, every carried-over norm whose `content` or
+`deadline:` changes.
+
+## F.7 Static semantics {/* #f7-static-semantics */}
+
+A norms-aware processor MUST, in addition to existing checks:
+
+- **N-1.** Every norm `id` MUST be an identifier, MUST NOT be a reserved
+  word (including the `IN` of [Appendix E](./appendix-e-sos-dsl.md)),
+  and MUST be unique within its contract. The name in `creates:` MUST
+  be an identifier and MUST NOT equal the `id` of a norm of the same
+  contract. (Under a YAML 1.1 loader an unquoted `yes`, `no`, `on`, or
+  `off` is a boolean, not a name; see
+  [A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03).)
+- **N-2.** `kind:` MUST be one of `obligation`, `permission`,
+  `prohibition`, `power`.
+- **N-3.** `bearer:` and `counterparty:` MUST name single declared
+  actors: without an index, with an integer index (`ROBOT[1]`), or with
+  an index that the contract instance binds (`ROBOT[i]`); a wildcard or
+  a range (`ROBOT[*]`, `ROBOT[1..3]`) is not allowed. They SHOULD name parties of the contract.
+- **N-4.** `deadline:` MUST be a `duration_lit` and is allowed only for
+  an obligation or a prohibition. `on_violation:` is allowed only for an
+  obligation or a prohibition.
+- **N-5.** `effects:` is allowed only for a power, and a power MUST have
+  at least one effect. Every name in `effects:` MUST be the `id` of a
+  norm of the same contract other than the power itself.
+- **N-6.** `on_violation.reparation` MUST name an obligation or a
+  prohibition of the same contract that has no `trigger:`. Following
+  `reparation:` from any norm MUST NOT lead back to that norm.
+- **N-7.** `on_violation.transition` MUST name a state in
+  `lifecycle.states` of the same contract; the contract MUST therefore
+  have a `lifecycle:` block ([Appendix E](./appendix-e-sos-dsl.md)).
+- **N-8.** A processor SHOULD warn when an identifier used as a whole
+  `trigger:`, `until:`, or `content:` is not an institutional event of
+  the contract but is the `id` of a norm, which is likely a mistake.
+- **N-9.** In a `message_event` of a norm or a `counts_as:` rule, the
+  sender and the receiver MUST name declared actors. The content of a
+  power MUST be an institutional event that every `counts_as:` rule
+  creating it creates from a `message_event`, or a `message_event` whose
+  sender is the bearer.
+  For an obligation or a prohibition whose content is a
+  `message_event`, the sender SHOULD be the bearer.
+- **N-10.** A temporal operator MUST have the arguments of F.4, its
+  duration MUST be a `duration_lit` greater than zero, and it MUST NOT
+  appear outside the places F.4 allows.
+- **N-11.** `on_amendment:` MUST be `carry_over`, `discharge`, or
+  `{ transform: X }` with an identifier `X`. (Whether `X` exists in the
+  new version can only be checked against that version.)
+- **N-12.** A processor SHOULD warn when a permission and a prohibition
+  of the same contract have the same `bearer:` and textually identical
+  `content:`, since the two conflict.
+
+### Relation to the core checks
+
+The consistency checks of [Section 6.3](./06-design.md) (satisfiability
+of `assume:` and `guarantee:` with an SMT solver) apply to state
+predicates. An `assume:` or `guarantee:` item that contains a temporal
+operator is not a state predicate. A norms-aware processor that does
+not translate temporal predicates MUST leave such an item out of the
+SMT checks and report that it did so; it MUST NOT treat the operator as
+an uninterpreted function.
+
+### Relation to the institutional parameters (informative)
+
+The parameters of [Section 5.4.2](./05-language-spec.md) are not given
+a formal meaning for norms in version 0.1. The intended reading, to be
+made precise in a later version (RD-6.1 in
+[Section 9.6](./09-research.md)), is: β, the degree of centralisation of
+decision-making, describes who holds the powers of a contract; α, the
+degree of information sharing, describes which triggers and contents
+the other parties can observe; and λ, the incentive intensity, scales
+the sanctions of violated norms.
+
+## F.8 Example
+
+The contract below is a simplified variant of the delivery contract of
+[Appendix E, E.6](./appendix-e-sos-dsl.md) with norms added. It is taken
+from `examples/norms_robot_delivery.cadl` in the
+[`cadl`](https://github.com/ertlnagoya/cadl) repository and abridged.
+
+```yaml
+sos:
+  name: "RobotDeliveryNorms"
+  extensions:
+    - sos-dsl: 0.1
+    - norms: 0.1
+  # actors DISPATCHER, ROBOT[1..N], CUSTOMER[1..M] as in Appendix E
+
+  contracts:
+    - id: DELIVERY_SLA
+      parties: [DISPATCHER, "ROBOT[*]", "CUSTOMER[*]"]
+      assume:
+        - "throughout(300s, DISPATCHER.is_operational == true)"
+      guarantee:
+        - "within(300s, ROBOT[i].status == Delivered)"
+
+      lifecycle:
+        states:   [Proposed, Assigned, Delivering, Completed, Violated]
+        initial:  Proposed
+        terminal: [Completed, Violated]
+        transitions:
+          - { id: assign,   from: Proposed,   to: Assigned,   on: "DISPATCHER -> ROBOT[i] : route_assignment" }
+          - { id: start,    from: Assigned,   to: Delivering, on: "ROBOT[i].status == InTransit" }
+          - { id: complete, from: Delivering, to: Completed,  on: "ROBOT[i].status == Delivered" }
+
+      counts_as:
+        - when: "DISPATCHER -> ROBOT[i] : replan_command"
+          creates: reassignment
+
+      norms:
+        - id: acknowledge
+          kind: obligation
+          bearer: "ROBOT[i]"
+          counterparty: DISPATCHER
+          trigger: "DISPATCHER -> ROBOT[i] : route_assignment"
+          content: "ROBOT[i] -> DISPATCHER : ack(accepted)"
+          deadline: 5s
+          on_violation:
+            severity: Major
+            reparation: report_failure
+        - id: report_failure
+          kind: obligation
+          bearer: "ROBOT[i]"
+          counterparty: DISPATCHER
+          content: "ROBOT[i] -> DISPATCHER : failure_report"
+          deadline: 2s
+          on_violation:
+            severity: Critical
+            transition: Violated
+        - id: no_low_battery_driving
+          kind: prohibition
+          bearer: "ROBOT[i]"
+          content: "ROBOT[i].battery < 10 AND ROBOT[i].status == InTransit"
+          on_violation:
+            severity: Critical
+            sanction: "removed from the dispatch pool for one period"
+        - id: may_return_to_charge
+          kind: permission
+          bearer: "ROBOT[i]"
+          content: "ROBOT[i] -> DISPATCHER : charging_request"
+        - id: reassign
+          kind: power
+          bearer: DISPATCHER
+          content: reassignment
+          effects:
+            discharge: [acknowledge, report_failure]
+          on_amendment: discharge
+```
+
+`acknowledge` is triggered by the route assignment and must be met
+within 5 s. If it is violated, the robot must report a failure within
+2 s (`report_failure`, a contrary-to-duty obligation, which stays
+inactive until then); failing that too moves the contract instance to
+`Violated`. `no_low_battery_driving`, `may_return_to_charge`, and
+`reassign` have no trigger and are active from the start of the
+contract instance. The dispatcher's `replan_command` counts as a
+`reassignment` performed by the dispatcher, which discharges both
+obligations while the power `reassign` is active; since each norm is
+judged once per contract instance, a later route assignment in the same
+instance creates no new obligation. The guarantee says that the robot
+delivers within 300 s of the start of the contract instance; if the
+dispatcher stops operating before a late delivery, the delivery is
+`excused` rather than `violated`.
+
+## F.9 Intermediate Representation (IR) addition
+
+The simulator IR (E.7) is extended with two fields on each contract
+under `institution.contracts`: `norms` and `counts_as`. As in E.7, the
+IR is a direct serialization of dataclasses and flattens nested
+blocks:
+
+```jsonc
+{
+  "norms": [
+    { "id": "acknowledge",
+      "kind": "obligation",
+      "bearer": "ROBOT[i]",
+      "counterparty": "DISPATCHER",
+      "trigger": "DISPATCHER -> ROBOT[i] : route_assignment",
+      "until": null,
+      "content": "ROBOT[i] -> DISPATCHER : ack(accepted)",
+      "deadline_ms": 5000,
+      "on_violation_severity": "Major",
+      "on_violation_sanction": null,
+      "on_violation_reparation": "report_failure",
+      "on_violation_transition": null,
+      "effects_activate": [],
+      "effects_suspend": [],
+      "effects_resume": [],
+      "effects_discharge": [],
+      "on_amendment": "carry_over",
+      "transform_to": null }
+  ],
+  "counts_as": [
+    { "when": "DISPATCHER -> ROBOT[i] : replan_command",
+      "creates": "reassignment",
+      "if": null }
+  ]
+}
+```
+
+`trigger`, `until`, `content`, `when`, and `if` are kept as text, like
+the rules of E.7. The key `if` is written as `if` in the serialized IR,
+although a dataclass field cannot have that name in every host
+language. `on_violation_severity` is `null` when the whole
+`on_violation:` block is omitted and `Major` when the block is present
+without `severity:`. `on_amendment` is always filled in: `carry_over`,
+`discharge`, or `transform`; `transform_to` is the target of
+`transform:` and `null` otherwise. `norms` and
+`counts_as` are empty lists for a contract without them.
+
+## F.10 Reference implementation status {/* #f10-reference-implementation-status */}
+
+The reference implementation (`cadl` 0.3) implements norms 0.1 from
+`cadl` 0.3.19 as follows:
+
+- `cadl` parses `norms:` and `counts_as:` and the temporal operators of
+  F.4, applies rules N-1 to N-12 in `cadl check` (N-8, N-12, and the
+  SHOULDs of N-3 and N-9 as warnings), and lowers both blocks to the IR
+  of F.9.
+- The SMT checks of `cadl verify` leave out `assume:` and `guarantee:`
+  items that contain temporal operators and report each one as not
+  checked (F.7). `cadl codegen` leaves the same items out of the
+  generated code of every target, with a comment in the code and a
+  warning; it does not translate temporal operators.
+- A numeric `deadline:` of a norm is read as seconds, the lenient form
+  that [A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)
+  describes for lifecycle deadlines. `cadl check` looks for temporal
+  operators in the places listed in F.4; it does not look inside
+  `violation.detect`, `incentives.rules`, a protocol `trigger:`, or
+  `context.assumptions`, which are text.
+- Verdicts (F.5) and amendments (F.6) are not computed: no generated
+  runtime monitors norms in `cadl` 0.3, and no command applies an
+  amendment. Translation of norms to a model checker for design-time
+  checking is not implemented.
+
+## F.11 Backward compatibility
+
+Files written against CADL v0.3 without this extension remain valid and
+are read the same way. A file that uses `norms:`, `counts_as:`, or the
+temporal operators without declaring `norms: 0.1` does not conform to
+this appendix. A norms-aware processor reads `within`, `throughout`, and
+`until` in such a file as ordinary function names, does not interpret
+its `norms:` and `counts_as:` blocks (they are not checked and not
+lowered to the IR), and SHOULD report them as undeclared extension
+keys. Processors that do not implement the extension MUST NOT reject
+such files; they SHOULD emit a single informational diagnostic per
+file.

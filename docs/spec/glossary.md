@@ -182,6 +182,33 @@ Terms of the SoS Contract DSL extension; see
 - **`on_match`** — What a monitor does when its rule matches: report a
   violation, move the instance to a target state, or both.
 
+## Norms extension
+
+Terms of the norms extension; see [Appendix F](./appendix-f-norms.md).
+
+- **Norm** — An obligation, permission, prohibition, or power of one
+  bearer, declared in the `norms:` block of a contract.
+- **Obligation / Prohibition / Permission** — What the bearer must bring
+  about (by a deadline, if one is given), must not bring about, or may
+  bring about.
+- **Power** — The ability of the bearer to perform an institutional act
+  that activates, suspends, resumes, or discharges other norms.
+- **Counts-as rule** — An entry of `counts_as:` that makes a message or a
+  condition create an institutional event of the contract.
+- **Institutional event** — A named event of a contract, created by a
+  counts-as rule; it can trigger, end, or fulfil norms and is the
+  content of powers.
+- **Norm instance** — A norm within one contract instance; in version
+  0.1 each norm is judged at most once per contract instance.
+- **Contrary-to-duty norm** — An obligation or prohibition that is
+  activated when another norm is violated (`on_violation.reparation`).
+- **Verdict** — The value of a norm instance or a temporal guarantee on the
+  trace observed so far: `pending`, `fulfilled`, `violated`, or `excused`
+  (the norm failed after an assumption of its contract had failed).
+- **Amendment** — The replacement of a contract by a new version while it
+  runs; `on_amendment:` says whether an active or suspended norm is
+  carried over, discharged, or transformed.
+
 ## Verification
 
 The checks of the reference verifier are described in
