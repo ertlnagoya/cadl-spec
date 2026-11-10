@@ -693,7 +693,13 @@ to a keyword of the PRISM language, or to one of its built-in function
 names `floor`, `ceil`, `round`, `pow`, `mod`, `log`, gets one trailing
 underscore; an
 exporter MUST report an error when the result collides with another
-name. Label and reward names are quoted and never renamed. The reserved
+name. Label and reward names are written in quotation marks and are
+renamed by the same rule: PRISM and Storm accept only an identifier
+that is no keyword between the quotation marks (`label "max"` is a
+syntax error in both), and Storm also rejects the built-in function
+names there. Labels and reward structures each have a namespace of
+their own in PRISM, so a collision is reported only between two labels
+or between two reward structures. The reserved
 keywords are those of the PRISM manual
 [[Kwiatkowska+, CAV 2011]](./appendix-b-references.md), which are
 case-sensitive:
@@ -986,9 +992,21 @@ The reference implementation implements stochastic 0.1 from `cadl`
   objective of a regime map at the points of a grid; these are reported
   as estimates at sample points (H.9), never as decided cells.
 - The reference implementation runs no external model checker and
-  computes no certified regime map, and the exported files have not
-  been run through PRISM or Storm. `cadl regime-map` still reports the
+  computes no certified regime map. `cadl regime-map` still reports the
   graph of regime names and transitions.
+- The exported files have been run through PRISM 4.11 and Storm
+  (stormpy 2.0.0) for the example of H.12 and for a second model that
+  uses `when:`, updates with three branches, guarded state and
+  transition rewards, `U`, `U<=k`, and keyword names: 27 properties in
+  4 designs. The state counts agree, and every value agrees with
+  `cadl model-check` as a rational number under Storm and under the
+  exact engine of PRISM. That engine does not support a step bound
+  (`F<=k`, `U<=k`); those properties were compared with PRISM in
+  floating point. The tests of the reference implementation repeat the
+  comparison when `prism` or `stormpy` is installed. This run found
+  that `cadl` 0.3.20 wrote a label or reward structure named like a
+  keyword unchanged, which neither tool loads; 0.3.21 renames it as
+  H.11 now says.
 
 ## H.15 Backward compatibility
 
