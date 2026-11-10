@@ -1,0 +1,693 @@
+<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-g-agents" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix G: Agent Governance Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix G: Agent Governance Extension | CADL"/><meta data-rh=true name=description content="Agent governance extension (agents 0.1): binding of actors to agents and tool servers, a deterministic allow / deny / escalate decision computed from the norms of a contract at the message boundary, escalation to a human after a denial, delegation of permissions with a provenance chain, audit records, and boundary-policy code generation."/><meta data-rh=true property=og:description content="Agent governance extension (agents 0.1): binding of actors to agents and tool servers, a deterministic allow / deny / escalate decision computed from the norms of a contract at the message boundary, escalation to a human after a denial, delegation of permissions with a provenance chain, audit records, and boundary-policy code generation."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents","name":"Appendix G: Agent Governance Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.255ca780.css /><script src=/cadl-spec/assets/js/runtime~main.3253e927.js defer></script><script src=/cadl-spec/assets/js/main.74047eaa.js defer></script></head><body><svg style="display: none;"><defs>
+<symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-689")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label="Skip to main content"><a class=skipToContent_fXgn href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/docs/quickstart/>Quick Start</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/docs/spec/intro/>Specification</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/textbook/>Textbook</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/handson/>Hands-on</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_nlXk><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>English</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class=dropdown__link lang=ja>日本語</a></ul></div><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_Bca1><div class="navbar__search searchBarContainer_NW3z" dir=ltr><input placeholder=Search aria-label=Search class="navbar__search-input searchInput_YFbd" value="" /><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class=docsWrapper_hBAB><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type=button></button><div class=docRoot_UBD9><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class=sidebarViewport_aRkj><div class=sidebar_njMd><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/intro/><span title="CADL Specification v0.3" class=linkLabel_WmDU>CADL Specification v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/introduction/><span title="1. Introduction" class=linkLabel_WmDU>1. Introduction</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/objectives/><span title="2. Language Objectives" class=linkLabel_WmDU>2. Language Objectives</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/comparison/><span title="3. Comparison with Existing Languages" class=linkLabel_WmDU>3. Comparison with Existing Languages</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/requirements/><span title="4. Requirements Specification" class=linkLabel_WmDU>4. Requirements Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/language-spec/><span title="5. Language Specification" class=linkLabel_WmDU>5. Language Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/design/><span title="6. Design" class=linkLabel_WmDU>6. Design</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/examples/><span title="7. Domain-Specific Description Examples" class=linkLabel_WmDU>7. Domain-Specific Description Examples</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/use-cases/><span title="8. Use Cases and Novelty Analysis" class=linkLabel_WmDU>8. Use Cases and Novelty Analysis</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/research/><span title="9. Research Directions and Open Challenges" class=linkLabel_WmDU>9. Research Directions and Open Challenges</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/roadmap/><span title="10. Implementation Roadmap" class=linkLabel_WmDU>10. Implementation Roadmap</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-a-syntax/><span title="Appendix A: Syntax Reference (EBNF)" class=linkLabel_WmDU>Appendix A: Syntax Reference (EBNF)</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-b-references/><span title="Appendix B: References" class=linkLabel_WmDU>Appendix B: References</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-c-motivation/><span title="Appendix C: Motivation Extension" class=linkLabel_WmDU>Appendix C: Motivation Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-d-codegen/><span title="Appendix D: Codegen Target Catalog" class=linkLabel_WmDU>Appendix D: Codegen Target Catalog</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><span title="Appendix E: SoS-DSL Extension" class=linkLabel_WmDU>Appendix E: SoS-DSL Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-f-norms/><span title="Appendix F: Norms Extension" class=linkLabel_WmDU>Appendix F: Norms Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/docs/spec/appendix-g-agents/><span title="Appendix G: Agent Governance Extension" class=linkLabel_WmDU>Appendix G: Agent Governance Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-h-stochastic/><span title="Appendix H: Stochastic Model Extension" class=linkLabel_WmDU>Appendix H: Stochastic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/glossary/><span title=Glossary class=linkLabel_WmDU>Glossary</span></a></ul></nav></div></div></aside><main class=docMainContainer_TBSr><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_VOVn"><div class=docItemContainer_Djhp><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/cadl-spec/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_YNFT><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Appendix G: Agent Governance Extension</span></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type=button class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Appendix G — Agent Governance Extension (agents 0.1)</h1></header>
+<p>This appendix specifies the <strong>agent governance extension</strong> to CADL. It
+builds on the norms extension (<a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>Appendix F</a>) and
+adds the key <code>agent:</code> to <code>actor_def</code>
+(<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a3-context-actors-metrics>A.3</a>), the keys
+<code>enforcement:</code> and <code>delegations:</code> to <code>contract_def</code>
+(<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a4-contracts-institution-layer>A.4</a>), and the
+key <code>on_denied:</code> to <code>norm_def</code> (F.3). With them, the permissions and
+prohibitions of a contract determine, for every message that arrives at
+an enforcement point, one of three <strong>decisions</strong>: <code>allow</code>, <code>deny</code>, or
+<code>escalate</code>. The decision is made before the message takes effect, and
+it is a function of the message and of the state of the norm instances;
+no part of it is left to the judgement of an agent.</p>
+<p>The core language does <strong>not</strong> mandate these blocks; a conforming CADL
+processor that does not implement the extension MUST NOT reject a file
+because of the new keys. It SHOULD accept them syntactically and emit
+an <em>informational</em> diagnostic.</p>
+<p>The extension is named <code>agents</code> and this appendix describes version
+<code>0.1</code>. It <strong>requires</strong> <code>norms: 0.1</code>: the norms are what is enforced. A
+file that uses it MUST declare both under <code>extensions:</code>
+(<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a2-top-level-structure>A.2</a>); G.14 says what
+a processor does with an undeclared use.</p>
+<div class="language-yaml codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-yaml codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token key atrule" style=color:#00a4db>sos</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>...</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>extensions</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>agents</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><br/></div></code></pre></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g1-motivation>G.1 Motivation<a href=#g1-motivation class=hash-link aria-label="Direct link to G.1 Motivation" title="Direct link to G.1 Motivation" translate=no>​</a></h2>
+<p>LLM-based agents are becoming constituent systems of SoS, and the
+protocols that connect them are being standardised
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[MCP, 2026-07-28]</a>
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Linux Foundation, A2A 2025]</a>. Enforcement
+is converging on deterministic checks at the tool-call boundary; for
+example, Amazon Bedrock AgentCore Policy authorises tool calls with
+Cedar policies and denies by default
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[AWS, AgentCore Policy]</a>. What is missing
+is the step from an organisational contract (who is allowed to do what,
+on whose authority) to such a check. Version 0.1 is a first step on
+four research directions of <a class="" href=/cadl-spec/docs/spec/research/>Section 9.8</a>:</p>
+<ol>
+<li class=""><strong>RD-8.1, compiling contracts to boundary policies.</strong> Nothing in a
+CADL file says which actor is an agent, which message is a tool
+call, and what a generated policy has to decide (G.4, G.5, G.10).</li>
+<li class=""><strong>RD-8.2, provenance of delegated authority.</strong> A check that sees
+only the local state cannot tell whether an action reached the
+caller through delegations that its originator was not entitled to
+make. G.7 gives delegated permissions a provenance chain.</li>
+<li class=""><strong>RD-8.3, recovery after a blocked action.</strong> A preprint review
+reports a study in which blocking 94% of unsafe actions still left
+fewer than 5% of tasks completed safely and correctly
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Dantas+, arXiv 2026]</a>. G.6 defines
+escalation to a named actor and a fallback message.</li>
+<li class=""><strong>Part of RD-8.4, audit.</strong> Community governance has been found to be
+a layer missing above the protocols
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Kang & Diponegoro, arXiv 2026]</a>, and a
+governance graph enforced with an append-only audit log constrained
+LLM agents where a prompt-only "constitution" did not
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Bracale Syrnikov+, arXiv 2026]</a>. G.8
+fixes the format of an audit record.</li>
+</ol>
+<p><strong>Scope of version 0.1.</strong> The extension is small on purpose. It has no
+primitives for membership, voting, or the preservation of dissent
+(RD-8.4 otherwise remains open, for a later version); it does not
+verify plans or the interaction of several agents (RD-8.5), since every
+decision concerns one message; it maps no article of any regulation to
+CADL; and it does not cover authentication: the sender and the receiver
+of a message are taken as given. At the boundary it considers only
+norms whose content is a message, and only the sender, the receiver,
+and the name of a message, not its arguments.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g2-concepts>G.2 Concepts<a href=#g2-concepts class=hash-link aria-label="Direct link to G.2 Concepts" title="Direct link to G.2 Concepts" translate=no>​</a></h2>
+<table><thead><tr><th>Concept<th>Meaning in agents 0.1<tbody><tr><td><strong>Tool call</strong><td>A message whose receiver is an actor of kind <code>tool_server</code> and whose name is one of the <code>tools:</code> of that actor.<tr><td><strong>Enforced contract</strong><td>A contract that has the key <code>enforcement:</code>. Only enforced contracts take part in decisions.<tr><td><strong>Enforcement point</strong><td>The one logical place where the decision for a message is made, over all enforced contracts of the file.<tr><td><strong>Decision</strong><td><code>allow</code>, <code>deny</code>, or <code>escalate</code>, computed for one message by the decision function of G.5 before the message takes effect.<tr><td><strong>Ground</strong><td>A prohibition that applies to a message in the decision function.<tr><td><strong>Hold</strong><td>The record of a message whose decision is <code>escalate</code>; the message is kept back until the hold reaches a final state (G.6).<tr><td><strong>Derived instance</strong><td>A permission held by a delegate (G.7), with its <strong>provenance chain</strong>: the actors from the bearer of the original permission to the holder, one link per delegation.<tr><td><strong>Audit record</strong><td>What an enforcement point records for one decision (G.8).</table>
+<p>Norm, norm instance, contract instance, institutional event, and
+observation have the meaning of <a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>Appendix F</a>.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g3-syntax-ebnf-additions-to-a3-a4-and-f3>G.3 Syntax (EBNF additions to A.3, A.4, and F.3)<a href=#g3-syntax-ebnf-additions-to-a3-a4-and-f3 class=hash-link aria-label="Direct link to G.3 Syntax (EBNF additions to A.3, A.4, and F.3)" title="Direct link to G.3 Syntax (EBNF additions to A.3, A.4, and F.3)" translate=no>​</a></h2>
+<p>The grammar uses the notation of <a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/>Appendix A</a>,
+which defines <code>identifier</code>, <code>hyphen_name</code>, <code>actor_ref</code>, <code>int_literal</code>,
+and <code>duration_lit</code>; <code>message_event</code> is defined in
+<a class="" href=/cadl-spec/docs/spec/appendix-e-sos-dsl/>E.3</a> and <code>norm_event</code> in
+<a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>F.3</a>.</p>
+<div class="language-ebnf codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-ebnf codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token definition rule keyword" style=color:#00009f>actor_def</span><span class="token plain">         </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"agent:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">agent_binding</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>agent_binding</span><span class="token plain">     </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"kind:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">agent_kind</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"protocol:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">hyphen_name</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"tools:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>agent_kind</span><span class="token plain">        </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"llm_agent"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"tool_server"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"human"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"service"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>contract_def</span><span class="token plain">      </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"enforcement:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">enforcement_block</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"delegations:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">delegation_def</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>enforcement_block</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"default:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"deny"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"allow"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"point:"</span><span class="token plain">   </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"caller"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"receiver"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"gateway"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>norm_def</span><span class="token plain">          </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"on_denied:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">denial_recovery</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>denial_recovery</span><span class="token plain">   </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"escalate_to:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">actor_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"timeout:"</span><span class="token plain">     </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">duration_lit</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"fallback:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">message_event</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">   </span><span class="token comment" style=color:#999988;font-style:italic>(* string *)</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"notify:"</span><span class="token plain">      </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">actor_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>delegation_def</span><span class="token plain">    </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"norm:"</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token string" style=color:#e3116c>"to:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">actor_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token string" style=color:#e3116c>"grant:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"revoke:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"max_depth:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">int_literal</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"until:"</span><span class="token plain">     </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">norm_event</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain">        </span><span class="token comment" style=color:#999988;font-style:italic>(* string *)</span><br/></div></code></pre></div></div>
+<ul>
+<li class="">An actor without <code>agent:</code> has no agent kind. The kind <code>tool_server</code>
+defines tool calls (G.4); <code>llm_agent</code>, <code>human</code>, and <code>service</code> have no
+meaning beyond the static rule that names one of them (G-8) and the
+use generators make of them. <code>protocol:</code> (<code>mcp</code>, <code>a2a</code>, or another
+name) has no default and no effect on decisions. An <code>agent:</code> on an
+actor declared with a range applies to every actor of the set.</li>
+<li class="">A tool name is an <code>identifier</code>, because it is the message name of a
+<code>message_event</code>. Where the protocol-level name is not an identifier,
+the <code>mappings:</code> of a <code>codegen:</code> entry (A.9) relates the two.</li>
+<li class="">A contract is <strong>enforced</strong> when it has the key <code>enforcement:</code>; an
+empty mapping or a null value (<code>enforcement: {}</code>, or the bare key)
+means "enforced with all defaults". When <code>default:</code> is omitted, the
+default decision is <code>deny</code> for a tool call and <code>allow</code> for every
+other message; when given, it applies to both (G.5).</li>
+<li class=""><code>point:</code> (default <code>gateway</code>) is a deployment hint for generators and
+has no effect on the decision. Whatever the deployment, there is one
+logical enforcement point: every governed message is decided once,
+over all enforced contracts, on one state.</li>
+<li class=""><code>on_denied:</code> is allowed only on a prohibition. <code>timeout:</code> has no
+default. <code>fallback:</code> and <code>notify:</code> are data: they are copied into the
+result of the decision (G.10) and have no other effect.</li>
+<li class=""><code>max_depth:</code> defaults to <code>1</code>. Without <code>revoke:</code> a delegation cannot
+be revoked by a message; without <code>until:</code> it has no end of its own.</li>
+</ul>
+<p>Keys added, by block: actor — <code>agent</code> (<code>kind</code> <code>protocol</code> <code>tools</code>);
+contract — <code>enforcement</code> (<code>default</code> <code>point</code>), <code>delegations</code> (<code>norm</code>
+<code>to</code> <code>grant</code> <code>revoke</code> <code>max_depth</code> <code>until</code>); norm — <code>on_denied</code>
+(<code>escalate_to</code> <code>timeout</code> <code>fallback</code> <code>notify</code>). In an enforced contract
+the names <code>approval</code> and <code>rejection</code> are reserved for the institutional
+events of G.6.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g4-messages-and-tool-calls>G.4 Messages and tool calls<a href=#g4-messages-and-tool-calls class=hash-link aria-label="Direct link to G.4 Messages and tool calls" title="Direct link to G.4 Messages and tool calls" translate=no>​</a></h2>
+<p>A <strong>message</strong> has a sender and a receiver, each one concrete actor, a
+name, and arguments. It is a <strong>tool call</strong> when its receiver has
+<code>agent.kind: tool_server</code> and its name is one of that actor's <code>tools:</code>;
+a message to a tool server with any other name is a call of an
+<strong>undeclared tool</strong>; every other message is an <strong>ordinary message</strong>.
+The result that a tool server returns is not a separate message in
+version 0.1.</p>
+<p>At the boundary, a <code>message_event</code> <code>S -> R : e</code> is <strong>matched</strong> against
+a message on three components: the sender, the receiver, and the
+message name (the identifier of <code>e</code>, or the name of the call).
+<strong>Arguments written in <code>e</code> are not considered</strong> in version 0.1:
+<code>delete_file</code> and <code>delete_file(path)</code> match the same messages. Each
+component is true, false, or <strong>unknown</strong>, and the match is their Kleene
+conjunction: false when any component is false, otherwise unknown when
+any is unknown, otherwise true. An actor reference matches a concrete
+actor as follows:</p>
+<table><thead><tr><th>Reference<th>Matches<tbody><tr><td><code>A</code><td>the actor <code>A</code>, declared without index; never an indexed member <code>A[k]</code><tr><td><code>A[3]</code>, <code>A[*]</code>, <code>A[1..3]</code><td><code>A[3]</code>; every member of the set <code>A</code>; <code>A[1]</code> to <code>A[3]</code><tr><td><code>A[1..N]</code> (symbolic bound)<td>every member of the set <code>A</code>; the bounds are not compared<tr><td><code>A[i]</code><td>false when the concrete actor is not a member of <code>A</code>. Otherwise: exactly <code>A[v]</code> when the contract instance binds <code>i</code> to <code>v</code>, and <strong>unknown</strong> when it binds no value to <code>i</code>.</table>
+<p><code>A[k]</code> is a <strong>member</strong> of the set <code>A</code> when <code>A</code> is declared with a range
+and <code>k</code> lies within its integer bounds (a set declared as <code>A[1..3]</code>
+does not contain <code>A[7]</code>); when the declared upper bound is symbolic,
+every index from the lower bound on is a member.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g5-boundary-enforcement-of-norms>G.5 Boundary enforcement of norms<a href=#g5-boundary-enforcement-of-norms class=hash-link aria-label="Direct link to G.5 Boundary enforcement of norms" title="Direct link to G.5 Boundary enforcement of norms" translate=no>​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id=instances-governed-messages-and-norms-that-take-part>Instances, governed messages, and norms that take part<a href=#instances-governed-messages-and-norms-that-take-part class=hash-link aria-label="Direct link to Instances, governed messages, and norms that take part" title="Direct link to Instances, governed messages, and norms that take part" translate=no>​</a></h3>
+<p>For an enforced contract without host-created instances, the single
+instance of F.5 exists <strong>from the start of the enforcement point</strong>, not
+from the first observation; this addition to F.5 lets the first message
+be decided. When a host application creates and ends the instances, the
+running instances are those it has created and not ended.</p>
+<p>Whether an enforced contract <strong>governs</strong> a message <code>m</code> is decided
+before any instance is considered, so no binding is applied to
+<code>parties:</code>: a party <code>A[i]</code> or <code>A[*]</code> matches every member of <code>A</code>.</p>
+<ul>
+<li class="">A message whose receiver is a tool server (a tool call or a call of
+an undeclared tool) is governed by every enforced contract of which
+that tool server is a party, <strong>whatever its sender</strong>: a party, a
+declared actor that is not a party, or an undeclared actor. Steps 2
+to 4 below therefore apply to outsiders too.
+When a tool server is a party of several enforced contracts, each of
+them governs every call to it, and a call that one of them does not
+allow is denied (step 4): contracts that share a tool server each
+have to permit the calls they intend.</li>
+<li class="">An ordinary message is governed by an enforced contract when its
+sender and its receiver each match a party.</li>
+</ul>
+<p>A norm still applies only to its bearer or to a valid holder (below).
+The enforcement point decides the messages one at a time, in
+the order in which they arrive, each on the state left by all earlier
+observations, and the decision MUST be deterministic.</p>
+<p>Only a permission or a prohibition whose <code>content:</code> is a
+<code>message_event</code> takes part in a decision. One whose content is a
+predicate, a <code>tpredicate</code> with temporal operators, or an institutional
+event has <strong>no effect at the boundary</strong> in version 0.1 and is monitored
+under Appendix F only. Obligations and powers do not take part: the
+message that an obligation requires, or by which a power is exercised,
+is decided like any other, and F.5, item 7 is unchanged.</p>
+<p>A norm instance takes part while it is <strong>in force at the boundary</strong>.
+The flag is an addition to F.5; the states and verdicts of F.5 are
+unchanged.</p>
+<ul>
+<li class="">A permission is in force while its instance is <code>active</code>.</li>
+<li class="">A prohibition is in force while its instance is <code>active</code>. When the
+instance becomes <code>violated</code>, the prohibition <strong>stays in force</strong>: the
+violation is reported once (F.5) but does not lift the prohibition.
+It then stays in force until the first of: the time at which its
+<code>deadline:</code> window would have closed; the occurrence of its <code>until:</code>;
+a <code>discharge</code> effect of a power that names it; an amendment under
+which it is not carried over (F.6); the end of the contract
+instance. <code>suspend</code> and <code>resume</code> effects that name it put it out of
+force and back, also after a violation.</li>
+</ul>
+<p>A norm instance in force <strong>applies</strong> to <code>m</code> when its content matches
+<code>m</code> (G.4) and the sender of <code>m</code> is its bearer. A derived instance of a
+permission (G.7) applies when it is valid and the content matches with
+the holder as sender. The result is unknown when the match is unknown
+or the enforcement point does not have the flag. Unknown is resolved
+<strong>fail-closed</strong>: an unknown prohibition applies, an unknown permission
+does not.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id=the-decision-function>The decision function<a href=#the-decision-function class=hash-link aria-label="Direct link to The decision function" title="Direct link to The decision function" translate=no>​</a></h3>
+<p>For a message <code>m</code>, the following steps give a <strong>result</strong> (fields in
+G.10), in this order.</p>
+<ol>
+<li class=""><strong>Ungoverned.</strong> If no enforced contract governs <code>m</code>: <code>allow</code>, reason
+<code>ungoverned</code>. This appendix does not restrict such a message.</li>
+<li class=""><strong>Undeclared tool.</strong> If <code>m</code> is a call of an undeclared tool: <code>deny</code>,
+reason <code>undeclared_tool</code>.</li>
+<li class=""><strong>Per contract.</strong> Each governing contract <em>C</em> decides, over all its
+running instances:<!-- -->
+<ol>
+<li class="">If <em>C</em> has no running instance: <code>deny</code>, reason <code>no_instance</code>,
+when <code>m</code> is a tool call; otherwise as in step 3.4.</li>
+<li class="">If prohibitions of <em>C</em> apply to <code>m</code>, they are the <strong>grounds</strong> and
+the reason is <code>prohibition</code>. <em>C</em> decides <code>escalate</code> when every
+ground has an <code>on_denied.escalate_to</code>, all name the same actor,
+and that actor is not the sender of <code>m</code>; otherwise <code>deny</code>. An
+<code>escalate_to: A[i]</code> is resolved with the bindings of each
+instance in which the ground applies; an unbound index, or
+different actors in different instances, gives <code>deny</code>.</li>
+<li class="">Otherwise, if a permission of <em>C</em>, original or derived, applies
+to <code>m</code>: <code>allow</code>, reason <code>permission</code>.</li>
+<li class="">Otherwise the <code>default:</code> of <em>C</em> or, when it is omitted, <code>deny</code> if
+<code>m</code> is a tool call and <code>allow</code> if not; reason <code>default</code>.</li>
+</ol>
+</li>
+<li class=""><strong>Combination (deny overrides).</strong> If some contract decides <code>deny</code>,
+the decision is <code>deny</code>. Otherwise, if some contract decides
+<code>escalate</code>, the decision is <code>escalate</code> when all escalating contracts
+name the same actor and <code>deny</code> when they do not (a hold has a single
+approver). Otherwise it is <code>allow</code>.</li>
+</ol>
+<p>The <strong>determining contracts</strong> are those that decided <code>deny</code>; if none,
+those that decided <code>escalate</code>; if none, all governing contracts. The
+reason of the result is, for <code>deny</code> and <code>escalate</code>, the first of
+<code>no_instance</code>, <code>prohibition</code>, <code>default</code> that a determining contract
+has; for <code>allow</code>, <code>permission</code> if a contract has it, else <code>default</code>.
+The result lists the grounds or applying permissions of the determining
+contracts and, whenever the reason is <code>prohibition</code> (for <code>deny</code> as well
+as for <code>escalate</code>), the <code>fallback</code> and <code>notify</code> of those grounds and
+the smallest <code>timeout:</code> among them.</p>
+<p>It follows that within a contract a prohibition overrides a permission
+(N-12 still warns), that a message governed by two enforced contracts
+has to be allowed by both, that a prohibition without <code>escalate_to:</code> is
+never escalated, and that an actor cannot approve its own message.</p>
+<p>The default differs by kind of message for a reason. Tools are
+enumerated and a tool call acts outside the contract, so a closed
+policy can be reviewed tool by tool; it is also the default of the
+enforcement cited in G.1. Ordinary messages include the coordination
+messages on which protocols, lifecycles, and triggers rely; a contract
+written for norms 0.1 has no permissions for them, and <code>deny</code> would
+stop them all. <code>default: deny</code> closes the policy for them too.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id=effect-of-a-decision-on-the-trace>Effect of a decision on the trace<a href=#effect-of-a-decision-on-the-trace class=hash-link aria-label="Direct link to Effect of a decision on the trace" title="Direct link to Effect of a decision on the trace" translate=no>​</a></h3>
+<ul>
+<li class=""><strong><code>allow</code>.</strong> The message takes effect and becomes an observation,
+with the time of the decision as its time stamp.</li>
+<li class=""><strong><code>deny</code>.</strong> The message does not take effect and is <strong>not an
+observation</strong>: it triggers no norm, creates no institutional event,
+fires no lifecycle transition, fulfils no obligation, and violates no
+prohibition. The enforcement point SHOULD return the result to the
+sender.</li>
+<li class=""><strong><code>escalate</code>.</strong> The message is held (G.6); while held it is not an
+observation.</li>
+</ul>
+<p>The deadlines of Appendix F keep running while a message is denied or
+held. A denied <code>trigger:</code> message does not activate its norm. As an
+addition to the verdicts of F.5, a <code>violated</code> obligation has the
+verdict <strong><code>excused</code></strong> when, between its activation and the violation, a
+message of its bearer that matches its content was denied with the
+obligation's own contract among the determining contracts, or was held
+on a ground of that contract and not released before the violation:
+the contract itself prevented the fulfilment. Its <code>on_violation:</code> still
+applies, as for every excused norm.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g6-escalation-after-a-denial>G.6 Escalation after a denial<a href=#g6-escalation-after-a-denial class=hash-link aria-label="Direct link to G.6 Escalation after a denial" title="Direct link to G.6 Escalation after a denial" translate=no>​</a></h2>
+<p><code>on_denied:</code> on a prohibition says what follows when that prohibition
+is a ground. <code>fallback:</code> names a message the sender could send instead
+and <code>notify:</code> an actor to be informed; both are only copied into the
+result. A fallback gives no permission: when sent, it is decided like
+any other message. <code>escalate_to:</code> and <code>timeout:</code> define holds.</p>
+<p>When the decision is <code>escalate</code>, the enforcement point creates a
+<strong>hold</strong> with a <code>hold_id</code> unique within the enforcement point, the
+message, the time of the decision, the grounds, the approver, and a
+deadline (the time of the decision plus the <code>timeout</code> of the result, or
+none). A hold without deadline in a contract instance that never ends
+is held for ever. How the hold id reaches the approver depends on the
+protocol.</p>
+<table><thead><tr><th>State<th>Entered when<th>Closing record (G.8)<tbody><tr><td><code>held</code><td>the hold is created; the only state that is not final<td>—<tr><td><code>approved</code><td>the approver approves; the message is released<td><code>allow</code>, reason <code>approved</code> (or the denial of the re-check)<tr><td><code>rejected</code><td>the approver rejects<td><code>deny</code>, reason <code>rejected</code><tr><td><code>expired</code><td>the deadline has passed<td><code>deny</code>, reason <code>expired</code>, with the deadline as <code>time</code><tr><td><code>cancelled</code><td>a contract instance of a ground ends, or a contract of a ground is amended<td><code>deny</code>, reason <code>cancelled</code></table>
+<p>The approver acts through two institutional events, <code>approval</code> and
+<code>rejection</code>, each created by a <code>counts_as:</code> rule from a message of the
+approver (G-9), for example <code>when: "OPERATOR -> PLANNER : approve"</code>,
+<code>creates: approval</code>. As an extension of F.5, where institutional events
+"exist only as events", these two carry one value, the <strong>hold id</strong>: the
+first argument of the message that created them. This is the only use
+of a message argument in version 0.1. The approver's message is itself
+governed and decided by G.5.</p>
+<p>The order of steps within one observation (F.5) is extended:</p>
+<ul>
+<li class=""><strong>After step 1:</strong> an <code>approval</code> (<code>rejection</code>) whose hold id names a
+<code>held</code> hold and whose performer (F.5, item 7) is the approver of that
+hold makes it <code>approved</code> (<code>rejected</code>). Any other <code>approval</code> or
+<code>rejection</code> changes no hold and SHOULD be recorded as unauthorised.
+Then the grants, revocations, and <code>until:</code> events of G.7 are applied.</li>
+<li class=""><strong>In step 6:</strong> when a contract instance ends, the <code>held</code> holds with a
+ground in it become <code>cancelled</code>, before its norms are settled.</li>
+<li class=""><strong>After step 6:</strong> each hold that became <code>approved</code> at this
+observation is released, in the order of creation.</li>
+</ul>
+<p><strong>Release.</strong> The message is re-checked on the current state. It is
+denied with the reason <code>undeclared_tool</code> if it is now a call of an
+undeclared tool, <code>no_instance</code> if a contract instance of a ground is no
+longer running, and <code>prohibition</code> (with that prohibition in <code>norms</code>) if
+a prohibition outside the grounds of the hold now applies. Nothing else
+is re-checked: the approval stands in for the permission. Otherwise the
+message takes effect as <strong>the immediately following observation, with
+the time stamp of the approving observation</strong>, before any other message
+is decided. As an addition to F.5, item 3, it is not an occurrence of
+the content of the prohibitions among its grounds: an approved
+exception does not violate them. An approval releases one message; a
+later message with the same sender, receiver, and name is decided
+again.</p>
+<p><strong>Expiry.</strong> Before each decision and each observation whose time is
+later than the deadline of a <code>held</code> hold, that hold becomes <code>expired</code>.
+An approval at exactly the deadline is in time.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g7-delegation-with-provenance>G.7 Delegation with provenance<a href=#g7-delegation-with-provenance class=hash-link aria-label="Direct link to G.7 Delegation with provenance" title="Direct link to G.7 Delegation with provenance" translate=no>​</a></h2>
+<p>An entry of <code>delegations:</code> makes one permission <strong>delegable</strong>: <code>norm:</code>
+names it, <code>to:</code> lists the actors that may hold a derived instance at
+any depth, <code>grant:</code> and <code>revoke:</code> name the messages that delegate and
+revoke, <code>max_depth:</code> is the largest number of links in a chain, and
+<code>until:</code> is an event that ends every derived instance of the entry.
+Only a permission whose content is a <code>message_event</code> can be delegated
+in version 0.1; a power cannot.</p>
+<p>A <strong>derived instance</strong> is a permission with the same content, read with
+its <strong>holder</strong> as sender, in one contract instance. Its <strong>provenance
+chain</strong> is <em>a</em><sub>0</sub>, …, <em>a</em><sub>n</sub>: <em>a</em><sub>0</sub> is the
+bearer of the original permission, <em>a</em><sub>n</sub> the holder, and each
+pair of neighbours a <strong>link</strong> made by one grant; the chain of the
+bearer is <em>a</em><sub>0</sub> alone. A derived instance is <code>active</code> or
+<code>discharged</code> (final). Derived instances are an addition to Appendix F,
+which has one instance per norm; there is <strong>at most one <code>active</code>
+derived instance per norm, holder, and contract instance</strong>, so every
+holder has one chain.</p>
+<p>A derived instance is <strong>valid</strong> when the original permission is in
+force (G.5), the derived instance is <code>active</code>, its chain has at most
+<code>max_depth</code> links, and every actor of the chain after the first matches
+a reference in <code>to:</code>. While the original is suspended, its derived
+instances are not valid.</p>
+<p><strong>Grant.</strong> A message <code>X -> Y : g</code>, where <code>g</code> is the <code>grant:</code> name of an
+entry of a contract that governs it, is decided by G.5 like any other
+message. When it is observed, these conditions are tested in each
+running instance of the contract:</p>
+<ol>
+<li class=""><code>X</code> is the bearer and the permission is in force, or <code>X</code> holds a
+valid derived instance;</li>
+<li class=""><code>Y</code> matches a reference in <code>to:</code>;</li>
+<li class=""><code>Y</code> does not occur in the chain of <code>X</code>;</li>
+<li class="">the chain of <code>X</code> has fewer than <code>max_depth</code> links;</li>
+<li class=""><code>Y</code> holds no <code>active</code> derived instance of the permission.</li>
+</ol>
+<p>If all hold, a derived instance is created for <code>Y</code>, with the chain of
+<code>X</code> followed by <code>Y</code>. If 1 to 4 hold and 5 fails, the grant is a no-op.
+If one of 1 to 4 fails, the grant has no effect and SHOULD be recorded
+as unauthorised. The granter keeps its instance: delegation shares
+authority and does not transfer it.</p>
+<p><strong>End.</strong> A derived instance becomes <code>discharged</code> when (a) a message
+<code>X -> Y : r</code> with the <code>revoke:</code> name of the entry is observed and <code>X</code>
+occurs before <code>Y</code> in the chain of <code>Y</code>: the instance of <code>Y</code> and every
+derived instance in whose chain <code>Y</code> occurs are discharged; (b) the
+<code>until:</code> of the entry occurs, as for the <code>until:</code> of a norm; (c) the
+original permission becomes <code>discharged</code> or the contract instance ends.
+A revoke message that does not satisfy (a) has no effect. A discharged
+instance is not revived; a new grant creates a new one.</p>
+<p>Because validity is computed from the whole chain, an actor cannot
+obtain through intermediaries an authority that its originator did not
+have or no longer has: a grant by an actor without a valid instance
+creates nothing, a chain is never longer than the contract allows, and
+revoking one link ends everything derived through it.</p>
+<p><strong>Amendments.</strong> F.6 governs the norm instances of an amended contract.
+This appendix adds two rules: when a new version of an enforced
+contract takes effect, (1) every <code>held</code> hold with a ground in that
+contract becomes <code>cancelled</code>, and (2) the validity of every derived
+instance is tested against the new version; an instance whose
+permission has no <code>delegations:</code> entry there, or whose original was
+discharged by the amendment, is <code>discharged</code>.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g8-audit-record>G.8 Audit record<a href=#g8-audit-record class=hash-link aria-label="Direct link to G.8 Audit record" title="Direct link to G.8 Audit record" translate=no>​</a></h2>
+<p>An enforcement point SHOULD record every decision and SHOULD keep the
+records append-only. Recording is a recommendation; the format is
+normative. An <strong>audit record</strong> is the result of the decision (G.10)
+with five more fields:</p>
+<table><thead><tr><th>Field<th>Content<tbody><tr><td><code>time</code><td>The time of the decision, on the clock of the trace.<tr><td><code>message</code><td><code>from</code>, <code>to</code>, and <code>name</code>, as in the policy input.<tr><td><code>instances</code><td>The running instances of the governing contracts: contract <code>id</code> and an identifier of the instance.<tr><td><code>hold_id</code><td>For an <code>escalate</code> decision and for the record that closes the hold; otherwise <code>null</code>.<tr><td><code>outcome</code><td>In the record that closes a hold, its final state; otherwise <code>null</code>.</table>
+<p>An <code>escalate</code> decision gives two records with the same <code>hold_id</code>: one
+when the hold is created and a <strong>closing record</strong> when it reaches a
+final state (table of G.6); the closing record keeps the <code>contracts</code>,
+<code>norms</code>, and <code>escalate_to</code> of the hold, unless the re-check denies.
+Grants, revocations, and acts recorded as
+unauthorised SHOULD be written to the same log.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g9-static-semantics>G.9 Static semantics<a href=#g9-static-semantics class=hash-link aria-label="Direct link to G.9 Static semantics" title="Direct link to G.9 Static semantics" translate=no>​</a></h2>
+<p>An agents-aware processor MUST, in addition to the checks of
+<a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>Appendix F</a>:</p>
+<ul>
+<li class=""><strong>G-1.</strong> A file that declares <code>agents: 0.1</code> MUST also declare
+<code>norms: 0.1</code>; otherwise the processor reports an error and does not
+interpret the keys of this extension.</li>
+<li class=""><strong>G-2.</strong> An <code>agent:</code> mapping MUST have <code>kind:</code>, one of <code>llm_agent</code>,
+<code>tool_server</code>, <code>human</code>, <code>service</code>; <code>protocol:</code> MUST be a
+<code>hyphen_name</code>.</li>
+<li class=""><strong>G-3.</strong> <code>tools:</code> is allowed only for a <code>tool_server</code>, which MUST
+list at least one tool. A tool name MUST be an identifier, not a
+reserved word, and unique within its actor. (Under a YAML 1.1 loader
+an unquoted <code>yes</code>, <code>no</code>, <code>on</code>, <code>off</code>, <code>true</code>, <code>false</code>, or <code>null</code> is
+not a name; see
+<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>.)</li>
+<li class=""><strong>G-4.</strong> When the receiver of a <code>message_event</code> is a tool server, the
+message name MUST be one of its <code>tools:</code>. This applies to the
+<code>trigger:</code>, <code>until:</code>, and <code>content:</code> of a norm, the <code>when:</code> of a
+<code>counts_as:</code> rule, the <code>on:</code> of a lifecycle transition, and a
+<code>fallback:</code>. A processor SHOULD warn about a message step of a
+protocol (A.5) that does not satisfy it.</li>
+<li class=""><strong>G-5.</strong> <code>enforcement.default</code> MUST be <code>deny</code> or <code>allow</code>, and
+<code>enforcement.point</code> one of <code>caller</code>, <code>receiver</code>, <code>gateway</code>. A null or
+empty <code>enforcement:</code> is valid.</li>
+<li class=""><strong>G-6.</strong> In an enforced contract, the sender of the <code>message_event</code>
+content of a permission or a prohibition MUST be textually equal to
+its <code>bearer:</code>.</li>
+<li class=""><strong>G-7.</strong> <code>on_denied:</code> is allowed only on a prohibition whose content
+is a <code>message_event</code>, in an enforced contract, and MUST have at least
+one key. <code>timeout:</code> MUST be a <code>duration_lit</code> greater than zero and
+requires <code>escalate_to:</code>. A processor SHOULD warn about an
+<code>escalate_to:</code> without <code>timeout:</code>.</li>
+<li class=""><strong>G-8.</strong> <code>escalate_to:</code> and <code>notify:</code> MUST name single declared
+actors (as N-3). <code>escalate_to:</code> MUST name a party of the contract, so
+that its messages are governed, MUST NOT be textually equal to the
+<code>bearer:</code> of its prohibition, and SHOULD have <code>agent.kind: human</code>.</li>
+<li class=""><strong>G-9.</strong> A contract with an <code>escalate_to: A</code> MUST have a <code>counts_as:</code>
+rule that creates <code>approval</code> from a <code>message_event</code> whose sender is
+<code>A</code>, and SHOULD have one for <code>rejection</code>. In an enforced contract,
+every rule that creates <code>approval</code> or <code>rejection</code> MUST have as
+<code>when:</code> a <code>message_event</code> whose sender is the <code>escalate_to:</code> of a
+prohibition of the contract, and no norm <code>id</code> may equal either name;
+these are the only uses that are errors. A reference to the two
+events in a <code>trigger:</code>, <code>until:</code>, or <code>content:</code> is allowed.</li>
+<li class=""><strong>G-10.</strong> A <code>fallback:</code> MUST be a <code>message_event</code> whose sender is
+textually equal to the <code>bearer:</code> of its prohibition and whose
+receiver is a declared actor, and MUST differ from the content of the
+prohibition in receiver or message name.</li>
+<li class=""><strong>G-11.</strong> <code>delegations:</code> is allowed only in an enforced contract.
+<code>norm:</code> MUST be the <code>id</code> of a permission of the contract whose
+content is a <code>message_event</code>; at most one entry may name a norm. The
+<code>bearer:</code> of that permission MUST NOT have an index bound by the
+contract instance (<code>ROBOT[i]</code>), so that the first actor of every
+chain can be read from the file.</li>
+<li class=""><strong>G-12.</strong> <code>to:</code> MUST list at least one reference, each naming
+declared actors; a wildcard or a range is allowed, an index bound by
+the contract instance is not. <code>to:</code> MUST NOT name a tool server and
+SHOULD NOT include the bearer. <code>max_depth:</code> MUST be an integer of at
+least 1. <code>until:</code> MUST satisfy the rules of Appendix F for the
+<code>until:</code> of a norm (N-9, N-10).</li>
+<li class=""><strong>G-13.</strong> <code>grant:</code> and <code>revoke:</code> MUST be identifiers and not reserved
+words. Within a contract, all <code>grant:</code> and <code>revoke:</code> names MUST
+differ from each other and from <code>approval</code> and <code>rejection</code>, and none
+may be a tool of a tool server that is a party. (The YAML 1.1 note of
+G-3 applies.)</li>
+<li class=""><strong>G-14.</strong> A processor SHOULD warn, in an enforced contract, about a
+permission or prohibition (a) whose content is not a <code>message_event</code>,
+because it has no effect at the boundary, or (b) whose
+<code>message_event</code> content has arguments, because they are not
+considered.</li>
+<li class=""><strong>G-15.</strong> A processor SHOULD warn about (a) a tool of a party of an
+enforced contract with <code>default: allow</code> that no permission or
+prohibition of the contract covers, and (b) a tool server that is a
+party of no enforced contract, whose tool calls are ungoverned. A
+norm <em>covers</em> a message when its <code>message_event</code> content has that
+receiver and message name.</li>
+<li class=""><strong>G-16.</strong> A processor SHOULD warn about a message that a contract
+needs and would itself deny: (a) the content of an obligation, or a
+<code>fallback:</code>, that a prohibition without <code>trigger:</code> whose bearer is
+the sender of that message covers, or that is a tool call covered by
+no permission of its sender while the default for tool calls is
+<code>deny</code>; a message that the sender could send only through a derived
+permission still gets the warning, because delegations are runtime
+state; (b) under <code>default: deny</code>, a <code>grant:</code> or <code>revoke:</code>
+name, or the <code>when:</code> message of a rule that creates <code>approval</code> or
+<code>rejection</code>, that no permission covers.</li>
+</ul>
+<p>The MUST rules are errors; the SHOULD rules are warnings and leave the
+file valid. N-1 to N-12 of Appendix F apply unchanged.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g10-code-generation>G.10 Code generation<a href=#g10-code-generation class=hash-link aria-label="Direct link to G.10 Code generation" title="Direct link to G.10 Code generation" translate=no>​</a></h2>
+<p>Two code targets generate a boundary policy from the enforced contracts
+of a file. They are listed in
+<a class="" href=/cadl-spec/docs/spec/appendix-d-codegen/>Appendix D</a> in the category <em>Boundary
+policy</em>: <code>agent-rego</code> emits Rego
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Open Policy Agent]</a> and is independent of
+the <code>opa</code> target, which emits one policy per contract from other parts
+of the contract; <code>agent-cedar</code> emits Cedar policies
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[AWS, AgentCore Policy]</a>. The syntax of
+the policies and the layout of the files belong to the targets.</p>
+<div class="language-jsonc codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-jsonc codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token plain">// policy input</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">{ "message": { "from": "SUMMARIZER", "to": "FILES", "name": "read_file" },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "now": "2026-11-10T09:00:05Z",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "instances": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    { "contract": "ASSISTED_REPORTING", "instance": "default",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "bindings": {},</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "in_force": {},</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "derived": [ { "norm": "may_read", "holder": "SUMMARIZER",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                     "chain": ["OPERATOR", "PLANNER", "SUMMARIZER"] } ] } ] }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">// result</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">{ "decision": "allow", "reason": "permission",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "contracts": ["ASSISTED_REPORTING"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "norms": ["ASSISTED_REPORTING.may_read"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "provenance": [["OPERATOR", "PLANNER", "SUMMARIZER"]],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "escalate_to": null, "timeout": null, "fallback": [], "notify": [] }</span><br/></div></code></pre></div></div>
+<p>Input:</p>
+<ul>
+<li class=""><code>message</code> (required): <code>from</code> and <code>to</code> are concrete actors written as
+in the file (<code>PLANNER</code>, <code>ROBOT[2]</code>); <code>name</code> is the message name.
+Arguments are not part of the input.</li>
+<li class=""><code>now</code> (optional): the time of the decision; it does not influence the
+decision.</li>
+<li class=""><code>instances</code> (optional): <strong>every</strong> running instance of every enforced
+contract; a contract without an entry has no running instance. When
+the field is absent, the policy assumes one running instance of each
+enforced contract, with no index bound and no derived instance. Per
+instance: <code>bindings</code> maps index names to integers; <code>in_force</code> maps
+the <code>id</code> of each norm that is not static (below) to <code>true</code> or
+<code>false</code>, and a missing entry is unknown; <code>derived</code> lists the derived
+instances that the runtime found valid by G.7, with their chains.</li>
+<li class="">A <code>derived</code> entry is re-checked fail-closed. It applies only if its
+norm is a delegable permission of that contract, the holder is the
+sender of the message and the last element of the chain, the chain
+has at most <code>max_depth</code> links, its first element matches the bearer
+and every later one a reference in <code>to:</code>, and the original permission
+is in force (static, or flag <code>true</code>; a missing flag does not count).
+Any other entry is ignored.</li>
+</ul>
+<p>For an input that does not have this form no decision is defined: a
+processor reports an error, and a generated policy denies.</p>
+<p>Result:</p>
+<ul>
+<li class=""><code>decision</code>: <code>allow</code>, <code>deny</code>, or <code>escalate</code>.</li>
+<li class=""><code>reason</code>: one of <code>ungoverned</code>, <code>undeclared_tool</code>, <code>no_instance</code>,
+<code>prohibition</code>, <code>permission</code>, <code>default</code>; in a closing record (G.6)
+also <code>approved</code>, <code>rejected</code>, <code>expired</code>, <code>cancelled</code>.</li>
+<li class=""><code>contracts</code>: the <code>id</code>s of the determining contracts (G.5); empty for
+<code>ungoverned</code> and <code>undeclared_tool</code>.</li>
+<li class=""><code>norms</code>: the grounds (reason <code>prohibition</code>) or the applying
+permissions (reason <code>permission</code>) of the determining contracts, each
+as <code>&lt;contract id>.&lt;norm id></code>, each once, in the order of
+declaration; empty for the other reasons.</li>
+<li class=""><code>provenance</code>: the chains of the applying derived instances, in the
+order of their norms and then of the input, without duplicates;
+empty when only original permissions applied.</li>
+<li class=""><code>escalate_to</code>: the approver for <code>escalate</code>, as a concrete actor;
+otherwise <code>null</code>.</li>
+<li class=""><code>timeout</code> (milliseconds), <code>fallback</code> (message events as text), and
+<code>notify</code> (actor references) are filled whenever the reason is
+<code>prohibition</code>, for <code>deny</code> as well as for <code>escalate</code>, from the
+grounds, without duplicates, in the order of declaration; for every
+other reason they are <code>null</code>, <code>[]</code>, and <code>[]</code>.</li>
+</ul>
+<p>A norm is <strong>static</strong> when it is a permission or a prohibition whose
+content is a <code>message_event</code>, it has no <code>trigger:</code>, <code>until:</code>, or
+<code>deadline:</code>, no power names it in <code>effects:</code>, no norm names it as
+<code>reparation:</code>, and no actor reference of the norm has an index bound by
+the contract instance: its bearer, counterparty, and content, its
+<code>escalate_to</code> and <code>notify</code>, and the sender and receiver of its
+<code>fallback</code>. By G.5 a static norm is in force in every running
+instance from its start to its end, so the input carries no flag for
+it. A policy is generated for one version of the contracts; an
+amendment requires a new policy.</p>
+<p>A generated policy MUST return, for every input, the same <code>decision</code> as
+the decision function of G.5, with static norms taken as in force, the
+other flags and the derived instances taken from the input, and
+everything the input does not supply taken as unknown. A target whose
+policy language has only two outcomes returns <code>deny</code> where G.5 gives
+<code>escalate</code>. The other result fields MAY be produced by the policy or by
+the runtime, from a table that the generator emits beside the policy
+(per prohibition: <code>escalate_to</code>, <code>timeout</code>, <code>fallback</code>, <code>notify</code>). A
+generator MUST list in the generated artifact, as needing runtime
+state, each permission or prohibition with a message content that is
+not static, and separately, as having no effect at the boundary, each
+permission or prohibition with another content; norms of other kinds
+are not listed. Holds, release, and the bookkeeping of delegations (G.6, G.7)
+belong to the runtime, not to the policy.</p>
+<p>For the example of G.12 with only <code>message</code> in the input (informative):</p>
+<table><thead><tr><th><code>message</code><th>Result<tbody><tr><td><code>PLANNER -> TICKETS : search_tickets</code><td><code>allow</code>, <code>permission</code>, <code>may_search</code> (static permission)<tr><td><code>PLANNER -> FILES : delete_file</code><td><code>escalate</code> to <code>OPERATOR</code>, <code>prohibition</code>, <code>no_delete</code><tr><td><code>PLANNER -> FILES : format_disk</code><td><code>deny</code>, <code>undeclared_tool</code><tr><td><code>SUMMARIZER -> FILES : read_file</code><td><code>deny</code>, <code>default</code>; with the <code>derived</code> entry shown above, <code>allow</code>, <code>permission</code></table>
+<p><strong>Cedar mapping (informative).</strong> In Cedar
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Cutler+, OOPSLA 2024]</a> a request is
+denied unless a <code>permit</code> policy is satisfied, a satisfied <code>forbid</code>
+policy overrides every <code>permit</code>, and a policy whose evaluation raises an
+error is skipped. Undeclared tools and prohibitions therefore become
+<code>forbid</code> policies, permissions <code>permit</code> policies, and the default for
+tool calls is the default denial of the language; <code>escalate</code> is
+returned as a denial and resolved by the runtime from the emitted
+table. Because an erroring <code>forbid</code> policy would be skipped and so
+would not deny, a generated policy must not raise an error on any
+input of the schema above: it tests the presence of every optional
+attribute before reading it. Messages that G.5 allows without a
+permission (ungoverned messages, a contract whose default is <code>allow</code>)
+need explicit <code>permit</code> policies, and with more than one enforced
+contract, deny-overrides across contracts needs an additional <code>forbid</code>
+policy per contract for what that contract does not allow. From the
+Cedar answer alone, a denial by such a policy or by the language
+default cannot be told apart from "a non-static or derived permission
+might allow"; the Cedar target therefore covers static norms only, and
+the runtime decides the rest.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g11-mapping-to-agent-protocols-informative>G.11 Mapping to agent protocols (informative)<a href=#g11-mapping-to-agent-protocols-informative class=hash-link aria-label="Direct link to G.11 Mapping to agent protocols (informative)" title="Direct link to G.11 Mapping to agent protocols (informative)" translate=no>​</a></h2>
+<p>The decision function does not depend on a protocol. The table gives
+the intended correspondence; nothing normative depends on it.</p>
+<table><thead><tr><th>CADL (agents 0.1)<th>MCP <a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[MCP, 2026-07-28]</a><th>A2A <a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Linux Foundation, A2A 2025]</a> (to be confirmed)<tbody><tr><td><code>kind: tool_server</code>; tool; tool call<td>An MCP server; a tool of it; a request to call the tool<td>—<tr><td><code>kind: llm_agent</code><td>An MCP client, when it calls tools<td>An A2A agent<tr><td>Ordinary message between agents<td>—<td>A message from one agent to another<tr><td><code>point: gateway</code><td>A gateway in front of the server; the specification requires the headers <code>Mcp-Method</code> and <code>Mcp-Name</code> so that gateways can route and meter requests without parsing their bodies<td>An intermediary between the agents<tr><td><code>escalate_to:</code>, hold id<td>Outside the protocol<td>Outside the protocol</table>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g12-example>G.12 Example<a href=#g12-example class=hash-link aria-label="Direct link to G.12 Example" title="Direct link to G.12 Example" translate=no>​</a></h2>
+<p>A human operator asks an LLM planner to prepare a report. The planner
+calls the tools of two tool servers and uses a sub-agent to summarise
+files. The file satisfies every rule of this appendix and N-1 to N-12
+of <a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>Appendix F</a>.</p>
+<div class="language-yaml codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-yaml codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token key atrule" style=color:#00a4db>sos</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>name</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"AssistedReporting"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>extensions</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>agents</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>actors</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> OPERATOR</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>role</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"Human operator who owns the task and the files"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>agent</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> human </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> PLANNER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>role</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"LLM agent that plans the report and calls tools"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>agent</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> llm_agent</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>protocol</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> a2a </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> SUMMARIZER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>role</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"LLM sub-agent that summarises files for the planner"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>agent</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> llm_agent</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>protocol</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> a2a </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> FILES</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>role</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"File store"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>agent</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> tool_server</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>protocol</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> mcp</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>tools</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">read_file</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> delete_file</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> TICKETS</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>role</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"Issue tracker"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>agent</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> tool_server</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>protocol</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> mcp</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>tools</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">search_tickets</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> create_ticket</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>contracts</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> ASSISTED_REPORTING</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>parties</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">OPERATOR</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> PLANNER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> SUMMARIZER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> FILES</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> TICKETS</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>enforcement</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>point</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> gateway      </span><span class="token comment" style=color:#999988;font-style:italic># default: omitted -> deny tool calls, allow other messages</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>counts_as</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>when</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"OPERATOR -> PLANNER : approve"</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>creates</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> approval </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>when</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"OPERATOR -> PLANNER : reject"</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>creates</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> rejection </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> may_read</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> permission</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> OPERATOR</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"OPERATOR -> FILES : read_file"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> may_search</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> permission</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> PLANNER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"PLANNER -> TICKETS : search_tickets"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> may_file_ticket</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> permission</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> PLANNER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"PLANNER -> TICKETS : create_ticket"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> no_delete</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> prohibition</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> PLANNER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"PLANNER -> FILES : delete_file"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>on_denied</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>escalate_to</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> OPERATOR</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>timeout</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> 10min</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>fallback</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"PLANNER -> TICKETS : create_ticket"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>notify</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> OPERATOR</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>delegations</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norm</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> may_read</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>to</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">PLANNER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> SUMMARIZER</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>grant</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> grant_read</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>revoke</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> revoke_read</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>max_depth</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>2</span><br/></div></code></pre></div></div>
+<p>The contract has no <code>lifecycle:</code> block and no host creates instances,
+so its single instance, here called <code>default</code>, exists from the start of
+the enforcement point. The four norms have no trigger: they are in
+force from the start, and all four are static (G.10). The permission to
+read belongs to the operator; the planner and the sub-agent read only
+through a delegation, over at most two links.</p>
+<p>At 09:00:00 the operator sends <code>OPERATOR -> PLANNER : grant_read</code>, and
+at 09:00:02 the planner sends <code>PLANNER -> SUMMARIZER : grant_read</code>.
+Both are ordinary messages to which no norm applies, so the default
+allows them. The first creates a derived instance of <code>may_read</code> for
+<code>PLANNER</code> with the chain OPERATOR → PLANNER, the second one for
+<code>SUMMARIZER</code> with the chain OPERATOR → PLANNER → SUMMARIZER. A further
+<code>SUMMARIZER -> PLANNER : grant_read</code> would be recorded as unauthorised:
+<code>PLANNER</code> occurs in the chain of <code>SUMMARIZER</code> (condition 3), which
+already has two links (condition 4).</p>
+<p><strong>Call 1 — allowed through a chain.</strong> At 09:00:05 the sub-agent sends
+<code>SUMMARIZER -> FILES : read_file</code>. The message is governed and the tool
+is declared. No prohibition applies: the sender is not the bearer of
+<code>no_delete</code>. The derived instance of <code>SUMMARIZER</code> is valid (<code>may_read</code>
+is in force, the chain has two links, its actors are in <code>to:</code>), and its
+content, read with the holder as sender, matches: <code>allow</code>.</p>
+<p><strong>Call 2 — escalated and approved.</strong> At 09:03:00 the planner sends
+<code>PLANNER -> FILES : delete_file</code>. <code>no_delete</code> is in force and applies;
+it is the only ground and its <code>escalate_to:</code> is not the sender, so the
+decision is <code>escalate</code>. The hold <code>h-1</code> is created with the approver
+<code>OPERATOR</code> and the deadline 09:13:00. At 09:03:40 the operator sends
+<code>OPERATOR -> PLANNER : approve("h-1")</code>, an ordinary message that the
+default allows. After step 1 of that observation the event <code>approval</code>,
+performed by <code>OPERATOR</code>, carries the hold id <code>h-1</code>, and the hold
+becomes <code>approved</code>. After step 6 the re-check finds a declared tool, a
+running instance, and no prohibition outside the grounds, so the held
+message becomes the next observation, with the time stamp 09:03:40. It
+is not an occurrence of the content of <code>no_delete</code>, which stays
+<code>active</code>. Had the operator sent <code>reject("h-1")</code>, or nothing until
+09:13:00, the closing record would be a <code>deny</code> with the reason
+<code>rejected</code>, or <code>expired</code> with the time 09:13:00; the planner would find
+the fallback in the result, and <code>may_file_ticket</code> allows that call.</p>
+<p><strong>Call 3 — denied after a revocation.</strong> At 09:10:00 the operator sends
+<code>OPERATOR -> PLANNER : revoke_read</code>. <code>OPERATOR</code> occurs before <code>PLANNER</code>
+in the chain of <code>PLANNER</code>, so the instance of <code>PLANNER</code> is discharged,
+and with it the instance of <code>SUMMARIZER</code>, in whose chain <code>PLANNER</code>
+occurs. At 09:10:30 the sub-agent sends <code>SUMMARIZER -> FILES : read_file</code>. No prohibition applies; <code>SUMMARIZER</code> holds no valid
+permission, and the original <code>may_read</code> does not apply because the
+sender is not its bearer; the message is a tool call and <code>default:</code> is
+omitted, so the contract denies. The sub-agent cannot keep an authority
+that the planner no longer has.</p>
+<p>The audit records of the three calls (the two of call 2 share the hold
+<code>h-1</code>). In all four, <code>instances</code> is the instance <code>default</code> of
+<code>ASSISTED_REPORTING</code> and <code>contracts</code> is <code>["ASSISTED_REPORTING"]</code>; the
+first record of call 2 is written out below the table.</p>
+<table><thead><tr><th><code>time</code><th><code>message</code><th><code>decision</code><th><code>reason</code><th><code>norms</code><th><code>provenance</code><th><code>hold_id</code><th><code>outcome</code><tbody><tr><td>09:00:05<td><code>SUMMARIZER</code>, <code>FILES</code>, <code>read_file</code><td><code>allow</code><td><code>permission</code><td><code>may_read</code><td>OPERATOR, PLANNER, SUMMARIZER<td><code>null</code><td><code>null</code><tr><td>09:03:00<td><code>PLANNER</code>, <code>FILES</code>, <code>delete_file</code><td><code>escalate</code><td><code>prohibition</code><td><code>no_delete</code><td>—<td><code>h-1</code><td><code>null</code><tr><td>09:03:40<td><code>PLANNER</code>, <code>FILES</code>, <code>delete_file</code><td><code>allow</code><td><code>approved</code><td><code>no_delete</code><td>—<td><code>h-1</code><td><code>approved</code><tr><td>09:10:30<td><code>SUMMARIZER</code>, <code>FILES</code>, <code>read_file</code><td><code>deny</code><td><code>default</code><td>—<td>—<td><code>null</code><td><code>null</code></table>
+<div class="language-jsonc codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-jsonc codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token plain">{ "time": "2026-11-10T09:03:00Z",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "message": { "from": "PLANNER", "to": "FILES", "name": "delete_file" },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "instances": [ { "contract": "ASSISTED_REPORTING", "instance": "default" } ],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "decision": "escalate", "reason": "prohibition",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "contracts": ["ASSISTED_REPORTING"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "norms": ["ASSISTED_REPORTING.no_delete"], "provenance": [],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "escalate_to": "OPERATOR", "timeout": 600000,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "fallback": ["PLANNER -> TICKETS : create_ticket"], "notify": ["OPERATOR"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "hold_id": "h-1", "outcome": null }</span><br/></div></code></pre></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g13-ir-addition-and-reference-implementation-status>G.13 IR addition and reference implementation status<a href=#g13-ir-addition-and-reference-implementation-status class=hash-link aria-label="Direct link to G.13 IR addition and reference implementation status" title="Direct link to G.13 IR addition and reference implementation status" translate=no>​</a></h2>
+<p>The simulator IR (E.7, F.9) is extended in three places; as there, it
+is a direct serialization of dataclasses and flattens nested blocks.</p>
+<div class="language-jsonc codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-jsonc codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token plain">// each actor under institution.actors</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">{ "id": "FILES",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "agent_kind": "tool_server",          // null for an actor without agent:</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "agent_protocol": "mcp",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "agent_tools": ["read_file", "delete_file"] }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">// each contract under institution.contracts</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">{ "enforced": true,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "enforcement_default": null,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "enforcement_point": "gateway",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "norms": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    { "id": "no_delete",                // ... and the fields of F.9</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_denied_escalate_to": "OPERATOR",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_denied_timeout_ms": 600000,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_denied_fallback": "PLANNER -> TICKETS : create_ticket",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_denied_notify": "OPERATOR" } ],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "delegations": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    { "norm": "may_read", "to": ["PLANNER", "SUMMARIZER"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "grant": "grant_read", "revoke": "revoke_read",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "max_depth": 2, "until": null } ] }</span><br/></div></code></pre></div></div>
+<p><code>enforced</code> is <code>true</code> when the contract has the key <code>enforcement:</code>, also
+with a null or empty value. <code>enforcement_default</code> is <code>null</code> when
+<code>default:</code> is omitted, because the default then depends on the kind of
+message; applying it is left to the consumer. <code>enforcement_point</code> is
+filled in for an enforced contract (<code>gateway</code>) and <code>null</code> otherwise;
+<code>max_depth</code> is always filled in (<code>1</code>). <code>fallback</code> and <code>until</code> are kept
+as text. <code>agent_tools</code> and <code>delegations</code> are empty lists when there is
+nothing to list, and the four <code>on_denied_*</code> fields are <code>null</code> for a
+norm without <code>on_denied:</code>. All fields shown here (<code>agent_*</code>,
+<code>enforced</code>, <code>enforcement_*</code>, <code>delegations</code>, <code>on_denied_*</code>) are present
+only when the file declares <code>agents: 0.1</code>; a file that declares only
+<code>norms: 0.1</code> has exactly the IR of F.9.</p>
+<p><strong>Reference implementation.</strong> <code>cadl</code> 0.3.20 implements agents 0.1 as
+follows. It parses the four new keys, applies G-1 to G-16 in
+<code>cadl check</code> (the SHOULDs as warnings), and lowers the blocks to the IR
+above; a <code>timeout:</code> given as a bare number is read as seconds, the
+lenient form that
+<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>
+describes for deadlines. <code>cadl agents-decide</code> implements the decision
+function of G.5 over the policy input of G.10. It is stateless: holds,
+release, expiry, grants, and revocations are not implemented, and valid
+derived instances come in through the input. <code>cadl codegen -t agent-rego</code> emits a Rego policy that returns the full result, and
+<code>-t agent-cedar</code> emits Cedar policies for the static norms with a side
+table. The tests of the reference implementation run the generated
+Rego against an OPA engine only when <code>opa</code> is installed, and do not
+run the Cedar policies at all. No command produces audit records
+(G.8).</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g14-backward-compatibility>G.14 Backward compatibility<a href=#g14-backward-compatibility class=hash-link aria-label="Direct link to G.14 Backward compatibility" title="Direct link to G.14 Backward compatibility" translate=no>​</a></h2>
+<p>Files written against CADL v0.3 without this extension remain valid and
+are read the same way; so are files that declare only <code>norms: 0.1</code>. A
+contract without the key <code>enforcement:</code> is not enforced, and its norms
+keep exactly the meaning of <a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>Appendix F</a>. For an
+enforced contract this appendix makes these additions to F.5 and no
+other change: the instance of a contract without host exists from the
+start of the enforcement point; a denied or held message is not an
+observation; permissions and prohibitions have an in-force flag; an
+obligation whose content the contract itself denied or held is
+<code>excused</code> (all G.5); <code>approval</code> and <code>rejection</code> carry a hold id, the
+order of steps is extended, and a released message does not violate
+its grounds (G.6); permissions have derived instances (G.7).</p>
+<p>A file that uses <code>agent:</code>, <code>enforcement:</code>, <code>delegations:</code>, or
+<code>on_denied:</code> without declaring <code>agents: 0.1</code> does not conform to this
+appendix. An agents-aware processor does not interpret these keys in
+such a file (they are not checked and not lowered to the IR) and SHOULD
+emit one warning per file that names the keys used. A file that
+declares <code>agents: 0.1</code> without <code>norms: 0.1</code> gets the error of G-1.
+Processors that do not
+implement the extension MUST NOT reject files that use it; they SHOULD
+emit a single informational diagnostic per file.</div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href=/cadl-spec/docs/spec/appendix-f-norms/><div class=pagination-nav__sublabel>Previous</div><div class=pagination-nav__label>Appendix F: Norms Extension</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/cadl-spec/docs/spec/appendix-h-stochastic/><div class=pagination-nav__sublabel>Next</div><div class=pagination-nav__label>Appendix H: Stochastic Model Extension</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#g1-motivation class="table-of-contents__link toc-highlight">G.1 Motivation</a><li><a href=#g2-concepts class="table-of-contents__link toc-highlight">G.2 Concepts</a><li><a href=#g3-syntax-ebnf-additions-to-a3-a4-and-f3 class="table-of-contents__link toc-highlight">G.3 Syntax (EBNF additions to A.3, A.4, and F.3)</a><li><a href=#g4-messages-and-tool-calls class="table-of-contents__link toc-highlight">G.4 Messages and tool calls</a><li><a href=#g5-boundary-enforcement-of-norms class="table-of-contents__link toc-highlight">G.5 Boundary enforcement of norms</a><ul><li><a href=#instances-governed-messages-and-norms-that-take-part class="table-of-contents__link toc-highlight">Instances, governed messages, and norms that take part</a><li><a href=#the-decision-function class="table-of-contents__link toc-highlight">The decision function</a><li><a href=#effect-of-a-decision-on-the-trace class="table-of-contents__link toc-highlight">Effect of a decision on the trace</a></ul><li><a href=#g6-escalation-after-a-denial class="table-of-contents__link toc-highlight">G.6 Escalation after a denial</a><li><a href=#g7-delegation-with-provenance class="table-of-contents__link toc-highlight">G.7 Delegation with provenance</a><li><a href=#g8-audit-record class="table-of-contents__link toc-highlight">G.8 Audit record</a><li><a href=#g9-static-semantics class="table-of-contents__link toc-highlight">G.9 Static semantics</a><li><a href=#g10-code-generation class="table-of-contents__link toc-highlight">G.10 Code generation</a><li><a href=#g11-mapping-to-agent-protocols-informative class="table-of-contents__link toc-highlight">G.11 Mapping to agent protocols (informative)</a><li><a href=#g12-example class="table-of-contents__link toc-highlight">G.12 Example</a><li><a href=#g13-ir-addition-and-reference-implementation-status class="table-of-contents__link toc-highlight">G.13 IR addition and reference implementation status</a><li><a href=#g14-backward-compatibility class="table-of-contents__link toc-highlight">G.14 Backward compatibility</a></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Documentation</div><ul class="footer__items clean-list"><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/quickstart/>Quick Start</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/spec/intro/>Specification</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/handson/>Hands-on</a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Tools</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class=footer__link-item>cadl (compiler / CLI)<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://pypi.org/project/cadl-lang/ target=_blank rel="noopener noreferrer" class=footer__link-item>cadl-lang on PyPI<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class=footer__link-item>CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-raspimouse-simulator target=_blank rel="noopener noreferrer" class=footer__link-item>Hands-on simulator<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Feedback</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl/issues target=_blank rel="noopener noreferrer" class=footer__link-item>Report a problem with the tool<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec/issues target=_blank rel="noopener noreferrer" class=footer__link-item>Report a problem with this site<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec target=_blank rel="noopener noreferrer" class=footer__link-item>Source of this site<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Organization</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://www.ertl.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>ERTL<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://www.nagoya-u.ac.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>Nagoya University<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a></ul></div></div><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University. Documentation licensed under <a href=https://creativecommons.org/licenses/by/4.0/>CC BY 4.0</a>; code examples and the site source under the <a href=https://www.apache.org/licenses/LICENSE-2.0>Apache License 2.0</a>. Built with Docusaurus.</div></div></div></footer></div></body>

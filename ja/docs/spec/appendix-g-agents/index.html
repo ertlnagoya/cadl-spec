@@ -1,0 +1,571 @@
+<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-g-agents" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録G. エージェント統治拡張 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録G. エージェント統治拡張 | CADL"/><meta data-rh=true name=description content="エージェント統治拡張（agents 0.1）を規定する。アクターをエージェントとツールサーバに結び付け，メッセージの境界で契約の規範から allow / deny / escalate の決定を決定的に計算し，拒否の後の人へのエスカレーション，来歴連鎖を伴う許可の委任，監査記録，境界方針のコード生成を定める。"/><meta data-rh=true property=og:description content="エージェント統治拡張（agents 0.1）を規定する。アクターをエージェントとツールサーバに結び付け，メッセージの境界で契約の規範から allow / deny / escalate の決定を決定的に計算し，拒否の後の人へのエスカレーション，来歴連鎖を伴う許可の委任，監査記録，境界方針のコード生成を定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents","name":"付録G. エージェント統治拡張","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.255ca780.css /><script src=/cadl-spec/ja/assets/js/runtime~main.7d3b9115.js defer></script><script src=/cadl-spec/ja/assets/js/main.00450b78.js defer></script></head><body><svg style="display: none;"><defs>
+<symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-bfa")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=メインコンテンツまでスキップ><a class=skipToContent_fXgn href=#__docusaurus_skipToContent_fallback>メインコンテンツまでスキップ</a></div><nav aria-label=ナビゲーション class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label=ナビゲーションバーを開く aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/ja/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/quickstart/>クイックスタート</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/ja/docs/spec/intro/>仕様書</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/textbook/>テキストブック</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/handson/>ハンズオン</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_nlXk><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>日本語</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class=dropdown__link lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=ja>日本語</a></ul></div><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type=button disabled title=システムモード aria-label=ダークモードを切り替える(現在はシステムモード)><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_Bca1><div class="navbar__search searchBarContainer_NW3z" dir=ltr><input placeholder=検索 aria-label=Search class="navbar__search-input searchInput_YFbd" value="" /><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class=docsWrapper_hBAB><button aria-label=先頭へ戻る class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type=button></button><div class=docRoot_UBD9><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class=sidebarViewport_aRkj><div class=sidebar_njMd><nav aria-label=ドキュメントのサイドバー class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/intro/><span title="CADL仕様書 v0.3" class=linkLabel_WmDU>CADL仕様書 v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/introduction/><span title="1. はじめに" class=linkLabel_WmDU>1. はじめに</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/objectives/><span title="2. 言語の目的" class=linkLabel_WmDU>2. 言語の目的</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/comparison/><span title="3. 既存言語との比較" class=linkLabel_WmDU>3. 既存言語との比較</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/requirements/><span title="4. 要求仕様" class=linkLabel_WmDU>4. 要求仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/language-spec/><span title="5. 言語仕様" class=linkLabel_WmDU>5. 言語仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/design/><span title="6. 設計" class=linkLabel_WmDU>6. 設計</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/examples/><span title="7. 用途別記述例" class=linkLabel_WmDU>7. 用途別記述例</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/use-cases/><span title="8. 活用事例と新規性分析" class=linkLabel_WmDU>8. 活用事例と新規性分析</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/research/><span title="9. 研究方向性と未解決課題" class=linkLabel_WmDU>9. 研究方向性と未解決課題</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/roadmap/><span title="10. 実装ロードマップ" class=linkLabel_WmDU>10. 実装ロードマップ</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-a-syntax/><span title="付録A. 構文リファレンス（EBNF）" class=linkLabel_WmDU>付録A. 構文リファレンス（EBNF）</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-b-references/><span title="付録B. 参考文献" class=linkLabel_WmDU>付録B. 参考文献</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-c-motivation/><span title="付録C. 動機拡張" class=linkLabel_WmDU>付録C. 動機拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-d-codegen/><span title="付録D. コード生成ターゲット一覧" class=linkLabel_WmDU>付録D. コード生成ターゲット一覧</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-e-sos-dsl/><span title="付録E. SoS-DSL拡張" class=linkLabel_WmDU>付録E. SoS-DSL拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-f-norms/><span title="付録F. 規範拡張" class=linkLabel_WmDU>付録F. 規範拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/ja/docs/spec/appendix-g-agents/><span title="付録G. エージェント統治拡張" class=linkLabel_WmDU>付録G. エージェント統治拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-h-stochastic/><span title="付録H. 確率モデル拡張" class=linkLabel_WmDU>付録H. 確率モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/glossary/><span title=用語集 class=linkLabel_WmDU>用語集</span></a></ul></nav></div></div></aside><main class=docMainContainer_TBSr><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_VOVn"><div class=docItemContainer_Djhp><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label=パンくずリストのナビゲーション><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label=ホームページ class=breadcrumbs__link href=/cadl-spec/ja/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_YNFT><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>付録G. エージェント統治拡張</span></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type=button class="clean-btn tocCollapsibleButton_TO0P">このページの見出し</button></div><div class="theme-doc-markdown markdown"><header><h1>付録G. エージェント統治拡張（agents 0.1）</h1></header>
+<p>本付録は，CADLの<strong>エージェント統治拡張</strong>を規定する。この拡張は，
+規範拡張（<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>付録F</a>）の上に作られ，
+<code>actor_def</code>（<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a3-context-actors-metrics>A.3</a>）にキー <code>agent:</code> を，
+<code>contract_def</code>（<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a4-contracts-institution-layer>A.4</a>）に
+キー <code>enforcement:</code> と <code>delegations:</code> を，<code>norm_def</code>（F.3）にキー <code>on_denied:</code> を追加する。
+これにより，契約の許可と禁止は，判定点（enforcement point）に届くすべてのメッセージについて，
+<code>allow</code>，<code>deny</code>，<code>escalate</code> の3つの<strong>決定</strong>のいずれかを定める。
+決定はメッセージが効果を生じる前に行い，メッセージと規範インスタンスの状態の関数である。
+そのどの部分も，エージェントの判断には委ねない。</p>
+<p>コア言語は，これらのブロックを必須と<strong>しない</strong>。
+本拡張を実装していないCADL準拠の処理系は，新しいキーを理由にファイルを
+拒否してはならない。新しいキーを構文上は受理し，<em>情報レベル</em>の診断を出すことが望ましい。</p>
+<p>拡張の名前は <code>agents</code> であり，本付録はバージョン <code>0.1</code> を記述する。
+本拡張は <code>norms: 0.1</code> を<strong>必要とする</strong>。強制されるのは規範だからである。
+本拡張を用いるファイルは，<code>extensions:</code>
+（<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a2-top-level-structure>A.2</a>）で両方を宣言しなければならない。
+宣言せずに用いた場合に処理系がどう扱うかはG.14で述べる。</p>
+<div class="language-yaml codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-yaml codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token key atrule" style=color:#00a4db>sos</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>...</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>extensions</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>agents</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><br/></div></code></pre></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g1-動機>G.1 動機<a href=#g1-動機 class=hash-link aria-label="G.1 動機 への直接リンク" title="G.1 動機 への直接リンク" translate=no>​</a></h2>
+<p>LLMに基づくエージェントはSoSの構成システムになりつつあり，それらをつなぐプロトコルの
+標準化が進んでいる
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[MCP, 2026-07-28]</a>
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[Linux Foundation, A2A 2025]</a>。
+強制の方法は，ツール呼び出しの境界での決定的な検査に収束しつつある。
+たとえば，Amazon Bedrock AgentCore Policyは，Cedarの方針でツール呼び出しを認可し，
+既定で拒否する
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[AWS, AgentCore Policy]</a>。
+欠けているのは，組織の契約（誰が，誰の権限で，何をしてよいか）からそのような検査に至る
+段階である。バージョン0.1は，<a class="" href=/cadl-spec/ja/docs/spec/research/>9.8節</a>の4つの研究方向への最初の一歩である。</p>
+<ol>
+<li class=""><strong>RD-8.1，契約から境界方針へのコンパイル。</strong> CADLのファイルには，どのアクターが
+エージェントであるか，どのメッセージがツール呼び出しであるか，生成した方針が何を
+決定しなければならないかを述べるものがない（G.4，G.5，G.10）。</li>
+<li class=""><strong>RD-8.2，委任された権限の来歴。</strong> 局所的な状態だけを見る検査では，ある行為が，
+元の権限者に認められていない委任を経て呼び出し元に届いたものかどうかが分からない。
+G.7は，委任された許可に来歴連鎖（provenance chain）を与える。</li>
+<li class=""><strong>RD-8.3，阻止された行為の後の回復。</strong> あるプレプリントのレビューは，安全でない行為の
+94%を阻止しても，安全かつ正しく完了したタスクが5%未満にとどまったという研究を報告している
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[Dantas+, arXiv 2026]</a>。G.6は，名指したアクターへの
+エスカレーションと，代替のメッセージを定義する。</li>
+<li class=""><strong>RD-8.4の一部，監査。</strong> コミュニティの統治は，プロトコルの上に欠けている層であることが
+指摘されている
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[Kang & Diponegoro, arXiv 2026]</a>。また，追記専用の監査ログを
+伴って強制される統治グラフは，プロンプトだけの「憲法」ではできなかったLLMエージェントの
+制約を実現した
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[Bracale Syrnikov+, arXiv 2026]</a>。G.8は，監査記録の形式を
+定める。</li>
+</ol>
+<p><strong>バージョン0.1の範囲。</strong> 本拡張は意図して小さく保つ。構成員資格，投票，異議の保存のための
+基本要素を持たない（RD-8.4のそれ以外の部分は，後の版のために未解決のまま残る）。
+計画や複数のエージェントの相互作用を検証しない（RD-8.5）。どの決定も1つのメッセージに
+関するものだからである。いかなる規制の条項もCADLに対応付けない。認証を扱わない。
+メッセージの送信者と受信者は与えられたものとする。境界では，内容がメッセージである規範だけを
+考慮し，メッセージの送信者，受信者，名前だけを考慮して，引数は考慮しない。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g2-概念>G.2 概念<a href=#g2-概念 class=hash-link aria-label="G.2 概念 への直接リンク" title="G.2 概念 への直接リンク" translate=no>​</a></h2>
+<table><thead><tr><th>概念<th>agents 0.1での意味<tbody><tr><td><strong>ツール呼び出し（tool call）</strong><td>受信者が種別 <code>tool_server</code> のアクターであり，名前がそのアクターの <code>tools:</code> の1つであるメッセージ。<tr><td><strong>強制される契約（enforced contract）</strong><td>キー <code>enforcement:</code> を持つ契約。強制される契約だけが決定に加わる。<tr><td><strong>判定点（enforcement point）</strong><td>ファイルのすべての強制される契約にわたって，メッセージに対する決定を行う1つの論理的な場所。<tr><td><strong>決定（decision）</strong><td><code>allow</code>，<code>deny</code>，<code>escalate</code> のいずれか。メッセージが効果を生じる前に，G.5の決定関数が1つのメッセージについて計算する。<tr><td><strong>根拠（ground）</strong><td>決定関数において，メッセージに適用される禁止。<tr><td><strong>保留（hold）</strong><td>決定が <code>escalate</code> であるメッセージの記録。メッセージは，保留が最終状態に達するまで留め置かれる（G.6）。<tr><td><strong>派生インスタンス（derived instance）</strong><td>被委任者が保持する許可（G.7）。<strong>来歴連鎖</strong>を伴う。来歴連鎖は，元の許可の負担者から保持者までのアクターの列であり，委任1回につき1つのリンクを持つ。<tr><td><strong>監査記録（audit record）</strong><td>判定点が1つの決定について記録するもの（G.8）。</table>
+<p>規範，規範インスタンス，契約インスタンス，制度的事象，観測は，
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>付録F</a>の意味で用いる。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g3-構文a3a4f3へのebnfの追加>G.3 構文（A.3，A.4，F.3へのEBNFの追加）<a href=#g3-構文a3a4f3へのebnfの追加 class=hash-link aria-label="G.3 構文（A.3，A.4，F.3へのEBNFの追加） への直接リンク" title="G.3 構文（A.3，A.4，F.3へのEBNFの追加） への直接リンク" translate=no>​</a></h2>
+<p>文法は<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/>付録A</a>の記法に従う。<code>identifier</code>，<code>hyphen_name</code>，
+<code>actor_ref</code>，<code>int_literal</code>，<code>duration_lit</code> は付録Aで，<code>message_event</code> は
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-e-sos-dsl/>E.3</a>で，<code>norm_event</code> は
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>F.3</a>で定義している。</p>
+<div class="language-ebnf codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-ebnf codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token definition rule keyword" style=color:#00009f>actor_def</span><span class="token plain">         </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"agent:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">agent_binding</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>agent_binding</span><span class="token plain">     </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"kind:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">agent_kind</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"protocol:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">hyphen_name</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"tools:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>agent_kind</span><span class="token plain">        </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"llm_agent"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"tool_server"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"human"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"service"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>contract_def</span><span class="token plain">      </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"enforcement:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">enforcement_block</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"delegations:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">delegation_def</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>enforcement_block</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"default:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"deny"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"allow"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"point:"</span><span class="token plain">   </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"caller"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"receiver"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"gateway"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>norm_def</span><span class="token plain">          </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"on_denied:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">denial_recovery</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>denial_recovery</span><span class="token plain">   </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"escalate_to:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">actor_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"timeout:"</span><span class="token plain">     </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">duration_lit</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"fallback:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">message_event</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">   </span><span class="token comment" style=color:#999988;font-style:italic>(* string *)</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"notify:"</span><span class="token plain">      </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">actor_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>delegation_def</span><span class="token plain">    </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"norm:"</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token string" style=color:#e3116c>"to:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">actor_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token string" style=color:#e3116c>"grant:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"revoke:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"max_depth:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">int_literal</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"until:"</span><span class="token plain">     </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">norm_event</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain">        </span><span class="token comment" style=color:#999988;font-style:italic>(* string *)</span><br/></div></code></pre></div></div>
+<ul>
+<li class=""><code>agent:</code> を持たないアクターには，エージェントの種別がない。種別 <code>tool_server</code> は
+ツール呼び出しを定義する（G.4）。<code>llm_agent</code>，<code>human</code>，<code>service</code> は，そのうちの1つを
+名指す静的な規則（G-8）と，ジェネレータによる利用のほかには意味を持たない。
+<code>protocol:</code>（<code>mcp</code>，<code>a2a</code>，またはその他の名前）には既定値がなく，決定に影響しない。
+範囲付きで宣言したアクターの <code>agent:</code> は，その集合のすべてのアクターに適用される。</li>
+<li class="">ツールの名前は <code>identifier</code> である。<code>message_event</code> のメッセージ名だからである。
+プロトコル上の名前が識別子でない場合は，<code>codegen:</code> の項目の <code>mappings:</code>（A.9）が
+両者を関係付ける。</li>
+<li class="">契約は，キー <code>enforcement:</code> を持つときに<strong>強制される</strong>。空のマッピングまたはnull値
+（<code>enforcement: {}</code>，またはキーだけ）は，「すべて既定値で強制される」ことを意味する。
+<code>default:</code> を省略したとき，既定の決定は，ツール呼び出しについては <code>deny</code>，それ以外の
+すべてのメッセージについては <code>allow</code> である。<code>default:</code> を与えたときは，その値を両方に
+適用する（G.5）。</li>
+<li class=""><code>point:</code>（既定値 <code>gateway</code>）は，ジェネレータのための配備上のヒントであり，決定に影響しない。
+配備がどうであれ，論理的な判定点は1つである。統治されるすべてのメッセージは，
+すべての強制される契約にわたって，1つの状態の上で，1回決定される。</li>
+<li class=""><code>on_denied:</code> は禁止にだけ書ける。<code>timeout:</code> には既定値がない。<code>fallback:</code> と <code>notify:</code> は
+データである。決定の結果（G.10）に写されるだけで，それ以外の効果を持たない。</li>
+<li class=""><code>max_depth:</code> の既定値は <code>1</code> である。<code>revoke:</code> がなければ，委任をメッセージによって
+取り消すことはできない。<code>until:</code> がなければ，委任はそれ自身の終わりを持たない。</li>
+</ul>
+<p>追加するキーをブロックごとに示す。アクター — <code>agent</code>（<code>kind</code> <code>protocol</code> <code>tools</code>）。
+契約 — <code>enforcement</code>（<code>default</code> <code>point</code>），<code>delegations</code>（<code>norm</code>
+<code>to</code> <code>grant</code> <code>revoke</code> <code>max_depth</code> <code>until</code>）。規範 — <code>on_denied</code>
+（<code>escalate_to</code> <code>timeout</code> <code>fallback</code> <code>notify</code>）。強制される契約では，
+名前 <code>approval</code> と <code>rejection</code> をG.6の制度的事象のために予約する。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g4-メッセージとツール呼び出し>G.4 メッセージとツール呼び出し<a href=#g4-メッセージとツール呼び出し class=hash-link aria-label="G.4 メッセージとツール呼び出し への直接リンク" title="G.4 メッセージとツール呼び出し への直接リンク" translate=no>​</a></h2>
+<p><strong>メッセージ</strong>は，それぞれ1つの具体的なアクターである送信者と受信者，名前，引数を持つ。
+受信者が <code>agent.kind: tool_server</code> を持ち，名前がそのアクターの <code>tools:</code> の1つであるとき，
+メッセージは<strong>ツール呼び出し</strong>である。ツールサーバへの，それ以外の名前を持つメッセージは，
+<strong>未宣言のツール</strong>の呼び出しである。それ以外のすべてのメッセージは<strong>通常のメッセージ</strong>である。
+バージョン0.1では，ツールサーバが返す結果は別個のメッセージではない。</p>
+<p>境界では，<code>message_event</code> <code>S -> R : e</code> を，送信者，受信者，メッセージ名（<code>e</code> の識別子，
+または呼び出しの名前）の3つの成分についてメッセージと<strong>照合</strong>する。
+バージョン0.1では，<strong><code>e</code> に書いた引数は考慮しない</strong>。
+<code>delete_file</code> と <code>delete_file(path)</code> は同じメッセージに一致する。各成分は，真，偽，
+<strong>不明</strong>のいずれかであり，照合の結果はそれらのクリーネの連言である。いずれかの成分が偽で
+あれば偽，そうでなく，いずれかが不明であれば不明，それ以外は真である。アクター参照は，
+次のように具体的なアクターに一致する。</p>
+<table><thead><tr><th>参照<th>一致するもの<tbody><tr><td><code>A</code><td>添字なしで宣言したアクター <code>A</code>。添字付きの要素 <code>A[k]</code> には一致しない<tr><td><code>A[3]</code>，<code>A[*]</code>，<code>A[1..3]</code><td><code>A[3]</code>。集合 <code>A</code> のすべての要素。<code>A[1]</code> から <code>A[3]</code> まで<tr><td><code>A[1..N]</code>（記号の上限）<td>集合 <code>A</code> のすべての要素。上下限は比較しない<tr><td><code>A[i]</code><td>具体的なアクターが <code>A</code> の要素でないときは偽。そうでないとき，契約インスタンスが <code>i</code> を <code>v</code> に束縛していればちょうど <code>A[v]</code> に一致し，<code>i</code> に値を束縛していなければ<strong>不明</strong>である。</table>
+<p><code>A</code> を範囲付きで宣言しており，<code>k</code> がその整数の上下限の内にあるとき，<code>A[k]</code> は集合 <code>A</code> の
+<strong>要素</strong>である（<code>A[1..3]</code> と宣言した集合は <code>A[7]</code> を含まない）。宣言した上限が記号であるときは，
+下限以上のすべての添字が要素である。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g5-境界での規範の強制>G.5 境界での規範の強制<a href=#g5-境界での規範の強制 class=hash-link aria-label="G.5 境界での規範の強制 への直接リンク" title="G.5 境界での規範の強制 への直接リンク" translate=no>​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id=インスタンス統治されるメッセージ決定に加わる規範>インスタンス，統治されるメッセージ，決定に加わる規範<a href=#インスタンス統治されるメッセージ決定に加わる規範 class=hash-link aria-label="インスタンス，統治されるメッセージ，決定に加わる規範 への直接リンク" title="インスタンス，統治されるメッセージ，決定に加わる規範 への直接リンク" translate=no>​</a></h3>
+<p>ホストが生成するインスタンスを持たない強制される契約では，F.5の単一のインスタンスは，
+最初の観測からではなく，<strong>判定点の開始時から</strong>存在する。F.5へのこの追加によって，
+最初のメッセージを決定できる。ホストアプリケーションがインスタンスを生成し，終わらせる場合，
+動作中のインスタンスは，ホストアプリケーションが生成し，まだ終わらせていないものである。</p>
+<p>強制される契約がメッセージ <code>m</code> を<strong>統治する</strong>かどうかは，どのインスタンスを考慮するよりも前に
+決める。したがって，<code>parties:</code> には束縛を適用しない。当事者 <code>A[i]</code> または <code>A[*]</code> は，
+<code>A</code> のすべての要素に一致する。</p>
+<ul>
+<li class="">受信者がツールサーバであるメッセージ（ツール呼び出し，または未宣言のツールの呼び出し）は，
+そのツールサーバを当事者とするすべての強制される契約が統治する。
+<strong>送信者が何であるかを問わない</strong>。当事者でも，当事者でない宣言済みのアクターでも，
+未宣言のアクターでもよい。したがって，以下の段階2から4は部外者にも適用される。
+ツールサーバが複数の強制される契約の当事者である場合，そのそれぞれがそのサーバへのすべての呼び出しを
+統治し，そのうちの1つが許さない呼び出しは拒否される（段階4）。ツールサーバを共有する契約は，
+意図する呼び出しをそれぞれが許可する必要がある。</li>
+<li class="">通常のメッセージは，その送信者と受信者がそれぞれ当事者に一致するとき，
+強制される契約が統治する。</li>
+</ul>
+<p>その場合も，規範は，その負担者または有効な保持者（後述）にだけ適用される。
+判定点は，メッセージを届いた順に1つずつ，それぞれ，それより前のすべての観測が残した状態の
+上で決定する。決定は決定的でなければならない。</p>
+<p><code>content:</code> が <code>message_event</code> である許可または禁止だけが，決定に加わる。
+内容が，述語，時相演算子を含む <code>tpredicate</code>，または制度的事象である許可または禁止は，
+バージョン0.1では<strong>境界で効果を持たず</strong>，付録Fのもとで監視されるだけである。
+義務と権能は決定に加わらない。義務が求めるメッセージや，権能を行使するメッセージは，
+他のメッセージと同じように決定され，F.5の7は変わらない。</p>
+<p>規範インスタンスは，<strong>境界で効力を持つ</strong>（in force at the boundary）間，決定に加わる。
+このフラグはF.5への追加である。F.5の状態と判定は変わらない。</p>
+<ul>
+<li class="">許可は，そのインスタンスが <code>active</code> である間，効力を持つ。</li>
+<li class="">禁止は，そのインスタンスが <code>active</code> である間，効力を持つ。インスタンスが <code>violated</code> に
+なっても，禁止は<strong>効力を持ち続ける</strong>。違反は1回報告されるが（F.5），禁止を解くことはない。
+その後は，次のうち最初のものまで効力を持ち続ける。その <code>deadline:</code> の期間が閉じたはずの
+時刻。その <code>until:</code> が起こること。それを名指す権能の <code>discharge</code> の効果。
+それが引き継がれない改正（F.6）。契約インスタンスの終了。それを名指す <code>suspend</code> と
+<code>resume</code> の効果は，違反の後であっても，禁止の効力を失わせ，また戻す。</li>
+</ul>
+<p>効力を持つ規範インスタンスは，その内容が <code>m</code> に一致し（G.4），<code>m</code> の送信者がその負担者で
+あるとき，<code>m</code> に<strong>適用される</strong>。許可の派生インスタンス（G.7）は，それが有効であり，
+保持者を送信者として内容が一致するとき，適用される。照合の結果が不明であるとき，または
+判定点がフラグを持たないとき，結果は不明である。不明は<strong>フェイルクローズ</strong>（fail-closed）で
+解決する。不明の禁止は適用され，不明の許可は適用されない。</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id=決定関数>決定関数<a href=#決定関数 class=hash-link aria-label="決定関数 への直接リンク" title="決定関数 への直接リンク" translate=no>​</a></h3>
+<p>メッセージ <code>m</code> について，次の段階が，この順に<strong>結果</strong>（フィールドはG.10）を与える。</p>
+<ol>
+<li class=""><strong>統治されない。</strong> <code>m</code> を統治する強制される契約がなければ，<code>allow</code>，理由 <code>ungoverned</code>。
+本付録は，そのようなメッセージを制限しない。</li>
+<li class=""><strong>未宣言のツール。</strong> <code>m</code> が未宣言のツールの呼び出しであれば，<code>deny</code>，
+理由 <code>undeclared_tool</code>。</li>
+<li class=""><strong>契約ごと。</strong> 統治する各契約 <em>C</em> は，その動作中のすべてのインスタンスにわたって
+決定する。<!-- -->
+<ol>
+<li class=""><em>C</em> に動作中のインスタンスがなければ，<code>m</code> がツール呼び出しであるときは <code>deny</code>，
+理由 <code>no_instance</code>。そうでないときは段階3.4のとおり。</li>
+<li class=""><em>C</em> の禁止が <code>m</code> に適用されれば，それらが<strong>根拠</strong>であり，理由は <code>prohibition</code> である。
+すべての根拠が <code>on_denied.escalate_to</code> を持ち，すべてが同じアクターを名指し，
+そのアクターが <code>m</code> の送信者でないとき，<em>C</em> は <code>escalate</code> と決定する。
+そうでなければ <code>deny</code> と決定する。<code>escalate_to: A[i]</code> は，根拠が適用される
+各インスタンスの束縛で解決する。束縛されていない添字，またはインスタンスによって
+異なるアクターは，<code>deny</code> を与える。</li>
+<li class="">そうでなく，<em>C</em> の許可が，元のものであれ派生したものであれ，<code>m</code> に適用されれば，
+<code>allow</code>，理由 <code>permission</code>。</li>
+<li class="">そうでなければ，<em>C</em> の <code>default:</code>，またはそれを省略したときは，<code>m</code> がツール呼び出しで
+あれば <code>deny</code>，そうでなければ <code>allow</code>。理由 <code>default</code>。</li>
+</ol>
+</li>
+<li class=""><strong>結合（拒否優先，deny overrides）。</strong> いずれかの契約が <code>deny</code> と決定すれば，
+決定は <code>deny</code> である。そうでなく，いずれかの契約が <code>escalate</code> と決定すれば，
+<code>escalate</code> と決定したすべての契約が同じアクターを名指すときは決定は <code>escalate</code> であり，
+そうでないときは <code>deny</code> である（保留の承認者は1人である）。それ以外は <code>allow</code> である。</li>
+</ol>
+<p><strong>決定契約</strong>（determining contracts）は，<code>deny</code> と決定した契約である。それがなければ
+<code>escalate</code> と決定した契約であり，それもなければ統治するすべての契約である。
+結果の理由は，<code>deny</code> と <code>escalate</code> については，<code>no_instance</code>，<code>prohibition</code>，<code>default</code> の
+うち，決定契約が持つ最初のものである。<code>allow</code> については，いずれかの契約が <code>permission</code> を
+持てば <code>permission</code>，そうでなければ <code>default</code> である。
+結果は，決定契約の根拠または適用される許可を列挙する。また，理由が <code>prohibition</code> で
+あるときは常に（<code>escalate</code> だけでなく <code>deny</code> についても），それらの根拠の <code>fallback</code> と
+<code>notify</code>，およびそれらのうち最小の <code>timeout:</code> を列挙する。</p>
+<p>以上から，次のことが従う。1つの契約の中では禁止が許可に優先する（N-12は引き続き警告する）。
+2つの強制される契約が統治するメッセージは，両方に許されなければならない。
+<code>escalate_to:</code> のない禁止は決してエスカレーションされない。アクターは自分自身のメッセージを
+承認できない。</p>
+<p>既定値がメッセージの種類によって異なるのには理由がある。ツールは列挙されており，
+ツール呼び出しは契約の外に作用する。そのため，閉じた方針をツールごとにレビューできる。
+これはG.1に挙げた強制の既定値でもある。通常のメッセージには，プロトコル，ライフサイクル，
+発動条件が依存する調整のメッセージが含まれる。norms 0.1のために書いた契約は，それらに対する
+許可を持たないため，<code>deny</code> ではそれらがすべて止まってしまう。<code>default: deny</code> は，
+それらについても方針を閉じる。</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id=決定がトレースに与える効果>決定がトレースに与える効果<a href=#決定がトレースに与える効果 class=hash-link aria-label="決定がトレースに与える効果 への直接リンク" title="決定がトレースに与える効果 への直接リンク" translate=no>​</a></h3>
+<ul>
+<li class=""><strong><code>allow</code>。</strong> メッセージは効果を生じ，決定の時刻を時刻印とする観測になる。</li>
+<li class=""><strong><code>deny</code>。</strong> メッセージは効果を生じず，<strong>観測にならない</strong>。規範を発動させず，
+制度的事象を作らず，ライフサイクル遷移を起こさず，義務を履行させず，禁止に違反しない。
+判定点は，結果を送信者に返すことが望ましい。</li>
+<li class=""><strong><code>escalate</code>。</strong> メッセージは保留される（G.6）。保留されている間は観測にならない。</li>
+</ul>
+<p>付録Fの期限は，メッセージが拒否または保留されている間も進み続ける。
+拒否された <code>trigger:</code> のメッセージは，その規範を発動させない。F.5の判定への追加として，
+<code>violated</code> になった義務は，その発動から違反までの間に，その内容に一致する負担者の
+メッセージが，義務自身の契約を決定契約に含んで拒否されたか，またはその契約の根拠によって
+保留され，違反より前に解放されなかったとき，判定 <strong><code>excused</code></strong> を持つ。
+契約自身が履行を妨げたからである。その <code>on_violation:</code> は，<code>excused</code> となったすべての規範と
+同じく，適用される。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g6-拒否の後のエスカレーション>G.6 拒否の後のエスカレーション<a href=#g6-拒否の後のエスカレーション class=hash-link aria-label="G.6 拒否の後のエスカレーション への直接リンク" title="G.6 拒否の後のエスカレーション への直接リンク" translate=no>​</a></h2>
+<p>禁止の <code>on_denied:</code> は，その禁止が根拠であるときに何が続くかを述べる。
+<code>fallback:</code> は送信者が代わりに送ることのできるメッセージを名指し，<code>notify:</code> は
+知らせるべきアクターを名指す。どちらも結果に写されるだけである。
+代替のメッセージは許可を与えない。送られたときは，他のメッセージと同じように決定される。
+<code>escalate_to:</code> と <code>timeout:</code> は保留を定義する。</p>
+<p>決定が <code>escalate</code> であるとき，判定点は<strong>保留</strong>を作る。保留は，判定点の中で一意な
+<code>hold_id</code>，メッセージ，決定の時刻，根拠，承認者，期限（決定の時刻に結果の <code>timeout</code> を
+加えたもの，またはなし）を持つ。決して終わらない契約インスタンスにおける期限のない保留は，
+いつまでも保留される。保留のidが承認者にどのように届くかは，プロトコルに依存する。</p>
+<table><thead><tr><th>状態<th>その状態になるとき<th>終結記録（G.8）<tbody><tr><td><code>held</code><td>保留が作られたとき。最終状態でない唯一の状態<td>—<tr><td><code>approved</code><td>承認者が承認したとき。メッセージは解放される<td><code>allow</code>，理由 <code>approved</code>（または再検査による拒否）<tr><td><code>rejected</code><td>承認者が却下したとき<td><code>deny</code>，理由 <code>rejected</code><tr><td><code>expired</code><td>期限が過ぎたとき<td><code>deny</code>，理由 <code>expired</code>。<code>time</code> は期限<tr><td><code>cancelled</code><td>根拠の契約インスタンスが終わったとき，または根拠の契約が改正されたとき<td><code>deny</code>，理由 <code>cancelled</code></table>
+<p>承認者は，<code>approval</code> と <code>rejection</code> の2つの制度的事象を通じて行為する。それぞれは，
+承認者のメッセージから <code>counts_as:</code> 規則が作る（G-9）。たとえば
+<code>when: "OPERATOR -> PLANNER : approve"</code>，<code>creates: approval</code> である。
+F.5では制度的事象は「事象としてのみ存在」するが，その拡張として，この2つの事象は
+1つの値，すなわち<strong>保留のid</strong>を運ぶ。それは，事象を作ったメッセージの最初の引数である。
+これは，バージョン0.1でメッセージの引数を用いる唯一の箇所である。
+承認者のメッセージそのものも統治され，G.5によって決定される。</p>
+<p>1つの観測の中での段階の順序（F.5）を，次のように拡張する。</p>
+<ul>
+<li class=""><strong>段階1の後。</strong> <code>approval</code>（<code>rejection</code>）のうち，その保留のidが <code>held</code> の保留を名指し，
+その行為者（F.5の7）がその保留の承認者であるものは，その保留を <code>approved</code>（<code>rejected</code>）に
+する。それ以外の <code>approval</code> または <code>rejection</code> はどの保留も変えず，権限のない行為として
+記録することが望ましい。次に，G.7の付与，取消し，<code>until:</code> の事象を適用する。</li>
+<li class=""><strong>段階6の中。</strong> 契約インスタンスが終わると，その中に根拠を持つ <code>held</code> の保留は，
+その規範を確定させる前に，<code>cancelled</code> になる。</li>
+<li class=""><strong>段階6の後。</strong> この観測で <code>approved</code> になった各保留を，作られた順に解放する。</li>
+</ul>
+<p><strong>解放。</strong> メッセージを現在の状態の上で再検査する。メッセージが今は未宣言のツールの
+呼び出しであれば理由 <code>undeclared_tool</code> で，根拠の契約インスタンスがもはや動作していなければ
+<code>no_instance</code> で，保留の根拠以外の禁止が今は適用されれば <code>prohibition</code>（その禁止を <code>norms</code> に
+含む）で，拒否される。それ以外は再検査しない。承認が許可の代わりになる。
+拒否されなければ，メッセージは，他のどのメッセージが決定されるよりも前に，
+<strong>承認した観測の時刻印を持つ，直後の観測</strong>として効果を生じる。F.5の3への追加として，
+このメッセージは，その根拠である禁止の内容が起こったことにはならない。承認された例外は，
+それらの禁止に違反しない。承認は1つのメッセージを解放する。送信者，受信者，名前が同じ
+後のメッセージは，改めて決定される。</p>
+<p><strong>期限切れ。</strong> <code>held</code> の保留の期限より後の時刻を持つ各決定と各観測の前に，その保留は
+<code>expired</code> になる。ちょうど期限の時刻の承認は期限内とする。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g7-来歴を伴う委任>G.7 来歴を伴う委任<a href=#g7-来歴を伴う委任 class=hash-link aria-label="G.7 来歴を伴う委任 への直接リンク" title="G.7 来歴を伴う委任 への直接リンク" translate=no>​</a></h2>
+<p><code>delegations:</code> の項目は，1つの許可を<strong>委任可能</strong>にする。<code>norm:</code> はその許可を名指し，
+<code>to:</code> は任意の深さで派生インスタンスを保持してよいアクターを列挙し，<code>grant:</code> と <code>revoke:</code> は
+委任するメッセージと取り消すメッセージを名指し，<code>max_depth:</code> は連鎖のリンクの最大数であり，
+<code>until:</code> はその項目のすべての派生インスタンスを終わらせる事象である。
+バージョン0.1では，内容が <code>message_event</code> である許可だけを委任できる。権能は委任できない。</p>
+<p><strong>派生インスタンス</strong>は，1つの契約インスタンスにおける，同じ内容を持つ許可であり，
+その内容は<strong>保持者</strong>を送信者として読む。その<strong>来歴連鎖</strong>は
+<em>a</em><sub>0</sub>, …, <em>a</em><sub>n</sub> である。<em>a</em><sub>0</sub> は元の許可の負担者，
+<em>a</em><sub>n</sub> は保持者であり，隣り合う各対は，1回の付与が作る<strong>リンク</strong>である。
+負担者の連鎖は <em>a</em><sub>0</sub> だけである。派生インスタンスは <code>active</code> または
+<code>discharged</code>（最終状態）である。派生インスタンスは付録Fへの追加である。付録Fでは
+規範ごとに1つのインスタンスがある。<strong>規範，保持者，契約インスタンスの組ごとに，
+<code>active</code> の派生インスタンスは高々1つ</strong>であり，したがって，どの保持者も1つの連鎖を持つ。</p>
+<p>派生インスタンスは，元の許可が効力を持ち（G.5），派生インスタンスが <code>active</code> であり，
+その連鎖のリンクが <code>max_depth</code> 以下であり，連鎖の最初より後のすべてのアクターが <code>to:</code> の
+参照に一致するとき，<strong>有効</strong>である。元の許可が停止されている間，その派生インスタンスは
+有効でない。</p>
+<p><strong>付与。</strong> メッセージ <code>X -> Y : g</code> は，<code>g</code> が，それを統治する契約の項目の <code>grant:</code> の
+名前であるとき，他のメッセージと同じようにG.5によって決定される。それが観測されると，
+その契約の動作中の各インスタンスで，次の条件を調べる。</p>
+<ol>
+<li class=""><code>X</code> が負担者であり，許可が効力を持つ。または，<code>X</code> が有効な派生インスタンスを保持する。</li>
+<li class=""><code>Y</code> が <code>to:</code> の参照に一致する。</li>
+<li class=""><code>Y</code> が <code>X</code> の連鎖に現れない。</li>
+<li class=""><code>X</code> の連鎖のリンクが <code>max_depth</code> より少ない。</li>
+<li class=""><code>Y</code> がその許可の <code>active</code> の派生インスタンスを保持していない。</li>
+</ol>
+<p>すべてが成り立てば，<code>Y</code> のために，<code>X</code> の連鎖に <code>Y</code> を続けた連鎖を持つ派生インスタンスを作る。
+1から4が成り立ち，5が成り立たなければ，付与は何もしない。
+1から4のいずれかが成り立たなければ，付与は効果を持たず，権限のない行為として記録することが
+望ましい。付与者は自分のインスタンスを保つ。委任は権限を共有するのであり，移転するのではない。</p>
+<p><strong>終了。</strong> 派生インスタンスは，次のときに <code>discharged</code> になる。(a) その項目の <code>revoke:</code> の
+名前を持つメッセージ <code>X -> Y : r</code> が観測され，<code>Y</code> の連鎖の中で <code>X</code> が <code>Y</code> より前に現れるとき。
+このとき，<code>Y</code> のインスタンスと，連鎖に <code>Y</code> が現れるすべての派生インスタンスが解除される。
+(b) その項目の <code>until:</code> が，規範の <code>until:</code> と同じように起こったとき。(c) 元の許可が
+<code>discharged</code> になったとき，または契約インスタンスが終わったとき。
+(a) を満たさない取消しのメッセージは効果を持たない。解除されたインスタンスは復活しない。
+新しい付与は新しいインスタンスを作る。</p>
+<p>有効性は連鎖の全体から計算するため，アクターは，元の権限者が持っていなかった権限や，
+もはや持っていない権限を，仲介者を通じて得ることができない。有効なインスタンスを持たない
+アクターによる付与は何も作らず，連鎖は契約が許すより長くならず，1つのリンクを取り消すと，
+それを通じて派生したすべてが終わる。</p>
+<p><strong>改正。</strong> 改正された契約の規範インスタンスは，F.6が定める。
+本付録は2つの規則を追加する。強制される契約の新しい版が発効するとき，
+(1) その契約に根拠を持つすべての <code>held</code> の保留は <code>cancelled</code> になり，
+(2) すべての派生インスタンスの有効性を新しい版に対して調べる。新しい版でその許可が
+<code>delegations:</code> の項目を持たないインスタンス，または元の許可が改正によって解除された
+インスタンスは，<code>discharged</code> になる。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g8-監査記録>G.8 監査記録<a href=#g8-監査記録 class=hash-link aria-label="G.8 監査記録 への直接リンク" title="G.8 監査記録 への直接リンク" translate=no>​</a></h2>
+<p>判定点は，すべての決定を記録することが望ましく，記録を追記専用で保つことが望ましい。
+記録することは推奨であり，形式は規範的である。<strong>監査記録</strong>は，決定の結果（G.10）に
+次の5つのフィールドを加えたものである。</p>
+<table><thead><tr><th>フィールド<th>内容<tbody><tr><td><code>time</code><td>決定の時刻。トレースの時計による。<tr><td><code>message</code><td><code>from</code>，<code>to</code>，<code>name</code>。方針の入力と同じ。<tr><td><code>instances</code><td>統治する契約の動作中のインスタンス。契約の <code>id</code> とインスタンスの識別子。<tr><td><code>hold_id</code><td><code>escalate</code> の決定と，その保留を閉じる記録で値を持つ。それ以外は <code>null</code>。<tr><td><code>outcome</code><td>保留を閉じる記録では，その最終状態。それ以外は <code>null</code>。</table>
+<p><code>escalate</code> の決定は，同じ <code>hold_id</code> を持つ2つの記録を与える。1つは保留が作られたときの
+記録であり，もう1つは保留が最終状態に達したときの<strong>終結記録</strong>（closing record）である
+（G.6の表）。終結記録は，再検査が拒否する場合を除いて，保留の <code>contracts</code>，<code>norms</code>，
+<code>escalate_to</code> を保つ。
+付与，取消し，および権限のない行為として記録した行為は，同じログに書くことが望ましい。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g9-static-semantics>G.9 静的意味論<a href=#g9-static-semantics class=hash-link aria-label="G.9 静的意味論 への直接リンク" title="G.9 静的意味論 への直接リンク" translate=no>​</a></h2>
+<p>エージェント統治拡張を扱う処理系は，<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>付録F</a>の検査に加えて，
+次の検査をしなければならない。</p>
+<ul>
+<li class=""><strong>G-1.</strong> <code>agents: 0.1</code> を宣言するファイルは，<code>norms: 0.1</code> も宣言しなければならない。
+そうでなければ，処理系はエラーを報告し，本拡張のキーを解釈しない。</li>
+<li class=""><strong>G-2.</strong> <code>agent:</code> のマッピングは <code>kind:</code> を持たなければならず，その値は <code>llm_agent</code>，
+<code>tool_server</code>，<code>human</code>，<code>service</code> のいずれかである。<code>protocol:</code> は <code>hyphen_name</code> で
+なければならない。</li>
+<li class=""><strong>G-3.</strong> <code>tools:</code> は <code>tool_server</code> にだけ書け，<code>tool_server</code> は少なくとも1つのツールを
+列挙しなければならない。ツールの名前は識別子でなければならず，予約語であってはならず，
+そのアクターの中で一意でなければならない（YAML 1.1のローダーでは，引用符のない <code>yes</code>，
+<code>no</code>，<code>on</code>，<code>off</code>，<code>true</code>，<code>false</code>，<code>null</code> は名前にならない。
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>を参照）。</li>
+<li class=""><strong>G-4.</strong> <code>message_event</code> の受信者がツールサーバであるとき，メッセージ名はその <code>tools:</code> の
+1つでなければならない。これは，規範の <code>trigger:</code>，<code>until:</code>，<code>content:</code>，<code>counts_as:</code> 規則の
+<code>when:</code>，ライフサイクル遷移の <code>on:</code>，および <code>fallback:</code> に適用される。
+処理系は，これを満たさないプロトコル（A.5）のメッセージのステップについて警告することが
+望ましい。</li>
+<li class=""><strong>G-5.</strong> <code>enforcement.default</code> は <code>deny</code> または <code>allow</code> でなければならず，
+<code>enforcement.point</code> は <code>caller</code>，<code>receiver</code>，<code>gateway</code> のいずれかでなければならない。
+nullまたは空の <code>enforcement:</code> は有効である。</li>
+<li class=""><strong>G-6.</strong> 強制される契約では，許可または禁止の内容である <code>message_event</code> の送信者は，
+その <code>bearer:</code> とテキストとして等しくなければならない。</li>
+<li class=""><strong>G-7.</strong> <code>on_denied:</code> は，強制される契約の，内容が <code>message_event</code> である禁止にだけ書け，
+少なくとも1つのキーを持たなければならない。<code>timeout:</code> は0より大きい <code>duration_lit</code> で
+なければならず，<code>escalate_to:</code> を必要とする。処理系は，<code>timeout:</code> のない <code>escalate_to:</code> に
+ついて警告することが望ましい。</li>
+<li class=""><strong>G-8.</strong> <code>escalate_to:</code> と <code>notify:</code> は，宣言済みの1つのアクターを名指さなければならない
+（N-3と同じ）。<code>escalate_to:</code> は，そのメッセージが統治されるように，契約の当事者を
+名指さなければならず，その禁止の <code>bearer:</code> とテキストとして等しくてはならず，
+<code>agent.kind: human</code> を持つことが望ましい。</li>
+<li class=""><strong>G-9.</strong> <code>escalate_to: A</code> を持つ契約は，送信者が <code>A</code> である <code>message_event</code> から
+<code>approval</code> を作る <code>counts_as:</code> 規則を持たなければならず，<code>rejection</code> についても
+そのような規則を持つことが望ましい。強制される契約では，<code>approval</code> または <code>rejection</code> を
+作るすべての規則は，送信者がその契約の禁止の <code>escalate_to:</code> である <code>message_event</code> を
+<code>when:</code> として持たなければならず，どの規範の <code>id</code> もこの2つの名前のいずれとも等しくては
+ならない。エラーになる使い方はこれらだけである。<code>trigger:</code>，<code>until:</code>，<code>content:</code> での
+この2つの事象への参照は許される。</li>
+<li class=""><strong>G-10.</strong> <code>fallback:</code> は，送信者がその禁止の <code>bearer:</code> とテキストとして等しく，
+受信者が宣言済みのアクターである <code>message_event</code> でなければならず，受信者または
+メッセージ名において禁止の内容と異ならなければならない。</li>
+<li class=""><strong>G-11.</strong> <code>delegations:</code> は強制される契約にだけ書ける。<code>norm:</code> は，その契約の，内容が
+<code>message_event</code> である許可の <code>id</code> でなければならない。1つの規範を名指してよい項目は
+高々1つである。その許可の <code>bearer:</code> は，契約インスタンスが束縛する添字（<code>ROBOT[i]</code>）を
+持ってはならない。すべての連鎖の最初のアクターをファイルから読み取れるようにするためである。</li>
+<li class=""><strong>G-12.</strong> <code>to:</code> は少なくとも1つの参照を列挙しなければならず，それぞれが宣言済みの
+アクターを名指さなければならない。ワイルドカードや範囲は許されるが，契約インスタンスが
+束縛する添字は許されない。<code>to:</code> はツールサーバを名指してはならず，負担者を含まないことが
+望ましい。<code>max_depth:</code> は1以上の整数でなければならない。<code>until:</code> は，規範の <code>until:</code> に
+ついての付録Fの規則（N-9，N-10）を満たさなければならない。</li>
+<li class=""><strong>G-13.</strong> <code>grant:</code> と <code>revoke:</code> は識別子でなければならず，予約語であってはならない。
+1つの契約の中で，すべての <code>grant:</code> と <code>revoke:</code> の名前は，互いに異なり，<code>approval</code> および
+<code>rejection</code> とも異ならなければならず，いずれも，当事者であるツールサーバのツールであっては
+ならない（G-3のYAML 1.1についての注記が当てはまる）。</li>
+<li class=""><strong>G-14.</strong> 処理系は，強制される契約の許可または禁止のうち，(a) 内容が <code>message_event</code> で
+ないもの（境界で効果を持たないため），または (b) 内容の <code>message_event</code> が引数を持つもの
+（引数は考慮されないため）について警告することが望ましい。</li>
+<li class=""><strong>G-15.</strong> 処理系は，(a) <code>default: allow</code> を持つ強制される契約の当事者のツールのうち，
+その契約のどの許可も禁止も覆わないもの，および (b) どの強制される契約の当事者でもなく，
+そのツール呼び出しが統治されないツールサーバについて警告することが望ましい。
+規範は，その内容の <code>message_event</code> がその受信者とメッセージ名を持つとき，メッセージを
+<em>覆う</em>という。</li>
+<li class=""><strong>G-16.</strong> 処理系は，契約が必要とし，かつ契約自身が拒否することになるメッセージについて
+警告することが望ましい。(a) 義務の内容または <code>fallback:</code> であって，そのメッセージの
+送信者を負担者とする <code>trigger:</code> のない禁止が覆うもの，または，ツール呼び出しの既定値が
+<code>deny</code> であるのに，その送信者のどの許可にも覆われないツール呼び出しであるもの。
+送信者が派生した許可を通じてのみ送ることのできるメッセージにも，この警告を出す。
+委任は実行時の状態だからである。(b) <code>default: deny</code> のもとで，どの許可も覆わない
+<code>grant:</code> または <code>revoke:</code> の名前，あるいは <code>approval</code> または <code>rejection</code> を作る規則の
+<code>when:</code> のメッセージ。</li>
+</ul>
+<p>「しなければならない」の規則はエラーであり，「望ましい」の規則は警告であって，ファイルは
+有効のままである。付録FのN-1からN-12は変わらず適用される。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g10-コード生成>G.10 コード生成<a href=#g10-コード生成 class=hash-link aria-label="G.10 コード生成 への直接リンク" title="G.10 コード生成 への直接リンク" translate=no>​</a></h2>
+<p>2つのコードターゲットが，ファイルの強制される契約から境界方針を生成する。
+これらは<a class="" href=/cadl-spec/ja/docs/spec/appendix-d-codegen/>付録D</a>のカテゴリ<em>境界方針</em>に挙げている。
+<code>agent-rego</code> はRego
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[Open Policy Agent]</a>を出力する。これは，契約の他の部分から
+契約ごとに1つの方針を出力する <code>opa</code> ターゲットとは独立である。<code>agent-cedar</code> はCedarの方針
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[AWS, AgentCore Policy]</a>を出力する。方針の構文とファイルの
+配置は，ターゲットが定める。</p>
+<div class="language-jsonc codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-jsonc codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token plain">// policy input</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">{ "message": { "from": "SUMMARIZER", "to": "FILES", "name": "read_file" },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "now": "2026-11-10T09:00:05Z",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "instances": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    { "contract": "ASSISTED_REPORTING", "instance": "default",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "bindings": {},</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "in_force": {},</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "derived": [ { "norm": "may_read", "holder": "SUMMARIZER",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                     "chain": ["OPERATOR", "PLANNER", "SUMMARIZER"] } ] } ] }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">// result</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">{ "decision": "allow", "reason": "permission",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "contracts": ["ASSISTED_REPORTING"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "norms": ["ASSISTED_REPORTING.may_read"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "provenance": [["OPERATOR", "PLANNER", "SUMMARIZER"]],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "escalate_to": null, "timeout": null, "fallback": [], "notify": [] }</span><br/></div></code></pre></div></div>
+<p>入力は次のとおりである。</p>
+<ul>
+<li class=""><code>message</code>（必須）: <code>from</code> と <code>to</code> は，ファイルに書くとおりの具体的なアクター
+（<code>PLANNER</code>，<code>ROBOT[2]</code>）であり，<code>name</code> はメッセージ名である。
+引数は入力に含まれない。</li>
+<li class=""><code>now</code>（省略可能）: 決定の時刻。決定には影響しない。</li>
+<li class=""><code>instances</code>（省略可能）: すべての強制される契約の，動作中の<strong>すべての</strong>インスタンス。
+項目のない契約には，動作中のインスタンスがない。このフィールドがないとき，方針は，
+各強制される契約に，束縛された添字も派生インスタンスもない動作中のインスタンスが1つあると
+仮定する。インスタンスごとに，<code>bindings</code> は添字の名前を整数に対応付ける。<code>in_force</code> は，
+静的（後述）でない各規範の <code>id</code> を <code>true</code> または <code>false</code> に対応付け，項目がなければ
+不明である。<code>derived</code> は，ランタイムがG.7によって有効と認めた派生インスタンスを，
+その連鎖とともに列挙する。</li>
+<li class=""><code>derived</code> の項目は，フェイルクローズで再検査する。項目が適用されるのは，その規範が
+その契約の委任可能な許可であり，保持者がメッセージの送信者であって連鎖の最後の要素であり，
+連鎖のリンクが <code>max_depth</code> 以下であり，連鎖の最初の要素が負担者に一致し，それより後の
+各要素が <code>to:</code> の参照に一致し，元の許可が効力を持つ（静的であるか，フラグが <code>true</code> である。
+フラグがないものは数えない）ときだけである。それ以外の項目は無視する。</li>
+</ul>
+<p>この形式でない入力については，決定を定義しない。処理系はエラーを報告し，生成した方針は
+拒否する。</p>
+<p>結果は次のとおりである。</p>
+<ul>
+<li class=""><code>decision</code>: <code>allow</code>，<code>deny</code>，<code>escalate</code> のいずれか。</li>
+<li class=""><code>reason</code>: <code>ungoverned</code>，<code>undeclared_tool</code>，<code>no_instance</code>，
+<code>prohibition</code>，<code>permission</code>，<code>default</code> のいずれか。終結記録（G.6）では，
+<code>approved</code>，<code>rejected</code>，<code>expired</code>，<code>cancelled</code> もある。</li>
+<li class=""><code>contracts</code>: 決定契約（G.5）の <code>id</code>。<code>ungoverned</code> と <code>undeclared_tool</code> では空である。</li>
+<li class=""><code>norms</code>: 決定契約の根拠（理由 <code>prohibition</code>）または適用される許可（理由 <code>permission</code>）。
+それぞれ <code>&lt;contract id>.&lt;norm id></code> の形で，1回ずつ，宣言の順に並べる。
+それ以外の理由では空である。</li>
+<li class=""><code>provenance</code>: 適用される派生インスタンスの連鎖。その規範の順，次に入力の順に，
+重複なしで並べる。元の許可だけが適用されたときは空である。</li>
+<li class=""><code>escalate_to</code>: <code>escalate</code> の場合の承認者。具体的なアクターで表す。
+それ以外は <code>null</code>。</li>
+<li class=""><code>timeout</code>（ミリ秒），<code>fallback</code>（テキストとしてのメッセージ事象），
+<code>notify</code>（アクター参照）は，理由が <code>prohibition</code> であるときは常に，<code>escalate</code> だけでなく
+<code>deny</code> についても，根拠から，重複なしで，宣言の順に埋める。それ以外のすべての理由では，
+<code>null</code>，<code>[]</code>，<code>[]</code> である。</li>
+</ul>
+<p>規範は，次のとき<strong>静的</strong>である。内容が <code>message_event</code> である許可または禁止であり，
+<code>trigger:</code>，<code>until:</code>，<code>deadline:</code> を持たず，どの権能も <code>effects:</code> でそれを名指さず，
+どの規範も <code>reparation:</code> としてそれを名指さず，その規範のどのアクター参照も契約インスタンスが
+束縛する添字を持たない。アクター参照とは，その負担者，相手方，内容，その <code>escalate_to</code> と
+<code>notify</code>，およびその <code>fallback</code> の送信者と受信者である。G.5により，静的な規範は，
+動作中のすべてのインスタンスで，その開始から終了まで効力を持つ。そのため，入力は
+静的な規範のフラグを運ばない。方針は契約の1つの版に対して生成する。改正には新しい方針が
+必要である。</p>
+<p>生成した方針は，すべての入力について，G.5の決定関数と同じ <code>decision</code> を返さなければならない。
+このとき，静的な規範は効力を持つものとし，その他のフラグと派生インスタンスは入力から取り，
+入力が与えないものはすべて不明とする。方針言語が2つの結果しか持たないターゲットは，
+G.5が <code>escalate</code> を与えるところで <code>deny</code> を返す。結果のその他のフィールドは，方針が
+作ってもよく，ジェネレータが方針とともに出力する表（禁止ごとの <code>escalate_to</code>，<code>timeout</code>，
+<code>fallback</code>，<code>notify</code>）からランタイムが作ってもよい。ジェネレータは，生成物の中に，
+メッセージを内容とする許可または禁止のうち静的でないものをそれぞれ，実行時の状態を
+必要とするものとして列挙し，それとは別に，他の内容を持つ許可または禁止をそれぞれ，
+境界で効果を持たないものとして列挙しなければならない。他の種類の規範は列挙しない。
+保留，解放，委任の管理（G.6，G.7）は，方針ではなくランタイムに属する。</p>
+<p>入力に <code>message</code> だけを与えたときのG.12の例（参考）。</p>
+<table><thead><tr><th><code>message</code><th>結果<tbody><tr><td><code>PLANNER -> TICKETS : search_tickets</code><td><code>allow</code>，<code>permission</code>，<code>may_search</code>（静的な許可）<tr><td><code>PLANNER -> FILES : delete_file</code><td><code>OPERATOR</code> への <code>escalate</code>，<code>prohibition</code>，<code>no_delete</code><tr><td><code>PLANNER -> FILES : format_disk</code><td><code>deny</code>，<code>undeclared_tool</code><tr><td><code>SUMMARIZER -> FILES : read_file</code><td><code>deny</code>，<code>default</code>。上に示した <code>derived</code> の項目があれば，<code>allow</code>，<code>permission</code></table>
+<p><strong>Cedarへの対応（参考）。</strong> Cedar
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[Cutler+, OOPSLA 2024]</a>では，<code>permit</code> の方針が満たされない限り
+要求は拒否され，満たされた <code>forbid</code> の方針はすべての <code>permit</code> に優先し，評価がエラーを
+起こした方針は飛ばされる。したがって，未宣言のツールと禁止は <code>forbid</code> の方針になり，
+許可は <code>permit</code> の方針になり，ツール呼び出しの既定値は言語の既定の拒否である。
+<code>escalate</code> は拒否として返され，出力した表からランタイムが解決する。
+エラーを起こした <code>forbid</code> の方針は飛ばされ，拒否しないことになるため，生成した方針は，
+上のスキーマのどの入力に対してもエラーを起こさないようにする必要がある。すなわち，
+省略可能なすべての属性について，読む前にその存在を調べる。G.5が許可なしに許すメッセージ
+（統治されないメッセージ，既定値が <code>allow</code> である契約）には，明示的な <code>permit</code> の方針が
+必要である。また，強制される契約が2つ以上あるとき，契約をまたぐ拒否優先には，
+契約ごとに，その契約が許さないものに対する追加の <code>forbid</code> の方針が必要である。
+Cedarの答えだけからは，そのような方針による拒否や言語の既定値による拒否を，
+「静的でない許可または派生した許可が許すかもしれない」場合と区別できない。
+そのため，Cedarターゲットは静的な規範だけを扱い，残りはランタイムが決定する。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g11-エージェントプロトコルへの対応参考>G.11 エージェントプロトコルへの対応（参考）<a href=#g11-エージェントプロトコルへの対応参考 class=hash-link aria-label="G.11 エージェントプロトコルへの対応（参考） への直接リンク" title="G.11 エージェントプロトコルへの対応（参考） への直接リンク" translate=no>​</a></h2>
+<p>決定関数はプロトコルに依存しない。次の表は，意図している対応を示す。
+規範的な事項はこれに依存しない。</p>
+<table><thead><tr><th>CADL（agents 0.1）<th>MCP <a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[MCP, 2026-07-28]</a><th>A2A <a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[Linux Foundation, A2A 2025]</a>（要確認）<tbody><tr><td><code>kind: tool_server</code>，ツール，ツール呼び出し<td>MCPサーバ，そのツール，ツールを呼び出す要求<td>—<tr><td><code>kind: llm_agent</code><td>ツールを呼び出すときのMCPクライアント<td>A2Aエージェント<tr><td>エージェント間の通常のメッセージ<td>—<td>あるエージェントから別のエージェントへのメッセージ<tr><td><code>point: gateway</code><td>サーバの前に置くゲートウェイ。仕様は，ゲートウェイが要求の本体を構文解析せずに要求を経路制御し計量できるように，ヘッダ <code>Mcp-Method</code> と <code>Mcp-Name</code> を必須としている<td>エージェント間の仲介者<tr><td><code>escalate_to:</code>，保留のid<td>プロトコルの範囲外<td>プロトコルの範囲外</table>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g12-例>G.12 例<a href=#g12-例 class=hash-link aria-label="G.12 例 への直接リンク" title="G.12 例 への直接リンク" translate=no>​</a></h2>
+<p>人のオペレータが，LLMのプランナーに報告書の作成を依頼する。プランナーは2つのツールサーバの
+ツールを呼び出し，ファイルの要約にサブエージェントを使う。このファイルは，本付録の
+すべての規則と，<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>付録F</a>のN-1からN-12を満たす。</p>
+<div class="language-yaml codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-yaml codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token key atrule" style=color:#00a4db>sos</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>name</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"AssistedReporting"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>extensions</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>agents</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>actors</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> OPERATOR</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>role</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"Human operator who owns the task and the files"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>agent</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> human </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> PLANNER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>role</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"LLM agent that plans the report and calls tools"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>agent</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> llm_agent</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>protocol</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> a2a </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> SUMMARIZER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>role</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"LLM sub-agent that summarises files for the planner"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>agent</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> llm_agent</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>protocol</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> a2a </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> FILES</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>role</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"File store"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>agent</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> tool_server</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>protocol</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> mcp</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>tools</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">read_file</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> delete_file</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> TICKETS</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>role</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"Issue tracker"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>agent</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> tool_server</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>protocol</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> mcp</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>tools</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">search_tickets</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> create_ticket</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>contracts</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> ASSISTED_REPORTING</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>parties</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">OPERATOR</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> PLANNER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> SUMMARIZER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> FILES</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> TICKETS</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>enforcement</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>point</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> gateway      </span><span class="token comment" style=color:#999988;font-style:italic># default: を省略 -> ツール呼び出しは deny，他のメッセージは allow</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>counts_as</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>when</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"OPERATOR -> PLANNER : approve"</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>creates</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> approval </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>when</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"OPERATOR -> PLANNER : reject"</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>creates</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> rejection </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> may_read</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> permission</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> OPERATOR</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"OPERATOR -> FILES : read_file"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> may_search</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> permission</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> PLANNER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"PLANNER -> TICKETS : search_tickets"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> may_file_ticket</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> permission</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> PLANNER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"PLANNER -> TICKETS : create_ticket"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> no_delete</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> prohibition</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> PLANNER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"PLANNER -> FILES : delete_file"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>on_denied</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>escalate_to</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> OPERATOR</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>timeout</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> 10min</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>fallback</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"PLANNER -> TICKETS : create_ticket"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>notify</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> OPERATOR</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>delegations</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norm</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> may_read</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>to</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">PLANNER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> SUMMARIZER</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>grant</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> grant_read</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>revoke</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> revoke_read</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>max_depth</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>2</span><br/></div></code></pre></div></div>
+<p>この契約は <code>lifecycle:</code> ブロックを持たず，インスタンスを生成するホストもない。
+そのため，その単一のインスタンス（ここでは <code>default</code> と呼ぶ）は，判定点の開始時から存在する。
+4つの規範は発動条件を持たない。開始時から効力を持ち，4つとも静的である（G.10）。
+読み取りの許可はオペレータのものである。プランナーとサブエージェントは，高々2つのリンクに
+わたる委任を通じてのみ読み取る。</p>
+<p>09:00:00にオペレータが <code>OPERATOR -> PLANNER : grant_read</code> を送り，09:00:02にプランナーが
+<code>PLANNER -> SUMMARIZER : grant_read</code> を送る。どちらも，どの規範も適用されない
+通常のメッセージであるため，既定値によって許される。1つ目は，連鎖 OPERATOR → PLANNER を持つ
+<code>may_read</code> の派生インスタンスを <code>PLANNER</code> のために作り，2つ目は，連鎖
+OPERATOR → PLANNER → SUMMARIZER を持つ派生インスタンスを <code>SUMMARIZER</code> のために作る。
+さらに <code>SUMMARIZER -> PLANNER : grant_read</code> が送られたとすれば，権限のない行為として
+記録される。<code>PLANNER</code> は <code>SUMMARIZER</code> の連鎖に現れ（条件3），その連鎖はすでに2つのリンクを
+持つ（条件4）からである。</p>
+<p><strong>呼び出し1 — 連鎖を通じて許される。</strong> 09:00:05にサブエージェントが
+<code>SUMMARIZER -> FILES : read_file</code> を送る。このメッセージは統治され，ツールは宣言されている。
+禁止は適用されない。送信者が <code>no_delete</code> の負担者でないからである。<code>SUMMARIZER</code> の
+派生インスタンスは有効であり（<code>may_read</code> は効力を持ち，連鎖は2つのリンクを持ち，
+そのアクターは <code>to:</code> にある），保持者を送信者として読んだその内容は一致する。
+決定は <code>allow</code> である。</p>
+<p><strong>呼び出し2 — エスカレーションされ，承認される。</strong> 09:03:00にプランナーが
+<code>PLANNER -> FILES : delete_file</code> を送る。<code>no_delete</code> は効力を持ち，適用される。
+それは唯一の根拠であり，その <code>escalate_to:</code> は送信者でないため，決定は <code>escalate</code> である。
+承認者 <code>OPERATOR</code> と期限09:13:00を持つ保留 <code>h-1</code> が作られる。09:03:40にオペレータが
+<code>OPERATOR -> PLANNER : approve("h-1")</code> を送る。これは，既定値によって許される
+通常のメッセージである。その観測の段階1の後，<code>OPERATOR</code> が行った事象 <code>approval</code> が
+保留のid <code>h-1</code> を運び，保留は <code>approved</code> になる。段階6の後，再検査は，宣言されたツール，
+動作中のインスタンスを確認し，根拠以外の禁止がないことを確認する。そのため，保留された
+メッセージは，時刻印09:03:40を持つ次の観測になる。これは <code>no_delete</code> の内容が
+起こったことにはならず，<code>no_delete</code> は <code>active</code> のままである。オペレータが <code>reject("h-1")</code> を
+送った場合，または09:13:00まで何も送らなかった場合，終結記録は，理由 <code>rejected</code> の <code>deny</code>，
+または時刻09:13:00を持つ <code>expired</code> の <code>deny</code> になる。プランナーは結果の中に代替のメッセージを
+見いだし，<code>may_file_ticket</code> がその呼び出しを許す。</p>
+<p><strong>呼び出し3 — 取消しの後に拒否される。</strong> 09:10:00にオペレータが
+<code>OPERATOR -> PLANNER : revoke_read</code> を送る。<code>PLANNER</code> の連鎖の中で <code>OPERATOR</code> は <code>PLANNER</code> より
+前に現れるため，<code>PLANNER</code> のインスタンスは解除され，それとともに，連鎖に <code>PLANNER</code> が現れる
+<code>SUMMARIZER</code> のインスタンスも解除される。09:10:30にサブエージェントが
+<code>SUMMARIZER -> FILES : read_file</code> を送る。禁止は適用されない。<code>SUMMARIZER</code> は有効な許可を
+保持しておらず，元の <code>may_read</code> は，送信者がその負担者でないため適用されない。
+このメッセージはツール呼び出しであり，<code>default:</code> は省略されているため，契約は拒否する。
+サブエージェントは，プランナーがもはや持っていない権限を保つことができない。</p>
+<p>3つの呼び出しの監査記録を示す（呼び出し2の2つの記録は保留 <code>h-1</code> を共有する）。
+4つの記録のすべてで，<code>instances</code> は <code>ASSISTED_REPORTING</code> のインスタンス <code>default</code> であり，
+<code>contracts</code> は <code>["ASSISTED_REPORTING"]</code> である。呼び出し2の最初の記録は，表の下に
+全体を示す。</p>
+<table><thead><tr><th><code>time</code><th><code>message</code><th><code>decision</code><th><code>reason</code><th><code>norms</code><th><code>provenance</code><th><code>hold_id</code><th><code>outcome</code><tbody><tr><td>09:00:05<td><code>SUMMARIZER</code>, <code>FILES</code>, <code>read_file</code><td><code>allow</code><td><code>permission</code><td><code>may_read</code><td>OPERATOR, PLANNER, SUMMARIZER<td><code>null</code><td><code>null</code><tr><td>09:03:00<td><code>PLANNER</code>, <code>FILES</code>, <code>delete_file</code><td><code>escalate</code><td><code>prohibition</code><td><code>no_delete</code><td>—<td><code>h-1</code><td><code>null</code><tr><td>09:03:40<td><code>PLANNER</code>, <code>FILES</code>, <code>delete_file</code><td><code>allow</code><td><code>approved</code><td><code>no_delete</code><td>—<td><code>h-1</code><td><code>approved</code><tr><td>09:10:30<td><code>SUMMARIZER</code>, <code>FILES</code>, <code>read_file</code><td><code>deny</code><td><code>default</code><td>—<td>—<td><code>null</code><td><code>null</code></table>
+<div class="language-jsonc codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-jsonc codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token plain">{ "time": "2026-11-10T09:03:00Z",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "message": { "from": "PLANNER", "to": "FILES", "name": "delete_file" },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "instances": [ { "contract": "ASSISTED_REPORTING", "instance": "default" } ],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "decision": "escalate", "reason": "prohibition",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "contracts": ["ASSISTED_REPORTING"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "norms": ["ASSISTED_REPORTING.no_delete"], "provenance": [],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "escalate_to": "OPERATOR", "timeout": 600000,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "fallback": ["PLANNER -> TICKETS : create_ticket"], "notify": ["OPERATOR"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "hold_id": "h-1", "outcome": null }</span><br/></div></code></pre></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g13-irへの追加とリファレンス実装の状況>G.13 IRへの追加とリファレンス実装の状況<a href=#g13-irへの追加とリファレンス実装の状況 class=hash-link aria-label="G.13 IRへの追加とリファレンス実装の状況 への直接リンク" title="G.13 IRへの追加とリファレンス実装の状況 への直接リンク" translate=no>​</a></h2>
+<p>シミュレータIR（E.7，F.9）を3か所で拡張する。そこと同じく，IRはデータクラスを
+そのまま直列化したものであり，入れ子のブロックを平らにする。</p>
+<div class="language-jsonc codeBlockContainer_Ckt0 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_QJqH><pre tabindex=0 class="prism-code language-jsonc codeBlock_bY9V thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_e6Vv><div class=token-line style=color:#393A34><span class="token plain">// each actor under institution.actors</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">{ "id": "FILES",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "agent_kind": "tool_server",          // null for an actor without agent:</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "agent_protocol": "mcp",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "agent_tools": ["read_file", "delete_file"] }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">// each contract under institution.contracts</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">{ "enforced": true,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "enforcement_default": null,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "enforcement_point": "gateway",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "norms": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    { "id": "no_delete",                // ... and the fields of F.9</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_denied_escalate_to": "OPERATOR",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_denied_timeout_ms": 600000,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_denied_fallback": "PLANNER -> TICKETS : create_ticket",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_denied_notify": "OPERATOR" } ],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "delegations": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    { "norm": "may_read", "to": ["PLANNER", "SUMMARIZER"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "grant": "grant_read", "revoke": "revoke_read",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "max_depth": 2, "until": null } ] }</span><br/></div></code></pre></div></div>
+<p><code>enforced</code> は，契約がキー <code>enforcement:</code> を持つとき，値がnullまたは空であっても，
+<code>true</code> である。<code>enforcement_default</code> は，<code>default:</code> を省略したときは <code>null</code> である。
+そのときの既定値はメッセージの種類に依存するからであり，それを適用することは利用側に委ねる。
+<code>enforcement_point</code> は，強制される契約では値を持ち（<code>gateway</code>），それ以外では <code>null</code> である。
+<code>max_depth</code> は常に値を持つ（<code>1</code>）。<code>fallback</code> と <code>until</code> はテキストのまま保持する。
+<code>agent_tools</code> と <code>delegations</code> は，列挙するものがないときは空のリストであり，4つの
+<code>on_denied_*</code> フィールドは，<code>on_denied:</code> を持たない規範では <code>null</code> である。
+ここに示したすべてのフィールド（<code>agent_*</code>，<code>enforced</code>，<code>enforcement_*</code>，<code>delegations</code>，
+<code>on_denied_*</code>）は，ファイルが <code>agents: 0.1</code> を宣言するときにだけ存在する。
+<code>norms: 0.1</code> だけを宣言するファイルは，F.9のIRとちょうど同じIRを持つ。</p>
+<p><strong>リファレンス実装。</strong> <code>cadl</code> 0.3.20は，agents 0.1を次のように実装する。
+4つの新しいキーを構文解析し，<code>cadl check</code> でG-1からG-16を適用し（「望ましい」は警告とする），
+各ブロックを上のIRへ変換する。単なる数値で与えた <code>timeout:</code> は秒として読む。これは，
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>が
+期限について述べる寛容な形式である。<code>cadl agents-decide</code> は，G.10の方針の入力に対して
+G.5の決定関数を実装する。これは状態を持たない。保留，解放，期限切れ，付与，取消しは
+実装しておらず，有効な派生インスタンスは入力を通じて与える。
+<code>cadl codegen -t agent-rego</code> は，完全な結果を返すRegoの方針を出力し，
+<code>-t agent-cedar</code> は，静的な規範に対するCedarの方針を，付随する表とともに出力する。
+リファレンス実装のテストは，<code>opa</code> がインストールされているときにだけ，生成したRegoを
+OPAエンジンで実行し，Cedarの方針はまったく実行しない。監査記録（G.8）を作るコマンドはない。</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g14-後方互換性>G.14 後方互換性<a href=#g14-後方互換性 class=hash-link aria-label="G.14 後方互換性 への直接リンク" title="G.14 後方互換性 への直接リンク" translate=no>​</a></h2>
+<p>本拡張を用いないCADL v0.3のファイルは引き続き有効であり，同じように読まれる。
+<code>norms: 0.1</code> だけを宣言するファイルも同じである。キー <code>enforcement:</code> を持たない契約は
+強制されず，その規範は<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>付録F</a>の意味をそのまま保つ。
+強制される契約について，本付録はF.5に次の追加を行い，それ以外の変更は行わない。
+ホストのない契約のインスタンスは，判定点の開始時から存在する。拒否または保留された
+メッセージは観測にならない。許可と禁止は，効力を持つかどうかのフラグを持つ。
+内容を契約自身が拒否または保留した義務は <code>excused</code> になる（以上はすべてG.5）。
+<code>approval</code> と <code>rejection</code> は保留のidを運び，段階の順序を拡張し，解放されたメッセージは
+その根拠に違反しない（G.6）。許可は派生インスタンスを持つ（G.7）。</p>
+<p><code>agents: 0.1</code> を宣言せずに <code>agent:</code>，<code>enforcement:</code>，<code>delegations:</code>，または <code>on_denied:</code> を
+用いるファイルは，本付録に適合しない。エージェント統治拡張を扱う処理系は，そのような
+ファイルではこれらのキーを解釈せず（検査もIRへの変換もしない），用いられているキーを
+名指す警告をファイルごとに1つ出すことが望ましい。<code>norms: 0.1</code> なしに <code>agents: 0.1</code> を
+宣言するファイルは，G-1のエラーになる。
+本拡張を実装していない処理系は，本拡張を用いるファイルを拒否してはならない。
+ファイルごとに1つの情報レベルの診断を出すことが望ましい。</div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label=ドキュメントページ><a class="pagination-nav__link pagination-nav__link--prev" href=/cadl-spec/ja/docs/spec/appendix-f-norms/><div class=pagination-nav__sublabel>前へ</div><div class=pagination-nav__label>付録F. 規範拡張</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/cadl-spec/ja/docs/spec/appendix-h-stochastic/><div class=pagination-nav__sublabel>次へ</div><div class=pagination-nav__label>付録H. 確率モデル拡張</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#g1-動機 class="table-of-contents__link toc-highlight">G.1 動機</a><li><a href=#g2-概念 class="table-of-contents__link toc-highlight">G.2 概念</a><li><a href=#g3-構文a3a4f3へのebnfの追加 class="table-of-contents__link toc-highlight">G.3 構文（A.3，A.4，F.3へのEBNFの追加）</a><li><a href=#g4-メッセージとツール呼び出し class="table-of-contents__link toc-highlight">G.4 メッセージとツール呼び出し</a><li><a href=#g5-境界での規範の強制 class="table-of-contents__link toc-highlight">G.5 境界での規範の強制</a><ul><li><a href=#インスタンス統治されるメッセージ決定に加わる規範 class="table-of-contents__link toc-highlight">インスタンス，統治されるメッセージ，決定に加わる規範</a><li><a href=#決定関数 class="table-of-contents__link toc-highlight">決定関数</a><li><a href=#決定がトレースに与える効果 class="table-of-contents__link toc-highlight">決定がトレースに与える効果</a></ul><li><a href=#g6-拒否の後のエスカレーション class="table-of-contents__link toc-highlight">G.6 拒否の後のエスカレーション</a><li><a href=#g7-来歴を伴う委任 class="table-of-contents__link toc-highlight">G.7 来歴を伴う委任</a><li><a href=#g8-監査記録 class="table-of-contents__link toc-highlight">G.8 監査記録</a><li><a href=#g9-static-semantics class="table-of-contents__link toc-highlight">G.9 静的意味論</a><li><a href=#g10-コード生成 class="table-of-contents__link toc-highlight">G.10 コード生成</a><li><a href=#g11-エージェントプロトコルへの対応参考 class="table-of-contents__link toc-highlight">G.11 エージェントプロトコルへの対応（参考）</a><li><a href=#g12-例 class="table-of-contents__link toc-highlight">G.12 例</a><li><a href=#g13-irへの追加とリファレンス実装の状況 class="table-of-contents__link toc-highlight">G.13 IRへの追加とリファレンス実装の状況</a><li><a href=#g14-後方互換性 class="table-of-contents__link toc-highlight">G.14 後方互換性</a></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class=footer__title>ドキュメント</div><ul class="footer__items clean-list"><li class=footer__item><a class=footer__link-item href=/cadl-spec/ja/docs/quickstart/>クイックスタート</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/ja/docs/spec/intro/>仕様書</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/ja/docs/handson/>ハンズオン</a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>ツール</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class=footer__link-item>cadl（コンパイラ / CLI）<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://pypi.org/project/cadl-lang/ target=_blank rel="noopener noreferrer" class=footer__link-item>PyPI の cadl-lang<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class=footer__link-item>CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-raspimouse-simulator target=_blank rel="noopener noreferrer" class=footer__link-item>ハンズオン用シミュレータ<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>フィードバック</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl/issues target=_blank rel="noopener noreferrer" class=footer__link-item>ツールの問題を報告<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec/issues target=_blank rel="noopener noreferrer" class=footer__link-item>このサイトの問題を報告<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec target=_blank rel="noopener noreferrer" class=footer__link-item>このサイトのソース<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>組織</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://www.ertl.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>ERTL<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://www.nagoya-u.ac.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>名古屋大学<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a></ul></div></div><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University. 文書は <a href=https://creativecommons.org/licenses/by/4.0/deed.ja>CC BY 4.0</a>，コード例とサイトのソースは <a href=https://www.apache.org/licenses/LICENSE-2.0>Apache License 2.0</a> で提供します。Built with Docusaurus.</div></div></div></footer></div></body>
