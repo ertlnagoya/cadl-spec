@@ -109,3 +109,103 @@ description: "References cited in the CADL specification."
 [52] E. Shinan et al., "Lark: a parsing toolkit for Python," https://github.com/lark-parser/lark (accessed Oct. 2026).
 
 [53] S. Bansal, M. Chen, S. Herbert, and C. J. Tomlin, "Hamilton-Jacobi Reachability: A Brief Overview and Recent Advances," in Proc. IEEE CDC, pp. 2242-2253, 2017.
+
+[54] I. Incer, A. Benveniste, A. Sangiovanni-Vincentelli, and S. A. Seshia, "Hypercontracts," in Proc. NASA Formal Methods (NFM), LNCS, pp. 674-692, 2022, https://arxiv.org/abs/2106.02449.
+
+[55] I. Incer, A. Badithela, J. Graebener, P. Mallozzi, A. Pandey, S.-J. Yu, A. Benveniste, B. Caillaud, R. M. Murray, A. Sangiovanni-Vincentelli, and S. A. Seshia, "Pacti: Scaling Assume-Guarantee Reasoning for System Analysis and Design," arXiv:2303.17751 (preprint), 2023, https://arxiv.org/abs/2303.17751.
+
+[56] A. Cimatti, M. Dorigatti, and S. Tonetta, "OCRA: A tool for checking the refinement of temporal contracts," in Proc. IEEE/ACM ASE, 2013, https://es-static.fbk.eu/people/tonetta/publications/ase13.pdf.
+
+[57] A. Champion, A. Mebsout, C. Sticksel, and C. Tinelli, "The Kind 2 Model Checker," in Proc. CAV, 2016, doi:10.1007/978-3-319-41591-8_24.
+
+[58] R. Dewes and R. Dimitrova, "Contract-based Design and Verification of Multi-Agent Systems with Quantitative Temporal Requirements," in Proc. AAAI, 2025, https://arxiv.org/abs/2412.13114.
+
+[59] Fondazione Bruno Kessler, "SAWS2: Safety Analysis, Validation & Verification for SysML v2," tool page, http://fm.fbk.eu/tools/saws2-safety-analysis-validation-verification-for-sysml-v2/ (accessed Nov. 2026).
+
+[60] C. Etzien, T. Gezgin, S. B. Fröschle, S. Henkler, and A. Rettberg, "Contracts for evolving systems," in Proc. IEEE ISORC, pp. 1-8, 2013, doi:10.1109/ISORC.2013.6913235.
+
+[61] S. Junges, E. Ábrahám, C. Hensel, N. Jansen, J.-P. Katoen, T. Quatmann, and M. Volk, "Parameter synthesis for Markov models: covering the parameter space," Formal Methods in System Design, vol. 62, pp. 181-259, 2024, doi:10.1007/s10703-023-00442-x.
+
+[62] C. Hensel, S. Junges, J.-P. Katoen, T. Quatmann, and M. Volk, "The probabilistic model checker Storm," Int. J. Software Tools for Technology Transfer, vol. 24, no. 4, pp. 589-610, 2022, doi:10.1007/s10009-021-00633-z.
+
+[63] J. Spel, S. Junges, and J.-P. Katoen, "Are Parametric Markov Chains Monotonic?," in Proc. ATVA, LNCS, 2019, doi:10.1007/978-3-030-31784-3_28.
+
+[64] E. Bartocci, C. Mateis, E. Nesterini, and D. Ničković, "Survey on mining signal temporal logic specifications," Information and Computation, vol. 289, 2022, https://zenodo.org/record/7118379.
+
+[65] Y. Chen et al., "NL2TL: Transforming Natural Languages to Temporal Logics using Large Language Models," in Proc. EMNLP, 2023, https://arxiv.org/abs/2305.07766.
+
+[66] A. Bisharat, B. Ortiz, E. Spencer, K. Bhadauria, T. Wang, G. K. Thiruvathukal, K. Läufer, and M. Abuhamad, "Can LLMs Write Correct TLA+ Specifications? Evaluating Natural-Language-to-TLA+ Generation," in Proc. ICSOFT, pp. 39-50, 2026, https://arxiv.org/abs/2606.05792.
+
+[67] J. Winkler and W. Kremser, "Towards a digital twin of a holacratic organization: a point of view on Lyytinen et al. (2023)," Journal of Organization Design, vol. 13, no. 3, pp. 95-99, 2024, doi:10.1007/s41469-024-00163-3.
+
+[68] E. Denney, G. J. Pai, and I. Habli, "Dynamic Safety Cases for Through-Life Safety Assurance," in Proc. IEEE/ACM ICSE, vol. 2, pp. 587-590, 2015, doi:10.1109/ICSE.2015.199.
+
+[69] R. Wei, S. Foster, H. Mei, F. Yan, R. Yang, I. Habli, C. O'Halloran, N. Tudor, T. Kelly, and Y. Nemouchi, "ACCESS: Assurance Case Centric Engineering of Safety-critical Systems," Journal of Systems and Software, 2024, doi:10.1016/j.jss.2024.112034.
+
+[70] Z. Chen, Y. Deng, and W. Du, "Trusta: Reasoning about Assurance Cases with Formal Methods and Large Language Models," Science of Computer Programming, vol. 244, 103288, 2025, doi:10.1016/j.scico.2025.103288.
+
+[71] SCSC Assurance Case Working Group, "Goal Structuring Notation Community Standard, Version 3," SCSC-141C, May 2021, https://scsc.uk/scsc-141c.
+
+[72] Object Management Group, "Structured Assurance Case Metamodel (SACM), Version 2.3," Oct. 2023, https://www.omg.org/spec/SACM.
+
+[73] N. Bencomo, S. Götz, and H. Song, "Models{'@'}run.time: a guided tour of the state of the art and research challenges," Software and Systems Modeling, vol. 18, no. 5, pp. 3049-3082, 2019, doi:10.1007/s10270-018-00712-x.
+
+[74] C. E. Budde, P. R. D'Argenio, A. Hartmanns, and S. Sedwards, "A Statistical Model Checker for Nondeterminism and Rare Events," in Proc. TACAS, LNCS 10806, pp. 340-358, 2018, https://research.utwente.nl/en/publications/a-statistical-model-checker-for-nondeterminism-and-rare-events/.
+
+[75] J. Gutierrez, L. Hammond, A. W. Lin, M. Najib, and M. Wooldridge, "Rational Verification for Probabilistic Systems," in Proc. KR, 2021, https://arxiv.org/abs/2107.09119.
+
+[76] J. Gutierrez, M. Najib, G. Perelli, and M. Wooldridge, "Designing Equilibria in Concurrent Games with Social Welfare and Temporal Logic Constraints," Logical Methods in Computer Science, 2024, https://lmcs.episciences.org/14890.
+
+[77] D. Hyland, M. Mittelmann, A. Murano, G. Perelli, and M. Wooldridge, "Incentive Design for Rational Agents," in Proc. KR, 2024, https://proceedings.kr.org/2024/44/kr2024-0044-hyland-et-al.pdf.
+
+[78] R. Iannella, N. Fornara, and V. Rodríguez-Doncel, "W3C Standard ODRL Policy gaining industry adoption," W3C Blog, 23 Oct. 2025, https://www.w3.org/blog/2025/w3c-standard-odrl-policy-gaining-industry-adoption.
+
+[79] W3C ODRL Community Group, "ODRL Formal Semantics," Draft Community Group Report, https://w3c.github.io/odrl/formal-semantics/ (accessed Nov. 2026).
+
+[80] A. Parvizimosaed, M. Roveri, A. Rasti, A. A. Anda, S. Alfuhaid, D. Amyot, L. Logrippo, and J. Mylopoulos, "SymboleoPC: checking properties of legal contracts," Software and Systems Modeling, vol. 24, no. 4, pp. 1093-1126, 2025, doi:10.1007/s10270-024-01180-2.
+
+[81] J. F. Hübner, O. Boissier, and R. H. Bordini, "A normative programming language for multi-agent organisations," Annals of Mathematics and Artificial Intelligence, 2011, doi:10.1007/s10472-011-9251-0.
+
+[82] G. Boella and L. van der Torre, "Regulative and Constitutive Norms in Normative Multiagent Systems," in Proc. KR, 2004.
+
+[83] N. Alechina, G. De Giacomo, B. Logan, and G. Perelli, "Automatic Synthesis of Dynamic Norms for Multi-Agent Systems," in Proc. KR, pp. 12-21, 2022, doi:10.24963/kr.2022/2.
+
+[84] D. Ničković and T. Yamaguchi, "RTAMT: Online Robustness Monitors from STL," in Proc. ATVA, 2020, https://arxiv.org/abs/2005.11827.
+
+[85] T. Yamaguchi, B. Hoxha, and D. Ničković, "RTAMT - Runtime Robustness Monitors with Application to CPS and Robotics," Int. J. Software Tools for Technology Transfer, vol. 26, no. 5, pp. 79-99, 2024, https://arxiv.org/abs/2501.18608.
+
+[86] C. Johannsen, P. Jones, B. Kempa, K. Y. Rozier, and P. Zhang, "R2U2 Version 3.0: Re-Imagining a Toolchain for Specification, Resource Estimation, and Optimized Observer Generation for Runtime Verification in Hardware and Software," in Proc. CAV, LNCS 13966, pp. 483-497, 2023, doi:10.1007/978-3-031-37709-9_23.
+
+[87] T. A. Henzinger and N. E. Saraç, "Monitorability under Assumptions," in Proc. RV, 2020, https://research-explorer.ista.ac.at/record/8623.
+
+[88] K. Kharraz, S. Azzopardi, G. Schneider, and M. Leucker, "Synchronous Agents, Verification, and Blame - A Deontic View," in Proc. ICTAC, 2023, https://research.chalmers.se/en/publication/547125.
+
+[89] C. Colombo, G. J. Pace, and G. Schneider, "Interest Beyond Violation: On Points-of-Interest in Runtime Verification," in Proc. ISoLA, 2024, https://research.chalmers.se/en/publication/543803.
+
+[90] A. Francalanza, J. A. Pérez, and C. Sánchez, "Runtime verification for decentralised and distributed systems," in Lectures on Runtime Verification, E. Bartocci and Y. Falcone, Eds., LNCS 10457, pp. 176-210, 2018.
+
+[91] M. Alshiekh, R. Bloem, R. Ehlers, B. Könighofer, S. Niekum, and U. Topcu, "Safe Reinforcement Learning via Shielding," in Proc. AAAI, pp. 2669-2678, 2018, doi:10.1609/aaai.v32i1.11797.
+
+[92] D. Melcer, C. Amato, and S. Tripakis, "Shield Decentralization for Safe Multi-Agent Reinforcement Learning," in Proc. NeurIPS, 2022, https://neurips.cc/virtual/2022/poster/54764.
+
+[93] J. Gutierrez, M. Najib, G. Perelli, and M. Wooldridge, "Automated temporal equilibrium analysis: Verification and synthesis of multi-player games," Artificial Intelligence, vol. 287, 2020, https://arxiv.org/abs/2008.05638.
+
+[94] M. Kwiatkowska, G. Norman, D. Parker, and G. Santos, "Correlated Equilibria and Fairness in Concurrent Stochastic Games," in Proc. TACAS, LNCS 13244, pp. 60-78, 2022, https://arxiv.org/abs/2201.09702.
+
+[95] M. Kwiatkowska, G. Norman, D. Parker, and G. Santos, "Expectation vs. Reality: Towards Verification of Psychological Games," LNCS 15261, Springer, 2024, https://prismmodelchecker.org/games/publ.php.
+
+[96] M. Mittelmann, B. Maubert, A. Murano, and L. Perrussel, "Formal Verification of Bayesian Mechanisms," in Proc. AAAI, 2023, https://ojs.aaai.org/index.php/AAAI/article/view/26373.
+
+[97] Model Context Protocol, "The 2026-07-28 Specification," MCP Blog, 28 Jul. 2026, https://blog.modelcontextprotocol.io/posts/2026-07-28/.
+
+[98] The Linux Foundation, "Linux Foundation Announces the Formation of the Agentic AI Foundation," press release, Dec. 2025, https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation.
+
+[99] The Linux Foundation, "Linux Foundation Launches the Agent2Agent Protocol Project to Enable Secure, Intelligent Communication Between AI Agents," press release, Jun. 2025, https://linuxfoundation.org/press/linux-foundation-launches-the-agent2agent-protocol-project-to-enable-secure-intelligent-communication-between-ai-agents.
+
+[100] R. Kang and Y. Diponegoro, "Governance Gaps in Agent Interoperability Protocols: What MCP, A2A, and ACP Cannot Express," arXiv:2606.31498 (preprint), 2026, https://arxiv.org/abs/2606.31498.
+
+[101] Amazon Web Services, "Why Policy in Amazon Bedrock AgentCore chose Cedar for securing agentic workflows," AWS Security Blog, https://aws.amazon.com/blogs/security/why-policy-in-amazon-bedrock-agentcore-chose-cedar-for-securing-agentic-workflows/ (accessed Nov. 2026).
+
+[102] P. Dantas, L. Cordeiro, E. Nowroozi, and N. Tihanyi, "Toward Safe LLM Agents: A Survey of Specification, Verification, and Enforcement," arXiv:2608.14590 (preprint), 2026, https://arxiv.org/abs/2608.14590.
+
+[103] M. Bracale Syrnikov, F. Pierucci, M. Galisai, M. Prandi, P. Bisconti, F. Giarrusso, O. Sorokoletova, V. Suriani, and D. Nardi, "Institutional AI: Governing LLM Collusion in Multi-Agent Cournot Markets via Public Governance Graphs," arXiv:2601.11369 (preprint), 2026, https://arxiv.org/abs/2601.11369.
