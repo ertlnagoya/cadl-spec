@@ -219,3 +219,5 @@ description: "References cited in the CADL specification."
 [107] J. W. Cutler, C. Disselkoen, A. Eline, S. He, K. Headley, M. Hicks, K. Hietala, E. Ioannidis, J. Kastner, A. Mamat, D. McAdams, M. McCutchen, N. Rungta, E. Torlak, and A. M. Wells, "Cedar: A New Language for Expressive, Fast, Safe, and Analyzable Authorization," Proc. ACM Program. Lang., vol. 8, no. OOPSLA1, pp. 670-697, 2024, doi:10.1145/3649835. The language reference is the Cedar Policy Language Reference Guide, https://docs.cedarpolicy.com/ (accessed Nov. 2026).
 
 [108] M. Kwiatkowska, G. Norman, D. Parker, and G. Santos, "PRISM-games 3.0: Stochastic Game Verification with Concurrency, Equilibria and Time," in Proc. CAV, Part II, LNCS 12225, pp. 475-487, 2020, doi:10.1007/978-3-030-53291-8_25.
+
+[109] T. Quatmann, C. Dehnert, N. Jansen, S. Junges, and J.-P. Katoen, "Parameter Synthesis for Markov Models: Faster Than Ever," in Proc. ATVA, LNCS, Springer, pp. 50-67, 2016, doi:10.1007/978-3-319-46520-3_4.
