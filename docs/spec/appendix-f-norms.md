@@ -213,6 +213,20 @@ A `tpredicate` in `content:` is evaluated at observation times after
 the norm's activation (F.5). A predicate without temporal operators
 keeps the meaning it has in the core language.
 
+**When their value is known.** The value of an operator at time t can
+depend on observations after t. It is **decided** at the first
+observation that determines it. `within(d, p)` is decided true, and
+`throughout(d, p)` false, at the observation in `[t, t + d]` that shows
+it; `until(p, q, d)` is decided true at the observation at which `q`
+holds, and false at an observation at which `p` fails before `q` has
+held. Otherwise the value is decided at the first observation whose time
+stamp is after `t + d`: the interval is then over, `within` and `until`
+are false, and `throughout` is true. Before that the value is not
+decided, and a decided value does not change. The end of an interval is
+therefore not known at the time `t + d` itself but at the first
+observation after it; that observation need not change any quantity
+(F.5).
+
 A file that does not declare `norms: 0.1` reads `within`, `throughout`,
 and `until` as ordinary function names, as in the core language.
 
@@ -230,6 +244,25 @@ host, a single instance starts at the first observation and ends at the
 last. A trace that stops while the contract instance is still running
 is a *prefix*: the instance has not ended, and nothing is settled.
 
+A processor that receives the observations one at a time, while the
+system runs, does not know that an observation is the last one when it
+processes it. For such a processor the end of the instance is signalled
+separately, after that observation, and the norms are then settled
+(item 6 below) at the last observation received, with its time stamp,
+as in step 6 of that observation. An observation that arrives after the
+contract instance has ended is not part of the instance and has no
+effect on it.
+
+An observation need not change anything. An observation that carries
+only a time stamp is an observation like any other: predicates are
+evaluated and deadlines are checked at it. A passed deadline and the end
+of an interval are detected at an observation and not between
+observations (items 2 and 3 below, F.4). A processor that monitors a
+running system SHOULD therefore make an observation soon after the
+deadline of an active norm passes; without one, the violation, and with
+it the decision between `violated` and `excused`, waits for the next
+observation.
+
 A predicate has one of three values at an observation: true, false, or
 **undefined**, when it refers to a quantity that has no value yet;
 `AND`, `OR`, and `NOT` follow Kleene's three-valued logic. An undefined
@@ -239,6 +272,18 @@ not occur on it, and an assumption or guarantee is not decided by it.
 the previous observation of the instance or no previous observation.
 In a contract with a `lifecycle:` block, `state` in a predicate is the
 lifecycle state before the transitions of the current observation.
+
+A name that stands alone in a predicate, such as `load` in `load > 5` or
+`Delivered` in `ROBOT[i].status == Delivered`, is an observed quantity
+when the contract instance observes a quantity of that name, and a
+symbolic value otherwise. Which of the two it is does not depend on when
+its first value arrives: a quantity is undefined, not a symbolic value,
+at the observations before its first value. A symbolic value can only be
+compared with a text value, by `==`, `!=`, or `IN`; a predicate that
+uses it in another way is undefined. A processor that receives
+the observations one at a time SHOULD be given the names of such
+quantities when the instance starts; a processor that is not given them
+can read a name as a quantity only from its first value on.
 
 ### Norm instances
 
@@ -300,7 +345,9 @@ prohibition reports only its first violation.
    prohibition becomes `fulfilled`; every other norm instance, including
    an `inactive` one, becomes `discharged`. Two exceptions: a norm
    instance that became active at the observation at which the instance
-   ends was never judged and becomes `discharged`; and an obligation or
+   ends, and that step 4 of that observation did not make final,
+   becomes `discharged`, since no observation followed its activation;
+   and an obligation or
    prohibition whose `tpredicate` content is still undecided stays as it
    is, with the verdict `pending`. A violation that arises from this
    settlement is reported with its severity, but its `reparation:` and
@@ -376,8 +423,10 @@ operators, on the finite trace observed so far is one of four values:
 | `excused` | `violated` at or after the observation at which an assumption of the contract failed | fails at or after the observation at which an assumption failed |
 
 An assumption **fails** at the first observation at which its value
-becomes false; an assumption whose value is not yet decided, or is
-undefined, has not failed. An `assume:` or `guarantee:` item without
+becomes false (for an item with temporal operators, the observation at
+which its value is decided false, F.4); an assumption whose value is not
+yet decided, or is undefined, has not failed. An `assume:` or
+`guarantee:` item without
 temporal operators is a state predicate and is evaluated at every
 observation: it fails at the first observation at which it is false,
 and a guarantee that has not failed when the contract instance ends is
@@ -393,6 +442,13 @@ place, not at the time of the deadline. When a trace ends, `pending`
 verdicts stay `pending`: a trace that stops before a deadline or the
 end of an interval does not decide it, and neither does the end of the
 contract instance for a temporal item whose interval is not over.
+
+The verdicts after an observation are those of the trace up to that
+observation, read as a prefix. They do not depend on later observations,
+and a verdict other than `pending` does not change afterwards. A
+processor MAY therefore compute the verdicts while the system runs,
+observation by observation; it gives the verdicts that a processor
+reading the recorded trace gives.
 
 `excused` separates "the bearer failed" from "the bearer was not given
 what the contract assumes", which is the basis of assigning blame in
@@ -682,8 +738,10 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
 - The SMT checks of `cadl verify` leave out `assume:` and `guarantee:`
   items that contain temporal operators and report each one as not
   checked (F.7). `cadl codegen` leaves the same items out of the
-  generated code of every target, with a comment in the code and a
-  warning; it does not translate temporal operators.
+  contract code of every target, with a comment in the code and a
+  warning; it does not translate temporal operators into the target
+  languages. The Python target monitors them in a separate module (see
+  below).
 - A numeric `deadline:` of a norm is read as seconds, the lenient form
   that [A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)
   describes for lifecycle deadlines. `cadl check` looks for temporal
@@ -704,7 +762,33 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   contract, including every carried-over norm whose `content` or
   `deadline:` changes and a `transform:` target that the new version
   lacks.
-- The generated runtimes (Python, Unity C#) do not monitor norms, and
+- In the development version after `cadl` 0.3.21,
+  `cadl codegen -t python` writes, for a file that declares
+  `norms: 0.1`, a module `norms_monitor.py` into the generated package
+  ([Appendix D, D.1](./appendix-d-codegen.md)). It monitors one
+  contract instance while the system runs: the host makes a
+  monitor for the instance, passes it one observation at a time, and
+  gets back the norm instances, guarantees, and assumptions whose state
+  or verdict changed at that observation, with time and reason; it
+  signals the end of the instance, and can ask for the current verdicts.
+  The module contains the evaluation code of `cadl norms-eval`, copied
+  verbatim, and the contracts of the file as data; it does not need
+  `cadl` at run time, and for a recorded trace it gives the result of
+  `cadl norms-eval`. As that command, it takes the lifecycle state from
+  the observations and reports a `transition:` without applying it. It
+  reads the points that F.4 and F.5 state for a processor that receives
+  the observations one at a time as follows: a passed deadline is
+  detected at the next observation, and the monitor tells the host the
+  time at which the next deadline of a norm passes, so that the host can
+  make an observation after it; the host names the quantities that are
+  written without an actor, and a name it does not name is a quantity
+  from its first value on (`cadl norms-eval` takes the names from the
+  whole trace); an observation after the end of the instance is ignored
+  with a warning; and it keeps the observations of the instance until
+  the instance is dropped. An amendment (F.6) is applied when the host
+  supplies the data of the monitor generated from the new version; the
+  monitor cannot read a CADL file.
+- The Solidity, OPA, and Unity C# targets do not monitor norms, and
   translation of norms to a model checker for design-time checking is
   not implemented.
 
