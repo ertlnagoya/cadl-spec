@@ -154,10 +154,11 @@ governance structure. CADL can describe all four.
   [Appendix A, §A.7](./appendix-a-syntax.md#a7-transitions). *Example:* a normal regime in which the dispatcher manages centrally, and a failure regime in which each robot decides on its own.
 - **Regime map** — A map of which regime is optimal under which
   environmental conditions: the environmental parameter space divided
-  into regions, each assigned a regime. This map of the parameter space
-  is a concept whose construction support is planned; the
-  `cadl regime-map` command reports something narrower: the graph of
-  regime names and transitions. *Example:* low failure rate and low latency → centralised regime; high failure rate or high latency → distributed regime.
+  into regions, each assigned a regime. The stochastic model extension
+  defines it precisely as a query on a parametric Markov model
+  ([Appendix H, H.9](./appendix-h-stochastic.md)); computing it is not
+  yet supported, and the `cadl regime-map` command reports something
+  narrower: the graph of regime names and transitions. *Example:* low failure rate and low latency → centralised regime; high failure rate or high latency → distributed regime.
 - **Regime transition** (also: *institutional transition*) — Switching from one regime to another in
   response to a change in environmental conditions. Safety (collision avoidance, for instance) must be kept during the switch. *Example:* when communication latency exceeds 300 ms, switch from centralised to distributed operation, keeping "no collisions, no lost orders" during the switch.
 - **Safety invariant** — A condition that must never be violated, also
@@ -208,6 +209,44 @@ Terms of the norms extension; see [Appendix F](./appendix-f-norms.md).
 - **Amendment** — The replacement of a contract by a new version while it
   runs; `on_amendment:` says whether an active or suspended norm is
   carried over, discharged, or transformed.
+
+## Agent governance extension
+
+Terms of the agent governance extension; see
+[Appendix G](./appendix-g-agents.md).
+
+- **Tool server / Tool call** — An actor bound as `agent.kind: tool_server`
+  that offers named `tools:`; a tool call is a message to it whose name
+  is one of its tools.
+- **Enforcement point** — Where a message is decided before it takes
+  effect. The decision is `allow`, `deny`, or `escalate`, computed from
+  the prohibitions and permissions of the governing contracts.
+- **Hold / Escalation** — A message that is neither allowed nor denied
+  but held until the actor named by `on_denied.escalate_to` approves or
+  rejects it, or its `timeout:` passes.
+- **Delegation / Provenance chain** — A permission passed on by its
+  bearer to another actor; the derived permission records the chain of
+  holders back to the bearer and is valid only while every link is.
+- **Audit record** — What an enforcement point records for a decision:
+  the result, the time, the instances, and the outcome of a hold.
+
+## Stochastic model extension
+
+Terms of the stochastic model extension; see
+[Appendix H](./appendix-h-stochastic.md).
+
+- **Stochastic model** — The `model:` block: finite-domain variables,
+  guarded probabilistic commands, and parameters, read as a parametric
+  discrete-time Markov chain.
+- **Design** — A regime together with the parameter values it assigns;
+  each design has its own Markov chain.
+- **Property** — A statement about a design's Markov chain: the
+  probability of reaching a state, or an expected reward, as a query or
+  with a threshold.
+- **Regime map query** — The question of which design is best for an
+  objective in which part of a parameter region (`model.regime_maps`).
+  Its result divides the region into cells that are `decided` (with the
+  best designs), `infeasible`, or `undecided`.
 
 ## Verification
 

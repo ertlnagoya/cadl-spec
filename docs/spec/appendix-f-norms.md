@@ -227,9 +227,18 @@ them, and an instance **ends** when it reaches a terminal state. When
 the contract has no `lifecycle:` block, the host application creates
 and ends contract instances in the same way, without states; with no
 host, a single instance starts at the first observation and ends at the
-last. "Becomes true" means: false at the previous observation of the
-instance, or the first observation of the instance, and true at the
-current one.
+last. A trace that stops while the contract instance is still running
+is a *prefix*: the instance has not ended, and nothing is settled.
+
+A predicate has one of three values at an observation: true, false, or
+**undefined**, when it refers to a quantity that has no value yet;
+`AND`, `OR`, and `NOT` follow Kleene's three-valued logic. An undefined
+predicate does not hold and does not fail: an event or condition does
+not occur on it, and an assumption or guarantee is not decided by it.
+"Becomes true" means: true at the current observation, and not true at
+the previous observation of the instance or no previous observation.
+In a contract with a `lifecycle:` block, `state` in a predicate is the
+lifecycle state before the transitions of the current observation.
 
 ### Norm instances
 
@@ -267,15 +276,18 @@ prohibition reports only its first violation.
    `tpredicate` evaluated at that observation). It becomes `violated`
    when its `deadline:`, measured from the activation time without the
    time spent `suspended`, has passed without that happening; content
-   at exactly the deadline is in time. When the content is a
+   at exactly the deadline is in time, and content while the obligation
+   is `suspended` does not count. The violation takes place at the first
+   observation after the deadline. When the content is a
    `tpredicate` with temporal operators, its value at an observation may
    be known only later; the obligation stays `pending` until it is
    decided, and only observations up to the deadline count.
 3. **Prohibition.** An active prohibition becomes `violated` at the
    first observation at which its `content` occurs or holds. It becomes
    `fulfilled` when its `deadline:` window, measured from the activation
-   time without the time spent `suspended`, has closed. A suspended
-   prohibition is not judged.
+   time without the time spent `suspended`, has closed; content at
+   exactly the end of the window is a violation. A suspended prohibition
+   is not judged.
 4. **Permission and power.** They stay `active` until they are
    discharged.
 5. **Discharge.** A norm instance that is `active` or `suspended`
@@ -286,7 +298,13 @@ prohibition reports only its first violation.
    suspended obligation without `deadline:` becomes `violated`; an
    obligation whose deadline has not yet passed becomes `discharged`; a
    prohibition becomes `fulfilled`; every other norm instance, including
-   an `inactive` one, becomes `discharged`.
+   an `inactive` one, becomes `discharged`. Two exceptions: a norm
+   instance that became active at the observation at which the instance
+   ends was never judged and becomes `discharged`; and an obligation or
+   prohibition whose `tpredicate` content is still undecided stays as it
+   is, with the verdict `pending`. A violation that arises from this
+   settlement is reported with its severity, but its `reparation:` and
+   `transition:` do not apply, since the instance has ended.
 7. **Powers.** An institutional event created from a message is
    *performed by* the sender of that message; one created from a
    predicate has no performer. When the bearer of an active power
@@ -321,15 +339,24 @@ they are the content of powers.
 One observation can carry a message that creates an institutional
 event, triggers a norm, fulfils another, and fires a lifecycle
 transition. A processor applies the steps in this order, each to the
-state left by the previous one:
+state left by the previous one. Before step 1 it evaluates the
+`assume:` items and then the `guarantee:` items of the contract, so an
+assumption that fails at an observation excuses the violations of that
+observation; and at the first observation of the instance it first
+activates the norms that become active when the instance starts.
 
 1. create the institutional events of the `counts_as:` rules;
-2. apply the effects of powers (item 7);
+2. apply the effects of powers (item 7), power by power in the order
+   of declaration and, within one power, in the order `activate`,
+   `suspend`, `resume`, `discharge`; whether a power is active is
+   decided at the beginning of this step;
 3. activate norms whose triggers occurred (item 1);
-4. judge the active norms: fulfilment and violation of obligations and
-   prohibitions, discharge by `until:` (items 2, 3, 5); a norm activated
-   in step 3 is judged in this step too, so content at its activation
-   time counts;
+4. judge the active norms, for each norm in this order: a deadline
+   that has passed, then the content, then `until:` (items 2, 3, 5); so
+   a violation by a passed deadline comes before a discharge at the same
+   observation, and content before `until:`. A norm activated in step 3
+   is judged in this step too, so content at its activation time
+   counts;
 5. apply `on_violation:` (item 8); a reparation norm activated here is
    first judged at the next observation;
 6. fire the lifecycle transitions of
@@ -349,14 +376,23 @@ operators, on the finite trace observed so far is one of four values:
 | `excused` | `violated` at or after the observation at which an assumption of the contract failed | fails at or after the observation at which an assumption failed |
 
 An assumption **fails** at the first observation at which its value
-becomes false; an assumption whose value is not yet decided has not
-failed. Once an assumption has failed, every later violation in the
+becomes false; an assumption whose value is not yet decided, or is
+undefined, has not failed. An `assume:` or `guarantee:` item without
+temporal operators is a state predicate and is evaluated at every
+observation: it fails at the first observation at which it is false,
+and a guarantee that has not failed when the contract instance ends is
+`fulfilled`. An item that mixes a state predicate with temporal
+operators is a `tpredicate` and is evaluated once, at the start of the
+instance. Once an assumption has failed, every later violation in the
 same contract instance is `excused`; a guarantee or norm becomes
 `excused` only when it itself fails, not when the assumption fails. A
 discharged permission or power has the verdict `fulfilled`, although it
-is not fulfilled in the sense of F.2. When a trace ends, `pending`
+is not fulfilled in the sense of F.2. A violation by a passed deadline
+is judged `violated` or `excused` at the observation at which it takes
+place, not at the time of the deadline. When a trace ends, `pending`
 verdicts stay `pending`: a trace that stops before a deadline or the
-end of an interval does not decide it.
+end of an interval does not decide it, and neither does the end of the
+contract instance for a temporal item whose interval is not over.
 
 `excused` separates "the bearer failed" from "the bearer was not given
 what the contract assumes", which is the basis of assigning blame in
@@ -378,28 +414,49 @@ An **amendment** replaces the definition of a contract by a new version
 with the same contract `id` while contract instances are running. How
 versions are made, approved, and put into effect is outside norms 0.1;
 the [Course D](../handson/robot-town-tutorial.md) hands-on materials show
-one procedure. When the new version takes effect, norm instances are
-treated as follows.
+one procedure. The new version takes effect at an observation, before
+anything else is evaluated at that observation (before the assumptions
+and guarantees and before step 1 of F.5); a norm that the amendment
+makes active is therefore judged at that same observation. Norm
+instances are treated as follows.
 
 An `active` or `suspended` norm instance follows the `on_amendment:` of
 its norm in the **old** version:
 
 | `on_amendment:` | Effect |
 | --- | --- |
-| `carry_over` (default) | The instance continues under the norm with the same `id` in the new version, keeping its state and the time already elapsed against its deadline. It is `discharged` instead when the new version has no norm with that `id` or when that norm has a different `kind`. If the elapsed time already exceeds the new deadline, the instance becomes `violated` when the new version takes effect. |
+| `carry_over` (default) | The instance continues under the norm with the same `id` in the new version, keeping its state and the time already elapsed against its deadline. It is `discharged` instead when the new version has no norm with that `id` or when that norm has a different `kind`. If the content changes, the instance is judged on the new content from this observation on. If the elapsed time already exceeds the new deadline (elapsed time equal to it does not), an obligation, also a suspended one, becomes `violated` when the new version takes effect, and the window of a prohibition has closed, so it becomes `fulfilled`. |
 | `discharge` | The instance is `discharged`. |
 | `transform: X` | The instance is `discharged`, and the norm `X` of the new version is activated if it is `inactive`, with the time already elapsed counted against its deadline (for an obligation or prohibition; for a permission or power the time has no effect). If `X` is not `inactive`, nothing more happens. |
 
+The entries of the table are applied in the order in which the old
+version declares the norms, and before new norms are activated. When
+the target `X` of `transform:` does not exist in the new version, the
+instance is only `discharged`.
+
 An `inactive` norm instance takes the definition of the norm with the
 same `id` in the new version, and is removed when the new version has
-no such norm. A norm that is new in the new version starts `inactive`,
-and becomes active at once if it has no `trigger:` and is not a
-reparation or activation target (F.5, item 1). Final instances
-(`fulfilled`, `violated`, `discharged`) are not affected; in particular,
-a violation stays a violation of the version under which it occurred.
+no such norm; it is not activated by the amendment, even if its new
+definition has no `trigger:`. A norm is *new* when the old version has
+no norm with its `id`; it starts `inactive`, and becomes active at once
+if it has no `trigger:` and is not a reparation or activation target
+(F.5, item 1). Final instances (`fulfilled`, `violated`, `discharged`)
+are not affected and their `id`s are not used again in the contract
+instance: a norm of the new version with the `id` of a final instance
+gets no new instance. In particular, a violation stays a violation of
+the version under which it occurred, while a violation that occurs
+after the amendment uses the `on_violation:` of the new version.
+
 The `counts_as:` rules of the new version apply from the time it takes
-effect. A regime transition (A.7) does not affect norm instances in
-version 0.1.
+effect. An `assume:` or `guarantee:` item whose text is the same in
+both versions continues with its value; an item that is new is
+evaluated from this observation on (a `tpredicate` at this observation);
+an item that is removed keeps the verdict it had. An assumption that
+failed before the amendment still excuses later violations. When the
+contract has a `lifecycle:` block, the current state of the instance
+MUST be a state of the new version; otherwise the amendment cannot be
+applied to that instance. A regime transition (A.7) does not affect
+norm instances in version 0.1.
 
 A processor that applies amendments SHOULD report, before the new
 version takes effect, every carried-over norm whose `content` or
@@ -633,10 +690,23 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   operators in the places listed in F.4; it does not look inside
   `violation.detect`, `incentives.rules`, a protocol `trigger:`, or
   `context.assumptions`, which are text.
-- Verdicts (F.5) and amendments (F.6) are not computed: no generated
-  runtime monitors norms in `cadl` 0.3, and no command applies an
-  amendment. Translation of norms to a model checker for design-time
-  checking is not implemented.
+- From `cadl` 0.3.20, `cadl norms-eval` computes the norm states,
+  verdicts, violations, institutional events, and unauthorised acts of
+  F.5 for one contract instance from a recorded trace (JSON Lines, one
+  observation per line; the format is described in the README of the
+  `cadl` repository), and applies the amendments of F.6 that the trace
+  names. It takes the lifecycle state from the trace and does not run
+  the lifecycle state machine: a `transition:` requested by a violation
+  is reported, not applied. A norm or item that contains a function call
+  other than a temporal operator, a quantifier, or a wildcard reference
+  is not evaluated and stays `pending`. `cadl norms-diff` compares two
+  versions of a file and reports what F.6 does to the norms of each
+  contract, including every carried-over norm whose `content` or
+  `deadline:` changes and a `transform:` target that the new version
+  lacks.
+- The generated runtimes (Python, Unity C#) do not monitor norms, and
+  translation of norms to a model checker for design-time checking is
+  not implemented.
 
 ## F.11 Backward compatibility
 

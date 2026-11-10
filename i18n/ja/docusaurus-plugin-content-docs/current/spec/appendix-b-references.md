@@ -211,3 +211,13 @@ description: "CADL仕様書が引用する参考文献の一覧。"
 [102] P. Dantas, L. Cordeiro, E. Nowroozi, and N. Tihanyi, "Toward Safe LLM Agents: A Survey of Specification, Verification, and Enforcement," arXiv:2608.14590 (preprint), 2026, https://arxiv.org/abs/2608.14590.
 
 [103] M. Bracale Syrnikov, F. Pierucci, M. Galisai, M. Prandi, P. Bisconti, F. Giarrusso, O. Sorokoletova, V. Suriani, and D. Nardi, "Institutional AI: Governing LLM Collusion in Multi-Agent Cournot Markets via Public Governance Graphs," arXiv:2601.11369 (preprint), 2026, https://arxiv.org/abs/2601.11369.
+
+[104] M. Kwiatkowska, G. Norman, and D. Parker, "PRISM 4.0: Verification of Probabilistic Real-time Systems," in Proc. CAV, LNCS 6806, pp. 585-591, 2011, doi:10.1007/978-3-642-22110-1_47. The modelling and property languages are described in the PRISM manual, https://www.prismmodelchecker.org/manual/ (accessed Nov. 2026).
+
+[105] H. Hansson and B. Jonsson, "A logic for reasoning about time and reliability," Formal Aspects of Computing, vol. 6, no. 5, pp. 512-535, 1994, doi:10.1007/BF01211866.
+
+[106] L. Heck, T. Quatmann, J. Spel, J.-P. Katoen, and S. Junges, "Generalized Parameter Lifting: Finer Abstractions for Parametric Markov Chains," in Proc. ATVA, LNCS, Springer, pp. 207-230, 2025, doi:10.1007/978-3-032-08707-2_10.
+
+[107] J. W. Cutler, C. Disselkoen, A. Eline, S. He, K. Headley, M. Hicks, K. Hietala, E. Ioannidis, J. Kastner, A. Mamat, D. McAdams, M. McCutchen, N. Rungta, E. Torlak, and A. M. Wells, "Cedar: A New Language for Expressive, Fast, Safe, and Analyzable Authorization," Proc. ACM Program. Lang., vol. 8, no. OOPSLA1, pp. 670-697, 2024, doi:10.1145/3649835. The language reference is the Cedar Policy Language Reference Guide, https://docs.cedarpolicy.com/ (accessed Nov. 2026).
+
+[108] M. Kwiatkowska, G. Norman, D. Parker, and G. Santos, "PRISM-games 3.0: Stochastic Game Verification with Concurrency, Equilibria and Time," in Proc. CAV, Part II, LNCS 12225, pp. 475-487, 2020, doi:10.1007/978-3-030-53291-8_25.

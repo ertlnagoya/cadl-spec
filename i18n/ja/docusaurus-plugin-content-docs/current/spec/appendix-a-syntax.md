@@ -97,7 +97,8 @@ sos_body    = "name:" , text ,
               [ "metrics:"      , { "-" , metric_def } ] ,
               [ "verification:" , { "-" , verify_def } ] ,
               [ "codegen:"      , { "-" , codegen_def } ] ,
-              [ "motivation:"   , motivation_block ] ;
+              [ "motivation:"   , motivation_block ] ,
+              [ "model:"        , model_block ] ;          (* 付録H *)
 sos_type    = "Directed" | "Acknowledged" | "Collaborative" | "Virtual" ;
 extension_decl = hyphen_name , ":" , scalar ;
 ```
@@ -106,14 +107,19 @@ extension_decl = hyphen_name , ":" , scalar ;
 セマンティックバージョンの文字列を書く。
 
 **拡張点。** `extensions:` は，ファイルが依存する言語拡張を，名前とバージョンの組
-（たとえば `- sos-dsl: 0.1`）として宣言する。次の3つの拡張を定義している。
-宣言できる名前を持つのは1つ目と2つ目である。
+（たとえば `- sos-dsl: 0.1`）として宣言する。次の5つの拡張を定義している。
+最後のもの以外は，宣言できる名前を持つ。
 
 - SoS-DSL拡張（[付録E](./appendix-e-sos-dsl.md)）。名前 `sos-dsl`，バージョン `0.1` として
   宣言する。`contract_def`（A.4）にキー `lifecycle:` と `monitors:` を追加する。
 - 規範拡張（[付録F](./appendix-f-norms.md)）。名前 `norms`，バージョン `0.1` として宣言する。
   `contract_def`（A.4）にキー `norms:` と `counts_as:` を，契約の述語に有界の時相演算子を追加する。
   この拡張を用いるファイルは，宣言しなければならない。
+- エージェント統治拡張（[付録G](./appendix-g-agents.md)）。名前 `agents`，バージョン `0.1` として宣言する。
+  `norms` を必要とし，`actor_def`（A.3）にキー `agent:` を，`contract_def`（A.4）にキー `enforcement:` と
+  `delegations:` を，禁止に `on_denied:` を追加する。
+- 確率モデル拡張（[付録H](./appendix-h-stochastic.md)）。名前 `stochastic`，バージョン `0.1` として宣言する。
+  `sos_body` にキー `model:` を追加する。
 - 動機拡張（[付録C](./appendix-c-motivation.md)）。`motivation_block` を定義する。
   v0.3では `extensions:` に書く名前を持たず，`motivation:` ブロックを書くだけで用いる。
 
@@ -127,7 +133,8 @@ actor_def      = "id:"   , actor_ref ,
                  "role:" , text ,
                  [ "autonomy:"     , autonomy_level ] ,
                  [ "capabilities:" , { "-" , text } ] ,
-                 [ "interface:"    , interface_def ] ;
+                 [ "interface:"    , interface_def ] ,
+                 [ "agent:"        , agent_binding ] ;   (* 付録G *)
 autonomy_level = "low" | "medium" | "high" ;
 interface_def  = [ "input:"  , { "-" , text } ] ,
                  [ "output:" , { "-" , text } ] ;
@@ -163,7 +170,9 @@ contract_def      = "id:"      , identifier ,
                     [ "lifecycle:"        , lifecycle_block ] ,       (* 付録E *)
                     [ "monitors:"         , { "-" , monitor_def } ] , (* 付録E *)
                     [ "norms:"            , { "-" , norm_def } ] ,    (* 付録F *)
-                    [ "counts_as:"        , { "-" , counts_as_def } ] ; (* 付録F *)
+                    [ "counts_as:"        , { "-" , counts_as_def } ] , (* 付録F *)
+                    [ "enforcement:"      , enforcement_block ] ,     (* 付録G *)
+                    [ "delegations:"      , { "-" , delegation_def } ] ; (* 付録G *)
 
 authority_block   = [ "decision_scope:"  , text ] ,
                     [ "decision_holder:" , actor_ref ] ,
@@ -352,12 +361,14 @@ AND    OR    NOT    true    false    for all    exists    in
 | ブロック | キー |
 |---|---|
 | ファイル | `sos` |
-| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `metrics` `verification` `codegen` `motivation` |
+| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `metrics` `verification` `codegen` `motivation` `model` |
 | `context` | `environment` `assumptions` |
 | アクター | `id` `role` `autonomy` `capabilities` `interface`（`input` `output`） |
-| 契約 | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` `norms` `counts_as` |
+| 契約 | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` `norms` `counts_as` `enforcement` `delegations` |
 | 規範（付録F） | `id` `kind` `bearer` `counterparty` `trigger` `until` `content` `deadline` `on_violation`（`severity` `sanction` `reparation` `transition`） `effects`（`activate` `suspend` `resume` `discharge`） `on_amendment`（`transform`） |
 | counts-as規則（付録F） | `when` `creates` `if` |
+| エージェント統治（付録G） | アクターの `agent`（`kind` `protocol` `tools`），契約の `enforcement`（`default` `point`）と `delegations`（`norm` `to` `grant` `revoke` `max_depth` `until`），禁止の `on_denied`（`escalate_to` `timeout` `fallback` `notify`） |
+| 確率モデル（付録H） | `model`（`kind` `parameters` `variables` `commands` `labels` `regimes` `rewards` `properties` `regime_maps`）。各要素のキーはH.2に示す |
 | `authority` | `decision_scope` `decision_holder` `beta` `mode` |
 | `information` | `alpha` `views` `sharing` |
 | `incentives` | `type` `lambda` `rules` |
@@ -373,7 +384,7 @@ AND    OR    NOT    true    false    for all    exists    in
 列挙値: `Directed` `Acknowledged` `Collaborative` `Virtual`（SoSの型），
 `low` `medium` `high`（自律度），`smt` `model_check` `simulation` `proof`
 （検証手法），`ms` `s` `min` `h`（時間の単位）。拡張のキーと値は
-[付録C](./appendix-c-motivation.md)，[付録E](./appendix-e-sos-dsl.md)，[付録F](./appendix-f-norms.md)に示す。
+[付録C](./appendix-c-motivation.md)，[付録E](./appendix-e-sos-dsl.md)，[付録F](./appendix-f-norms.md)，[付録G](./appendix-g-agents.md)，[付録H](./appendix-h-stochastic.md)に示す。
 
 ## A.12 リファレンス実装の状況（`cadl` 0.3） {/* #a12-reference-implementation-status-v03 */}
 
@@ -391,9 +402,9 @@ AND    OR    NOT    true    false    for all    exists    in
 みなされ，宣言されていなければならない。単独で現れる名前は状態変数とみなされ，
 検査されない。`condition:`，`safety_invariant:`，`formula:`，`expr:`，モニターの
 `rule:`，ライフサイクルの `when:`，およびメッセージイベントでない `on:` の述語については，未宣言のアクターの検査を行わない。それ以外の必須キーが
-欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.19で確認）。
+欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.20で確認）。
 
-- **式。** `cadl` 0.3.19では，式はA.10とA.11に従う。既知の相違はない。`cadl` 0.3.17までは，
+- **式。** `cadl` 0.3.20では，式はA.10とA.11に従う。既知の相違はない。`cadl` 0.3.17までは，
   `factor` の単項 `-` を受け付けなかった。それを使った項目は不透明な述語として保持し，
   ライフサイクルの `on:` と `when:`，モニターの `rule:` については `cadl check` が警告を出した。
 - **識別子。** `cadl` 0.3.9からは，`cadl check` は，アクター，契約，プロトコル，メトリクスのid，
@@ -444,6 +455,9 @@ AND    OR    NOT    true    false    for all    exists    in
   `cadl` が付録Eそのものに対して満たしていない点は，[E.4節](./appendix-e-sos-dsl.md#e4-static-semantics)に示す。
   `cadl` 0.3.19からは，宣言された拡張 `norms` のバージョン `0.1` を実装しており，この診断は出ない。
   `cadl` が付録Fのどこまでを実装しているかは，[F.10節](./appendix-f-norms.md#f10-reference-implementation-status)に示す。
+  `cadl` 0.3.20からは，`agents` 0.1（[付録GのG.13節](./appendix-g-agents.md)）と `stochastic` 0.1
+  （[付録HのH.14節](./appendix-h-stochastic.md)）についても同様である。また，`cadl sim-ir` は
+  キー `stochastic_model` を出力する。この拡張を用いないファイルでは，その値は `null` である。
 
 `cadl` の0.3.7より前のリリースは，これらの点のいくつかで異なっていた。その経緯は，cadlリポジトリの
 [CHANGELOG](https://github.com/ertlnagoya/cadl/blob/master/CHANGELOG.md)にある。

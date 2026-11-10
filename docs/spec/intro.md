@@ -104,6 +104,8 @@ the order below, but each chapter is also self-contained.
 - **[Appendix D — Code Generation Targets](./appendix-d-codegen.md)** — Catalogue of codegen targets.
 - **[Appendix E — SoS-DSL Extension](./appendix-e-sos-dsl.md)** — Contract lifecycles and runtime monitors.
 - **[Appendix F — Norms Extension](./appendix-f-norms.md)** — Obligations, permissions, prohibitions and powers, counts-as rules, bounded temporal operators, and amendments.
+- **[Appendix G — Agent Governance Extension](./appendix-g-agents.md)** — Agents and tool servers as actors, allow / deny / escalate decisions from norms at the message boundary, delegation with provenance, and boundary-policy generation.
+- **[Appendix H — Stochastic Model Extension](./appendix-h-stochastic.md)** — A parametric Markov model in which α, β and λ appear, properties, regime map queries, and export to the PRISM language.
 - **[Glossary](./glossary.md)** — Terms used throughout the specification.
 
 ## Suggested Reading Paths
@@ -169,6 +171,15 @@ Version 0.2 is valid under Version 0.3 and is read the same way.
   prohibitions, and powers first-class objects of a contract and adds
   bounded temporal operators. A file that does not declare it is read as
   before.
+- **Agent governance extension**: `agents: 0.1`
+  ([Appendix G](./appendix-g-agents.md)) binds actors to agents and tool
+  servers and defines the allow / deny / escalate decision that the
+  norms of a contract give for a message, with delegation and audit
+  records.
+- **Stochastic model extension**: `stochastic: 0.1`
+  ([Appendix H](./appendix-h-stochastic.md)) gives a file an explicit
+  parametric Markov model in which the institutional parameters appear,
+  and defines the regime map as a query on it.
 
 Version 0.2 reconciled the text of Version 0.1 with the reference
 implementation. The changes that affect how a Version 0.1 file is read are:

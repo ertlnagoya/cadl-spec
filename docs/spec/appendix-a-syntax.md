@@ -110,7 +110,8 @@ sos_body    = "name:" , text ,
               [ "metrics:"      , { "-" , metric_def } ] ,
               [ "verification:" , { "-" , verify_def } ] ,
               [ "codegen:"      , { "-" , codegen_def } ] ,
-              [ "motivation:"   , motivation_block ] ;
+              [ "motivation:"   , motivation_block ] ,
+              [ "model:"        , model_block ] ;          (* Appendix H *)
 sos_type    = "Directed" | "Acknowledged" | "Collaborative" | "Virtual" ;
 extension_decl = hyphen_name , ":" , scalar ;
 ```
@@ -120,7 +121,7 @@ semantic version string such as `"1.0.0"`.
 
 **Extension points.** `extensions:` declares the language extensions a
 file relies on, each as a name and a version (for example
-`- sos-dsl: 0.1`). Three extensions are defined; the first two have a
+`- sos-dsl: 0.1`). Five extensions are defined; all but the last have a
 name that can be declared:
 
 - the SoS-DSL extension ([Appendix E](./appendix-e-sos-dsl.md)),
@@ -130,6 +131,14 @@ name that can be declared:
   `norms` with version `0.1`, which adds the keys `norms:` and
   `counts_as:` to `contract_def` (A.4) and bounded temporal operators to
   the predicates of a contract. A file that uses it MUST declare it;
+- the agent governance extension ([Appendix G](./appendix-g-agents.md)),
+  declared as `agents` with version `0.1`, which requires `norms` and
+  adds the key `agent:` to `actor_def` (A.3), the keys `enforcement:`
+  and `delegations:` to `contract_def` (A.4), and `on_denied:` to a
+  prohibition;
+- the stochastic model extension
+  ([Appendix H](./appendix-h-stochastic.md)), declared as `stochastic`
+  with version `0.1`, which adds the key `model:` to `sos_body`;
 - the motivation extension ([Appendix C](./appendix-c-motivation.md)),
   which defines `motivation_block`. It has no `extensions:` name in
   v0.3 and is used simply by writing a `motivation:` block.
@@ -144,7 +153,8 @@ actor_def      = "id:"   , actor_ref ,
                  "role:" , text ,
                  [ "autonomy:"     , autonomy_level ] ,
                  [ "capabilities:" , { "-" , text } ] ,
-                 [ "interface:"    , interface_def ] ;
+                 [ "interface:"    , interface_def ] ,
+                 [ "agent:"        , agent_binding ] ;   (* Appendix G *)
 autonomy_level = "low" | "medium" | "high" ;
 interface_def  = [ "input:"  , { "-" , text } ] ,
                  [ "output:" , { "-" , text } ] ;
@@ -182,7 +192,9 @@ contract_def      = "id:"      , identifier ,
                     [ "lifecycle:"        , lifecycle_block ] ,       (* Appendix E *)
                     [ "monitors:"         , { "-" , monitor_def } ] , (* Appendix E *)
                     [ "norms:"            , { "-" , norm_def } ] ,    (* Appendix F *)
-                    [ "counts_as:"        , { "-" , counts_as_def } ] ; (* Appendix F *)
+                    [ "counts_as:"        , { "-" , counts_as_def } ] , (* Appendix F *)
+                    [ "enforcement:"      , enforcement_block ] ,     (* Appendix G *)
+                    [ "delegations:"      , { "-" , delegation_def } ] ; (* Appendix G *)
 
 authority_block   = [ "decision_scope:"  , text ] ,
                     [ "decision_holder:" , actor_ref ] ,
@@ -380,12 +392,14 @@ Keys of the structure, by the block in which they are recognised.
 | Block | Keys |
 |---|---|
 | file | `sos` |
-| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `metrics` `verification` `codegen` `motivation` |
+| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `metrics` `verification` `codegen` `motivation` `model` |
 | `context` | `environment` `assumptions` |
 | actor | `id` `role` `autonomy` `capabilities` `interface` (`input` `output`) |
-| contract | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` `norms` `counts_as` |
+| contract | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` `norms` `counts_as` `enforcement` `delegations` |
 | norm (Appendix F) | `id` `kind` `bearer` `counterparty` `trigger` `until` `content` `deadline` `on_violation` (`severity` `sanction` `reparation` `transition`) `effects` (`activate` `suspend` `resume` `discharge`) `on_amendment` (`transform`) |
 | counts-as rule (Appendix F) | `when` `creates` `if` |
+| agent governance (Appendix G) | actor `agent` (`kind` `protocol` `tools`); contract `enforcement` (`default` `point`), `delegations` (`norm` `to` `grant` `revoke` `max_depth` `until`); prohibition `on_denied` (`escalate_to` `timeout` `fallback` `notify`) |
+| stochastic model (Appendix H) | `model` (`kind` `parameters` `variables` `commands` `labels` `regimes` `rewards` `properties` `regime_maps`); the keys of each entry are listed in H.2 |
 | `authority` | `decision_scope` `decision_holder` `beta` `mode` |
 | `information` | `alpha` `views` `sharing` |
 | `incentives` | `type` `lambda` `rules` |
@@ -403,8 +417,10 @@ Enumerated values: `Directed` `Acknowledged` `Collaborative` `Virtual`
 `simulation` `proof` (verification method); `ms` `s` `min` `h`
 (duration units). The keys and values of the extensions are listed in
 [Appendix C](./appendix-c-motivation.md),
-[Appendix E](./appendix-e-sos-dsl.md), and
-[Appendix F](./appendix-f-norms.md).
+[Appendix E](./appendix-e-sos-dsl.md),
+[Appendix F](./appendix-f-norms.md),
+[Appendix G](./appendix-g-agents.md), and
+[Appendix H](./appendix-h-stochastic.md).
 
 ## A.12 Reference implementation status (`cadl` 0.3) {/* #a12-reference-implementation-status-v03 */}
 
@@ -428,9 +444,9 @@ predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
 monitor `rule:`, lifecycle `when:`, and an `on:` that is not a message
 event are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. `cadl` 0.3
-deviates from this appendix as follows (checked against `cadl` 0.3.19).
+deviates from this appendix as follows (checked against `cadl` 0.3.20).
 
-- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.19; no
+- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.20; no
   deviation is known. Up to `cadl` 0.3.17 the unary `-` of `factor` was
   not accepted: an item that used it was kept as an opaque predicate,
   and for a lifecycle `on:` or `when:` or a monitor `rule:`, `cadl check`
@@ -508,6 +524,11 @@ deviates from this appendix as follows (checked against `cadl` 0.3.19).
   implemented and gets no such diagnostic; what `cadl` implements of
   Appendix F is stated in
   [Section F.10](./appendix-f-norms.md#f10-reference-implementation-status).
+  From `cadl` 0.3.20 the same holds for `agents` 0.1
+  ([Appendix G, G.13](./appendix-g-agents.md)) and `stochastic` 0.1
+  ([Appendix H, H.14](./appendix-h-stochastic.md)), and `cadl sim-ir`
+  emits the key `stochastic_model`, which is `null` for a file without
+  that extension.
 
 Releases of `cadl` before 0.3.7 differed in several of these points; the history
 is in the
