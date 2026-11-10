@@ -103,6 +103,7 @@ the order below, but each chapter is also self-contained.
 - **[Appendix C — Motivation Extension](./appendix-c-motivation.md)** — Agent motivation models and profiles.
 - **[Appendix D — Code Generation Targets](./appendix-d-codegen.md)** — Catalogue of codegen targets.
 - **[Appendix E — SoS-DSL Extension](./appendix-e-sos-dsl.md)** — Contract lifecycles and runtime monitors.
+- **[Appendix F — Norms Extension](./appendix-f-norms.md)** — Obligations, permissions, prohibitions and powers, counts-as rules, bounded temporal operators, and amendments.
 - **[Glossary](./glossary.md)** — Terms used throughout the specification.
 
 ## Suggested Reading Paths
@@ -163,6 +164,11 @@ Version 0.2 is valid under Version 0.3 and is read the same way.
 - **`model: hybrid` is reserved** in the motivation extension: a
   processor MUST accept it and treat it as `commitment_budget`
   ([Appendix C](./appendix-c-motivation.md)).
+- **Norms extension**: the new extension `norms: 0.1`
+  ([Appendix F](./appendix-f-norms.md)) makes obligations, permissions,
+  prohibitions, and powers first-class objects of a contract and adds
+  bounded temporal operators. A file that does not declare it is read as
+  before.
 
 Version 0.2 reconciled the text of Version 0.1 with the reference
 implementation. The changes that affect how a Version 0.1 file is read are:

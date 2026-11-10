@@ -178,7 +178,7 @@ cadl sim-ir my_delivery.cadl --format json
 Verify both:
 
 1. `cadl check my_delivery.cadl` prints `Type check passed: my_delivery.cadl` (and no `[ERROR]` lines).
-2. The IR JSON has `"lifecycle": null` and `"monitors": []`. These two lines sit at the end of the contract (around line 90 of the output). To print just them:
+2. The IR JSON has `"lifecycle": null` and `"monitors": []`. These two lines sit near the end of the contract (around line 90 of the output), just before `"norms"` and `"counts_as"`, which belong to the norms extension and stay empty here. To print just them:
 
    ```bash
    cadl sim-ir my_delivery.cadl --format json | grep -n -A1 '"lifecycle"'
@@ -186,7 +186,7 @@ Verify both:
 
    ```
    90:        "lifecycle": null,
-   91-        "monitors": []
+   91-        "monitors": [],
    ```
 
 These two `null` / `[]` are **the gap we will fill in Chapter 5** — they are why the structure-only specification cannot say "the robot must ack within 5 seconds".

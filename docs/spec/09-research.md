@@ -13,7 +13,7 @@ tool already solves part of a problem, we say which part CADL would hand
 to that tool and which question the tool cannot answer.
 
 The starting point is this specification (Version 0.3) and the reference
-implementation `cadl` 0.3.18. It checks the satisfiability of contracts
+implementation `cadl` 0.3.19. It checks the satisfiability of contracts
 with Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), detects
 protocol deadlocks by structural analysis, supports the SoS-DSL extension
 ([Appendix E](./appendix-e-sos-dsl.md): `lifecycle:`, `monitors:`,
@@ -250,10 +250,16 @@ shields synthesized from temporal safety specifications block unsafe
 actions [[Alshiekh+, AAAI 2018]](./appendix-b-references.md), also per
 agent without communication [[Melcer+, NeurIPS 2022]](./appendix-b-references.md).
 
-In CADL 0.3, `assume` and `guarantee` are state predicates without
-temporal operators, deadlines exist only on lifecycle transitions
-(`deadline:`), monitors are hand-written `rule:` predicates, and Z3 is used
-only for satisfiability. We found no work that handles first-class norm
+In the core language, `assume` and `guarantee` are state predicates
+without temporal operators, deadlines exist only on lifecycle
+transitions (`deadline:`), monitors are hand-written `rule:` predicates,
+and Z3 is used only for satisfiability. The norms extension
+([Appendix F](./appendix-f-norms.md), `norms` 0.1) is a first step on
+RD-6.1, RD-6.2, RD-6.3, and RD-6.5: it defines first-class norms,
+bounded temporal operators with four-valued verdicts, counts-as rules,
+and what happens to running norms on an amendment. Design-time checking
+by a model checker, runtime monitoring of norms, and the formal link to
+α, β, and λ remain open. We found no work that handles first-class norm
 objects together with the institutional parameters α, β, and λ, the
 composition of many contracts in an SoS, and amendment during operation.
 We also found no tool that connects deontic blame semantics with
@@ -360,7 +366,7 @@ consistency of what it generates (Section 9.2).
 ## 9.9 Research Roadmap
 We organize the above research directions along a time axis and present
 a short-, medium-, and long-term research roadmap. The order follows the
-current implementation: items that extend what `cadl` 0.3.18 already
+current implementation: items that extend what `cadl` 0.3.19 already
 provides come first.
 
 | **Period** | **Key Challenges** | **Content** |

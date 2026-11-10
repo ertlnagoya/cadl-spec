@@ -94,6 +94,7 @@ flowchart LR
 - **[付録C — 動機拡張](./appendix-c-motivation.md)** — エージェントの動機モデルとプロファイル。
 - **[付録D — コード生成ターゲット](./appendix-d-codegen.md)** — コード生成ターゲットの一覧。
 - **[付録E — SoS-DSL拡張](./appendix-e-sos-dsl.md)** — 契約のライフサイクルとランタイムモニター。
+- **[付録F — 規範拡張](./appendix-f-norms.md)** — 義務・許可・禁止・権能，counts-as規則，有界の時相演算子，改正。
 - **[用語集](./glossary.md)** — 仕様全体で用いる用語。
 
 ## 推奨される読み順
@@ -148,6 +149,9 @@ Version 0.3 でも正しく，同じ意味に読まれます。
   （[付録A A.3節](./appendix-a-syntax.md#a3-context-actors-metrics)）。
 - **動機拡張の `model: hybrid` は予約語**です。処理系はこれを受け付け，
   `commitment_budget` として扱わなければなりません（[付録C](./appendix-c-motivation.md)）。
+- **規範拡張**：新しい拡張 `norms: 0.1`（[付録F](./appendix-f-norms.md)）は，義務・許可・禁止・
+  権能を契約の第一級の対象とし，有界の時相演算子を追加します。これを宣言しないファイルは，
+  従来どおりに読まれます。
 
 Version 0.2 は，Version 0.1 の記述をリファレンス実装に合わせて改めたものです。
 Version 0.1 のファイルの読み方に影響する変更は次のとおりです。
