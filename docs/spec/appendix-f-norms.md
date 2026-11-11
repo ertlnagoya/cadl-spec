@@ -1278,25 +1278,23 @@ At each observation the environment chooses three things.
    the state of a translated norm and is left out. The environment
    chooses a subset of the message events; each occurs at most once in
    an observation, in a fixed order (the order of the model).
-2. **Values.** The predicates of v0.1 compare one quantity with
-   literals. The literals compared with a quantity cut its domain into
-   classes on which every such comparison has the same value: for
-   numbers c<sub>1</sub> < … < c<sub>k</sub>, the classes below
-   c<sub>1</sub>, each c<sub>j</sub>, each open interval between two of
-   them, and above c<sub>k</sub>; for symbolic and text values, each
-   literal and one other value; for a boolean quantity, true and false.
-   One representative stands for each class, and *no value* is a class
-   of every quantity, for which the predicates that use it are
-   undefined (F.5). The environment chooses one class per quantity; the
-   choices are grouped by the predicates they decide, so that two
-   choices that give every predicate the same three-valued value are
-   one choice. The classes assume that every value of a quantity has
-   the type of the literals it is compared with (numbers, booleans, or
-   symbols and texts), or that it has no value. A trace with a value of
-   another type, such as a text where numbers are compared or a boolean
-   compared with numbers, can give a predicate a value that no class
-   gives it (true, false or undefined); the answers do not cover such
-   traces.
+2. **Values.** A trace may give a quantity any JSON value. The values
+   are cut into classes on which every predicate of the model has the
+   same value as norms-eval evaluates it (F.5): no value; true; false;
+   for numbers, the numbers below, at, between, and above the numeric
+   literals compared with the quantity, together with 0 (a number used
+   as a condition is true unless it is 0) and, when a boolean literal is
+   compared with it, 1 (an ordering compares true as 1); each text
+   literal and each name without a value compared with it, and one other
+   text; and one value for lists and objects, which no comparison tells
+   apart. One representative stands for each class. The model evaluates
+   every predicate on the representatives with the evaluator of
+   norms-eval, so a comparison of values of different types (a text with
+   a number, a boolean with a number) has in the model the value it has
+   in a trace: undefined where norms-eval cannot compare the two values,
+   false where it compares them as unequal. The environment chooses one
+   class per quantity; combinations of classes that give every predicate
+   the same three-valued value are one choice.
 3. **The end.** Whether the instance ends at this observation (step 6
    of F.5). This covers both the end signalled for an instance without
    `lifecycle:` and a terminal lifecycle state.
