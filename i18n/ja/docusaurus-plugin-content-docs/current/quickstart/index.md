@@ -74,7 +74,7 @@ B と比べる相手を変えるには，**A — baseline** を開いて同じ�
 - **Motivation profile** — エージェント間のモチベーション分布
   （`uniform`, `linear`, `polarized`）。
 - **ρ（モチベーション感度）** — ガバナンスがモチベーションにどれだけ応答するか。
-  ρ=0 はモチベーションを無視，ρ=1 は完全に結合。モチベーションのモデルを
+  ρ=0 ではモチベーションを無視し，ρ=1 では完全に連動します。モチベーションのモデルを
   持たないテンプレート（D-SoS と C-SoS）では，スライダーは無効になります。
 
 用意された比較から始めたい場合は，ページ上部の **Getting started**
@@ -96,7 +96,7 @@ B と比べる相手を変えるには，**A — baseline** を開いて同じ�
 サイドバーの **Save this comparison** を押すと，現在の A と B の指標が
 ページ下部の **Saved comparisons** の表に加わります。表は CSV または JSON で
 ダウンロードできます。ブラウザのアドレスには現在の設定が記録されるので，
-アドレスを写せば比較を共有できます。
+アドレスをコピーすれば比較を共有できます。
 
 ![D-SoS（A）と C-SoS（B）を比べている CADL Explorer：左にサイドバーの設定，右に Outcome の節](/img/handson/explorer-compare.jpg)
 
@@ -105,7 +105,7 @@ B と比べる相手を変えるには，**A — baseline** を開いて同じ�
 サイドバーの **Custom CADL** を開き，**Design B**（または
 **Design A (baseline)**）に `CADLMotivationConfig` YAMLを貼り付けると，
 選択肢の代わりにその設定が使われます。**CADL source of A and B** に表示される
-YAMLと同じく，`governance:` / `motivation:` を入れ子にした形式で書きます。最小例：
+YAMLと同じく，`governance:` / `motivation:` を入れ子にした形式で書きます。最小の例を示します。
 
 ```yaml
 name: my-custom-config
@@ -229,7 +229,7 @@ Verification FAILED: 7/9 checks passed
 
 ## 次のステップ
 
-- **手を動かして学ぶなら → [テキストブック](../textbook/index.md)**（コース A）。そのあと、[ハンズオン入口](../handson/index.md)に示す順で他のコースに進みます。
-- 言語全体については [仕様書の概要](../spec/intro.md) を参照。
-- 第 [5. 言語仕様](../spec/05-language-spec.md) 章で三層構文を確認。
-- 第 [7. 例](../spec/07-examples.md) 章により大きな例が載っています。
+- 手を動かして学ぶなら，[テキストブック](../textbook/index.md)（コース A）に進みます。そのあと，[ハンズオン入口](../handson/index.md)に示す順で他のコースに進みます。
+- 言語全体については，[仕様書の概要](../spec/intro.md) を参照してください。
+- 三層の構文は，仕様書の [5. 言語仕様](../spec/05-language-spec.md) で確認できます。
+- より大きな例は，仕様書の [7. 例](../spec/07-examples.md) にあります。

@@ -18,12 +18,12 @@ title: "第 4 章 — 構造を書く"
 
 **演習で：**
 
-- SoS のアクターを同定し、自分で宣言できる（知らないドメインを含む）。
+- SoS のアクターを洗い出し、自分で宣言できる（知らないドメインを含む）。
 - `cadl check` を実行し、その診断メッセージを説明できる。
 
 ## 4.2 背景
 
-CADL の `actors:` ブロックは SoS の UML クラス図のようなものです。各アクター型はポート（`interface.input` / `interface.output`）と自律度（`autonomy: low | medium | high`）を持ちます。`contracts:` ブロックは、指定したアクターサブセットの間の *合意* です。
+`actors:` ブロックには、UML のクラス図と同じように、SoS に参加するアクターの種類を書きます。各アクターは、入出力（`interface.input` / `interface.output`）と自律性の程度（`autonomy: low | medium | high`）を持ちます。`contracts:` ブロックには、`parties:` に挙げたアクターの間の合意を書きます。
 
 ```mermaid
 flowchart LR
@@ -41,7 +41,7 @@ flowchart LR
 
 ### 構造を組み立てる部品
 
-CADL ファイルは「**誰が**参加し、**お互いに何を期待しているか**」を、「いつ」「どれくらいの頻度で」よりも先に述べます。構造を組み立てる部品は次のとおりです。
+CADL ファイルには、いつ、どれくらいの頻度でどのような事象が起こるかよりも先に、誰が参加し、お互いに何を期待しているかを書きます。構造を組み立てる部品は次のとおりです。
 
 ```mermaid
 flowchart LR
@@ -54,7 +54,7 @@ flowchart LR
   C --> T
 ```
 
-この章では **actors** と **contracts**、それにプロトコルを 1 つ（**protocols**）書きます。`transitions` は発展課題に回します。
+この章では `actors:` と `contracts:`、それにプロトコルを 1 つ（`protocols:`）書きます。`transitions:` はこの章では扱いません。
 
 ## 4.3 手順
 
@@ -127,7 +127,7 @@ sos:
         - "DISPATCHER -> CUSTOMER[j] : delivery_notification"
 ```
 
-型チェッカを実行：
+`cadl check` で検査します。
 
 ```bash
 cd ~/program/cadl_repo
@@ -175,10 +175,10 @@ cadl sim-ir my_delivery.cadl --format json
 
 ## 4.5 チェック
 
-両方とも確認：
+次の 2 点を確認します。
 
 1. `cadl check my_delivery.cadl` が `Type check passed: my_delivery.cadl` と表示され、`[ERROR]` の行がない。
-2. IR JSON で `"lifecycle": null` と `"monitors": []` になっている。この 2 行は契約の終わり近く（出力の 90 行目あたり）にあり，その後に規範拡張の `"norms"` と `"counts_as"` が続く（ここでは空）。この 2 行だけを表示するには：
+2. IR JSON で `"lifecycle": null` と `"monitors": []` になっている。この 2 行は契約の終わり近く（出力の 90 行目あたり）にあり、その後に規範拡張の `"norms"` と `"counts_as"` が続く（ここでは空）。この 2 行だけを表示するには：
 
    ```bash
    cadl sim-ir my_delivery.cadl --format json | grep -n -A1 '"lifecycle"'
@@ -189,7 +189,7 @@ cadl sim-ir my_delivery.cadl --format json
    91-        "monitors": [],
    ```
 
-この `null` と `[]` こそが **第 5 章で埋めるギャップ** です。構造だけの仕様では「ロボットは 5 秒以内に ack せよ」と言えない理由がこれです。
+この `null` と `[]` の部分を、第 5 章で書きます。ここが空なので、構造だけの仕様では「ロボットは 5 秒以内に ack を返す」という規則を書けません。
 
 ## 4.6 よくある間違い
 
@@ -197,11 +197,11 @@ cadl sim-ir my_delivery.cadl --format json
 | --- | --- |
 | `YAML parse error: while parsing a flow sequence` | `[ROBOT[i].battery, ...]` のように subscript 付きをクオートなしで書いた。`["ROBOT[i].battery", ...]` のように quote する。 |
 | `Parse error: Invalid SoS type: 'Centralized'. Must be one of: Directed, Acknowledged, Collaborative, Virtual` | `type:` に書けるのはこの 4 つだけ。 |
-| `[ERROR]: Undefined actor 'CUSTMER' referenced in contract 'DELIVERY_SLA' parties` | `parties:`（または述語の中。例：`CUSTMER[i].x`）に書いた名前が `actors:` で宣言されていない。多くは打ち間違い。`CUSTOMER[1..M]` と宣言したアクターは，`"CUSTOMER[*]"`（全員）または `CUSTOMER[i]`（1 人）で参照する。 |
+| `[ERROR]: Undefined actor 'CUSTMER' referenced in contract 'DELIVERY_SLA' parties` | `parties:`（または述語の中。例：`CUSTMER[i].x`）に書いた名前が `actors:` で宣言されていない。多くは打ち間違い。`CUSTOMER[1..M]` と宣言したアクターは、`"CUSTOMER[*]"`（全員）または `CUSTOMER[i]`（1 人）で参照する。 |
 
 ## 4.7 おさらい
 
-SoS の **構造** を記述する CADL ファイルが完成しました。コンパイルでき、IR に変換でき、IR の中に契約 `DELIVERY_SLA` とプロトコル `DeliveryOrder` が 1 つずつあることも確認できました。次は、ランタイムがこの契約への違反を検出できるように、規範を書き加えます。
+SoS の構造を記述する CADL ファイルが完成しました。コンパイルでき、IR に変換でき、IR の中に契約 `DELIVERY_SLA` とプロトコル `DeliveryOrder` が 1 つずつあることも確認できました。次は、ランタイムがこの契約への違反を検出できるように、規範を書き加えます。
 
 ## 4.8 演習
 
@@ -230,7 +230,7 @@ SoS の **構造** を記述する CADL ファイルが完成しました。コ�
 3. `assume` に `ROBOT[i].battery > 0` を含めるか、もっと強い条件にするか判断する。
 4. `cadl check` を再実行。
 
-**振り返り**: 同じアクターに *2 つの* 契約があるとき、`assume` 節はどう作用しますか？（ヒント：両方が同時に成り立つ必要がある — これがまさに Dahmann (2014) [[9]](appendix-d-references.md) が SoS pain point #5 として挙げた *相互依存* の問題です。）
+**振り返り**: 同じアクターが 2 つの契約の当事者であるとき、それぞれの `assume` はどう働きますか？（ヒント：両方が同時に成り立つ必要があります。Dahmann (2014) [[9]](appendix-d-references.md) が SoS の課題（pain point）の 5 番目に挙げた相互依存の問題に当たります。）
 
 ### 演習 4.3 (★★) — プロトコルに条件を加える
 
@@ -256,19 +256,19 @@ SoS の **構造** を記述する CADL ファイルが完成しました。コ�
       postcondition: "ROBOT[i].status == Delivered"
 ```
 
-**振り返り**: なぜプロトコルは *メッセージ* の列として書かれ、コードとして書かれないのでしょうか？ Python 関数では得られないどんな利点があるでしょうか？（ヒント：各ステップを *誰が実装するか* を考える。）
+**振り返り**: プロトコルをコードとして書かず、メッセージの列として書くのはなぜでしょうか？ Python の関数として書いた場合と比べて、どんな利点がありますか？（ヒント：各ステップを誰が実装するかを考える。）
 
 ### 演習 4.4 (★★★) — 知らないドメインを書いてみる
 
-**目的**: 既存ファイルを一切コピーせず、**配送ドローンの群**（地上ロボットではなく）の CADL 骨格をゼロから書く。ドメインの形は同じだが、アクターと capabilities は異なる。
+**目的**: 既存のファイルをコピーせずに、配送ドローンの群（地上ロボットの代わりにドローンが運ぶ）の CADL ファイルの骨組みを最初から書く。全体の構成は同じだが、アクターと capabilities は異なる。
 
 **手順**:
 
 1. `my_drone_delivery.cadl` を白紙から作成。
-2. アクターを決める。ヒント：*DRONE* は *ROBOT* と違う `capabilities` を必要とする（高度、飛行禁止区域、天候を考慮）。
+2. アクターを決める。ヒント：DRONE には ROBOT と違う `capabilities` が要る（高度、飛行禁止区域、天候を考慮する）。
 3. `cadl check` を実行。
 
-**振り返り**: 自分のファイルのうち、ロボット配送と *同じ* 部分はどれくらいで、本当に違う部分はどれくらいですか？ 同じライフサイクルが小修正で再利用できる — これがまさに SoS-DSL の設計意図です。
+**振り返り**: 自分のファイルのうち、ロボット配送と同じ部分はどれくらいで、違う部分はどれくらいですか？ SoS-DSL は、同じライフサイクルを少し変えるだけで別のドメインに使えるように設計されています。
 
 ### 授業で使う場合
 
@@ -281,5 +281,5 @@ SoS の **構造** を記述する CADL ファイルが完成しました。コ�
 
 **次の授業（第 5 章）に持参**:
 
-- `my_delivery_v1.cadl`（クリーンにコンパイルされる）
-- v1 で表現できないものを 3〜5 行のメモで列挙（ヒント：タイミング、何を違反とみなすか、その帰結）。
+- `my_delivery_v1.cadl`（`cadl check` がエラーなく通るもの）
+- v1 で表現できないものを 3〜5 行のメモで列挙（ヒント：タイミング、何を違反とみなすか、違反したらどうなるか）。

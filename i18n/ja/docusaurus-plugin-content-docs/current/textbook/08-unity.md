@@ -17,7 +17,7 @@ title: "第 8 章 — Unity でシミュレーションを動かす"
 
 ### NATS と arbitrator を起動
 
-**2 つ**の別 Terminal で：
+別々の Terminal を 2 つ開いて、それぞれで次を実行します。
 
 ```bash
 # Terminal 1 — NATS メッセージブローカ
@@ -47,9 +47,9 @@ go run .
 
 > #### 🛠 Play のたびに arbitrator を再起動する（重要）
 >
-> Go の arbitrator はロボット台数や配送状態を**起動時に一度だけ**初期化し、Unity を停止→再生しても**状態をリセットしません**。前回セッションの「busy／割当中」を抱えたまま新しい配送を出さなくなり、**全車が `Proposed` のまま約 5 分後に `deadline_watch` で `Violated`**、という症状になります。**Play のたびに Terminal 2 の arbitrator を `Ctrl+C` で止めて再起動**してください（不安なら NATS も）。起動順は必ず **NATS → arbitrator → Unity の Play**。
+> Go の arbitrator は、ロボット台数や配送状態を起動時に一度だけ初期化し、Unity を停止して再生し直しても状態をリセットしません。前回のセッションの「busy／割当中」の状態が残るので新しい配送を出さなくなり、全車が `Proposed` のまま、約 5 分後に `deadline_watch` で `Violated` になります。Play のたびに、Terminal 2 の arbitrator を `Ctrl+C` で止めて再起動してください（不安なら NATS も再起動します）。起動の順序は必ず、NATS、arbitrator、Unity の Play の順です。
 >
-> 設定ファイルは**絶対パスで明示**すると確実です（既定は相対パスで、起動ディレクトリに依存します）。
+> 設定ファイルは絶対パスで指定すると確実です（既定は相対パスで、起動ディレクトリに依存します）。
 >
 > ```bash
 > cd ~/program/cadl-raspimouse-simulator/arbitrator/C-SoS/main
@@ -64,7 +64,7 @@ go run .
 2. 初回オープンはパッケージの取得と Library の構築で数分かかる。
 3. Project ペインで `Assets/Scenes/C-SoS.unity` をダブルクリック。
 
-**11 個のノードと 17 本のエッジ**からなる経路網（グラフ）と、その上を走る **5 体**のロボット（Red / Blue / Green / Yellow / Purple）が見えるはずです。ノード数・エッジ数・台数はいずれも `Assets/streamingAssets/cadl_config.json` から読み込まれるので、Console にも `[GraphDefinition] Loaded from CADL config: 11 nodes, 17 edges` と出ます（CADL ファイルの `context.environment` にある `grid_size: 30` は IR に引き継がれる抽象的な環境パラメータで、Unity シーンは参照しません。シーンの経路グラフは `cadl_config.json` で定義されたものです）。
+11 個のノードと 17 本のエッジからなる経路網（グラフ）と、その上を走る 5 体のロボット（Red / Blue / Green / Yellow / Purple）が見えるはずです。ノード数・エッジ数・台数はいずれも `Assets/streamingAssets/cadl_config.json` から読み込まれるので、Console にも `[GraphDefinition] Loaded from CADL config: 11 nodes, 17 edges` と出ます（CADL ファイルの `context.environment` にある `grid_size: 30` は IR に引き継がれる抽象的な環境パラメータで、Unity シーンは参照しません。シーンの経路グラフは `cadl_config.json` で定義されたものです）。
 
 ![C-SoS.unity を開いた直後の Unity エディタ。Scene ビューに、番号の付いたノードを持つ経路網と 5 台のロボットが表示されている](/img/handson/unity-scene-opened.jpg)
 
@@ -122,15 +122,15 @@ Pilot Contract Bridge (Script)
 
 ![ロボットを選択した Unity エディタ。Inspector に Pilot Contract Bridge が表示され、Robot Battery 15、Request Deadline Ms 300000、Assigned Dwell Ms 700 になっている](/img/handson/unity-pilot-contract-bridge.jpg)
 
-シーンを保存（`Cmd+S` / `Ctrl+S`）。
+シーンを保存します（`Cmd+S` / `Ctrl+S`）。
 
 ### Play を押す
 
-Editor 上部の ▶ をクリック。
+Editor 上部の ▶ をクリックします。
 
 ## 8.3 表示されるもの
 
-Console に以下のような行が連続的に出ます。Console の検索欄に `lifecycle DELIVERY_SLA` または `violation` と入れて絞り込めます。
+Console に以下のような行が次々に出ます。Console の検索欄に `lifecycle DELIVERY_SLA` または `violation` と入れて絞り込めます。
 
 ![Play 中の Unity：Scene ビューに経路網上のロボット、Console に DELIVERY_SLA で絞り込んだライフサイクルイベント](/img/handson/unity-play-console.jpg)
 
@@ -159,27 +159,27 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 
 ## 8.4 シーンの中の部品
 
-**C# が Unity で動く**。シーン上の `ContractRuntimeHost` が毎フレーム `Runtime.Tick(now)` を呼び、期限切れと監視ルールを評価します。各ロボットに付けた `PilotContractBridge` が、ロボットの状態変化（配送を落札した・配達を終えた）を**契約イベント**（`route_assignment` や `Delivered`）に翻訳し、そのロボット自身の契約インスタンスに流し込みます。違反や状態遷移は Console に 1 行ずつ出ます：
+生成した C# は、Unity の中で次のように動きます。シーン上の `ContractRuntimeHost` が毎フレーム `Runtime.Tick(now)` を呼び、期限切れと監視ルールを評価します。各ロボットに付けた `PilotContractBridge` が、ロボットの状態変化（配送を落札した・配達を終えた）を契約イベント（`route_assignment` や `Delivered`）に変換し、そのロボット自身の契約インスタンスに送ります。違反や状態遷移は Console に 1 行ずつ出ます。
 
 ```
 [lifecycle DELIVERY_SLA/robot-2-1 Proposed -> Assigned (assign, event) @ 16112ms]
 [violation DELIVERY_SLA/robot-2-1 battery_guard Major monitor:battery_guard @ 16112ms]
 ```
 
-### 手書きの橋渡し — `SoSDsl/Demo/`
+### 手書きのブリッジ — `SoSDsl/Demo/`
 
 | ファイル | 中身 |
 | --- | --- |
-| `ContractRuntimeHost.cs` | シーンに 1 つ。ランタイムを保持し、毎フレーム Tick し、イベントを Console に印字 |
-| `PilotContractBridge.cs` | ロボットごとに 1 つ。`Pilot_CSoS` を**観測**して契約イベントに翻訳。`Assigned Dwell Ms`（700ms）は周期監視が Assigned 状態を見逃さないための待ち時間 |
+| `ContractRuntimeHost.cs` | シーンに 1 つ。ランタイムを保持し、毎フレーム Tick し、イベントを Console に出力 |
+| `PilotContractBridge.cs` | ロボットごとに 1 つ。`Pilot_CSoS` を観測して契約イベントに変換。`Assigned Dwell Ms`（700ms）は周期監視が Assigned 状態を見逃さないための待ち時間 |
 
 ### シミュレータ本体（契約とは独立に動く）
 
 | ファイル | 中身 |
 | --- | --- |
-| `LineTrace/Pilot_CSoS.cs` | ロボットの頭脳。経路追従・配送の入札（claim）・落札・完了。**契約のことは何も知らない** |
+| `LineTrace/Pilot_CSoS.cs` | ロボットの制御プログラム。経路追従・配送の入札（claim）・落札・完了を行う。契約は参照しない |
 | `arbitrator/C-SoS/main/main.go` | Go 製のアービトレータ（配送の割当係）。NATS で配送を配り、早い者勝ち（FCFS）で落札を決める |
-| `Assets/streamingAssets/cadl_config.json` | グラフ（11 ノード・17 エッジ）・ロボット台数・NATS 設定。両側が読み込む：アービトレータ起動時の `[Config]` 行（Terminal 2）と、Unity の Console に出る `[GraphDefinition] Loaded from CADL config` の行は、このファイルに由来する |
+| `Assets/streamingAssets/cadl_config.json` | グラフ（11 ノード・17 エッジ）・ロボット台数・NATS 設定。アービトレータと Unity の両方が読み込む。アービトレータ起動時の `[Config]` 行（Terminal 2）と、Unity の Console に出る `[GraphDefinition] Loaded from CADL config` の行は、このファイルに由来する |
 
 ### どこを触ると何が変わるか
 
@@ -187,46 +187,46 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 
 | やりたいこと | 触る場所 |
 | --- | --- |
-| 期限を変える・監視を増やす・状態を足す | **`.cadl` ファイル**（→ e2e スクリプトで再生成） |
+| 期限を変える・監視を増やす・状態を足す | `.cadl` ファイル（変更後、e2e スクリプトで再生成） |
 | ロボットの動き方を変える | `Pilot_CSoS.cs`（ブリッジが観測するイベントが変わらない限り、契約側の変更は不要） |
-| 契約イベントへの翻訳を変える | `PilotContractBridge.cs` |
+| 契約イベントへの変換を変える | `PilotContractBridge.cs` |
 | 生成される C# の形を変える | `contract_emitter.py`（上級者向け） |
 | ロボット台数・地図を変える | `cadl_config.json` |
 
-**触ってはいけない場所**：`Generated/` と `Runtime/` の中身の手編集。次に e2e スクリプトを実行すると上書きされます（直したいなら生成器を直す）。
+`Generated/` と `Runtime/` の中身は、手で編集しないでください。次に e2e スクリプトを実行すると上書きされます（直したい場合は生成器を直します）。
 
 ### コードを読む（任意、約 10 分）
 
-`PilotContractBridge.cs` を読み、「観測→イベント」の翻訳がどれだけ薄いかを確かめます。
+`PilotContractBridge.cs` を読み、観測をイベントに変換する処理が、短いコードで済んでいることを確かめます。
 
 ## 8.5 チェック
 
-すべて確認：
+次の項目をすべて確認します。
 
 | 項目 | 期待 |
 | --- | --- |
-| `[lifecycle ... robot-{id}-1 ...]` イベントが **5 体すべて** に出る | はい |
+| `[lifecycle ... robot-{id}-1 ...]` イベントが 5 体すべてに出る | はい |
 | Battery 15 のロボットには `monitor:battery_guard` の violation が出る | はい |
 | 各ロボットの最初の遷移は `Proposed -> Assigned` | はい |
 | ロボットは約 5 秒ごとに 1 台ずつ `Assigned` になる（調停器が 1 件ずつ配達を割り当てる）ので、最後の 1 台までは 25〜30 秒ほどかかる | はい |
-| ロボットの契約が `Completed` になるのは、**そのロボット**が配達を終えたときで、他のロボットの契約は一緒に動かない | はい |
-| 第 7 章の Python と **同じ種類のイベント**（lifecycle 遷移・violation）が同じ意味で出ている | はい |
+| ロボットの契約が `Completed` になるのは、そのロボットが配達を終えたときで、他のロボットの契約は一緒に動かない | はい |
+| 第 7 章の Python と同じ種類のイベント（lifecycle 遷移・violation）が同じ意味で出ている | はい |
 
 ## 8.6 よくある間違い
 
 | 症状 | 対処 |
 | --- | --- |
-| Console: `[PilotContractBridge X] ContractRuntimeHost.Instance is null` | host を置き忘れ。8.2 節の「ContractRuntimeHost を追加」をやり直す。 |
+| Console: `[PilotContractBridge X] ContractRuntimeHost.Instance is null` | host を置き忘れている。8.2 節の「ContractRuntimeHost を追加」をやり直す。 |
 | Console に contract イベントが何も出ない | NATS / arbitrator が起動していない。Terminal 1 に `Server is ready`、Terminal 2 に `[Config] … taskArbitration.enabled=true …` が出ているか確認。 |
-| 配送が一切割り当てられない（`WON delivery` が出ない） | arbitrator が設定を読めていない可能性。`-config` に `cadl_config.json` の**絶対パス**を渡して起動し直し、`taskArbitration.enabled=true` の表示を確認する（同梱の config は既定で `true`）。 |
+| 配送が一切割り当てられない（`WON delivery` が出ない） | arbitrator が設定を読めていない可能性。`-config` に `cadl_config.json` の絶対パスを渡して起動し直し、`taskArbitration.enabled=true` の表示を確認する（同梱の config は既定で `true`）。 |
 | Play 後 Console に `The name 'CADL.SosDsl.Demo.ContractRuntimeHost' could not be found` | Generated/Runtime ファイルが認識されていない。e2e スクリプトを再実行、または Unity で `Assets ▸ Reimport All`。 |
-| **全車が `Proposed` のまま、約 5 分後に `deadline_watch` で `Violated`** | arbitrator が前回 Play の状態を持ち越している（落札が来ない）。Play を止め、**arbitrator を再起動**（必要なら NATS も）してから再生。**Play のたびに再起動が必要**（8.2 節の注記「Play のたびに arbitrator を再起動する」参照）。 |
-| **コンパイルエラー `... already contains a definition for ...`（パスが `Generated/Generated/…` や `Runtime/Runtime/…`）** | 生成ツリーが入れ子に二重コピーされている。`Assets/Scripts/SoSDsl/Generated/Generated` と `Runtime/Runtime` を削除（最新の e2e スクリプトは自動で掃除する）。 |
-| **Battery 15 の車も違反せず `Completed` まで進む** | bridge が `assign` と `accept` を同一フレームで撃ち、`Assigned` に留まらないため periodic な `battery_guard` がサンプリングできない。同梱の `PilotContractBridge` は `assignedDwellMs`（既定 700ms）で対策済み。bridge を差し替えた場合はこの値を monitor 周期より大きく保つ。 |
+| 全車が `Proposed` のまま、約 5 分後に `deadline_watch` で `Violated` | arbitrator が前回 Play の状態を持ち越している（落札が来ない）。Play を止め、arbitrator を再起動（必要なら NATS も）してから再生。Play のたびに再起動が必要（8.2 節の注記「Play のたびに arbitrator を再起動する」参照）。 |
+| コンパイルエラー `... already contains a definition for ...`（パスが `Generated/Generated/…` や `Runtime/Runtime/…`） | 生成ツリーが、同名のディレクトリの中にもう一度コピーされている。`Assets/Scripts/SoSDsl/Generated/Generated` と `Runtime/Runtime` を削除（最新の e2e スクリプトは自動で削除する）。 |
+| Battery 15 の車も違反せず `Completed` まで進む | bridge が `assign` と `accept` を同一フレームで発火し、`Assigned` に留まらないため、周期的な `battery_guard` が評価する機会がない。同梱の `PilotContractBridge` は `assignedDwellMs`（既定 700ms）で対策済み。bridge を差し替えた場合はこの値を monitor 周期より大きく保つ。 |
 
 ## 8.7 おさらい
 
-CADL で仕様を書き、IR に変換し、C# を生成し、リアルタイムシミュレーションとして実行するところまでを通しで体験し、期限切れやバッテリ規則への違反が検出され、該当する契約インスタンスが `Violated` に移る様子を確認しました（ランタイムが行うのは違反の検出と記録であり、ロボットの逸脱そのものを防ぐわけではありません）。
+CADL で仕様を書き、IR に変換し、C# を生成し、リアルタイムシミュレーションとして実行するところまでを通しで実行し、期限切れやバッテリ規則への違反が検出され、該当する契約インスタンスが `Violated` に移る様子を確認しました（ランタイムが行うのは違反の検出と記録であり、ロボットの逸脱そのものを防ぐわけではありません）。
 
 ## 8.8 演習
 

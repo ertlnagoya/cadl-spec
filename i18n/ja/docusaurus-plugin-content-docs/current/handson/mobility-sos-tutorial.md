@@ -6,15 +6,15 @@ title: "コース B — 都市モビリティ (CADL × SUMO)"
 
 # コース B — 都市モビリティ：CADL × SUMO で SoS を設計する
 
-⬅ [コース A — ロボット配送](../textbook/index.md) に戻る
+[コース A — ロボット配送](../textbook/index.md) に戻る
 
 - 対象：[コース A](../textbook/index.md)（CADL/SoS-DSL の基礎）を済ませた方
 - 所要時間：60〜90 分
-- 完成すると手元に残るもの：タクシー需要を題材に自分で手を入れた `mobility_sos.cadl`、SUMO で走るシミュレーション、シミュレーション結果を CADL 契約の `guarantee` 節に照らして判定したレポート
+- 成果物：タクシー需要を題材に自分で書き換えた `mobility_sos.cadl`、SUMO で走るシミュレーション、シミュレーション結果を CADL 契約の `guarantee` 節に照らして判定したレポート
 
 ---
 
-## 0. このコースで何が起きるか
+## 0. このコースの概要
 
 コース A（[テキストブック](../textbook/index.md)）はロボット配送 SoS を題材に CADL → SoS-DSL → Unity C# を扱いました。
 コース B では題材を都市モビリティ（タクシー）に、コード生成のターゲットを SUMO に差し替えます。
@@ -44,7 +44,7 @@ mobility_sos.cadl
 参照実装は `cadl-mobility-sos-exercise` リポジトリにあります。
 
 :::info[リポジトリの公開状況]
-`cadl-mobility-sos-exercise` は GitHub 上の**非公開**のリポジトリで、現時点では公開していません。アクセス権がある場合は、下のセットアップのとおりクローンします。ない場合は、提供されたコピーを `~/program/cadl-mobility-sos-exercise` に置きます。どちらもない場合も、本ページは CADL をモビリティ SoS に適用する事例として読めます。
+`cadl-mobility-sos-exercise` は GitHub 上の非公開のリポジトリで、現時点では公開していません。アクセス権がある場合は、下のセットアップのとおりクローンします。ない場合は、提供されたコピーを `~/program/cadl-mobility-sos-exercise` に置きます。どちらもない場合も、本ページは CADL をモビリティ SoS に適用する事例として読めます。
 :::
 
 ---
@@ -90,7 +90,7 @@ pip install -r ~/program/cadl-explorer/requirements.txt
 
 ## 2. SoS の構造を読む（5 分）
 
-`cadl/mobility_sos.cadl` を開き、`sos:` ブロック内の `actors:` を見てみましょう（抜粋）。
+`cadl/mobility_sos.cadl` を開き、`sos:` ブロック内の `actors:` を見ます（抜粋）。
 
 ```yaml
 sos:
@@ -105,14 +105,14 @@ sos:
       autonomy: medium             # サービスの要求者
 ```
 
-読み方は次の通りです。プラットフォームは中央の調整役で、自分の判断で動く余地は小さい（`autonomy: low`）。
+プラットフォームは中央の調整役で、自分の判断で動く余地は小さくなっています（`autonomy: low`）。
 タクシーは自分の利益で動く、自律性の高いエージェントです。
 乗客は要求を出し、乗るかどうかを判断します。
 
 コース A のロボット配送と同じ Acknowledged 型 SoS です。
 
-:::tip[🔍 可視化チェックポイント 0 — 構造だけの仕様で何が得られるか]
-ここまでで読んだのは CADL の**構造**（actors）だけです。
+:::tip[可視化チェックポイント 0 — 構造だけの仕様で何が得られるか]
+ここまでで読んだのは CADL の構造（actors）だけです。
 ファイルを検査し、契約の規範部分が IR にどれだけ入っているかを表示してみます。
 
 ```bash
@@ -122,9 +122,9 @@ cadl sim-ir cadl/mobility_sos.cadl --format json \
    | python3 -c "import sys, json; c=json.load(sys.stdin)['institution']['contracts'][0]; print('lifecycle =', 'present' if c['lifecycle'] else None, '/ monitors =', len(c['monitors']))"
 ```
 
-いま読んでいるファイルは完成した仕様で、契約には §3 で読む `lifecycle:` と `monitors:` がすでに書かれています。そのため、上のコマンドは lifecycle がある、と表示するはずです。
-**構造だけ**だとどうなるかを見るには、作業用のコピーを作り、そこから `lifecycle:` と `monitors:` のブロックを削除して、同じ 2 つのコマンドを実行してください。`cadl check` は通りますが、IR では `"lifecycle": null`、monitors は 0 個になり、cadl-explorer の **Contract Lifecycle** ページには図が出ず、「契約が `lifecycle:` を宣言していない」という警告と、monitor が宣言されていないという案内だけが表示されます。**Designer** ページの **Structure** ビュー（cadl-explorer v0.5.5 以降）の **Message flow** タブにも、「No messages yet」と表示されるだけです。このビューはメッセージをプロトコルのステップ、ライフサイクルのイベント、情報共有から取り出しますが、コピーにはそのどれもないからです。
-構造だけでは「期限」「違反」「帰結」を書けない、というこのギャップを埋めているのが、§3 で読む 2 つのブロックです。
+いま読んでいるファイルは完成した仕様で、契約には §3 で読む `lifecycle:` と `monitors:` がすでに書かれています。そのため、上のコマンドは `lifecycle = present` と表示するはずです。
+構造だけだとどうなるかを見るには、作業用のコピーを作り、そこから `lifecycle:` と `monitors:` のブロックを削除して、同じ 2 つのコマンドを実行してください。`cadl check` は通りますが、IR では `"lifecycle": null`、monitors は 0 個になり、cadl-explorer の **Contract Lifecycle** ページには図が出ず、「契約が `lifecycle:` を宣言していない」という警告と、monitor が宣言されていないという案内だけが表示されます。**Designer** ページの **Structure** ビュー（cadl-explorer v0.5.5 以降）の **Message flow** タブにも、「No messages yet」と表示されるだけです。このビューはメッセージをプロトコルのステップ、ライフサイクルのイベント、情報共有から取り出しますが、コピーにはそのどれもないからです。
+構造だけでは、期限、違反、違反したときの帰結を書けません。これらを書くのが、§3 で読む 2 つのブロックです。
 :::
 
 ---
@@ -170,8 +170,8 @@ contracts:
 
 ### 演習 3-1
 
-この契約は「乗車要求 1 件につきライフサイクル 1 インスタンス」という対応関係になっています。
-以下に答えてみてください。
+この契約では、乗車要求 1 件につきライフサイクルのインスタンスが 1 つ作られます。
+次の問いに答えてください。
 
 1. プラットフォームが 31 秒経っても割り当てを出さなかった場合、状態は何になりますか？
 2. `accept` の期限を守る責任があるのは、どの主体ですか？
@@ -179,10 +179,10 @@ contracts:
 
 ---
 
-## 4. 可視化する（10 分）— 🔍 可視化チェックポイント 1（DSL 後）
+## 4. 可視化する（10 分）— 可視化チェックポイント 1（DSL 後）
 
 §3 で CADL ソースの `lifecycle:` と `monitors:` を読みました。
-ファイルにこの 2 つのブロックがあるので、cadl-explorer に意味のある図が出ます。
+ファイルにこの 2 つのブロックがあるので、cadl-explorer は状態機械の図を描けます。
 
 ```bash
 cd ~/program/cadl-mobility-sos-exercise
@@ -195,7 +195,7 @@ streamlit run app.py
 # サイドバー → "Contract Lifecycle" → mobility_sos.ir.json をアップローダにドラッグ
 ```
 
-以下のような図がブラウザに描画されます：
+ブラウザに次のような図が描かれます。
 
 ![Mobility SoS Lifecycle](/img/mobility_sos_lifecycle.png)
 
@@ -209,14 +209,14 @@ streamlit run app.py
 
 図の中で `Terminated` はどこともつながっていません。契約は `Terminated` を終端状態として宣言していますが、そこへ入る遷移を書いていないためです。`mobility_sos.cadl` を **Designer** ページで開くと、同じことが Lifecycle の警告（`State 'Terminated' cannot be reached from the initial state 'Requested'`）として表示されます。`cadl check` はこの状態でも通ります。
 
-:::info[このパターンは何度も出てきます]
-このコースでは「CADL を編集 → `cadl sim-ir` で IR を再生成 → IR を cadl-explorer にアップロードし直す」という 3 ステップ（ブラウザでページを再読み込みすると、アップロードしたファイルは消える）を、節目（構造を読んだ後、契約を読んだ後、コード生成後、シミュレーション後、契約改訂後）でそのつど繰り返します。
-コードと図が連動して動く感触をつかむのが、このコースの主目的です。
+:::info[この手順は何度も出てきます]
+このコースでは、CADL を編集する、`cadl sim-ir` で IR を作り直す、IR を cadl-explorer にアップロードし直す、という 3 つの手順を、構造を読んだ後、契約を読んだ後、コード生成の後、シミュレーションの後、契約を改訂した後に、そのつど繰り返します（ブラウザでページを再読み込みすると、アップロードしたファイルは消えます）。
+CADL を書き換えると図も変わることを、手を動かして確かめるのがこのコースの主な目的です。
 :::
 
 ### 演習 4-1
 
-`cadl/mobility_sos.cadl` の `match` の `deadline: 30s` を `60s` に書き換えて、IR を作り直し、もう一度アップロードしてみてください。
+`cadl/mobility_sos.cadl` の `match` の `deadline: 30s` を `60s` に書き換えて、IR を作り直し、もう一度アップロードしてください。
 エッジラベルが `Δ 30s` から `Δ 60s` に変わるはずです。
 確認できたら 30s に戻してから次の章へ進んでください（以降の手順は 30s 前提）。
 
@@ -257,11 +257,11 @@ python scripts/cadl_to_sumo.py
   `end` は「`sumo/routes/midtown.rou.xml` の最後の `depart` ＋（1800 秒と `ride_time` guarantee の大きいほう）＋ 60 秒」で決まる（サンプルデータでは 3060 + 1800 + 60 = 4920）。リポジトリには `sumo/routes/midtown.rou.xml` が同梱されているので、この最初の実行ですでに 4920 秒になる（経路ファイルがなければ 3600 秒）。§6 では `generate_sumo_routes.py` のあと、`run_sumo.py` の前にこのスクリプトを再実行するので、`end` は生成した経路に合わせて決まる。§8 のように `ride_time` を厳しくしても `end` は短くならない
 - `sumo/cadl_constraints.json` — `analyze_results.py` が読む契約条件（guarantees / deadlines / monitors）
 
-:::tip[🔍 可視化チェックポイント 2 — コード生成しても CADL ソースは変わらない]
+:::tip[可視化チェックポイント 2 — コード生成しても CADL ソースは変わらない]
 `cadl_to_sumo.py` は IR を読んで SUMO の設定ファイルを書き出すだけで、`cadl/mobility_sos.cadl` の `lifecycle:` / `monitors:` には触れません（§3 のときと 1 バイトも変わりません）。
-ここで `cadl/mobility_sos.ir.json` を cadl-explorer にアップロードし直しても、§4 と同じ図が出るだけのはずです。
+ここで `cadl/mobility_sos.ir.json` を cadl-explorer にアップロードし直しても、§4 と同じ図が出ます。
 
-「コード生成は仕様を書き換えない」というこの性質があるおかげで、CADL を仕様の唯一の出典として扱えます。
+コード生成が仕様を書き換えないので、CADL を仕様の唯一の出典として扱えます。
 :::
 
 ---
@@ -318,13 +318,13 @@ python scripts/analyze_results.py
 
 ここで実際に判定されるのは 2 つの `guarantee` 節だけです。deadline と monitor は一覧に出ますが、評価はされません。
 
-- `guarantees` は `tripinfo.xml` に照らして評価される。`ride_time` は `tripinfo.duration` に直接対応する。`waiting_time` は `tripinfo.waitingTime` と比べているが、これは代理指標にすぎない。`waitingTime` は車両が走行中に停止していた時間であり、乗客がタクシーを待った時間ではない。このパイプラインでは CSV の 1 行ごとに、乗車時刻に乗車地点へ車両を 1 台投入するので、乗客の待ち時間は発生せず、値は 30 件すべて 0 秒になる。したがって、この `[OK]` はモデルの作り上、常に成り立つ。
+- `guarantees` は `tripinfo.xml` に照らして評価される。`ride_time` は `tripinfo.duration` に直接対応する。`waiting_time` は `tripinfo.waitingTime` と比べているが、これは代理指標である。`waitingTime` は車両が走行中に停止していた時間であり、乗客がタクシーを待った時間ではない。このパイプラインでは CSV の 1 行ごとに、乗車時刻に乗車地点へ車両を 1 台投入するので、乗客の待ち時間は発生せず、値は 30 件すべて 0 秒になる。したがって、この `[OK]` はモデルの作り上、常に成り立つ。
 - `deadlines`（matching/accept）は SUMO 上に対応するイベントがないので未評価。
 - `monitors` は、乗客ごとの `waiting_time`（`Matched` の間）、`battery`、`route_deviation_ratio` を見ており、いずれも SUMO の標準出力にない属性なので未評価。
 
-:::tip[🔍 可視化チェックポイント 3 — 仕様と実装の対応を確認]
-`analyze_results.py` の `[OK]` / `[SKIP]` の各行と cadl-explorer の図は、同じ CADL から派生したものです。
-ブラウザで cadl-explorer を開きながら、次の対応関係を眺めてみてください。
+:::tip[可視化チェックポイント 3 — 仕様と実装の対応を確認]
+`analyze_results.py` の `[OK]` / `[SKIP]` の各行と cadl-explorer の図は、同じ CADL から作られたものです。
+ブラウザで cadl-explorer を開き、次の対応を確かめてください。
 
 | analyze_results.py の出力 | cadl-explorer 上の対応箇所 |
 |---|---|
@@ -334,15 +334,15 @@ python scripts/analyze_results.py
 | `[SKIP] accept ≤ 5.0s` | `Matched → Accepted` の `Δ 5s` ラベル |
 | `[SKIP] waiting_too_long` / `low_battery_guard` / `detour_guard` | Monitors テーブルの 1・2・3 行目 |
 
-`[SKIP]` は失敗ではなく、「SUMO にはこの観測量が無い」という事実をそのまま表しているだけです。
-このギャップを TraCI で埋める課題が §9 にあります。
+`[SKIP]` は失敗ではなく、SUMO にその観測量が無いことを表しています。
+無い観測量を TraCI で読み取って評価できるようにする課題が §9 にあります。
 :::
 
 ---
 
 ## 8. 感度解析：契約条件を変えて再評価する（10 分）
 
-このコースの肝になる章です。CADL の guarantee を書き換えるだけで、SUMO を再実行しなくても違反件数が変わることを確かめます。
+このコースで最も重要な章です。CADL の guarantee を書き換えるだけで、SUMO を再実行しなくても違反件数が変わることを確かめます。
 
 ```bash
 # ride_time を 1800s → 100s に書き換え (試験用)
@@ -356,7 +356,7 @@ python scripts/cadl_to_sumo.py
 python scripts/analyze_results.py | grep -E "OK|VIOLATED"
 ```
 
-期待される結果（SUMO 1.28.0 では違反 12 件。実行は決定的なので、同じ SUMO の版ならそのまま再現します。別の版では、違反件数と該当タクシーの並びが変わることがあります。着目すべきは `waiting_time` が `OK` で `ride_time` が `VIOLATED` になる、という**内訳の形**です）：
+期待される結果（SUMO 1.28.0 では違反 12 件。実行は決定的なので、同じ SUMO の版ならそのまま再現します。別の版では、違反件数と該当タクシーの並びが変わることがあります。確かめるのは、`waiting_time` が `OK` で `ride_time` が `VIOLATED` になることです）：
 
 ```text
       [OK          ] waiting_time <= 300s  (tripinfo.waitingTime)
@@ -366,27 +366,27 @@ OK: 分析完了。
 
 最後の行はスクリプトの終了メッセージです。`OK` で始まるので `grep` のパターンに一致します。
 
-:::tip[🔍 可視化チェックポイント 4 — 改訂後（このコースの山場）]
-作り直した `cadl/mobility_sos.ir.json`（上のコマンドで書き出し済み）を、cadl-explorer にアップロードし直してみてください。
+:::tip[可視化チェックポイント 4 — 改訂後]
+作り直した `cadl/mobility_sos.ir.json`（上のコマンドで書き出し済み）を、cadl-explorer にアップロードし直してください。
 
 今回書き換えたのは guarantee の値（`ride_time <= 1800s` から `100s`）だけで、`lifecycle:` や `monitors:` には触れていません。
-そのため、状態機械の図そのものは §4 と同じです（状態数も遷移数も `Δ` ラベルも変化なし）。
-状態機械を変えたいときは `transitions:` を編集する必要があり、その例は演習 4-1 で扱った通りです。
+そのため、状態機械の図は §4 と同じです（状態数も遷移数も `Δ` ラベルも変わりません）。
+状態機械を変えるには `transitions:` を編集します。その例は演習 4-1 で扱いました。
 
-このチェックポイントの狙いは、CADL を編集した直後にブラウザに戻り、判定を駆動しているのが同じ CADL ソースであることを目で確認することにあります。
-それが次の三者の対応関係につながります。
+このチェックポイントでは、CADL を編集した直後にブラウザに戻り、図と判定が同じ CADL ソースから作られていることを確かめます。
+図、実行、判定は、次のように 1 つの CADL ソースに対応しています。
 
 ```
   CADL ソース (mobility_sos.cadl)
         │
-        ├── 図 (cadl-explorer)        ← 仕様を眺める
+        ├── 図 (cadl-explorer)        ← 仕様を見る
         ├── 実行 (SUMO)                ← 動的な挙動
         └── 判定 (analyze_results.py) ← guarantee の判定
 ```
 
-この往復が、CADL を起点にした SoS 設計のフィードバックループです。
+CADL を書き換え、図と判定で結果を確かめ、また書き換える、という繰り返しで SoS の設計を進めます。
 
-最後に元に戻すのを忘れずに。
+最後に、ファイルを元に戻してください。
 
 ```bash
 mv cadl/mobility_sos.cadl.bak cadl/mobility_sos.cadl
@@ -404,7 +404,7 @@ python scripts/analyze_results.py
 |---|---|
 | `match` の deadline を 30s から 10s に厳しくしたとき、何件が現実的に間に合うか調べる | SUMO には match イベントがなく（CSV の 1 行が車両 1 台）、`cadl_to_sumo.py` は IR を読むだけなので、この行は `[SKIP]` のままです。`analyze_results.py` を拡張し、`tripinfo.xml` の `departDelay` を代理指標として使います。サンプルデータでは 30 件すべて 0 秒なので、まず match イベントを何と定義するかを決めてください |
 | `num_taxis` を 10 から 5 に変えて、何かが変わるかを調べる | SUMO のパイプラインは `num_taxis` を使っていません（需要は CSV から来て、1 行が車両 1 台）。変更後も `tripinfo.xml` の 30 件の `<tripinfo>` 行は同一です（生成日時を含む先頭のコメントだけが変わります）。`summary.xml` の `running` の時系列（サンプルデータでは最大 2）から、この需要に必要な台数と、capacity 違反が現れるには何をモデル化する必要があるかを論じてください |
-| 新しい monitor `surge_pricing_guard` を追加し、ツールチェーンのどこまで届くかを追う | YAML の `monitors:` に追記して IR を作り直す。IR（monitor が 4 件）、cadl-explorer の Monitors テーブル、`analyze_results.py` の `[SKIP]` 一覧に現れることを確認します。このパイプラインは monitor の rule を評価しないので、発火の様子はまだ観察できません |
+| 新しい monitor `surge_pricing_guard` を追加し、ツールチェーンのどのツールにまで反映されるかを確かめる | YAML の `monitors:` に追記して IR を作り直す。IR（monitor が 4 件）、cadl-explorer の Monitors テーブル、`analyze_results.py` の `[SKIP]` 一覧に現れることを確認します。このパイプラインは monitor の rule を評価しないので、発火の様子はまだ観察できません |
 | A/B の可視化比較：改訂前と改訂後の設計を見比べる | cadl-explorer の **Designer** ページで `.cadl` を開き、**Versions** で版を保存してから改訂後のファイルを開き、そこで二つを比較する。版を保存すると、**Compare two designs** の **A — baseline** に保存した版、**B — compared** に現在の設計が入り、構造の差分とソースの差分が表示される（cadl-explorer v0.5.4 以降。それより前の版では自分で選ぶ）。Lifecycle 図を並べて見たいときは、**Contract Lifecycle** ページをブラウザの 2 つのタブで開き、それぞれに別の IR をアップロードする（別ポートで 2 つ起動する必要はありません） |
 | `[SKIP]` のひとつを評価可能にする：TraCI で SUMO の信号を読み、`match` deadline を実測する | `pip install eclipse-sumo` だけでは `traci` を import できません。`pip install traci` を実行するか、`import sumo` のあとで `os.path.join(sumo.SUMO_HOME, "tools")` を `sys.path` に追加します（pip でのインストールではシェル変数 `$SUMO_HOME` は設定されません）。`traci.vehicle.getDeparture(vehID)`（または `traci.simulation.getDepartedIDList()`）を読み、CSV の `pickup_time` との差を計算します。これは投入遅延であり、`match` の代理指標（サンプルデータでは 0 秒）です。モデル化された match イベントではありません |
 
@@ -413,9 +413,9 @@ python scripts/analyze_results.py
 ## まとめ
 
 コース A では CADL → Unity C# を、コース B では CADL → SUMO を扱いました。
-同じ CADL/SoS-DSL の文法のまま、対象ドメインとランタイムを差し替えられることが体感できたはずです。
-契約の deadline / guarantee / monitor は CADL ソースの 1 箇所に書かれ、`cadl sim-ir` が出力する IR を通じて各ツールに届きます。ただし、そのうちどこまでを評価できるかはランタイムによって異なります。このコースの SUMO パイプラインが評価するのは `guarantee` 節だけで、deadline と monitor は、対応する観測量が SUMO に無いため `[SKIP]` と報告されます。
-CADL の guarantee を書き換えて解析をやり直せば、再シミュレーションなしに既存の結果を再評価できます。SoS 設計に向いた、安くて速いフィードバックループです。
+同じ CADL/SoS-DSL の文法のまま、対象ドメインとランタイムを差し替えられることを確かめました。
+契約の deadline / guarantee / monitor は CADL ソースの 1 箇所に書かれ、各ツールは `cadl sim-ir` が出力する IR からそれを読みます。ただし、そのうちどこまでを評価できるかはランタイムによって異なります。このコースの SUMO パイプラインが評価するのは `guarantee` 節だけで、deadline と monitor は、対応する観測量が SUMO に無いため `[SKIP]` と報告されます。
+CADL の guarantee を書き換えて解析をやり直せば、シミュレーションをやり直さずに既存の結果を再評価できるので、契約の条件を変えた結果を短い時間で確かめられます。
 
 ---
 

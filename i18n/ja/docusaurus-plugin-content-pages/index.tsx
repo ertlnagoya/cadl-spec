@@ -61,8 +61,8 @@ function WhatIsCADL() {
               ドメイン固有言語です。
             </p>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              CADLは<strong>三層アーキテクチャ</strong>——制度層（Institution）・プロトコル層（Protocol）・
-              アルゴリズム層（Algorithm）——を採用し，ガバナンスルール，エージェント間の調整手続き，
+              CADLは，制度層（Institution）・プロトコル層（Protocol）・アルゴリズム層（Algorithm）からなる
+              <strong>三層アーキテクチャ</strong>を採用し，ガバナンスルール，エージェント間の調整手続き，
               各側が実行するアルゴリズム（名前で参照）を1つの言語で記述できます。
               ツールチェーンは，CADL仕様から設計の矛盾を検査し，コードとシミュレータ設定を生成します。
             </p>
@@ -180,14 +180,14 @@ function WhatIsExplorer() {
           <div className="col col--6 col--offset-1">
             <Heading as="h2">CADL Explorer とは</Heading>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              <strong>CADL Explorer</strong> は，CADLのガバナンスパイプラインをエンドツーエンドで体験できる
-              インタラクティブなWebアプリケーションです。CADL仕様から出発し，
-              制度設計 → シミュレータ設定 → 実験 → ガバナンス評価 という因果連鎖を一貫して可視化します。
+              <strong>CADL Explorer</strong> は，CADL仕様からガバナンスの評価までの流れを，
+              ブラウザ上で操作しながら確かめられるWebアプリケーションです。CADL仕様をもとに，
+              制度設計，シミュレータ設定，実験結果，ガバナンス評価が順にどうつながるかを表示します。
             </p>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              設計上の意思決定がマルチエージェントシステムの振る舞いにどう影響するかを，
-              透明かつ再現可能な形で示すことができます。
-              ガバナンスパラメータがシステムの性能にどう影響するかを調べる助けになります。
+              設計上の決定とマルチエージェントシステムの振る舞いとの関係を，
+              各段階の内容を確かめながら，再現可能な形で調べられます。
+              ガバナンスパラメータを変えるとシステムの性能がどう変わるかを調べるのに使えます。
             </p>
             <Link
               className="button button--primary button--lg"
@@ -210,7 +210,7 @@ function WhatIsHandson() {
             <Heading as="h2">ハンズオンで学ぶ</Heading>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
               <strong>SoS-DSL ハンズオン</strong>は，ロボット配送の System of Systems を題材に，
-              CADL ツールチェーンの全工程を体験する約95分の自習用ワークショップです（全5回の演習コースとしても使えます）。
+              CADL ツールチェーンの全工程を試す約95分の自習用ワークショップです（全5回の演習コースとしても使えます）。
               <em>CADL によるモデリング → SoS-DSL の契約（lifecycle と monitors）→ 可視化 → コード生成 → シミュレーション実行</em>
               の順に進みます。
             </p>

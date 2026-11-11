@@ -148,5 +148,5 @@ sos:
 | e2e スクリプト | `cadl_repo/scripts/sos_dsl_handson_e2e.sh` |
 | 例題 | `cadl_repo/examples/sos_dsl_robot_delivery.cadl` |
 | Python 参照ランタイム | `cadl-raspimouse-simulator/cadl/runtime/` |
-| 生成された C# と手書きの橋渡し | `cadl-raspimouse-simulator/unity/Assets/Scripts/SoSDsl/`（`Generated/`、`Runtime/`、`Demo/`） |
+| 生成された C# と手書きのブリッジ | `cadl-raspimouse-simulator/unity/Assets/Scripts/SoSDsl/`（`Generated/`、`Runtime/`、`Demo/`） |
 | ライフサイクルの図を描く部分 | `cadl-explorer/cadl_sim/sos_dsl/` |
