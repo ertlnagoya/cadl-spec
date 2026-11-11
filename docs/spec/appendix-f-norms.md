@@ -1272,6 +1272,33 @@ members of the instance. For a set with integer bounds the domain is
 the declared set; its members beyond the n of the instance send no
 message and have no value in the model, and the report says so.
 
+### Several contract instances
+
+A model may also hold several instances of the same contract, each
+with its own bindings (`--instance`, repeated, or `--instances N` in
+the reference implementation). The instances share the observations
+(the step and the horizon), the choices of the environment (the message
+events of all of them, and the quantities, which are the same quantities
+in every instance), and they start together at the first observation.
+Each instance has its own norm instances and their states, its own
+institutional events, its own assumptions and their failure (so the
+verdict `excused` is per instance), and its own end: in the any end
+reading each instance ends at an observation of its own, in the full
+reading all end at the horizon. After its end the state of an instance
+does not change, and the observations after it are not part of it (F.5).
+The trace of an instance is the sequence of observations up to its end
+with its bindings, and the model is exact for each of these traces as
+F.12 states for one instance. The questions are asked for every norm of
+every instance, named `id@k` for the instance k, and conflicts for every
+pair of obligations and prohibitions in the same instance or in two of
+them: a conflict across instances arises, for example, when the bearer
+of a norm of one instance is obliged to do what a norm of another
+instance forbids. A witness holds the trace of every instance over the
+same observations, and each is evaluated by F.5 with the bindings of its
+instance. The number of instances is at most 4 in version 0.1, and the
+end of the instances multiplies the choices of the environment by 2 per
+instance.
+
 ### What the environment chooses
 
 At each observation the environment chooses three things.
