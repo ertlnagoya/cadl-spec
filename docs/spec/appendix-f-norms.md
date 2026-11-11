@@ -1112,9 +1112,10 @@ At each observation the environment chooses three things.
    one choice. The classes assume that every value of a quantity has
    the type of the literals it is compared with (numbers, booleans, or
    symbols and texts), or that it has no value. A trace with a value of
-   another type, such as a text where numbers are compared, can make a
-   predicate false or undefined where every class makes it true; the
-   answers do not cover such traces.
+   another type, such as a text where numbers are compared or a boolean
+   compared with numbers, can give a predicate a value that no class
+   gives it (true, false or undefined); the answers do not cover such
+   traces.
 3. **The end.** Whether the instance ends at this observation (step 6
    of F.5). This covers both the end signalled for an instance without
    `lifecycle:` and a terminal lifecycle state.
@@ -1263,7 +1264,10 @@ the norm, which must agree with the model, and, for every activating
 choice followed by observations without messages and values to the
 horizon, that the norm is violated. That every other continuation of
 an activating choice violates the norm as well rests on the model
-checker; the witness trace is one of the activating choices. For a conflict
+checker; the witness trace is one of the activating choices. When
+there are more than 512 choices at that observation, the processor
+MAY check a sample of 512 of them instead of every choice, and then
+SHALL say in the report that the check was sampled. For a conflict
 there are two witnesses from the state of conflict: one keeps n and
 violates m, the other keeps m and violates n. For a norm violated in
 every instance, the instance without messages and values serves as an
@@ -1279,7 +1283,7 @@ classes in one group of predicates. The model checker explores the
 reachable states explicitly; the number of transitions is the number of
 reachable states times the number of choices, which grows with the
 message events and the classes of values. The time of a check grows
-with the number of commands of the model (two per choice and end) and
+with the number of commands of the model (four per choice of the environment) and
 of reachable states: an instance with 12 message events (4 096
 choices, 16 384 commands) took more than ten minutes. A processor
 SHOULD bound the time of the model checker and report when the bound is
