@@ -717,8 +717,9 @@ without an authenticated sender (`unauthenticated_request`), a request
 that names a task or a context of another client (`task_refused`), a
 request that was sent but got no valid response (`invalid_response`), a
 cancellation of a task that is passed on or withdraws a hold
-(`task_cancel`), and a request beyond the number of requests handled at
-the same time (`overloaded`). These records change no decision,
+(`task_cancel`), a request beyond a limit of the gateway on the
+requests handled at the same time (`overloaded`), and a request that was
+not read within its deadline (`read_timeout`). These records change no decision,
 and they are only as trustworthy as the host that writes them: a log
 replayed from a trace that anyone could write proves nothing about
 them.
@@ -1619,10 +1620,11 @@ are these.
   lowercase hexadecimal. The field `scheme` separates this MAC from the
   MAC of an inbox file, also when an actor uses one key for both. The
   headers `A2A-Version` and `Content-Type` are not covered by the MAC.
-  A nonce is accepted once in a run; the gateway keeps the nonces of a
-  run in memory, so memory grows with the authenticated requests, and
-  after 1 000 000 of them it refuses every further request (reason
-  `nonce_limit`) until it is started again, with a new run id. A bearer
+  A nonce is accepted once in a run. The gateway keeps the nonces of
+  each actor in memory, so memory grows with the authenticated requests
+  of a run; after 1 000 000 requests of one actor it refuses the further
+  requests of that actor (reason `nonce_limit`) until it is started
+  again, with a new run id. The other actors are not affected. A bearer
   token, which whoever sees it can send again, is not accepted. Every
   actor of the keys is an actor of the file. A request without a valid
   header gets HTTP 401 with the run id, is recorded as
@@ -1643,14 +1645,16 @@ are these.
   Approvals come through the inbox, as for the MCP gateway, bound to the
   arguments of the held message, which are the whole `params` of its
   `SendMessage`; an A2A message would carry the hold id and nothing that
-  binds it to what the approver saw. When the receiver of such a rule
-  is a set or a range, an approval through the inbox becomes the message
-  to the actor of the gateway (`Y`, or the tool server of the MCP
-  gateway), provided that actor is a member. A gateway does not start
-  when a contract that its actor is a party of escalates and none of its
-  rules that create `approval` has a receiver that the gateway can name
-  in this way, because the holds of that contract could never be
-  approved.
+  binds it to what the approver saw. An approval through the inbox is
+  given to the runtime and never delivered, so the receiver of such a
+  rule, when it is a set, a range, or an index variable, is resolved to
+  a concrete actor: the actor of the gateway (`Y`, or the tool server of
+  the MCP gateway) when the reference can match it, else, at the MCP
+  gateway, its client (`--agent`) when the reference can match it, else
+  the first declared member of the set. A gateway does not start when a
+  contract that its actor is a party of escalates and has no
+  `counts_as:` rule that creates `approval`; G-9 already makes such a
+  file an error.
 - Only `SendMessage` is decided. `GetTask` and `CancelTask` carry no
   message between actors; they pass, without a decision, for tasks that
   the agent or the gateway gave to the same actor in this run.
@@ -1699,30 +1703,46 @@ are these.
   no valid response gives -32006 and `invalid_response`. An address
   other than loopback needs TLS, and `--upstream-token` needs an
   `https` agent or a loopback address.
-- At most 64 requests are handled at the same time (`--max-handlers`;
-  held blocking requests count); a request beyond that gets HTTP 503
-  and is recorded as `overloaded`. The records of `unauthenticated_request`
-  and of `overloaded` are kept to at most 20 a second for each event; the
+- The request line, the headers, and the body of a request have to
+  arrive within 10 seconds in all (`--read-timeout`); otherwise the
+  connection is closed and recorded as `read_timeout`. At most 64
+  connections are read at the same time, before authentication
+  (`--max-readers`); a further connection gets HTTP 503 and is recorded
+  as `overloaded` with the reason `readers`. A request takes one of 64
+  handler slots (`--max-handlers`) only after it is authenticated, and
+  keeps it while it is held; without a free slot it gets HTTP 503
+  (`overloaded`, `handlers`). So unauthenticated connections cannot take
+  the slots of the clients. One actor may have at most 16 held blocking
+  requests (`--max-held-per-actor`); a further blocking `SendMessage` of
+  that actor gets HTTP 503 before its decision (`overloaded`,
+  `held_per_actor` and the actor), so one client cannot take every slot.
+  The records of `unauthenticated_request`, `overloaded`, and
+  `read_timeout` are kept to at most 20 a second for each event; the
   next record of the event counts the requests that were not recorded
-  (`;not_recorded_before=N` in its `reason`).
+  (`;not_recorded_before=N` in its `reason`). A peer that keeps 64 slow
+  connections open still delays other connections, by up to the read
+  deadline each time; the gateway does not limit connections by address.
 
 The gateway does not read the header `A2A-Extensions`, does not answer
 `ExtensionSupportRequiredError` (-32008), does not read `A2A-Version` as
 a query parameter, and does not check that a part `raw` is base64.
 
 The A2A gateway is tested with a fake A2A agent in a thread of the test
-and a fake client, standard library only, in 67 tests: allow,
+and a fake client, standard library only, in 73 tests: allow,
 denial by the default, a message without name, escalation that is
 approved, rejected, or expires, with and without `returnImmediately`, a
 held task that is cancelled before a signed approval arrives or after
 its deadline, a client that closes the connection of a held request over
 TCP (also after sending more bytes, or by a half-close) and over TLS, a
 grant through the inbox, an approval re-addressed to another held
-message with other arguments, approval rules with a set as receiver,
+message with other arguments, approval rules with a set or a range as
+receiver at both gateways,
 eight kinds of failed authentication, 27 kinds of malformed input, an
 agent that is down or answers wrongly, a release that cannot be passed
-on, more requests than handlers, and the isolation of tasks and
-contexts. In every scenario the agent receives no request that was not
+on, more requests than handlers, slow connections that send their
+body a byte at a time, more connections than readers, more held requests
+of one actor than allowed, the nonces of one actor, and the isolation of
+tasks and contexts. In every scenario the agent receives no request that was not
 allowed or released, and `cadl agents-run` on the trace writes the same
 audit log as the gateway. An independent review of the first version
 found that a context id that the gateway had not seen was claimed by
@@ -1738,8 +1758,14 @@ approved, also at the MCP gateway; that a client that sent more bytes
 and then closed was not seen as gone; that a cancellation after a
 deadline that the ticker had not yet observed was answered as cancelled
 while the log said `expired`; and that a cancellation reached the agent
-without a record. Each is corrected and has a test. Neither review found
-a request that reached the agent without a decision; the first checked
+without a record. A third review found that slow unauthenticated
+connections could take every handler slot, because a slot was taken
+before the request was read and authenticated and the timeout applied
+to each read only; that the correction of the set receiver refused to
+start with files that `cadl` 0.3.24 accepted; and that one client could
+use up the cap of the nonces for all. Each is corrected and has a test.
+None of the reviews found a request that reached the agent without a
+decision; the first checked
 this also in a run of 12 threads whose log of 280 records
 `cadl agents-run` reproduced.
 
