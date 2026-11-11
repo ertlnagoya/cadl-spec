@@ -562,7 +562,7 @@ empty or of the form of 3. ∎
 special case of the proposition of the end-point certification of
 [I.9](./appendix-i-games.md), which is stated for any strategic model:
 condition (i) is condition A of I.9 for the weights that this appendix
-defines as well, and condition (ii) is condition B− from the initial
+defines as well, and condition (ii) implies condition B− from the initial
 state, since a `sanction_of:` term has the coefficient −m of ℓ. I.9
 turns it into a method for an equilibrium map whose only open
 parameter is ℓ: one exact evaluation at each end of a cell `[a, b]`
@@ -784,10 +784,11 @@ about the same construct, a processor gives one diagnostic.
   precisions: a weight that J.7 defines (−m·ℓ or m′·ℓ) is a weight in
   the sense of its condition A, and ℓ is the open parameter of the
   query, whether or not it is bound to a `C.lambda`. Condition (ii) of
-  J.7 for p is condition B− of I.9 from the initial state; a processor
-  MUST NOT claim that p is a deviator on a cell from the end points
-  unless B− or B+ holds for p, computed exactly at the values used for
-  the other parameters. Up to `cadl` 0.3.23 this rule stated the method
+  J.7 for p implies condition B− of I.9 from the initial state; a
+  processor MUST NOT claim that p is a deviator on a cell from the end
+  points unless B− or B+ holds for p from s₀ (`concept: nash`) or from
+  the deciding state s (`concept: every_reachable_state`), computed
+  exactly at the values used for the other parameters. Up to `cadl` 0.3.23 this rule stated the method
   itself and required the declaration of `grounding: 0.1`; the method
   now belongs to I.9, and its claims in a file that declares this
   extension are those of I.9.

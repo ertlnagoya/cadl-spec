@@ -904,7 +904,14 @@ states that the relaxed process reaches from s under it. Other sound
 methods are admissible, for example exact reasoning on the rational
 functions U_p and BR_p, or the certification by the end points of a
 cell below, which proves that a gain is convex or monotone in a
-parameter.
+parameter. An open item, not normative: by the performance-difference
+identity, U_p(τ, v) − U_p(v) is the expected sum, along the play of τ
+from s₀ until φ_p, of the one-step advantages Q_p(s, c, v) − V_p(s, v)
+of the commands that τ takes; bounding these advantages on a cell and
+maximising their sum in the relaxed process would bound the gain
+directly instead of comparing bounds of two functions as N and E1 do.
+Such a method is one of the sound methods that this paragraph admits;
+the reference implementation does not use it (I.14).
 
 **Certification by the end points of a cell.** When the only open
 parameter enters the game through weights only, a cell can be decided
@@ -933,7 +940,7 @@ A term whose ℓ has the coefficient 0 at these values, or in whose
 weight ℓ does not occur, imposes nothing; a player with no other
 terms satisfies both. In Appendix J, a `sanction_of:` term has
 c_k = −m ≤ 0 and satisfies B− from s₀ when the profile incurs no
-sanction of the norm; this is condition (ii) of J.7.
+sanction of the norm, which condition (ii) of J.7 states.
 
 > **Proposition.** Assume A, and fix the values of the other
 > parameters.
@@ -1856,7 +1863,13 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   and, deterministically, by a fixed file of the test suite on which
   it makes a wrong claim: the files of the hump of J.11 without
   grounding, a gain |1 − 2ℓ|, and a state that only the player's own
-  deviation reaches with probability p. The generators of the
+  deviation reaches with probability p. Two files of the independent
+  review of this version are part of the suite as well: on one, a
+  sixth injected error (condition B checked from s₀ and taken for
+  every state) claims a deviator where the profile is an equilibrium
+  from every reachable state; on the other, N_s without R⁺_C(p) decides
+  the cell that contains p = 0, which must stay undecided. The
+  generators of the
   independent reviews of 0.3.23 were run again against the new code
   (through the command line: the ten generator presets of the review of
   Appendix J (600 models) and the driver of the review of the maps (160
@@ -1884,9 +1897,10 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   on which the payoff depends strongly. In CENTRALIZED, cells near
   λ = 0 stay undecided at a width of 1/32 in p_fail and p_loss
   although R gains about 0.23 at their centres. No error was found,
-  and no change was made; a sharper sufficient condition, for example
-  one that bounds U_p(τ) − U_p(σ) directly by the one-step advantages
-  Q_p(s, c) − V_p(s) along τ, is left open. In the fuzzing above,
+  and no change was made; a sharper sufficient condition that bounds
+  U_p(τ) − U_p(σ) directly through the one-step advantages
+  Q_p(s, c) − V_p(s) along τ (the performance-difference identity) is
+  an open item; I.9 already admits it as another sound method. In the fuzzing above,
   the games with three or four players, most of them with three open
   parameters, took about 0.9 s each (wall-clock, check, map with a
   budget of 24 cells, and oracle).
