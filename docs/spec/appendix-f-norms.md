@@ -145,6 +145,29 @@ event. Values that contain `[`, `]`, `*`, `->`, or `": "` SHOULD be quoted
 and MUST be quoted inside a flow sequence, as for every scalar of
 [Appendix A](./appendix-a-syntax.md).
 
+A `message_event` `S -> R : m` **occurs** at an observation that
+carries a message with the name `m` whose sender matches `S` and whose
+receiver matches `R`; when `m` is written with arguments, they must
+equal the arguments of the message. An actor reference matches a
+concrete actor of a message as follows, wherever a `message_event`
+stands: in a `trigger:`, an `until:`, a `content:`, and the `when:` of
+a `counts_as:` rule.
+
+| Reference | Matches |
+| --- | --- |
+| `A` | the actor `A`, declared without index; never an indexed member `A[k]` |
+| `A[3]` | the member `A[3]` |
+| `A[*]` | every member of the declared set `A` |
+| `A[1..3]` | the members `A[1]` to `A[3]`; with a symbolic bound (`A[1..N]`), every member of the set |
+| `A[i]` | the member `A[v]` when the contract instance binds `i` to `v`; every member of the set when it binds no value to `i` (a processor SHOULD warn) |
+
+`A[k]` is a **member** of the set `A` when `A` is declared with a range
+and `k` lies within its integer bounds: a set declared as `A[1..3]`
+does not contain `A[7]`. When the declared upper bound is symbolic
+(`A[1..N]`), every index from the lower bound on is a member, and
+`A[0]` is not. An actor that is not declared, or that lies
+outside the bounds of its set, matches no reference.
+
 In these predicates the reserved identifiers of
 [Appendix E, E.4](./appendix-e-sos-dsl.md#e4-static-semantics) are
 available as in a `rule`: `now`, `request`, and, when the contract has a
@@ -213,6 +236,41 @@ A `tpredicate` in `content:` is evaluated at observation times after
 the norm's activation (F.5). A predicate without temporal operators
 keeps the meaning it has in the core language.
 
+**When their value is known.** The value of an operator at time t can
+depend on observations after t. It is **decided** at the first
+observation that determines it; before that it is not decided, and a
+decided value does not change.
+
+For an operator whose operands contain no temporal operator, the rule is
+as follows. `within(d, p)` is decided true, and `throughout(d, p)`
+false, at the observation in `[t, t + d]` that shows it;
+`until(p, q, d)` is decided true at the observation at which `q` holds,
+and false at an observation at which `p` fails before `q` has held.
+Otherwise the value is decided at the first observation whose time stamp
+is after `t + d`. The interval is then over: `within` and `until` are
+false and `throughout` is true, unless an operand was undefined (F.5) at
+an observation of the interval and a value of that operand could have
+decided it otherwise; in that case the value is undefined. For
+`until(p, q, d)` this is so only for an undefined `q`, or for an
+undefined `p` at an observation before one at which `q` held: an
+undefined `p` does not matter when `q` never held, and the value is then
+false. Likewise `until` is not decided false by a failing `p` at an
+observation before which `q` was undefined; its value is then undefined. The end
+of an interval is therefore not known at the time `t + d` itself but at
+the first observation after it; that observation need not change any
+quantity (F.5).
+
+An operator whose operand contains a temporal operator is decided once
+the values of the operand on which it depends are decided, each by the
+same rule at its own observation. This can be later than `t + d`.
+`within(2s, throughout(5s, p))` at time t needs the value of
+`throughout(5s, p)` at the observations of `[t, t + 2s]`, and that
+value, when `p` keeps holding, is decided only by an observation more
+than 5 s later: the operator can stay undecided until an observation
+after `t + 7s`. In general the value of a `tpredicate` at time t is
+decided at the latest by the first observation after t plus the largest
+sum of the durations of operators nested in one another.
+
 A file that does not declare `norms: 0.1` reads `within`, `throughout`,
 and `until` as ordinary function names, as in the core language.
 
@@ -230,6 +288,25 @@ host, a single instance starts at the first observation and ends at the
 last. A trace that stops while the contract instance is still running
 is a *prefix*: the instance has not ended, and nothing is settled.
 
+A processor that receives the observations one at a time, while the
+system runs, does not know that an observation is the last one when it
+processes it. For such a processor the end of the instance is signalled
+separately, after that observation, and the norms are then settled
+(item 6 below) at the last observation received, with its time stamp,
+as in step 6 of that observation. An observation that arrives after the
+contract instance has ended is not part of the instance and has no
+effect on it.
+
+An observation need not change anything. An observation that carries
+only a time stamp is an observation like any other: predicates are
+evaluated and deadlines are checked at it. A passed deadline and the end
+of an interval are detected at an observation and not between
+observations (items 2 and 3 below, F.4). A processor that monitors a
+running system SHOULD therefore make an observation soon after the
+deadline of an active norm passes; without one, the violation, and with
+it the decision between `violated` and `excused`, waits for the next
+observation.
+
 A predicate has one of three values at an observation: true, false, or
 **undefined**, when it refers to a quantity that has no value yet;
 `AND`, `OR`, and `NOT` follow Kleene's three-valued logic. An undefined
@@ -239,6 +316,18 @@ not occur on it, and an assumption or guarantee is not decided by it.
 the previous observation of the instance or no previous observation.
 In a contract with a `lifecycle:` block, `state` in a predicate is the
 lifecycle state before the transitions of the current observation.
+
+A name that stands alone in a predicate, such as `load` in `load > 5` or
+`Delivered` in `ROBOT[i].status == Delivered`, is an observed quantity
+or a symbolic value. The set of names that are observed quantities is
+fixed for the contract instance: it is given to the processor when the
+instance starts, or, for a recorded trace, it is the set of names that
+have a value in some observation of the instance. A name of this set is
+a quantity at every observation of the instance, and is undefined, not a
+symbolic value, at the observations before its first value. Every other
+name that stands alone is a symbolic value. A symbolic value can only be
+compared with a text value, by `==`, `!=`, or `IN`; a predicate that
+uses it in another way is undefined.
 
 ### Norm instances
 
@@ -300,7 +389,9 @@ prohibition reports only its first violation.
    prohibition becomes `fulfilled`; every other norm instance, including
    an `inactive` one, becomes `discharged`. Two exceptions: a norm
    instance that became active at the observation at which the instance
-   ends was never judged and becomes `discharged`; and an obligation or
+   ends, and that step 4 of that observation did not make final,
+   becomes `discharged`, since no observation followed its activation;
+   and an obligation or
    prohibition whose `tpredicate` content is still undecided stays as it
    is, with the verdict `pending`. A violation that arises from this
    settlement is reported with its severity, but its `reparation:` and
@@ -376,8 +467,10 @@ operators, on the finite trace observed so far is one of four values:
 | `excused` | `violated` at or after the observation at which an assumption of the contract failed | fails at or after the observation at which an assumption failed |
 
 An assumption **fails** at the first observation at which its value
-becomes false; an assumption whose value is not yet decided, or is
-undefined, has not failed. An `assume:` or `guarantee:` item without
+becomes false (for an item with temporal operators, the observation at
+which its value is decided false, F.4); an assumption whose value is not
+yet decided, or is undefined, has not failed. An `assume:` or
+`guarantee:` item without
 temporal operators is a state predicate and is evaluated at every
 observation: it fails at the first observation at which it is false,
 and a guarantee that has not failed when the contract instance ends is
@@ -393,6 +486,24 @@ place, not at the time of the deadline. When a trace ends, `pending`
 verdicts stay `pending`: a trace that stops before a deadline or the
 end of an interval does not decide it, and neither does the end of the
 contract instance for a temporal item whose interval is not over.
+
+With the set of observed quantities fixed for the contract instance
+(see "Contract instances" above), the verdicts after an observation are
+those of the trace up to that observation, read as a prefix with the
+same set. They do not depend on later observations, and a verdict other
+than `pending` does not change afterwards. A processor MAY therefore
+compute the verdicts while the system runs, observation by observation;
+given the same set of quantities, it gives the verdicts that a processor
+reading the recorded trace gives.
+
+A processor that is not given the names of the quantities and learns
+them from the observations reads a name as a symbolic value until its
+first value arrives. For a predicate that uses such a name before its
+first value, it MAY give a verdict that differs from the one above. This
+is the only permitted difference. Such a processor SHOULD be given the
+names; the difference arises only where the name is compared with a text
+value, since any other use of a symbolic value is undefined, as is the
+quantity without a value.
 
 `excused` separates "the bearer failed" from "the bearer was not given
 what the contract assumes", which is the basis of assigning blame in
@@ -682,8 +793,10 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
 - The SMT checks of `cadl verify` leave out `assume:` and `guarantee:`
   items that contain temporal operators and report each one as not
   checked (F.7). `cadl codegen` leaves the same items out of the
-  generated code of every target, with a comment in the code and a
-  warning; it does not translate temporal operators.
+  contract code of every target, with a comment in the code and a
+  warning; it does not translate temporal operators into the target
+  languages. The Python target monitors them in a separate module (see
+  below).
 - A numeric `deadline:` of a norm is read as seconds, the lenient form
   that [A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)
   describes for lifecycle deadlines. `cadl check` looks for temporal
@@ -697,14 +810,65 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   `cadl` repository), and applies the amendments of F.6 that the trace
   names. It takes the lifecycle state from the trace and does not run
   the lifecycle state machine: a `transition:` requested by a violation
-  is reported, not applied. A norm or item that contains a function call
+  is reported, not applied. Up to `cadl` 0.3.21 it matched the actor
+  references of message events too widely: a range such as `A[1..2]`
+  matched every actor named `A[k]`, and `A[*]` and an unbound `A[i]`
+  also matched actors outside the declared set. `cadl` 0.3.22
+  matches them by the table of F.3; verdicts computed
+  for a file that uses such references in a `trigger:`, an `until:`, a
+  `content:`, or a `counts_as:` rule SHOULD be computed again. It also
+  tests the lower bound of a set with a symbolic upper bound. The time
+  of a trace is a finite number of at most 2<sup>53</sup> in absolute
+  value, so epoch seconds and epoch milliseconds are accepted. The
+  actors and the name of a message of a trace are read as written:
+  `ROBOT[ 2 ]`, which 0.3.21 read as `ROBOT[2]`, is a trace error. This
+  is deliberate, because two spellings of one actor in a recorded trace
+  defeat a check that compares names. It
+  also ignores the observations after the end of the contract instance
+  entirely: up to 0.3.21 it took the names of the observed quantities
+  (F.5) also from them, so that such an observation could change a
+  verdict. A norm or item that contains a function call
   other than a temporal operator, a quantifier, or a wildcard reference
   is not evaluated and stays `pending`. `cadl norms-diff` compares two
   versions of a file and reports what F.6 does to the norms of each
   contract, including every carried-over norm whose `content` or
   `deadline:` changes and a `transform:` target that the new version
   lacks.
-- The generated runtimes (Python, Unity C#) do not monitor norms, and
+- From `cadl` 0.3.22,
+  `cadl codegen -t python` writes, for a file that declares
+  `norms: 0.1`, a module `norms_monitor.py` into the generated package
+  ([Appendix D, D.1](./appendix-d-codegen.md)). It monitors one
+  contract instance while the system runs: the host makes a
+  monitor for the instance, passes it one observation at a time, and
+  gets back the norm instances, guarantees, and assumptions whose state
+  or verdict changed at that observation, with time and reason; it
+  signals the end of the instance, and can ask for the current verdicts.
+  The module contains the evaluation code of `cadl norms-eval`, copied
+  verbatim, and the contracts of the file as data; it does not need
+  `cadl` at run time, and for a recorded trace it gives the result of
+  `cadl norms-eval`. As that command, it takes the lifecycle state from
+  the observations and reports a `transition:` without applying it. It
+  reads the points that F.4 and F.5 state for a processor that receives
+  the observations one at a time as follows. A passed deadline and the
+  end of an interval are detected at the next observation; the monitor
+  tells the host the earliest time stamp at which an observation is
+  certain to decide something that only waits for time (a little after
+  the deadline or the end of the interval, since content at the
+  deadline itself is in time; times are compared with a tolerance of
+  10<sup>-9</sup> s). The host names the quantities that are written
+  without an actor; a name it does not name is read as a symbolic value
+  until its first value, which is the difference F.5 permits
+  (`cadl norms-eval` takes the names from the observations of the
+  instance in the trace). An observation after the end of the instance
+  has no effect and is counted in a warning. An observation that is
+  malformed, or whose amendment cannot be applied, is refused and leaves
+  the monitor as it was. The monitor keeps the observations of the
+  instance until it is dropped. An amendment (F.6) is applied when the
+  host supplies the data of the monitor generated from the new version;
+  the monitor cannot read a CADL file. Before `cadl codegen` writes the
+  module it checks that the module compiles and that every name it uses
+  is defined in it, and it refuses to generate otherwise.
+- The Solidity, OPA, and Unity C# targets do not monitor norms, and
   translation of norms to a model checker for design-time checking is
   not implemented.
 

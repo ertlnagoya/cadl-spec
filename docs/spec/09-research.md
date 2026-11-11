@@ -13,7 +13,7 @@ tool already solves part of a problem, we say which part CADL would hand
 to that tool and which question the tool cannot answer.
 
 The starting point is this specification (Version 0.3) and the reference
-implementation `cadl` 0.3.21. It checks the satisfiability of contracts
+implementation `cadl` 0.3.22. It checks the satisfiability of contracts
 with Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), detects
 protocol deadlocks by structural analysis, supports the SoS-DSL extension
 ([Appendix E](./appendix-e-sos-dsl.md): `lifecycle:`, `monitors:`,
@@ -78,8 +78,10 @@ regime map. The stochastic model extension
 step on RD-1.3: it lets a file state a parametric Markov model in which
 α, β, and λ appear, defines the regime map as a query whose result is a
 set of certified cells, and fixes an export to the PRISM language.
-Deriving the model from contracts, computing the cells, and the game
-reading of Section 9.7 remain open.
+The reference implementation computes certified cells by parameter
+lifting ([H.14](./appendix-h-stochastic.md#h14-reference-implementation-status)).
+Deriving the model from contracts, scaling beyond small models, and the
+game reading of Section 9.7 remain open.
 
 | **ID** | **Challenge** | **Content** |
 | --- | --- | --- |
@@ -263,9 +265,11 @@ and Z3 is used only for satisfiability. The norms extension
 ([Appendix F](./appendix-f-norms.md), `norms` 0.1) is a first step on
 RD-6.1, RD-6.2, RD-6.3, and RD-6.5: it defines first-class norms,
 bounded temporal operators with four-valued verdicts, counts-as rules,
-and what happens to running norms on an amendment. Design-time checking
-by a model checker, runtime monitoring of norms, and the formal link to
-α, β, and λ remain open. We found no work that handles first-class norm
+and what happens to running norms on an amendment. The
+generated Python code monitors norms at run time
+([F.10](./appendix-f-norms.md#f10-reference-implementation-status)).
+Design-time checking by a model checker, monitoring in the other
+generated runtimes, and the formal link to α, β, and λ remain open. We found no work that handles first-class norm
 objects together with the institutional parameters α, β, and λ, the
 composition of many contracts in an SoS, and amendment during operation.
 We also found no tool that connects deontic blame semantics with
@@ -378,7 +382,7 @@ such as voting and dissent (RD-8.4) and plan-level verification
 ## 9.9 Research Roadmap
 We organize the above research directions along a time axis and present
 a short-, medium-, and long-term research roadmap. The order follows the
-current implementation: items that extend what `cadl` 0.3.21 already
+current implementation: items that extend what `cadl` 0.3.22 already
 provides come first.
 
 | **Period** | **Key Challenges** | **Content** |

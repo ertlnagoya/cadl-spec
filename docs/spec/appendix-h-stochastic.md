@@ -53,6 +53,7 @@ give to such a tool. Stochastic 0.1 is a small first step:
   exports to the PRISM modelling language by fixed rules (H.11).
 - **The regime map question is defined, not solved.** H.9 defines what
   a query asks and what a correct answer is, not how to compute it.
+  H.14 describes the method of the reference implementation.
 
 **Scope of version 0.1.**
 
@@ -311,8 +312,14 @@ region of a regime map.
 
 **Graph preservation.** A region is *graph-preserving* for a design
 when no probability of its commands is zero at a valuation of the
-region unless it is zero at all of them. A processor MAY decline to
-certify cells that are not; they are then `undecided` (H.9).
+region unless it is zero at all of them. Where a probability becomes
+zero, a solution function (H.7) need not be continuous: a probability
+of reaching a state can drop to zero, and an expected reward can become
++∞. A processor MAY decline to certify cells that are not
+graph-preserving; they are then `undecided` (H.9). A processor that
+certifies such a cell MUST use a method that is sound without the
+assumption; a method that assumes graph preservation MUST NOT be
+applied to it.
 
 **Action labels.** `action:` names a command; several commands may
 share a name. Commands do not synchronise on it. Transition rewards
@@ -462,7 +469,8 @@ H.12). The keys of a query:
   as y": x ≥ y under `maximize:` and x ≤ y under `minimize:`.
 - **`constraint:`** is an optional threshold property. Write sat_R(v)
   for: the design of R satisfies the constraint at v (true when there
-  is none) and, under `minimize:`, J_R(v) is finite.
+  is none) and, under `minimize:`, J_R(v) is finite. Under `maximize:`
+  the value +∞ is admitted and is at least as good as every value.
 - **`resolution:`** is a number r with 0 < r < 1: the fraction of the
   volume of B that may remain undecided.
 
@@ -517,7 +525,35 @@ for a claim about a single point. Region verification by parameter
 lifting and exact reasoning on the solution functions are such
 methods; evaluation at sample points, however many, is not. Only such
 certified cells count toward `resolution:`. A processor that cannot
-reach the requested resolution still reports the map and says so.
+reach the requested resolution still reports the map and says so. A
+processor SHOULD name the method together with the map.
+
+The claims presuppose that H.7 is defined on the cell. A processor MUST
+NOT claim `decided` or `infeasible` for a cell unless every compared
+design is well-defined (H.5) at every valuation of the cell. The corner
+check of S-14 establishes this for a design whose probabilities are
+multi-affine in the open parameters. For any other design the processor
+has to establish it for the cell, or leave the cell `undecided`.
+
+**Deciding a cell from bounds.** Suppose a method gives, for each
+compared regime R, a lower bound l_R and an upper bound u_R of J_R that
+hold at every valuation of a cell C (a bound may be +∞), and likewise
+bounds of the quantity of the constraint. Say that R is *in* on C when
+the bounds show sat_R(v) for every v ∈ C, and *out* on C when they show
+that sat_R(v) fails for every v ∈ C. Then:
+
+- C is infeasible when every compared regime is out on C;
+- R is optimal on C when R is in on C and, for every other compared
+  regime R′, either R′ is out on C or l_R ≥ u_R′ under `maximize:`
+  (u_R ≤ l_R′ under `minimize:`).
+
+These conditions are sufficient, not necessary. They compare a bound of
+one solution function with a bound of another, not the two functions at
+the same valuation. A cell near a point where two regimes tie can
+therefore stay `undecided` although one regime is optimal on it, and
+regimes that tie on a whole cell are both found only when their bounds
+coincide, or when the processor knows that the two solution functions
+are the same.
 
 **Estimates.** A processor MAY additionally report estimates of the
 objective at sample points, for example from simulation, with their
@@ -682,7 +718,12 @@ kept as written.
    `label "name" = (tr(pred));`.
 8. For each reward structure, `rewards "id"`, then its items in order,
    a state reward as `tr(guard) : (value);` and a transition reward as
-   `[a] tr(guard) : (value);`, then `endrewards`.
+   `[a] tr(guard) : (value);`, then `endrewards`. A transition reward
+   whose action label no command of the design has is not written: it
+   is never earned in that design, and PRISM and Storm reject an item
+   that names an action the model does not have. When no item of a
+   structure is written, the single item `true : (0);` is written
+   instead, because Storm rejects an empty reward structure.
 
 **Numbers** are written as the shortest decimal that round-trips,
 without an exponent (`0.9`, `1`, `0.001`).
@@ -724,7 +765,8 @@ a quoted label, or already one parenthesised expression:
 `P=? [ F<=3 "delivered" ]`.
 
 Regions, the regimes compared, and `resolution:` are arguments of an
-analysis and are not exported. Parameter lifting in its classic form
+analysis and are not exported. Parameter lifting
+[[Quatmann+, ATVA 2016]](./appendix-b-references.md) in its classic form
 assumes probabilities that are multi-affine in the parameters and
 regions that are graph-preserving (H.5)
 [[Heck+, ATVA 2025]](./appendix-b-references.md). Regime maps are not a function
@@ -881,6 +923,16 @@ optimal on it when (1 − f₂)(1 − l₂) ≥ 2/3, DISTRIBUTED when
 (1 − f₁)(1 − l₁) ≤ 2/3, and otherwise the curve crosses the cell and
 it is `undecided`.
 
+A method that decides a cell from bounds of the two designs (H.9)
+decides fewer cells. Write x_min = (1 − f₂)(1 − l₂) and
+x_max = (1 − f₁)(1 − l₁) for the least and the greatest x on the cell.
+The value of either design on the cell ranges exactly over
+1 − (1 − s)³ for x between x_min and x_max. Comparing these ranges
+decides CENTRALIZED when s_C at x_min is at least s_D at x_max, that is
+when 0.81·x_min − 0.09·x_max ≥ 0.48, and DISTRIBUTED when
+0.81·x_max − 0.09·x_min ≤ 0.48. A cell that satisfies neither is
+`undecided`, also when the curve does not cross it.
+
 **Export.** By H.11, the model file of the design CENTRALIZED is the
 following; p_fail and p_loss are open because the regime map lists
 them in `over:`. The file of DISTRIBUTED differs only in
@@ -988,25 +1040,131 @@ The reference implementation implements stochastic 0.1 from `cadl`
 - `cadl model-export` writes the files of H.11.
 - `cadl model-check` is a small reference evaluator with exact rational
   arithmetic for one design at fixed parameter values. It evaluates
-  the properties of H.8, up to 2 000 unknowns. It can also evaluate the
-  objective of a regime map at the points of a grid; these are reported
-  as estimates at sample points (H.9), never as decided cells.
-- The reference implementation runs no external model checker and
-  computes no certified regime map. `cadl regime-map` still reports the
-  graph of regime names and transitions.
+  the properties of H.8, up to 2 000 unknowns. With `--regime-map ID`
+  it evaluates the objective of a regime map at the points of a grid;
+  these are reported as estimates at sample points (H.9), never as
+  decided cells.
+- `cadl model-check --regime-map ID --certify` computes the regime map
+  of H.9, from `cadl` 0.3.22. It runs no external model
+  checker. The method is parameter lifting
+  [[Quatmann+, ATVA 2016]](./appendix-b-references.md) with exact
+  rational arithmetic. On a cell, a design is relaxed to a Markov
+  decision process in which every state chooses, independently of the
+  other states, a corner of the cell for the open parameters that occur
+  in its outgoing probabilities. When those probabilities are
+  multi-affine, the chain at any valuation of the cell is this process
+  under one randomised policy, so the minimal and the maximal value of
+  the process bound the solution function on the whole cell. Bounded
+  properties are solved by backward induction, unbounded ones by policy
+  iteration with exact linear solves. A cell is decided from these
+  bounds by the conditions of H.9. An undecided cell is bisected along
+  the parameter whose interval is widest relative to the region, the
+  largest undecided cell first, until the undecided fraction is at most
+  `resolution:` or a budget is exhausted (`--max-depth`, by default 24
+  bisections of one cell; `--max-cells`, by default 20 000 cells). In
+  the second case the map is reported with the statement that the
+  resolution is not reached, and the exit status is 1. Two halves with
+  the same claim are reported as one cell. The command reports the
+  method, the cells, their numbers per status, and the undecided
+  fraction as an exact number; estimates (`--grid`) and the certified
+  map (`--certify`) are separate outputs and cannot be combined.
+- Limits of the certified map:
+  - The bounds of two designs are compared, not their difference, so
+    cells next to a boundary stay `undecided` (H.9, H.12). Regimes that
+    tie on a cell are listed together only when their bounds coincide
+    or their designs have the same model.
+  - A probability that is not multi-affine in the open parameters is
+    enclosed by exact interval arithmetic on its monomials, and the
+    state chooses a vertex of the set of distributions within these
+    intervals. This is sound but coarser. Such a design counts as
+    well-defined on a cell only when the intervals lie within `[0, 1]`;
+    otherwise the cell is `undecided` and the report gives this reason.
+    Interval arithmetic overestimates, so near a valuation where such
+    a probability is 0 or 1 it may fail to establish this however small
+    the cell is.
+  - Cells that are not graph-preserving are analysed, not declined. The
+    bounds of a probability are those of the decision process. An
+    expected reward gets a finite upper bound only when every policy of
+    the process reaches the target with probability 1; it is +∞ on the
+    whole cell when no policy does; its lower bound is the least
+    expected reward that any policy accumulates.
+  - The cost grows with the number of cells, which grows with the
+    number of open parameters, and with the number of states: every
+    policy is evaluated by an exact linear system, of at most 2 000
+    unknowns.
+  - S-14 is checked by `cadl check` at the corners of the region. A
+    probability that is not multi-affine can leave `[0, 1]` in the
+    interior only; the certified mode reports that as an error (exit
+    status 2) when the centre or a corner of a cell shows it, and
+    otherwise leaves the cell `undecided`.
+  - A YAML number with more than 15 significant digits, which H.2
+    forbids, is rounded when the file is loaded and is not reported;
+    the claims are then about the rounded model.
+- For the example of H.12 (`resolution: 0.05`) the certified map has 95
+  cells, 60 `decided` and 35 `undecided`, after joining a partition of
+  121 cells; 241 cells were analysed, with at most 10 bisections of a
+  cell. CENTRALIZED is certified on 235/1024 of the region (it is
+  optimal on 0.2521 of it), DISTRIBUTED on 738/1024 (optimal on
+  0.7479), and the undecided fraction is 51/1024 = 0.0498. The curve
+  crosses 31 of the 35 undecided cells; the other 4 lie next to it. The
+  computation takes about 0.1 s on a laptop; with `resolution: 0.01` it
+  takes 0.8 s (726 cells before joining) and with `resolution: 0.002`
+  3.8 s (3 632 cells).
+- The certified maps were checked in two ways. The tests of the
+  reference implementation repeat both; the second needs `stormpy`.
+  The eight maps are that of H.12 and seven maps of a second model with
+  three regimes, cycles, `minimize:` with an expected reward that is +∞
+  for one regime everywhere and for the others at one face of the
+  region, constraints that make part of the region infeasible, a
+  probability that is not multi-affine, cells that are not
+  graph-preserving, a tie on a whole cell, and three open parameters.
+  - Every `decided` and `infeasible` cell of the eight maps, 212 cells,
+    was evaluated with the exact reference evaluator at its corners,
+    its centre, and six random rational points: 2 512 point
+    evaluations. At each of them every regime in `best` is optimal, or
+    no regime satisfies the constraint, as claimed.
+  - The bounds were compared with Storm (stormpy 2.0.0, exact parameter
+    lifting engine) on the exported files, for 134 pairs of a design
+    and a cell that is graph-preserving for it. For the designs with
+    multi-affine probabilities, the lower and upper bounds of `cadl`
+    are equal, as rational numbers, to those of Storm (159 pairs of
+    bounds). The extrema that Storm finds on the cell by refinement lie
+    within the bounds of `cadl` (213 pairs). Storm's verdict on the
+    constraint for the cell (all valuations satisfy it, all violate it,
+    or neither) is the claim of `cadl` in 79 of 79 cases.
+  - Storm's parameter lifting assumes a graph-preserving region.
+    stormpy's `verify` refuses a region that is not, and its extremum
+    computation returned the minimum 1 for `P=? [ F done ]` on
+    0 ≤ p ≤ 1/2 for a design that reaches `done` with probability p in
+    each step, where the value at p = 0 is 0. Cells that are not
+    graph-preserving were therefore checked with the reference
+    evaluator only.
+- An independent review tried to break the certified mode and found no
+  wrong claim: 3 290 random models, 56 782 `decided` or `infeasible`
+  cells tested at 1 731 349 exact points, among them cells that are not
+  graph-preserving and designs that are not multi-affine; the solvers
+  of the decision process agreed with a brute-force search over all
+  memoryless policies on 60 000 random processes; and four soundness
+  errors injected into the code were each detected by the harness.
+- `cadl regime-map` still reports the graph of regime names and
+  transitions.
 - The exported files have been run through PRISM 4.11 and Storm
-  (stormpy 2.0.0) for the example of H.12 and for a second model that
+  (stormpy 2.0.0) for the example of H.12, for a second model that
   uses `when:`, updates with three branches, guarded state and
-  transition rewards, `U`, `U<=k`, and keyword names: 27 properties in
-  4 designs. The state counts agree, and every value agrees with
+  transition rewards, `U`, `U<=k`, and keyword names, and for the model
+  of the certified maps above: 39 properties in 7 designs. The state
+  counts agree, and every value agrees with
   `cadl model-check` as a rational number under Storm and under the
   exact engine of PRISM. That engine does not support a step bound
   (`F<=k`, `U<=k`); those properties were compared with PRISM in
   floating point. The tests of the reference implementation repeat the
-  comparison when `prism` or `stormpy` is installed. This run found
-  that `cadl` 0.3.20 wrote a label or reward structure named like a
-  keyword unchanged, which neither tool loads; 0.3.21 renames it as
-  H.11 now says.
+  comparison when `prism` or `stormpy` is installed. These runs found
+  two defects of the export. `cadl` 0.3.20 wrote a label or reward
+  structure named like a keyword unchanged, which neither tool loads;
+  0.3.21 renames it as H.11 now says. `cadl` up to 0.3.21 wrote a
+  transition reward for an action that no command of the design has,
+  which neither tool loads; 0.3.22 omits it as H.11
+  now says.
 
 ## H.15 Backward compatibility
 

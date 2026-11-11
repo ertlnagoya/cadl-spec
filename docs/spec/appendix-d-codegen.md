@@ -18,7 +18,7 @@ pairs each target name with its **category**, **intended artifact**, and
 
 | Target name | Category | Emitted artifact | Reference-impl module | Command |
 |-------------|----------|------------------|-----------------------|---------|
-| `python` | Runtime code | Python package (actors, contract monitors, protocols, regime controller, metrics, runtime) | `cadl.codegen` | `cadl codegen -t python` |
+| `python` | Runtime code | Python package (actors, contract monitors, protocols, regime controller, metrics, runtime; for a file that declares `norms: 0.1`, also a monitor of the norms of [Appendix F](./appendix-f-norms.md)) | `cadl.codegen` | `cadl codegen -t python` |
 | `solidity` | Institutional contract | Solidity [[Solidity Documentation]](./appendix-b-references.md) smart contracts, one per contract | `cadl.codegen.solidity` | `cadl codegen -t solidity` |
 | `opa` | Institutional policy | Rego / OPA [[Open Policy Agent]](./appendix-b-references.md) policies, one per contract | `cadl.codegen.opa` | `cadl codegen -t opa` |
 | `unity-csharp` | Runtime code | Unity C# classes for the lifecycles and monitors of [Appendix E](./appendix-e-sos-dsl.md) | `cadl.codegen.unity_csharp` | `cadl codegen -t unity-csharp` |
@@ -39,6 +39,24 @@ selected on the command line as shown in the last column; `codegen:`
 entries in the file are parsed but do not yet drive generation. From
 `cadl` 0.3.9, an entry that names a target the implementation cannot
 emit gets a warning (D.4).
+
+For a file that declares the norms extension
+([Appendix F](./appendix-f-norms.md)), the `python` target also emits
+the module `norms_monitor.py` (from `cadl` 0.3.22). It monitors the `norms:` and `counts_as:` blocks and the
+`assume:` and `guarantee:` items of each contract, including the items
+with temporal operators, for one contract instance while the system
+runs: it is given one observation at a time and returns the norm
+instances and items whose state or verdict (`pending`, `fulfilled`,
+`violated`, `excused`) changed. Unlike the other modules of the package,
+it does not import `cadl`: it carries the declared actors and the
+contracts as data (one JSON text) and the evaluation code of
+`cadl norms-eval`, and uses only the standard library of Python. The
+generator checks the module before it writes it and writes nothing when
+the check fails.
+[F.10](./appendix-f-norms.md#f10-reference-implementation-status) gives
+the details. The `solidity`, `opa`, and `unity-csharp` targets do not
+monitor norms; `solidity` and `opa` leave the items with temporal
+operators out of the generated checks, with a comment and a warning.
 
 ## D.2 Two-tier generator layout
 
@@ -71,7 +89,9 @@ independently.
   and monitors ([Appendix E](./appendix-e-sos-dsl.md)) are to run inside
   that simulation.
 - Pick **`python`** when you want an executable runtime skeleton of the
-  actors, contract monitors, and protocols; **`ros2`** is reserved for
+  actors, contract monitors, and protocols, or when the norms of
+  [Appendix F](./appendix-f-norms.md) are to be monitored while the
+  system runs; **`ros2`** is reserved for
   driving actual robots and is not implemented in `cadl` 0.3.
 - Pick **`solidity`** when the Institution-layer contracts must be
   enforced on-chain (blockchain deployment).
