@@ -1,0 +1,605 @@
+<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-j-grounding" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録J. 制度パラメータの根拠付け | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-j-grounding/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録J. 制度パラメータの根拠付け | CADL"/><meta data-rh=true name=description content="根拠付け拡張（grounding 0.1）を規定する。契約の規範から導出する情報共有の指標，権能の集中の指標，インセンティブの被覆率，宣言された alpha と beta を指標と比べる規則，制裁と報酬の数値の大きさ，および，戦略モデルにおける制裁の利得の項を，大きさに lambda を掛けたものとする定義を定める。"/><meta data-rh=true property=og:description content="根拠付け拡張（grounding 0.1）を規定する。契約の規範から導出する情報共有の指標，権能の集中の指標，インセンティブの被覆率，宣言された alpha と beta を指標と比べる規則，制裁と報酬の数値の大きさ，および，戦略モデルにおける制裁の利得の項を，大きさに lambda を掛けたものとする定義を定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-j-grounding/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-j-grounding/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-j-grounding/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-j-grounding/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-j-grounding","name":"付録J. 制度パラメータの根拠付け","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.aceecb03.css /><script src=/cadl-spec/ja/assets/js/runtime~main.e3998799.js defer></script><script src=/cadl-spec/ja/assets/js/main.0c5a27c4.js defer></script></head><body><svg style="display: none;"><defs>
+<symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-bfa")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=メインコンテンツまでスキップ><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>メインコンテンツまでスキップ</a></div><nav aria-label=ナビゲーション class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label=ナビゲーションバーを開く aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/ja/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/quickstart/>クイックスタート</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/ja/docs/spec/intro/>仕様書</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/textbook/>テキストブック</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/handson/>ハンズオン</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>日本語</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-j-grounding/ target=_self rel="noopener noreferrer" class=dropdown__link lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-j-grounding/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title=システムモード aria-label=ダークモードを切り替える(現在はシステムモード)><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=検索 aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label=先頭へ戻る class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label=ドキュメントのサイドバー class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/intro/><span title="CADL仕様書 v0.3" class=linkLabel_E58b>CADL仕様書 v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/introduction/><span title="1. はじめに" class=linkLabel_E58b>1. はじめに</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/objectives/><span title="2. 言語の目的" class=linkLabel_E58b>2. 言語の目的</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/comparison/><span title="3. 既存言語との比較" class=linkLabel_E58b>3. 既存言語との比較</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/requirements/><span title="4. 要求仕様" class=linkLabel_E58b>4. 要求仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/language-spec/><span title="5. 言語仕様" class=linkLabel_E58b>5. 言語仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/design/><span title="6. 設計" class=linkLabel_E58b>6. 設計</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/examples/><span title="7. 用途別記述例" class=linkLabel_E58b>7. 用途別記述例</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/use-cases/><span title="8. 活用事例と新規性分析" class=linkLabel_E58b>8. 活用事例と新規性分析</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/research/><span title="9. 研究方向性と未解決課題" class=linkLabel_E58b>9. 研究方向性と未解決課題</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/roadmap/><span title="10. 実装ロードマップ" class=linkLabel_E58b>10. 実装ロードマップ</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-a-syntax/><span title="付録A. 構文リファレンス（EBNF）" class=linkLabel_E58b>付録A. 構文リファレンス（EBNF）</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-b-references/><span title="付録B. 参考文献" class=linkLabel_E58b>付録B. 参考文献</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-c-motivation/><span title="付録C. 動機拡張" class=linkLabel_E58b>付録C. 動機拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-d-codegen/><span title="付録D. コード生成ターゲット一覧" class=linkLabel_E58b>付録D. コード生成ターゲット一覧</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-e-sos-dsl/><span title="付録E. SoS-DSL拡張" class=linkLabel_E58b>付録E. SoS-DSL拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-f-norms/><span title="付録F. 規範拡張" class=linkLabel_E58b>付録F. 規範拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-g-agents/><span title="付録G. エージェント統治拡張" class=linkLabel_E58b>付録G. エージェント統治拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-h-stochastic/><span title="付録H. 確率モデル拡張" class=linkLabel_E58b>付録H. 確率モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-i-games/><span title="付録I. 戦略モデル拡張" class=linkLabel_E58b>付録I. 戦略モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/ja/docs/spec/appendix-j-grounding/><span title="付録J. 制度パラメータの根拠付け" class=linkLabel_E58b>付録J. 制度パラメータの根拠付け</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/glossary/><span title=用語集 class=linkLabel_E58b>用語集</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=パンくずリストのナビゲーション><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label=ホームページ class=breadcrumbs__link href=/cadl-spec/ja/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>付録J. 制度パラメータの根拠付け</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">このページの見出し</button></div><div class="theme-doc-markdown markdown"><header><h1>付録J. 制度パラメータの規範による根拠付け（grounding 0.1）</h1></header>
+<p>本付録は，CADLの<strong>根拠付け拡張</strong>を規定する。この拡張は，規範拡張
+（<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>付録F</a>）の上に成り立ち，<code>contract_def</code>
+（<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a4-contracts-institution-layer>A.4</a>）にキー <code>grounding:</code> を，
+<code>norm_def</code> にキー <code>shares:</code> と <code>on_fulfilment:</code> を，<code>on_violation:</code> にキー <code>magnitude:</code> を
+追加する（F.3）。さらに，戦略モデル拡張（<a class="" href=/cadl-spec/ja/docs/spec/appendix-i-games/>付録I</a>）も用いるファイルでは，
+利得の項（I.2）にキー <code>sanction_of:</code> と <code>reward_of:</code> を追加する。これにより，処理系は，契約の規範から，
+2つの<strong>導出指標</strong> α̂ と β̂，および<strong>インセンティブ被覆率</strong> χ を計算し（いずれも <code>[0, 1]</code> の中にある），
+宣言された <code>alpha</code> と <code>beta</code> を指標と比べる。本拡張は，また，戦略モデルにおいて規範の制裁を表すと
+宣言した利得の項の重みを定義する。それは，規範の宣言する大きさにλを掛けたものである。</p>
+<p>コア言語は，これらのキーを必須としない。本拡張を実装していないCADL準拠の処理系は，
+これらのキーを理由にファイルを拒否してはならない。キーを構文上は受理し，<em>情報レベル</em>の診断を
+出すことが望ましい。</p>
+<p>拡張の名前は <code>grounding</code> であり，本付録はバージョン <code>0.1</code> を記述する。本拡張は <code>norms: 0.1</code> を
+必要とする。本拡張を用いるファイルは，<code>extensions:</code>
+（<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a2-top-level-structure>A.2</a>）で両方を宣言しなければならない。
+宣言せずに用いた場合に処理系がどう扱うかはJ.12で述べる。キー <code>sanction_of:</code> と <code>reward_of:</code> は，
+さらに <code>stochastic: 0.1</code> と <code>games: 0.1</code> を必要とする。</p>
+<div class="language-yaml codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-yaml codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token key atrule" style=color:#00a4db>sos</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>...</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>extensions</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>grounding</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><br/></div></code></pre></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j1-動機と範囲>J.1 動機と範囲<a href=#j1-動機と範囲 class=hash-link aria-label="J.1 動機と範囲 への直接リンク" title="J.1 動機と範囲 への直接リンク" translate=no>​</a></h2>
+<p><a class="" href=/cadl-spec/ja/docs/spec/language-spec/>5.4.2節</a>は，制度パラメータα，β，λを，定性的な端点を持つ <code>[0, 1]</code> の数として
+定義する。言語の他の部分は，中間の値が何を意味するかを述べない。設計者は <code>beta: 0.7</code> と書くが，
+その数を，それが置かれた契約に関係付ける規則はない。付録Fは，意図する読み方（βは契約の権能を誰が
+持つかを表し，αは他の当事者がどの発動条件と内容を観測できるかを表し，λは違反された規範の制裁の
+大きさを調整する）を参考として述べるにとどまる。<a class="" href=/cadl-spec/ja/docs/spec/research/>9.6節</a>は，規範とパラメータの
+形式的な結び付きを未解決としており，RD-1.5は，λを契約のパラメータとして扱うことを求めている。
+制度の規則を，それが何に作用するかによって分類する方法には，情報の規則，集約の規則，利得の規則が
+含まれる <a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[Ostrom, 2005]</a>。これは，3つのパラメータが3種類の規範を
+要約することを示唆する。grounding 0.1では，その最初の部分に取り組む。本拡張は，α，β，λに，規範による形式的な
+意味を与えない。それは，以下に述べるもの以外は未解決のまま残る。</p>
+<ul>
+<li class=""><strong>2つの指標と1つの被覆率を，ファイルから計算する。</strong> J.4は，α̂，β̂，χを，1つの契約から読み取る
+有限集合の上の，個数の比として定義する。これらは，2つの処理系が同じファイルから同じ数を計算すると
+いう意味で，再現可能である。α̂については，分子も分母も記述者の注記（項目と <code>shares:</code> のリスト）に
+基づくので，指標の質は注記の質で決まる。</li>
+<li class=""><strong>指標は証拠であり，パラメータの意味は定めない。</strong> 指標は，宣言されたパラメータに取って代わらず，
+5.4.2節を変えない。指標は，契約の規範についての構造的な事実であり，宣言値はそれと合うことも
+合わないこともある。指標が捉えられないものは，J.4に述べる。</li>
+<li class=""><strong>宣言値を指標と比べる。</strong> 宣言されたαまたはβと，その指標との不一致は，関係する構成要素を名指す
+警告である（J.5）。本付録のどの規則も，付録Fのもとで有効であり，新しいキーを1つも用いないファイルを，
+無効にしない（J.12）。</li>
+<li class=""><strong>λは倍率である。</strong> 本付録では，λは制裁と報酬の大きさに掛かる。λを導出指標と比べることはしない。
+χが表すのは別のもの，すなわち，λが掛かり得る制裁または報酬を伴う規範の数である。</li>
+<li class=""><strong>制裁に大きさを与え，モデルがそれを用いる。</strong> <code>magnitude:</code> は，規範の制裁または報酬に数を与える。
+戦略モデルでは，<code>sanction_of:</code> で宣言した利得の項は，定義により，重み −magnitude·λ を持つ。
+ここでλは，契約の <code>lambda</code> に束縛したパラメータである（J.7）。その項が制裁を表すこと，すなわち，
+その報酬構造が規範の違反を数えていることは，記述者の仮定のままであり，そのような項を用いて計算した
+どの結果も，その仮定とともに報告する。</li>
+</ul>
+<p><strong>バージョン0.1の範囲。</strong></p>
+<ul>
+<li class="">指標は1つの契約に関するものである。SoSの複数の契約にわたって指標を集約することはしない。</li>
+<li class="">情報項目は記述者が宣言する（<code>grounding.items</code>）。アクターのインタフェース，述語，メッセージからは
+導出しない。</li>
+<li class="">指標は個数である。大きさ，重大度，権能が影響する規範の数による重み付けはしない。</li>
+<li class=""><code>magnitude:</code> と <code>on_fulfilment:</code> は，付録Fの動的意味論に影響しない。判定，違反，反義務の規範は
+変わらない。</li>
+<li class="">本拡張は，規範からモデルを導出せず，モデルの報酬構造が規範の違反を数えていることを検査しない
+（H.8は，規範とモデルの間の変換を定義しない）。</li>
+<li class=""><a class="" href=/cadl-spec/ja/docs/spec/appendix-g-agents/>付録G</a>の委任と，<a class="" href=/cadl-spec/ja/docs/spec/appendix-c-motivation/>付録C</a>の動機パラメータρと
+κについては，指標を定義しない。</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j2-概念>J.2 概念<a href=#j2-概念 class=hash-link aria-label="J.2 概念 への直接リンク" title="J.2 概念 への直接リンク" translate=no>​</a></h2>
+<table><thead><tr><th>概念<th>grounding 0.1での意味<tbody><tr><td><strong>アクター名</strong><td>アクター参照から添字を除いた識別子。<code>ROBOT[i]</code>，<code>"ROBOT[*]"</code>，<code>ROBOT[2]</code> のアクター名は <code>ROBOT</code> である。<tr><td><strong>当事者名</strong><td>契約の <code>parties:</code> の項目のアクター名。同じアクター名を持つ項目は，1つの当事者である。<tr><td><strong>単一のアクター</strong><td>整数の添字を持つアクター参照，または，アクターが範囲なしで宣言されているときの，添字のないアクター参照。<tr><td><strong>情報項目</strong><td><code>grounding.items</code> に宣言する，名前付きの情報。その<strong>起点</strong>，すなわちその情報が由来する当事者を伴う。1つの項目の起点は1つである。2つの当事者に由来する情報は，2つの項目として宣言する。<tr><td><strong>共有規範</strong><td>内容がメッセージであり，<code>shares:</code> を持つ義務または許可。そのメッセージは，挙げた項目を受信者に与える。<tr><td><strong>大きさ（magnitude）</strong><td>負でない数。インセンティブ強度が最大（λ = 1）であるときの制裁または報酬の大きさであり，契約の計算単位で表す。<tr><td><strong>導出指標</strong><td>α̂またはβ̂。1つの契約から計算する <code>[0, 1]</code> の有理数であるか，未定義である。<tr><td><strong>インセンティブ被覆率</strong><td>χ。契約の義務と禁止のうち，制裁または報酬を伴うものの割合であるか，未定義である。</table>
+<p>規範，義務，許可，禁止，権能，負担者は，<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>付録F</a>の意味を持つ。</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j3-構文a4f3i2へのebnfの追加>J.3 構文（A.4，F.3，I.2へのEBNFの追加）<a href=#j3-構文a4f3i2へのebnfの追加 class=hash-link aria-label="J.3 構文（A.4，F.3，I.2へのEBNFの追加） への直接リンク" title="J.3 構文（A.4，F.3，I.2へのEBNFの追加） への直接リンク" translate=no>​</a></h2>
+<p>文法は<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/>付録A</a>の記法に従う。<code>identifier</code>，<code>actor_ref</code>，<code>number</code>，<code>text</code> は
+付録Aで定義している。</p>
+<div class="language-ebnf codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-ebnf codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token definition rule keyword" style=color:#00009f>contract_def</span><span class="token plain">    </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"grounding:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">grounding_block</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>grounding_block</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"items:"</span><span class="token plain">     </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>":"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">actor_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"tolerance:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">number</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>norm_def</span><span class="token plain">        </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"shares:"</span><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"on_fulfilment:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">norm_fulfilment</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>norm_violation</span><span class="token plain">  </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"magnitude:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">number</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>norm_fulfilment</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"reward:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">text</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"magnitude:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">number</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>payoff_term</span><span class="token plain">     </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"reward:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"weight:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">param_expr</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain">                  </span><span class="token comment" style=color:#999988;font-style:italic>(* I.2 *)</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"sanction_of:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">norm_ref</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"reward_of:"</span><span class="token plain">   </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">norm_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>norm_ref</span><span class="token plain">        </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"."</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain">               </span><span class="token comment" style=color:#999988;font-style:italic>(* string *)</span><br/></div></code></pre></div></div>
+<ul>
+<li class=""><code>grounding.items</code> は，各情報項目の名前を，その起点に対応付ける。<code>tolerance:</code> は <code>[0, 1]</code> の数であり，
+既定値は <code>0.25</code> である（J.5）。</li>
+<li class=""><code>shares:</code> は，共有規範のメッセージが伝える情報項目を列挙する。</li>
+<li class=""><code>on_violation.magnitude</code> は，規範の制裁の大きさである。</li>
+<li class=""><code>on_fulfilment:</code> は，規範を履行したことに対する報酬を記録する。<code>reward:</code> は，<code>sanction:</code> が制裁を
+述べるのと同じく，報酬をテキストで述べ，<code>magnitude:</code> はその大きさである。報酬は，規範インスタンスが
+F.5の状態 <code>fulfilled</code> に達したときに支払われたものとみなす。義務では，その内容が期限内に実現された
+ときである。禁止では，違反のないまま，その期間が閉じるか，契約インスタンスが終わったときである。
+インスタンスが <code>discharged</code> になったときは，その判定は <code>fulfilled</code> であるが，報酬は支払われない。
+このブロックは注記であり，付録Fの意味論に影響しない。</li>
+<li class=""><code>norm_ref</code> は，引用符付きの文字列 <code>"C.n"</code> である。契約の <code>id</code>，ドット，その契約の規範の <code>id</code> からなる。</li>
+</ul>
+<p>本付録のどのキーについても，空のテキスト，または空白だけからなるテキスト（<code>sanction: ""</code>，
+<code>reward: " "</code>）は空として扱い，YAMLのnullは，ないものとして扱う。テキストは，YAMLの読込み後のものと
+する。ローダが数や真偽値として読む引用符のないスカラーは，書かれたとおりのテキストである
+（<code>sanction: 0</code> はテキスト "0" であり，インセンティブを伴う）。記述者は，そのようなテキストを引用符で
+囲むことが望ましい。列またはマッピングである <code>reward:</code> は誤りである（J-4）。大きさは10進小数で
+書かなければならない。YAML 1.1のローダは，<code>1e3</code> を文字列として読み（J-4の誤り），<code>1.0e-7</code> を数として
+読む。引用符のない項目名の
+うち，YAML 1.1のローダが真偽値やnullとして読むものは，引用符で囲まなければならない
+（<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>）。</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j4-導出指標と被覆率>J.4 導出指標と被覆率<a href=#j4-導出指標と被覆率 class=hash-link aria-label="J.4 導出指標と被覆率 への直接リンク" title="J.4 導出指標と被覆率 への直接リンク" translate=no>​</a></h2>
+<p>3つの量は，本拡張を宣言するファイルのどの契約 C についても定義する。それぞれ，2つの個数の比であるか，
+分母が0であるときは<strong>未定義</strong>である。未定義の量は，J.5のどの比較にも関与しない。</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=情報共有α̂>情報共有：α̂<a href=#情報共有α̂ class=hash-link aria-label="情報共有：α̂ への直接リンク" title="情報共有：α̂ への直接リンク" translate=no>​</a></h3>
+<p>C の当事者名の集合を Π，<code>grounding.items</code> の項目の集合を X，項目 x の起点を o(x)（当事者名である。
+J-2）とする。C の<strong>組</strong>とは，項目 x と，o(x) 以外の当事者名 q の組 (x, q) である。これは，項目を
+当事者と共有し得る場所である。</p>
+<p>宛先が当事者の全体を表すかどうかは，F.3のアクター参照の照合に従う。アクター参照 T は，その
+アクター名が q であり，かつ，単一のアクター <code>A</code>（J.2），<code>A[*]</code>，識別子を添字とする <code>A[i]</code>，アクターを
+宣言したときの範囲の全体，または記号的な上限を持つ範囲（F.3により，すべての要素に一致する）で
+あるとき，<strong>当事者 q の全体を表す</strong>という。整数の添字を持つ参照が当事者の全体を表すのは，それが，
+そのアクター名を持つ <code>parties:</code> のただ1つのエントリに等しいときに限る。整数の添字または範囲を持つ
+それ以外の参照は，<strong>要素を特定している</strong>という。集合の名前だけの参照，すなわち範囲付きで宣言した
+アクターに対する <code>A</code> は，どの要素にも一致しない（F.3）。それは組を与えず，処理系は警告することが
+望ましい（J-3）。それは，要素を特定しているものでもない。添字と範囲は，書かれたとおりに比べる。
+コアの構文解析器は，添字の中の空白を受け付けない。たとえば，<code>parties: [DISPATCHER, "ROBOT[1]", "ROBOT[2]"]</code>
+では，宛先 <code>ROBOT[2]</code> は要素を特定しており，項目と ROBOT の組を与えるのは，<code>ROBOT[*]</code>，<code>ROBOT[i]</code>，
+または範囲だけである。</p>
+<p>組 (x, q) は，次のとき，与えられている。</p>
+<ul>
+<li class=""><strong>共有のエントリによって</strong>：<code>information.sharing</code> のエントリ <code>"S -> T : x"</code> が，項目 x と，当事者 q の
+全体を表す宛先 T を持つとき。この形で項目が1つでないエントリ，たとえば <code>"A -> B : x, y"</code> や
+<code>"A -> B : f(5s)"</code> は，コアの構文解析器が寛容に受け付けるが（A.12），組を与えず，処理系は警告する
+ことが望ましい（J-3）。</li>
+<li class=""><strong>義務によって</strong>，または<strong>許可によって</strong>：その種類の共有規範が，<code>shares:</code> に x を挙げ，内容として
+メッセージ <code>S -> T : m</code> を持ち，その受信者 T が当事者 q の全体を表すとき。</li>
+</ul>
+<p>組は，この3つの与え方の少なくとも1つで与えられているとき，<strong>与えられている</strong>という。</p>
+<div class="language-text codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-text codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">α̂  =  (number of given pairs) / (number of pairs)</span><br/></div></code></pre></div></div>
+<p>α̂は，組がないとき（項目がない，または当事者名が1つである）は未定義である。α̂ = 0 であるのは，
+組が1つも与えられていないとき，かつそのときに限る。これは，宣言した項目に限って，5.4.2節の端点
+「情報非共有」に対応する。α̂ = 1 であるのは，すべての組が与えられているとき，かつそのときに限る。
+これは，宣言した項目に限って，「完全共有」に対応する。処理系は，α̂とともに，3つの与え方のそれぞれで
+与えられている組の数，与えられていない組，および<strong>要素を特定した</strong>エントリと規範を報告する。組を
+与えるはずであるが，宛先が要素を特定しているエントリまたは規範
+（<code>"DISPATCHER -> ROBOT[3] : route"</code> など）は，組を与えず，挙げる項目がいくつであっても，エントリと
+規範のそれぞれを1回ずつ，分けて列挙する。<code>alpha: 0</code> を宣言し，共有のエントリがすべて要素を特定して
+いる契約は，α̂ = 0 であり，J-6の警告を受けない。要素を特定したエントリも共有であるが，指標はそれを
+見ない。</p>
+<p>この定義が見ないものは，次のとおりである。</p>
+<ul>
+<li class="">送信元 S は調べない。エントリは，誰が送るかにかかわらず，項目を T に与える。</li>
+<li class="">識別子の添字は，記述者が選ばれた1つの要素を意図している場合（<code>ROBOT[winner]</code>）も含めて，常に
+当事者の全体として数える。</li>
+<li class="">契約の当事者でない宛先は，組を与えない。処理系は警告することが望ましい（J-3）。</li>
+<li class="">規範の状態は無視する。共有規範は，<code>trigger:</code>，<code>until:</code>，<code>deadline:</code> を持つかどうかにかかわらず，
+また，初めから発効しているか，反義務の規範として，または権能によってだけ発効するかにかかわらず，数える。</li>
+<li class="">同じメッセージの禁止は，組を取り除かない。そのような衝突については，付録FのN-12が警告する。</li>
+<li class="">義務も許可も，組を与える。指標が記録するのは，規範が当事者に項目を持たせること，または持つことを
+許すことである。当事者が実際にそれを持つかどうかは記録しない。3つの個数を見れば，その違いがわかる。</li>
+<li class="">当事者が1つのアクター集合だけである契約は，当事者名が1つであり，組を持たないので，α̂は未定義である。
+したがって，対等な構成システムからなる協調型のSoSで重要となる，同等の者どうしの共有は，
+バージョン0.1の指標には現れない。</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=権能の集中β̂>権能の集中：β̂<a href=#権能の集中β̂ class=hash-link aria-label="権能の集中：β̂ への直接リンク" title="権能の集中：β̂ への直接リンク" translate=no>​</a></h3>
+<p>C の<strong>決定点</strong>とは，C の権能（F.2）である。権能は，その行使が，定義された効果によって他の規範の状態を
+変える，契約のただ1つの構成要素である（F.5）。<code>authority.decision_scope</code> はテキストであり，数えない。
+単一のアクター a（J.2）について，<code>bearer:</code> が参照 a である（アクター名も添字も同じである）C の権能の
+数を k(a) とする。負担者が単一のアクターでない権能（<code>ROBOT[i]</code> など）は，各要素がそれぞれ自分のために
+保持するものであり，どの単一のアクターの分としても数えない。</p>
+<div class="language-text codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-text codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">β̂  =  (largest k(a) over the single actors a) / (number of powers)</span><br/></div></code></pre></div></div>
+<p>β̂は，単一のアクターが負担する権能が1つもないとき0であり，C に権能がないときにだけ未定義である。
+これは，契約の決定点のうち，1つのアクターにあるものの最大の割合であり，<strong>集中</strong>の指標である。
+β̂ = 1 であるのは，1つの単一のアクターがすべての権能を負担するとき，かつそのときに限る。これは，
+権能に限って，5.4.2節の端点「単一アクターが全決定」に対応する。β̂ = 0 であるのは，どの単一のアクターも
+権能を負担しないとき，かつそのときに限る。</p>
+<p>β̂は <code>authority.decision_holder</code> に依存しない。処理系は，β̂とともに，次を報告する。負担者ごとの権能の数。
+各権能について，その <code>effects:</code> に挙げた相異なる規範の数。決定権者が単一のアクター h を名指すときは，
+<strong>決定権者の割合</strong>，すなわち k(h) を権能の数で割ったもの。個数は，効果によって重み付けしない。
+1つの規範を解除する権能も，他の当事者の権能を解除する権能も，同じように数える。</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=インセンティブの被覆率χ>インセンティブの被覆率：χ<a href=#インセンティブの被覆率χ class=hash-link aria-label="インセンティブの被覆率：χ への直接リンク" title="インセンティブの被覆率：χ への直接リンク" translate=no>​</a></h3>
+<p>C の義務と禁止の集合を N とする。N の規範は，次の少なくとも1つが成り立つとき，
+<strong>インセンティブを伴う</strong>という。</p>
+<ul>
+<li class="">空でない <code>on_violation.sanction</code> を持つ。</li>
+<li class="">0より大きい <code>on_violation.magnitude</code> を持つ。</li>
+<li class="">空でない <code>on_fulfilment.reward</code>，または0より大きい <code>on_fulfilment.magnitude</code> を持つ。</li>
+</ul>
+<div class="language-text codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-text codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">χ  =  (number of norms of N that carry an incentive) / (number of norms in N)</span><br/></div></code></pre></div></div>
+<p>χは，N が空であるときは未定義である。χ = 0 であるのは，どの義務と禁止も制裁も報酬も伴わないとき，
+かつそのときに限り，χ = 1 であるのは，そのすべてが伴うとき，かつそのときに限る。χはλの指標ではない。
+χは，λが掛かる対象を持つ規範を数える。どれだけ掛かるかを述べるのがλである（J.7）。</p>
+<p>さらに2つの個数を，χとは分けて報告する。これらはχには含めない。インセンティブを伴わず，
+<code>on_violation.reparation</code> を持つ N の規範（その違反は，制裁の代わりに，さらなる義務を生じさせる）の数と，
+<code>on_violation.transition</code> を持つ N の規範（その違反は，契約インスタンスを動かすか終わらせる）の数である。
+<code>severity:</code> は，どこにも数えない。それは違反を分類するものである。</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=量の性質>量の性質<a href=#量の性質 class=hash-link aria-label="量の性質 への直接リンク" title="量の性質 への直接リンク" translate=no>​</a></h3>
+<p>3つの量は，名前の付け替えと，規範，項目，当事者の順序の入れ替えについて不変である。分割と併合に
+ついては不変でない。1つの権能を2つに分けて書くと，あるいは2つの義務を1つに併合すると，契約が
+当事者に求めることは同じでも，β̂またはχが変わる。各補題では，述べていないものはすべて同じままであり，
+量は前後で定義されているとする。</p>
+<ul>
+<li class=""><strong>補題1（α̂）。</strong> <code>information.sharing</code> にエントリを追加しても，共有規範の <code>shares:</code> に項目を
+追加しても，共有規範を追加しても，α̂は下がらない。<em>証明。</em> 組の集合は変わらず，与えられていた組は
+すべて，引き続き与えられている。これに対して，項目または当事者を追加すると，組が増え，α̂が下がる
+ことがある。</li>
+<li class=""><strong>補題2（β̂）。</strong> 負担者が，k(a) が最大である単一のアクターである権能を追加しても，β̂は下がらない。
+負担者が単一のアクターでない権能を追加しても，β̂は上がらない。<em>証明。</em> n 個の権能のうちの最大の数を
+k とすると，k ≤ n であるので，k/n ≤ (k + 1)/(n + 1) かつ k/(n + 1) ≤ k/n である。</li>
+<li class=""><strong>補題3（χ）。</strong> インセンティブを伴わなかった義務または禁止に，（空でない制裁のテキスト，または0より
+大きい大きさによって）インセンティブを伴わせると，χは 1/|N| だけ上がる。0である大きさでは上がらない。
+インセンティブを伴う規範を N に追加しても，χは下がらず，伴わない規範を追加しても，χは上がらない。
+<em>証明。</em> 補題2と同様である。</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=量が表さないもの>量が表さないもの<a href=#量が表さないもの class=hash-link aria-label="量が表さないもの への直接リンク" title="量が表さないもの への直接リンク" translate=no>​</a></h3>
+<ul>
+<li class="">α̂が数えるのは，共有する資格と義務である。運用において当事者が何を観測するかや，情報の品質や
+遅延は数えない。項目は，記述者が挙げたものである。</li>
+<li class="">β̂が数えるのは，権能である。誰が経路を計画するかのように，制度上の行為でない決定は，規範でないので，
+数えない。すべての権能は，その効果が何であっても，同じ重みを持つ。</li>
+<li class="">χが述べるのは，制裁または報酬を伴う規範がいくつあるかである。それらがどれほど大きいかや，
+どれほど確実に適用されるかは述べない。</li>
+<li class="">J.7のどの結果にも，大きさとλの積だけが入る。1つの契約の中では，λと大きさは別々には特定されない。
+すべての大きさを2倍にし，λを半分にしても，何も変わらない。</li>
+<li class="">コアのキー <code>incentives.type</code>，<code>incentives.rules</code>，<code>violation.action</code> はテキストであり，無視する。
+契約は，χからは見えないインセンティブを，そこに持ち得る。</li>
+<li class=""><a class="" href=/cadl-spec/ja/docs/spec/appendix-g-agents/>付録G</a>の強制のもとでは，禁止されたメッセージは境界で拒否され，送ることが
+できない。したがって，その禁止は，制裁がなくても実効性を持つ。ゆえに，強制される契約での被覆率0は，
+「インセンティブなし」を意味しない。</li>
+<li class="">どの量も，振る舞いについては何も述べない。共有を増やすこと，あるいはインセンティブを強くすることが
+性質を改善するかどうかは，付録Hと付録Iのモデルに対する問いである。</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j5-宣言されたパラメータとの関係>J.5 宣言されたパラメータとの関係<a href=#j5-宣言されたパラメータとの関係 class=hash-link aria-label="J.5 宣言されたパラメータとの関係 への直接リンク" title="J.5 宣言されたパラメータとの関係 への直接リンク" translate=no>​</a></h2>
+<p>処理系は，どの契約についても3つの量を計算し，報告する（J-5）。<code>alpha</code> と <code>beta</code> については，宣言値，
+指標，およびその差を報告し，両者を比べる。どの不一致も警告である。指標は規範についての証拠であり，
+本拡張を宣言することが，<code>norms: 0.1</code> を宣言するファイルを無効にすることは決してない。</p>
+<p><strong>宣言された端点に対する反例が，契約の中にある場合。</strong> 5.4.2節の端点は，全称的な言明である。同じ契約の
+構成要素が反例であるとき，処理系は，警告し，その構成要素を名指すことが望ましい（J-6）。</p>
+<table><thead><tr><th>宣言<th>警告で名指す反例<tbody><tr><td><code>alpha: 0</code><td>与えられている組と，それを与えるエントリまたは共有規範。α̂が未定義のときは，空でない <code>information.sharing</code><tr><td><code>alpha: 1</code><td>与えられていない組（規範がないことは，当事者が項目を持たないことを示さないので，4つのうちで最も弱い）<tr><td><code>beta: 1</code><td>数が最大である単一のアクター（複数あるときは，ファイルの順で最初のもの）が負担していない権能。β̂ = 0 のときは，すべての権能<tr><td><code>beta: 0</code><td>数が最大である単一のアクター。ただし，β̂が，権能を負担する相異なる単一のアクターの数で1を割った値を超えるときに限る</table>
+<p>β̂が0であるのは，すべての権能をアクター集合が負担するときに限る。複数の単一のアクターがそれぞれ同じ数の
+権能を負担し，それより多く負担する者がいない契約では，β̂は，その数で1を割った値であり，これらの
+負担者について取り得る最小の値である。そこでは，<code>beta: 0</code> に警告は出ない。</p>
+<p><strong>中間の値が指標から遠い場合。</strong> αとβについて，処理系は，宣言値と指標の差が契約の許容差を超え，
+J-6がそのパラメータについて警告を出さないとき，警告することが望ましい（J-7）。許容差の既定値は
+0.25である。指標は粗く，規範の少ない契約では，指標が取り得る値が少ない（権能が2つであれば，β̂は
+0，1/2，1 のいずれかである）。より大きな差を受け入れる記述者は，それを <code>grounding.tolerance</code> で述べる。
+処理系は，決定権者が単一のアクターを名指し，その割合がβ̂より小さいときも，警告することが望ましい。
+このとき，権能は別のアクターに集中している。</p>
+<p><strong>λは数とは比べない。</strong> λは倍率であり，χは被覆率である。どの規範にも軽い制裁がある契約は，χ = 1 で，
+λが小さく，整合している。処理系は，宣言された <code>lambda</code> の隣にχを報告し，次の2つの場合にだけ
+警告することが望ましい（J-8）。契約のどの義務と禁止もインセンティブを伴わない（χ = 0，または N が空で
+ある）のに，<code>lambda</code> が0より大きい場合。このとき，λには，規範の中に掛かる対象がない。および，ある
+規範がインセンティブを伴うのに <code>lambda: 0</code> である場合。このとき，規範が宣言するものは，モデルの中で
+効果を持たない。</p>
+<p><strong>契約のバージョン。</strong> 契約の2つのバージョンを比べる処理系（F.6）は，本付録のキー（大きさ，<code>on_fulfilment:</code>，
+<code>shares:</code>，項目）で何が変わったかを報告し，宣言値とその指標が逆の向きに動くとき，警告することが
+望ましい（J-13）。たとえば，改正がロボットに権能を与える一方で，<code>beta</code> を上げる場合である。</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j6-付録hと付録iのモデルにおけるパラメータ>J.6 付録Hと付録Iのモデルにおけるパラメータ<a href=#j6-付録hと付録iのモデルにおけるパラメータ class=hash-link aria-label="J.6 付録Hと付録Iのモデルにおけるパラメータ への直接リンク" title="J.6 付録Hと付録Iのモデルにおけるパラメータ への直接リンク" translate=no>​</a></h2>
+<p><strong>現状。</strong> モデルのパラメータは，<code>from: "C.alpha"</code>，<code>"C.beta"</code>，<code>"C.lambda"</code> によって宣言値に
+束縛する（H.3）。これにより，契約とモデルが同じ数を用いる。その数がモデルの中で何をするかは，
+記述者が書く。<a class="" href=/cadl-spec/ja/docs/spec/appendix-h-stochastic/>H.12</a>では，βは決定が集中的に行われる確率であり，αは
+集中的な計画の品質に掛かる。どちらの付録も，これらの式を契約から導出せず，本付録も導出しない。</p>
+<p><strong>本付録がαとβについて加えるもの。</strong> 契約の規範は，束縛したパラメータが宣言値を持つ設計を記述する。
+別の値を割り当てるモードは，動作モード（H.6）を記述するが，ファイルはそのモードに固有の規範を
+持たない。そこで，処理系は，どの設計においても，<code>C.alpha</code> または <code>C.beta</code> に束縛したパラメータの
+固定値を C の指標と比べ，両者の差が許容差を超える設計について，警告ではなく，情報レベルの診断を
+出すことが望ましい（J-9）。</p>
+<p><strong>未解決のまま残るもの。</strong> モードは固有の規範を持たないので，モードがαとβに割り当てる値を指標に
+照らして検査することはできず，βによるモードの順序を，その規範の順序と比べることもできない。
+共有規範または権能からモデルの確率を導出すること，および，ゲームにおいてプレイヤーが観測するものと
+してのα（RD-7.3）は，定義しない。</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j7-λ規範の制裁から利得の項へ>J.7 λ：規範の制裁から利得の項へ<a href=#j7-λ規範の制裁から利得の項へ class=hash-link aria-label="J.7 λ：規範の制裁から利得の項へ への直接リンク" title="J.7 λ：規範の制裁から利得の項へ への直接リンク" translate=no>​</a></h2>
+<p>戦略モデル（<a class="" href=/cadl-spec/ja/docs/spec/appendix-i-games/>付録I</a>）では，利得の項は，重みを与える代わりに，その項が表すと
+宣言する制裁または報酬を持つ規範を名指してよい。</p>
+<div class="language-yaml codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-yaml codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reward</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> shortcuts</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>sanction_of</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"DELIVERY.no_shortcut"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><br/></div></code></pre></div></div>
+<p>項が名指す規範 <code>C.n</code> を n とし，<code>from: "C.lambda"</code> で束縛したモデルのパラメータを ℓ とする
+（ちょうど1つなければならない。J-10）。この項は <code>weight:</code> を持たず，その重みを次のように定義する。</p>
+<table><thead><tr><th>項<th>重み<tbody><tr><td><code>sanction_of: "C.n"</code><td>−m · ℓ。m は n の <code>on_violation.magnitude</code><tr><td><code>reward_of: "C.n"</code><td>m′ · ℓ。m′ は n の <code>on_fulfilment.magnitude</code></table>
+<p>この項は，それ以外の点ではI.6の項であり，付録Iがそのまま適用される。</p>
+<p><strong>検査されない仮定。</strong> 項の報酬構造は，モデルの中で制裁がどれだけ頻繁に科されるか，または報酬が
+支払われるかについての，記述者の言明である。規約は次のとおりである。<code>sanction_of:</code> の項の累積報酬は，
+モデルの1回の実行の中のすべての契約インスタンスにわたって，規範の違反を数え，<code>reward_of:</code> の項の
+累積報酬は，その履行を数える。1回の実行は，複数の契約インスタンスにまたがってよい。これを検査できる
+処理系はない。付録Fは規範を時間付きトレースの上で判定し，付録Hはモデルをステップで評価する。両者の
+間の変換は定義されていない。したがって，そのような項を持つ利得を用いて計算したどの結果も，各項に
+ついての仮定「報酬構造 r は，C.n の違反（履行）を数えるものとする」とともに報告しなければならない
+（J-12）。</p>
+<p><strong>制裁を負う者。</strong> 制裁は，規範の負担者の損失である。<code>sanction_of:</code> の項は，負担者を代表するプレイヤーの
+利得に置き，他のどこにも置かない。その額がどこへ行くかは，本付録は述べない。それが相手方への移転である
+ときは，記述者は，相手方のプレイヤーの利得に，同じ報酬構造と明示的な重みを持つ，2つ目のふつうの項を
+書く（<code>weight: "2 * lambda"</code>）。その項の大きさは，規範に照らして検査されない（J-11）。</p>
+<p><strong>処理系が検査すること（J-10，J-11）。</strong> 規範が存在し，義務または禁止であり，大きさを宣言している
+こと。利得のプレイヤーが規範の負担者を代表すること。1つの規範が，それぞれのキーで多くとも1回だけ
+名指されること。モデルが C の規範を1つでも名指すときは，大きさを持ち，負担者がモデルのプレイヤーで
+ある C のどの規範も名指されること。ファイルは大きさを1回だけ述べるので，大きさと係数λは，定義により
+成り立つ。</p>
+<p><strong>均衡となる値の集合の形。</strong> σ をプロファイル，D を設計，ℓ をパラメータとし，他のすべてのパラメータを固定する。
+次の2つの条件を考える。</p>
+<ul>
+<li class=""><strong>(i)</strong> ℓ は，モデルのどの確率にも，どの報酬の値にも現れず，ℓ が現れるどの重みも，ℓ について
+アフィンである（ℓ が1より高いべきで現れない）。</li>
+<li class=""><strong>(ii)（プレイヤー p について）</strong> p の項のうち，重みに ℓ が現れるものはどれも，<code>sanction_of:</code> の項と
+同じく，m ≥ 0 である重み −m·ℓ を持ち，σ のもとで，その報酬構造の期待累積値が0である。</li>
+</ul>
+<blockquote>
+<p><strong>命題。</strong> (i) を仮定する。D が良定義であるかどうかと，σ が許容できるかどうかは，ℓ に依存しない。
+それらが成り立つところで，次が成り立つ。</p>
+<ol>
+<li class="">どの gain_p も，ℓ の凸な区分線形関数である。ℓ の値の区間の上で，σ が D のε均衡である値の
+集合は，閉区間である（空であってもよい）。特に，σ は，a と b でε均衡であれば，a と b の間の
+どの値でもε均衡である。</li>
+<li class="">(ii) が p について成り立つならば，gain_p は ℓ について非増加である。b で gain_p > ε であれば，
+b より小さいどの値でも gain_p > ε である。</li>
+<li class="">(ii) がすべてのプレイヤーについて成り立つならば，1の集合は，空であるか，あるしきい値 λ*
+について，区間の ℓ ≥ λ* である値の全体である。</li>
+</ol>
+</blockquote>
+<p><em>証明。</em> (i) により，確率は ℓ に依存せず，それとともに，ゲームのグラフも，どの期待累積報酬も ℓ に
+依存しない。したがって，良定義性と許容性も依存しない（H.5，I.6）。p の戦略 τ について，σ[p↦τ] の
+もとでの p の利得は，A(τ) + ℓ·B(τ) である。どの重みも ℓ についてアフィンであるので，A(τ) と B(τ) は
+ℓ に依存しない数である。BR_p は，そのような関数の有限個の最大値であり（I.7），したがって凸で
+区分線形である。σ のもとでの利得はアフィンである。ゆえに gain_p は凸で区分線形であり，連続である。
+凸で連続な関数が ε 以下である集合は閉区間であり，プレイヤーにわたる共通部分も閉区間である。(ii) の
+もとでは，B(τ) は，大きさと期待累積報酬の積の和に負号を付けたものであるので，どの τ についても
+B(τ) ≤ 0 であり，σ 自身の戦略については0である。このとき，gain_p は，非増加な関数の最大値から定数を
+引いたものである。ある値を含めばそれより大きい値をすべて含む閉区間は，空であるか，3の形である。∎</p>
+<p><strong>命題が成り立つ範囲。</strong></p>
+<ul>
+<li class="">(ii) がなければ，集合は閉区間であり，しきい値の形であるとは限らない。I.12では，<code>shortcut_first</code> は
+制裁を受け，それが均衡であるのは，max(0, T_1, T_2) ≤ λ ≤ T_3 であるとき，かつそのときに限る。
+<code>reward_of:</code> の項も (ii) を破る。その項の σ のもとでの値は，ℓ とともに増えるからである。</li>
+<li class="">契約が2つあれば，2つの <code>lambda</code> に束縛した2つのパラメータがある。命題は，他方を固定したとき，
+そのそれぞれについて成り立つ。両方の領域については何も述べない。</li>
+<li class="">ℓ が確率に現れるとき（インセンティブが環境の振る舞いを変えるとき），(i) は成り立たず，利得は ℓ の
+有理関数であり，上のことは何も成り立たない。</li>
+</ul>
+<p><strong>セルの端点による認証。</strong> J-14は，この命題を，開いているパラメータが ℓ だけである均衡マップ（I.9）の
+ための方法にする。セル <code>[a, b]</code> の両端での厳密な評価が <code>equilibrium</code> を認証し，b での評価が，(ii) の
+成り立つ逸脱者を認証する。凸性と単調性が証明されているので，これはH.9の意味での標本点での評価には当たらない。
+ただし，J-14が挙げるすべての条件のもとでだけ健全である。</p>
+<p><strong>例。</strong> <a class="" href=/cadl-spec/ja/docs/spec/appendix-i-games/>I.12</a>の1つ目のモデルは，2つの拡張を宣言し，契約に規範を追加し，R の
+3番目の項の重みを置き換えることによって，規範に結び付けられる。</p>
+<div class="language-yaml codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-yaml codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token key atrule" style=color:#00a4db>sos</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>name</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"RobotDeliveryGame"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>extensions</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>stochastic</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>games</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>grounding</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token comment" style=color:#999988;font-style:italic># actors, transitions as in I.12</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>contracts</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> DELIVERY</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>parties</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">DISPATCHER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[*]"</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>information</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>alpha</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.9</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>authority</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">   </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>decision_holder</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> DISPATCHER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>beta</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.9</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>incentives</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>lambda</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> no_shortcut</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> prohibition</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i]"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>counterparty</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> DISPATCHER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i].handling == Careless"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>on_violation</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>severity</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> Major</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>sanction</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"deduction from the delivery fee"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>magnitude</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>2</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>model</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token comment" style=color:#999988;font-style:italic># as in I.12, except the payoff of R:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token key atrule" style=color:#00a4db>payoffs</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>player</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> R</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>until</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"settled"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>terms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reward</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> fee</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">       </span><span class="token key atrule" style=color:#00a4db>weight</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>10</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reward</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> effort</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">    </span><span class="token key atrule" style=color:#00a4db>weight</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>-1</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reward</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> shortcuts</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>sanction_of</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"DELIVERY.no_shortcut"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>player</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> D</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>until</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"settled"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>terms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reward</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> fee</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>weight</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>5</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><br/></div></code></pre></div></div>
+<p>3番目の項の重みは −2·<code>lambda</code> であり，I.12で手で書いた重みと同じである。したがって，I.12のどの数値も
+変わらず，どの結果も，仮定「報酬構造 <code>shortcuts</code> は，<code>DELIVERY.no_shortcut</code> の違反を数えるものとする」
+とともに報告する。負担者 <code>ROBOT[i]</code> は，R が代表する <code>"ROBOT[*]"</code> に覆われる（J-10）。<code>shortcuts</code> は，
+1回の実行の中の手抜きの試行を，3回まで数える。付録Fは規範を契約インスタンスごとに1回判定するので，
+この数が規範の違反の数と一致するのは，ホストが試行ごとに契約インスタンスを開始する場合に限られる。
+これは，ホストについての仮定であり，ファイルの中の何もそれを表していない。報告に添える仮定は，
+この種のものである。</p>
+<p>条件 (i) と (ii) は，<code>comply</code> について成り立つ。<code>lambda</code> は，この項の重み −2·<code>lambda</code> にだけ現れ，
+<code>comply</code> は手抜きの試行をしないので，そのもとでの <code>shortcuts</code> の期待値は0である（J-12によって
+報告される）。料金を g，労力の費用を c，丁寧な試行が成功する確率を s，<code>no_shortcut</code> の大きさを m と
+すると，I.12は次を導く。</p>
+<blockquote>
+<p>s·g ≥ c かつ s &lt; 1 である各設計において，遵守プロファイルがナッシュ均衡であるのは，λ ≥ λ* で
+あるとき，かつそのときに限る。ここで，λ* = max(0, (c − (s/2)·(g·(1 − s)² + c·(2 − s))) / m) である。</p>
+</blockquote>
+<p>g = 10，c = 1，m = 2 のとき，固定値では，λ* は CENTRALIZED で 0.150108，DISTRIBUTED で 0.060373
+である。宣言値 λ = 0.1 では，遵守は DISTRIBUTED でだけ均衡である。しきい値は，大きさに反比例する。
+λ = 0.1 では，CENTRALIZED で遵守が均衡であるのは，大きさが 480347064349/160000000000 以上である
+（約 3.0022。3.002 では足りない）とき，かつそのときに限り，DISTRIBUTED では，
+193194567781/160000000000 以上である（約 1.2075）とき，かつそのときに限る。この契約では，
+χ = 1/1 = 1 であり（ただ1つの禁止が制裁を伴う），α̂は未定義であり（項目がない），β̂も未定義である
+（権能がない）。被覆は完全であり，残る問いは，モデルが答える問い，すなわち，大きさ m·λ が十分であるか
+どうかである。</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j8-static-semantics>J.8 静的意味論<a href=#j8-static-semantics class=hash-link aria-label="J.8 静的意味論 への直接リンク" title="J.8 静的意味論 への直接リンク" translate=no>​</a></h2>
+<p>本拡張を実装する処理系は，<code>grounding: 0.1</code> を宣言しているファイルにおいて，既存の検査に加えて，
+以下の規則を適用しなければならない。J-1からJ-4とJ-10は誤りであり，本付録のキーだけに関する。
+2つの条項が，同じ構成要素について同じ事実を報告することになるときは，処理系は診断を1つだけ出す。</p>
+<ul>
+<li class="">
+<p><strong>J-1.</strong> <code>grounding: 0.1</code> を宣言するファイルは，<code>norms: 0.1</code> も宣言しなければならない。
+そうでない場合，処理系は誤りを報告し，本拡張のキーを解釈しない。</p>
+</li>
+<li class="">
+<p><strong>J-2.</strong> <code>grounding.items</code> のどのキーも，識別子でなければならず，
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a11-reserved-keywords>A.11</a>の予約語であってはならない。その値は，
+アクター名が契約の当事者名であるアクター参照でなければならない。<code>tolerance:</code> は，<code>[0, 1]</code> の
+数でなければならない。</p>
+</li>
+<li class="">
+<p><strong>J-3.</strong> <code>shares:</code> は，<code>content:</code> が <code>message_event</code> である義務または許可にだけ許される。
+少なくとも1つの項目を，それぞれ1回だけ列挙しなければならず，どの項目も同じ契約の
+<code>grounding.items</code> に宣言されていなければならない。処理系は，次のとき，警告することが望ましい。
+メッセージの受信者が，挙げた項目の起点のアクター名を持つとき。共有のエントリの宛先，または
+宣言した項目を名指す共有のエントリの宛先，または共有規範の受信者が，契約の当事者でないとき，
+または集合の名前だけの参照であるとき（J.4）。宣言した項目を名指す <code>information.sharing</code> のエントリが，
+J.4の形で項目が1つのものでないとき。契約が項目を宣言しているのに，<code>information.sharing</code> の
+エントリが，<code>grounding.items</code> に宣言されていない項目を名指すとき。</p>
+</li>
+<li class="">
+<p><strong>J-4.</strong> <code>on_violation.magnitude</code> と <code>on_fulfilment.magnitude</code> は，負でない有限の数でなければ
+ならない。<code>on_fulfilment:</code> は，（<code>on_violation:</code> と同じく。N-4）義務または禁止にだけ許され，
+空でない（J.3）<code>reward:</code> と <code>magnitude:</code> の少なくとも一方を持たなければならない。<code>reward:</code> は
+テキスト（スカラー）でなければならず，列またはマッピングは誤りである。空でない <code>sanction:</code> または
+<code>reward:</code> のテキストの隣に0である <code>magnitude:</code> があるとき，処理系は警告することが望ましい。</p>
+</li>
+<li class="">
+<p><strong>J-5.</strong> 本拡張を実装し，報告をする処理系は，ファイルのどの契約についても，J.4の定義によって
+α̂，β̂，χを厳密に計算し，それぞれを，その2つの個数とともに，または未定義であることをその理由とともに，
+報告しなければならない。J.4が挙げるその他の個数（組の3つの与え方，要素を特定したエントリと規範，
+負担者ごとの権能と権能ごとの効果，決定権者の割合，反義務の規範だけを持つ規範と遷移を持つ規範）も
+報告しなければならない。<code>alpha</code> と <code>beta</code> については，それが宣言され，指標が定義されているとき，
+宣言値，指標，およびその差を報告しなければならない。<code>lambda</code> については，宣言値をχの隣に報告し，
+差は報告しない。J-6からJ-9とJ-13の比較は厳密である。宣言値は，書かれたとおりの10進小数である（H.2）。
+量は，誤りのないファイルについて定義する。J-2からJ-4の誤りを持つファイルについては，どの量も
+報告しない。</p>
+</li>
+<li class="">
+<p><strong>J-6.</strong> 処理系は，次のとき，警告し，反例である構成要素を名指すことが望ましい。契約が <code>alpha: 0</code> を
+宣言し，与えられている組を持つか，α̂が未定義であって空でない <code>information.sharing</code> を持つとき。
+<code>alpha: 1</code> を宣言し，α̂が定義されていて1より小さいとき。<code>beta: 1</code> を宣言し，β̂が定義されていて
+1より小さいとき。<code>beta: 0</code> を宣言し，β̂が定義されていて，権能を負担する相異なる単一のアクターの数で1を割った値より
+大きいとき（J.5）。</p>
+</li>
+<li class="">
+<p><strong>J-7.</strong> 宣言された <code>alpha</code> または <code>beta</code> と，定義されている指標との差が契約の許容差を超え，
+宣言値が0でも1でもないとき（端点はJ-6が検査する。J-6が警告を出さない場合も同じである），また，決定権者が単一のアクターを名指し，その権能の
+割合がβ̂より小さいとき，処理系は警告することが望ましい。</p>
+</li>
+<li class="">
+<p><strong>J-8.</strong> <code>norms:</code> を持つ契約について，契約が0より大きい <code>lambda</code> を宣言し，その義務と禁止のどれもインセンティブを伴わない（J.4）
+とき，また，<code>lambda: 0</code> を宣言し，そのどれかがインセンティブを伴うとき，処理系は警告することが
+望ましい。</p>
+</li>
+<li class="">
+<p><strong>J-9.</strong> <code>stochastic: 0.1</code> も宣言するファイルでは，どの設計についても，<code>C.alpha</code> または
+<code>C.beta</code> に束縛され，指標が定義されているどのパラメータについても，その設計のもとでの
+パラメータの固定値と指標との差が C の許容差を超えるとき，処理系は情報レベルの診断を出すことが
+望ましい。J-6またはJ-7がすでに報告したパラメータについて，固定値がその宣言値に等しい設計では，
+この診断は出さない。<code>transitions:</code> のないファイルは，ただ1つの設計 <code>base</code> を持つ。</p>
+</li>
+<li class="">
+<p><strong>J-10.</strong> <code>sanction_of:</code> と <code>reward_of:</code> は，<code>stochastic: 0.1</code> と <code>games: 0.1</code> も宣言する
+ファイルにだけ許される。項は，<code>weight:</code>，<code>sanction_of:</code>，<code>reward_of:</code> のうち多くとも1つを
+持たなければならない。値は，文字列 <code>C.n</code> でなければならない。ここで <code>C</code> は宣言済みの契約であり，
+<code>n</code> は，0より大きい <code>on_violation.magnitude</code>（<code>sanction_of:</code> の場合）または
+<code>on_fulfilment.magnitude</code>（<code>reward_of:</code> の場合）を持つ，<code>C</code> の義務または禁止である。<code>C</code> の規範を
+名指す項を持つモデルは，<code>from: "C.lambda"</code> で束縛したパラメータを，ちょうど1つ持たなければならない。利得のプレイヤーは，
+<code>actors:</code> に，<code>n</code> の負担者を<strong>覆う</strong>参照を挙げていなければならない。覆うとは，両者のアクター名が
+同じであり，両者が異なる整数の添字を持つのではないことである（<code>"ROBOT[*]"</code> と <code>ROBOT[1]</code> は
+負担者 <code>ROBOT[i]</code> を覆う。<code>ROBOT[1]</code> は負担者 <code>ROBOT[2]</code> を覆わない）。1つのモデルの中で，
+1つの規範を，2つ以上の <code>sanction_of:</code> の項が名指してはならず，2つ以上の <code>reward_of:</code> の項が
+名指してもならない。</p>
+</li>
+<li class="">
+<p><strong>J-11.</strong> モデルが契約 <code>C</code> の規範を名指す項を持つとき，処理系は，0より大きい大きさを持ち，
+負担者があるプレイヤーのアクター参照に覆われ，その大きさに対応するキーを持つどの項も名指していない
+（両方の大きさを持つ規範には，両方の項が必要である），
+<code>C</code> のどの義務または禁止についても，警告することが望ましい。また，<code>C.lambda</code> に束縛した
+パラメータが現れる <code>weight:</code> を持つ項についても，警告することが望ましい。そのような項の大きさは，
+規範に照らして検査されないからである。</p>
+</li>
+<li class="">
+<p><strong>J-12.</strong> <code>sanction_of:</code> または <code>reward_of:</code> の項を持つ利得を評価する処理系は，その利得に依存する
+どの結果とともにも，そのような各項についてのJ.7の仮定を報告しなければならない。処理系は，
+どの <code>sanction_of:</code> の項，どの <code>reward_of:</code> の項，どの設計についても，固定値において，遵守
+プロファイルのもとで，利得の目標までに累積する，項の報酬構造の期待値を報告することが望ましい。
+0より大きい値は情報であり，警告ではない。負担者が遵守していても，義務は偶然によって違反され得る
+からである。<code>sanction_of:</code> の項では，値が0であることは，遵守プロファイルについてのJ.7の条件 (ii) で
+ある。<code>reward_of:</code> の項は，その値にかかわらず，重みの符号によって (ii) を破る。</p>
+</li>
+<li class="">
+<p><strong>J-13.</strong> 契約の2つのバージョンを比べる処理系は，<code>on_violation.magnitude</code>，<code>on_fulfilment:</code> ブロック，
+<code>shares:</code> のリスト，<code>grounding.items</code> のどの変更も報告することが望ましい。また，αまたはβについて，
+宣言値と指標が両方のバージョンで定義されており，(x′ − x)·(x̂′ − x̂) が0より小さいとき，警告することが
+望ましい。ここで，x と x̂ は古いバージョンの宣言値と指標，x′ と x̂′ は新しいバージョンのものである。2つのバージョンの一方だけが
+本拡張を宣言するときは，これらのキーの変更を，キーがない状態に対して報告し，指標を比べないことを
+述べ，向きについての警告は出さない。新しいバージョンで加わった規範は，その大きさ，<code>on_fulfilment:</code>，
+<code>shares:</code> とともに列挙する。</p>
+</li>
+<li class="">
+<p><strong>J-14.</strong> 処理系は，均衡マップ（I.9）のセル <code>[a, b]</code> を，その端点での評価から認証してよい。
+ただし，次のすべてが成り立つ場合を除いて，そうしてはならない。</p>
+<ol>
+<li class="">問い合わせが，開いているパラメータをちょうど1つ，ℓ だけ持つ（I-9により，どのモードもそれに値を
+割り当てない）。ℓ は，<code>C.lambda</code> に束縛されているかどうかにかかわらず，問い合わせの開いている
+パラメータである。</li>
+<li class="">J.7の条件 (i) が ℓ について成り立つ。これは，モデルのテキストの上で検査する。ℓ は，どの <code>prob:</code> にも，
+どの報酬の <code>value:</code> にも現れず，どのプレイヤーのどの <code>weight:</code> でも，J.7が定義するどの重みでも，
+ℓ は，テキストの上で数えて（積の因子のべきは足し合わせ，打ち消しは考えない。
+<code>lambda * lambda - lambda * lambda</code> のべきは2である），高々1のべきで現れる。</li>
+<li class="">セルの中の ℓ の1つの値で，設計が良定義であり，プロファイルが許容できる（命題により，このとき
+どの値でもそうである）。これは念のための条件であり，別の検査は要らない。条件4の評価が，a と b で
+これを確立するからである。</li>
+<li class="">a と b での評価が厳密である（I.8）。</li>
+<li class="">p が逸脱者であるという主張については，その設計で，J.7の条件 (ii) が p について成り立つ。
+ℓ が現れる p のどの重みも，他のパラメータに用いる値において，m ≥ 0 である −m·ℓ の形であり，
+プロファイルのもとでの期待値が0であることは厳密に計算する。</li>
+</ol>
+<p>このとき，プロファイルが a と b でε均衡であれば，セルは <code>equilibrium</code> であり，条件5が成り立ち，
+b で gain_p > ε であれば，p はセルの上で逸脱者である。他の <code>status</code> は導かれない。条件5がなければ，
+両端で逸脱利得が ε を超えていても，プレイヤーはセルの上で逸脱者とはならない。処理系は，<code>status</code> に
+加えて，<code>equilibrium</code> のセルの各プレイヤーについて逸脱利得の界 <code>[0, max(g(a), g(b))]</code>（凸性による）を，
+逸脱者について <code>[g(b), g(a)]</code>（単調性による）を報告してよい。ここで g(a) と g(b) は両端での逸脱利得で
+ある。また，逸脱者の逸脱として，b での標準の最適応答を報告してよい。<code>from_every_state</code> は主張しない。</p>
+<p>この規則をI.9の条件とともに用いる処理系は，それらの条件が <code>undecided</code> のまま残したセルに，この規則を
+適用する。セルは，どちらかの方法が確立した逸脱者を持つ。この規則は本付録の規則であり，
+<code>grounding: 0.1</code> を宣言しないファイルでは用いることができない。その論証は規範を用いない。<code>games</code> だけを
+宣言するファイルのための端点による方法は，付録Iの後のバージョンに委ねる。</p>
+</li>
+</ul>
+<p><code>alpha</code>，<code>beta</code>，<code>lambda</code> が <code>[0, 1]</code> にあるというA.4の規則は変わらない。規則N-1からN-12と
+I-1からI-11も変わらない。</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j9-例>J.9 例<a href=#j9-例 class=hash-link aria-label="J.9 例 への直接リンク" title="J.9 例 への直接リンク" translate=no>​</a></h2>
+<p>以下の契約は，<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>F.8</a>の契約に，3つのパラメータのブロック，<code>grounding:</code>
+ブロック，2つの <code>shares:</code> の注記，1つの大きさ，および，ロボットが割当てを断るための権能 <code>decline</code> を
+加えたものである。F.8がすでに持つキーは省略している。</p>
+<div class="language-yaml codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-yaml codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token key atrule" style=color:#00a4db>sos</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>name</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"RobotDeliveryNorms"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>extensions</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>sos-dsl</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>grounding</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token comment" style=color:#999988;font-style:italic># actors DISPATCHER, ROBOT[1..N], CUSTOMER[1..M] as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>contracts</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> DELIVERY_SLA</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>parties</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">DISPATCHER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[*]"</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"CUSTOMER[*]"</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>authority</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">   </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>decision_holder</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> DISPATCHER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>beta</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.9</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>information</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>alpha</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.6</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>sharing</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"DISPATCHER -> ROBOT[*] : route"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[*] -> DISPATCHER : status"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"DISPATCHER -> CUSTOMER[*] : status"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>incentives</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>lambda</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.5</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>grounding</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>items</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>route</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">   DISPATCHER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>status</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">  </span><span class="token string" style=color:#e3116c>"ROBOT[*]"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>battery</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[*]"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>failure</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[*]"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token comment" style=color:#999988;font-style:italic># assume, guarantee, lifecycle, counts_as as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> acknowledge              </span><span class="token comment" style=color:#999988;font-style:italic># obligation of ROBOT[i], as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>on_violation</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>severity</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> Major</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reparation</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> report_failure </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> report_failure           </span><span class="token comment" style=color:#999988;font-style:italic># obligation of ROBOT[i], as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i] -> DISPATCHER : failure_report"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>shares</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">failure</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>on_violation</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>severity</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> Critical</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>transition</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> Violated </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> no_low_battery_driving   </span><span class="token comment" style=color:#999988;font-style:italic># prohibition of ROBOT[i], as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>on_violation</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>severity</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> Critical</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>sanction</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"removed from the dispatch pool for one period"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>magnitude</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>4</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> may_return_to_charge     </span><span class="token comment" style=color:#999988;font-style:italic># permission of ROBOT[i], as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i] -> DISPATCHER : charging_request"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>shares</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">battery</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> reassign                 </span><span class="token comment" style=color:#999988;font-style:italic># power of DISPATCHER, as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> decline</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> power</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i]"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i] -> DISPATCHER : decline"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>effects</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>discharge</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">acknowledge</span><span class="token punctuation" style=color:#393A34>]</span><br/></div></code></pre></div></div>
+<p><strong>α̂。</strong> 当事者名は DISPATCHER，ROBOT，CUSTOMER であり，項目は4つである。各項目には，起点以外の
+当事者が2つあるので，組は8つである。どの宛先も，当事者の全体を表す。</p>
+<table><thead><tr><th>項目（起点）<th>DISPATCHER<th>ROBOT<th>CUSTOMER<tbody><tr><td><code>route</code>（DISPATCHER）<td>起点<td>共有のエントリによって与えられている<td>与えられていない<tr><td><code>status</code>（ROBOT）<td>共有のエントリによって与えられている<td>起点<td>共有のエントリによって与えられている<tr><td><code>battery</code>（ROBOT）<td>許可（<code>may_return_to_charge</code>）によって与えられている<td>起点<td>与えられていない<tr><td><code>failure</code>（ROBOT）<td>義務（<code>report_failure</code>）によって与えられている<td>起点<td>与えられていない</table>
+<p>3つの組が共有のエントリによって，1つが義務によって，1つが許可によって与えられている。要素を特定した
+エントリはない。5つの組が与えられているので，α̂ = 5/8 = 0.625 である。宣言された <code>alpha: 0.6</code> との
+差は 0.025 であり，許容差の中にある。仮に最初のエントリが <code>"DISPATCHER -> ROBOT[3] : route"</code> で
+あったならば，それは要素を特定しており，組（<code>route</code>，ROBOT）は与えられず，α̂は 4/8 になる。</p>
+<p><strong>β̂。</strong> 契約は2つの権能を持つ。<code>reassign</code> は，単一のアクターである DISPATCHER が負担する。
+<code>decline</code> は，単一のアクターでない <code>ROBOT[i]</code> が負担する。単一のアクターの最大の数は1であるので，
+β̂ = 1/2 = 0.5 であり，決定権者の割合も 1/2 である。<code>reassign</code> はその効果に2つの規範を挙げ，
+<code>decline</code> は1つを挙げる。宣言された <code>beta: 0.9</code> との差は 0.4 であり，許容差 0.25 を超えるので，
+処理系は警告する（J-7）。契約は，ほぼ集中した権限を宣言しているが，決定点の半分はロボットにある。
+<code>beta: 1</code> であれば，警告はJ-6のものになり，<code>decline</code> を名指す。</p>
+<p><strong>χ。</strong> 契約は3つの義務と禁止を持つ。<code>no_low_battery_driving</code> は，大きさ4の制裁を伴う。
+<code>acknowledge</code> は反義務の規範を持ち，制裁を持たない。<code>report_failure</code> はライフサイクルの遷移を持ち，
+制裁を持たない。どちらもインセンティブを伴わない。χ = 1/3 = 0.333333 であり，反義務の規範だけを持つ
+規範が1つ，遷移を持つ規範が1つある。宣言された <code>lambda: 0.5</code> は0より大きく，インセンティブを伴う
+規範があるので，J-8は警告を出さない。</p>
+<p>定義により，<code>decline</code> を除く改正は β̂ を 1/1 = 1 に上げ，補題3により，
+<code>report_failure</code> に制裁を与える改正は χ を 2/3 に上げる。</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j10-中間表現irへの追加>J.10 中間表現（IR）への追加<a href=#j10-中間表現irへの追加 class=hash-link aria-label="J.10 中間表現（IR）への追加 への直接リンク" title="J.10 中間表現（IR）への追加 への直接リンク" translate=no>​</a></h2>
+<p><code>institution.contracts</code> の下の各契約に，フィールド <code>grounding</code> を追加し，F.9の各規範に，4つの
+フィールドを追加する。J.9の例では，次のとおりである。</p>
+<div class="language-jsonc codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-jsonc codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">{</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "grounding": {</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "items": { "route": "DISPATCHER", "status": "ROBOT[*]", "battery": "ROBOT[*]", "failure": "ROBOT[*]" },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "tolerance": 0.25,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "indices": {</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "alpha":    { "given": 5, "pairs": 8,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    "by_sharing": 3, "by_obligation": 1, "by_permission": 1, "member_specific": 0 },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "beta":     { "largest": 1, "powers": 2, "holder": 1,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    "bearers": { "DISPATCHER": 1, "ROBOT[i]": 1 } },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "coverage": { "incentive": 1, "norms": 3, "reparation_only": 1, "transition": 1 }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "norms": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    { "id": "no_low_battery_driving",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      // ... the fields of F.9</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "shares": [],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_violation_magnitude": 4,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_fulfilment_reward": null,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_fulfilment_magnitude": null }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  ]</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">}</span><br/></div></code></pre></div></div>
+<p>フィールド <code>grounding</code> と規範の4つのフィールドは，本拡張を（<code>norms: 0.1</code> とともに）宣言していない
+ときは，存在しない。他のどのファイルのIRも変わらない。契約が <code>grounding:</code> ブロックを持たないとき，
+<code>items</code> は空のマッピングであり，<code>tolerance</code> は既定値である。<code>alpha</code>，<code>beta</code>，<code>coverage</code> は，その量が
+未定義であるとき <code>null</code> である。そうでないときは，厳密な比を作れるように，最初の2つのフィールドが
+分子と分母である。<code>by_sharing</code>，<code>by_obligation</code>，<code>by_permission</code> は組を数え，重なってよい。
+<code>member_specific</code> は，エントリと規範をそれぞれ1回ずつ数え，集合の名前だけの参照は数えない。<code>holder</code> は，決定権者の数 k(h) であり，決定権者が
+単一のアクターを名指さないときは <code>null</code> である。<code>bearers</code> は，書かれたとおりの各負担者の参照を，
+その権能の数に対応付ける。大きさは，ないとき <code>null</code> であり，空のテキストは <code>null</code> である。</p>
+<p><a class="" href=/cadl-spec/ja/docs/spec/appendix-i-games/>I.13</a>のIRの利得の項に，フィールド <code>sanction_of</code> と <code>reward_of</code>
+（文字列 <code>C.n</code> または <code>null</code>）を追加する。これらは，本拡張を宣言しているときに，どの項にも書く
+（重みを書いた項では，どちらも <code>null</code>）。そのどちらかを持つ項では，<code>weight</code> は，定義された重みの
+テキスト <code>-m * p</code> または <code>m * p</code> である。ここで m は，指数のない10進小数として（H.11の数と同じく）
+書いた大きさであり，p は，<code>C.lambda</code> に束縛したパラメータの
+<code>id</code> である（J.7では <code>"-2 * lambda"</code>）。診断は，IRに含めない。</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j11-reference-implementation-status>J.11 リファレンス実装の状況<a href=#j11-reference-implementation-status class=hash-link aria-label="J.11 リファレンス実装の状況 への直接リンク" title="J.11 リファレンス実装の状況 への直接リンク" translate=no>​</a></h2>
+<p>リファレンス実装は，<code>cadl</code> 0.3.23から，grounding 0.1を次のように実装する。0.3.22までは，拡張の名前は
+未知のものであり，そのキーは診断なしに無視されていた。</p>
+<ul>
+<li class=""><code>cadl check</code> は，規則J-1からJ-9を，戦略モデルではJ-10からJ-12も適用し（「望ましい」は警告とし，
+J-9とJ-12は情報レベルの診断とする），キーをJ.10のIRへ変換する。宣言されていない使用には，ファイル
+ごとに1つの警告を出す（J.12）。<code>grounding:</code> または <code>on_fulfilment:</code> の中の，本付録が定義しないキー
+（<code>tolerence:</code> のような綴りの誤り）には警告を出す。<code>on_violation:</code> の中の <code>magnitude:</code> の綴りの誤りや
+<code>shares:</code> の綴りの誤りは，コア言語の未知のキーと区別できず，診断は出ない。</li>
+<li class=""><code>cadl norms-indices FILE [--contract ID] [--format text|json]</code> は，J.4の量をそのすべての個数とともに，
+J.5の比較，および設計ごとのJ-9の診断を報告する。誤り，特にJ-2からJ-4の誤りを持つファイルは
+拒否する（終了ステータス2）。警告は，終了ステータス0を変えない。</li>
+<li class=""><code>cadl norms-diff</code> は，本拡張を宣言しないバージョンとの比較を含めて，J-13の所見を報告する。既定では，
+<code>norms:</code> または <code>counts_as:</code> を持つ契約を比べる。規範を持たない契約の <code>grounding.items</code> の変更は，
+<code>--contract</code> を付けて比べる。</li>
+<li class="">キーは，付録Fが読む規範とは分けて保持する。したがって，<code>cadl norms-eval</code>，<code>cadl agents-run</code>，境界での
+決定，生成した監視器は，キーがあってもなくても同じ判定を与える。注記したファイルから生成した監視器が，
+キーのないファイルから生成したものと同一であるのは，注記したどの規範も，すでに <code>on_violation:</code>
+ブロックを持っていたときに限る。<code>on_violation:</code> を持たない規範に <code>on_violation: { magnitude: m }</code> を
+加えるとブロックが作られ，監視器は既定の重大度を持つ。振る舞いは同じである。</li>
+<li class="">コアの構文解析器は，<code>alpha</code>，<code>beta</code>，<code>lambda</code> を2進の浮動小数点数として読む。往復変換で戻る最短の
+10進小数を，書かれた10進小数とみなす（J-5）。したがって，有効数字が17桁を超える値は復元されない。
+宣言されていないアクターへの添字のない参照は，単一のアクターとして数える（他の規則が報告する）。
+<code>bearers</code> のキーは，空白を除いた参照である。</li>
+<li class="">付録I（<code>cadl game-check</code>）とともに，J.7の結び付きを実装している。<code>sanction_of:</code> または <code>reward_of:</code> の
+項はJ.7の重みを持ち，どの検査とマップの結果もJ.7の仮定を伴い，J-14は，<code>grounding: 0.1</code> を宣言する
+ファイルで，その条件が成り立つとき，<code>--certify</code> で用いる（マップは，それが適用されるかどうかと，
+されない理由を報告し，それが認証したセルは <code>method: "endpoints (J-14)"</code> を持つ）。結び付きを実装して
+いるので，I.13の <code>not_evaluated</code> は，有効なファイルでは生じない。用いることのできない参照は，J-1または
+J-10の誤りである。</li>
+<li class="">指標の検証。独立したレビューは，4 300個と2 000個の無作為な契約で，量を2つのスクリプトと比べ，
+不一致はなかった。J.12の不変性は，4 454個の無作為なファイルと，テストスイートの174個のソースで
+成り立った。<code>norms: 0.1</code> を宣言するファイルに <code>- grounding: 0.1</code> を加えても，誤りは増えなかった。
+J.4の補題は，乱数の種を固定した無作為な契約で，性質として検査した。添付のトレースに対する
+<code>cadl norms-eval</code> と <code>cadl agents-run</code> の判定は，すべての規範に大きさと <code>on_fulfilment:</code> を加えても
+同一であり，0.3.22の添付の17個の例の出力（331個のファイル）は，0.3.22と同一であった。</li>
+<li class="">結び付きの検証。独立したレビューは，生成した840個のモデルを，I.9の上下界を無効にして，決定した
+どのセルもJ-14によるものとなるようにしてプログラミングインタフェースで実行し（点評価12 416回），
+320個をコマンドラインで実行した（点評価3 496回）。すべての戦略を列挙するオラクルと比べ，誤った主張は
+なかった。実装者のファジングは，1 200個のモデルでJ-14によってセルを認証した。その中には，ℓ が確率に
+現れるゲームや，ℓ についてアフィンでない重みを持つゲームが含まれ，J-14はそれらを拒否した
+（点評価50 733回，誤った主張なし）。条件2と条件5を落とすように故意に入れた誤りも検出した。</li>
+<li class="">J.7の例は，重みを書いたI.12の1つ目の例と同じ結果を与える。J-12は，両方の設計で0を報告する。
+λ = 0.1 での最小の大きさは厳密に再現される。<code>magnitude: 3.00216915218125</code>
+（480347064349/160000000000）では，CENTRALIZED で <code>comply_nash</code> は均衡であり，3.00216915218124 では
+均衡でない。1.20746604863125（193194567781/160000000000）では，DISTRIBUTED で均衡であり，
+1.20746604863124 では均衡でない。ファイルに書く値の有効数字は15桁までであるので（H.2），しきい値は，
+この2つの隣の値で検査する。</li>
+<li class="">J.9の量は，例に対して <code>cadl norms-indices</code> が表示するものであり，警告は1つ（<code>beta</code> についてのJ-7）で
+ある。</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j12-後方互換性>J.12 後方互換性<a href=#j12-後方互換性 class=hash-link aria-label="J.12 後方互換性 への直接リンク" title="J.12 後方互換性 への直接リンク" translate=no>​</a></h2>
+<p>本拡張を用いないCADL v0.3のファイルは引き続き有効であり，同じように読まれ，そのIRも変わらない
+（J.10）。本拡張は，付録Fの
+どの判定も，付録Hと付録Iのどの結果も変えない。<code>sanction_of:</code> を持つ項は，定義された重みを持つ
+I.6の項である。</p>
+<p>本拡張を宣言することが，<code>norms: 0.1</code> を宣言するファイルを無効にすることは決してない。
+<code>norms: 0.1</code> を宣言し，付録Fのもとで有効であり，本付録のキーを1つも用いないファイルは，その
+<code>extensions:</code> に <code>grounding: 0.1</code> を加えても，有効なままである。誤りとなる規則のうち，J-1は
+そのようなファイルでは発動し得ず，J-2，J-3，J-4，J-10は，本付録のキーにだけ適用される。宣言されたパラメータと指標との
+どの比較（J-6からJ-9）も，警告または情報レベルの診断である。</p>
+<p><code>grounding: 0.1</code> を宣言せずに <code>grounding:</code>，<code>shares:</code>，<code>on_fulfilment:</code>，
+<code>on_violation.magnitude</code>，<code>sanction_of:</code>，<code>reward_of:</code> を用いるファイルは，本付録に適合しない。
+本拡張を実装する処理系は，そのようなファイルではこれらのキーを解釈せず，宣言されていない拡張の
+キーとして，用いたキーを挙げる警告をファイルごとに1つ出して報告することが望ましい（値がnullである
+キーは，用いたものとしない）。量は計算せず，<code>sanction_of:</code> または <code>reward_of:</code> を持つ
+利得の項は，I-7により誤りである。<code>norms: 0.1</code> なしに <code>grounding: 0.1</code> を宣言するファイルには，
+J-1の誤りを出す。</p>
+<p>付録Iを実装し，本付録を実装していない処理系は，両方を宣言するファイルにおいて，<code>sanction_of:</code> または
+<code>reward_of:</code> の項を持つ利得も，それを必要とする問い合わせも，評価してはならない。処理系は，
+問い合わせを評価しなかったと報告する（I-7）。どの場合にも，そのような項を，既定値の重みを持つ項として
+読むことはない。本拡張を実装していない処理系は，本拡張を用いるファイルを拒否してはならない。
+ファイルごとに1つの情報レベルの診断を出すことが望ましい。</div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label=ドキュメントページ><a class="pagination-nav__link pagination-nav__link--prev" href=/cadl-spec/ja/docs/spec/appendix-i-games/><div class=pagination-nav__sublabel>前へ</div><div class=pagination-nav__label>付録I. 戦略モデル拡張</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/cadl-spec/ja/docs/spec/glossary/><div class=pagination-nav__sublabel>次へ</div><div class=pagination-nav__label>用語集</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_VuIf thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#j1-動機と範囲 class="table-of-contents__link toc-highlight">J.1 動機と範囲</a><li><a href=#j2-概念 class="table-of-contents__link toc-highlight">J.2 概念</a><li><a href=#j3-構文a4f3i2へのebnfの追加 class="table-of-contents__link toc-highlight">J.3 構文（A.4，F.3，I.2へのEBNFの追加）</a><li><a href=#j4-導出指標と被覆率 class="table-of-contents__link toc-highlight">J.4 導出指標と被覆率</a><ul><li><a href=#情報共有α̂ class="table-of-contents__link toc-highlight">情報共有：α̂</a><li><a href=#権能の集中β̂ class="table-of-contents__link toc-highlight">権能の集中：β̂</a><li><a href=#インセンティブの被覆率χ class="table-of-contents__link toc-highlight">インセンティブの被覆率：χ</a><li><a href=#量の性質 class="table-of-contents__link toc-highlight">量の性質</a><li><a href=#量が表さないもの class="table-of-contents__link toc-highlight">量が表さないもの</a></ul><li><a href=#j5-宣言されたパラメータとの関係 class="table-of-contents__link toc-highlight">J.5 宣言されたパラメータとの関係</a><li><a href=#j6-付録hと付録iのモデルにおけるパラメータ class="table-of-contents__link toc-highlight">J.6 付録Hと付録Iのモデルにおけるパラメータ</a><li><a href=#j7-λ規範の制裁から利得の項へ class="table-of-contents__link toc-highlight">J.7 λ：規範の制裁から利得の項へ</a><li><a href=#j8-static-semantics class="table-of-contents__link toc-highlight">J.8 静的意味論</a><li><a href=#j9-例 class="table-of-contents__link toc-highlight">J.9 例</a><li><a href=#j10-中間表現irへの追加 class="table-of-contents__link toc-highlight">J.10 中間表現（IR）への追加</a><li><a href=#j11-reference-implementation-status class="table-of-contents__link toc-highlight">J.11 リファレンス実装の状況</a><li><a href=#j12-後方互換性 class="table-of-contents__link toc-highlight">J.12 後方互換性</a></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class=footer__title>ドキュメント</div><ul class="footer__items clean-list"><li class=footer__item><a class=footer__link-item href=/cadl-spec/ja/docs/quickstart/>クイックスタート</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/ja/docs/spec/intro/>仕様書</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/ja/docs/handson/>ハンズオン</a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>ツール</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class=footer__link-item>cadl（コンパイラ / CLI）<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://pypi.org/project/cadl-lang/ target=_blank rel="noopener noreferrer" class=footer__link-item>PyPI の cadl-lang<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class=footer__link-item>CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-raspimouse-simulator target=_blank rel="noopener noreferrer" class=footer__link-item>ハンズオン用シミュレータ<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>フィードバック</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl/issues target=_blank rel="noopener noreferrer" class=footer__link-item>ツールの問題を報告<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec/issues target=_blank rel="noopener noreferrer" class=footer__link-item>このサイトの問題を報告<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec target=_blank rel="noopener noreferrer" class=footer__link-item>このサイトのソース<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>組織</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://www.ertl.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>ERTL<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://www.nagoya-u.ac.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>名古屋大学<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div></div><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University. 文書は <a href=https://creativecommons.org/licenses/by/4.0/deed.ja>CC BY 4.0</a>，コード例とサイトのソースは <a href=https://www.apache.org/licenses/LICENSE-2.0>Apache License 2.0</a> で提供します。Built with Docusaurus.</div></div></div></footer></div></body>

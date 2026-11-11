@@ -1,0 +1,867 @@
+<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-j-grounding" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix J: Grounding of the Institutional Parameters | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-j-grounding/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix J: Grounding of the Institutional Parameters | CADL"/><meta data-rh=true name=description content="Grounding extension (grounding 0.1): an index of information sharing, an index of the concentration of powers, and a coverage measure for incentives, derived from the norms of a contract; rules that compare the declared alpha and beta with the indices; numeric magnitudes of sanctions and rewards; and the definition of the payoff term of a sanction in a strategic model as the magnitude times lambda."/><meta data-rh=true property=og:description content="Grounding extension (grounding 0.1): an index of information sharing, an index of the concentration of powers, and a coverage measure for incentives, derived from the norms of a contract; rules that compare the declared alpha and beta with the indices; numeric magnitudes of sanctions and rewards; and the definition of the payoff term of a sanction in a strategic model as the magnitude times lambda."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-j-grounding/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-j-grounding/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-j-grounding/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-j-grounding/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-j-grounding","name":"Appendix J: Grounding of the Institutional Parameters","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.a32b2f0d.js defer></script><script src=/cadl-spec/assets/js/main.60e54b48.js defer></script></head><body><svg style="display: none;"><defs>
+<symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-689")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label="Skip to main content"><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/docs/quickstart/>Quick Start</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/docs/spec/intro/>Specification</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/textbook/>Textbook</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/handson/>Hands-on</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>English</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-j-grounding/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-j-grounding/ target=_self rel="noopener noreferrer" class=dropdown__link lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=Search aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/intro/><span title="CADL Specification v0.3" class=linkLabel_E58b>CADL Specification v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/introduction/><span title="1. Introduction" class=linkLabel_E58b>1. Introduction</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/objectives/><span title="2. Language Objectives" class=linkLabel_E58b>2. Language Objectives</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/comparison/><span title="3. Comparison with Existing Languages" class=linkLabel_E58b>3. Comparison with Existing Languages</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/requirements/><span title="4. Requirements Specification" class=linkLabel_E58b>4. Requirements Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/language-spec/><span title="5. Language Specification" class=linkLabel_E58b>5. Language Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/design/><span title="6. Design" class=linkLabel_E58b>6. Design</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/examples/><span title="7. Domain-Specific Description Examples" class=linkLabel_E58b>7. Domain-Specific Description Examples</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/use-cases/><span title="8. Use Cases and Novelty Analysis" class=linkLabel_E58b>8. Use Cases and Novelty Analysis</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/research/><span title="9. Research Directions and Open Challenges" class=linkLabel_E58b>9. Research Directions and Open Challenges</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/roadmap/><span title="10. Implementation Roadmap" class=linkLabel_E58b>10. Implementation Roadmap</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-a-syntax/><span title="Appendix A: Syntax Reference (EBNF)" class=linkLabel_E58b>Appendix A: Syntax Reference (EBNF)</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-b-references/><span title="Appendix B: References" class=linkLabel_E58b>Appendix B: References</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-c-motivation/><span title="Appendix C: Motivation Extension" class=linkLabel_E58b>Appendix C: Motivation Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-d-codegen/><span title="Appendix D: Codegen Target Catalog" class=linkLabel_E58b>Appendix D: Codegen Target Catalog</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><span title="Appendix E: SoS-DSL Extension" class=linkLabel_E58b>Appendix E: SoS-DSL Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-f-norms/><span title="Appendix F: Norms Extension" class=linkLabel_E58b>Appendix F: Norms Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-g-agents/><span title="Appendix G: Agent Governance Extension" class=linkLabel_E58b>Appendix G: Agent Governance Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-h-stochastic/><span title="Appendix H: Stochastic Model Extension" class=linkLabel_E58b>Appendix H: Stochastic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-i-games/><span title="Appendix I: Strategic Model Extension" class=linkLabel_E58b>Appendix I: Strategic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/docs/spec/appendix-j-grounding/><span title="Appendix J: Grounding of the Institutional Parameters" class=linkLabel_E58b>Appendix J: Grounding of the Institutional Parameters</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/glossary/><span title=Glossary class=linkLabel_E58b>Glossary</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/cadl-spec/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Appendix J: Grounding of the Institutional Parameters</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Appendix J — Grounding of the Institutional Parameters in Norms (grounding 0.1)</h1></header>
+<p>This appendix specifies the <strong>grounding extension</strong> to CADL. It builds
+on the norms extension (<a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>Appendix F</a>) and adds
+the key <code>grounding:</code> to <code>contract_def</code>
+(<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a4-contracts-institution-layer>A.4</a>), the
+keys <code>shares:</code> and <code>on_fulfilment:</code> to <code>norm_def</code> and the key
+<code>magnitude:</code> to <code>on_violation:</code> (F.3), and, in a file that also uses
+the strategic model extension
+(<a class="" href=/cadl-spec/docs/spec/appendix-i-games/>Appendix I</a>), the keys <code>sanction_of:</code> and
+<code>reward_of:</code> to a payoff term (I.2). With them, a processor computes
+from the norms of a contract two <strong>derived indices</strong>, α̂ and β̂, and
+the <strong>incentive coverage</strong> χ, all in <code>[0, 1]</code>, and compares the
+declared <code>alpha</code> and <code>beta</code> with the indices. The extension also
+defines the weight of a payoff term that is declared to stand for the
+sanction of a norm in a strategic model: the size the norm declares,
+multiplied by λ.</p>
+<p>The core language does <strong>not</strong> mandate these keys; a conforming CADL
+processor that does not implement the extension MUST NOT reject a file
+because of them. It SHOULD accept them syntactically and emit an
+<em>informational</em> diagnostic.</p>
+<p>The extension is named <code>grounding</code> and this appendix describes version
+<code>0.1</code>. It <strong>requires</strong> <code>norms: 0.1</code>. A file that uses it MUST declare
+both under <code>extensions:</code>
+(<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a2-top-level-structure>A.2</a>); J.12 says what
+a processor does with an undeclared use. The keys <code>sanction_of:</code> and
+<code>reward_of:</code> additionally require <code>stochastic: 0.1</code> and <code>games: 0.1</code>.</p>
+<div class="language-yaml codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-yaml codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token key atrule" style=color:#00a4db>sos</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>...</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>extensions</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>grounding</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><br/></div></code></pre></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j1-motivation-and-scope>J.1 Motivation and scope<a href=#j1-motivation-and-scope class=hash-link aria-label="Direct link to J.1 Motivation and scope" title="Direct link to J.1 Motivation and scope" translate=no>​</a></h2>
+<p><a class="" href=/cadl-spec/docs/spec/language-spec/>Section 5.4.2</a> defines the institutional
+parameters α, β, and λ as numbers in <code>[0, 1]</code> with qualitative end
+points, and nothing else in the language says what an intermediate
+value means. A designer writes <code>beta: 0.7</code>, and no rule relates that
+number to the contract in which it stands. Appendix F states an
+intended reading (β describes who holds the powers of a contract, α
+which triggers and contents the other parties can observe, and λ
+scales the sanctions of violated norms) and leaves it informative;
+<a class="" href=/cadl-spec/docs/spec/research/>Section 9.6</a> lists the formal link between norms
+and the parameters as open, and RD-1.5 asks for λ to be treated as a
+parameter of the contracts. The classification of institutional rules
+by what they affect, among them information rules, aggregation rules,
+and payoff rules <a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Ostrom, 2005]</a>, suggests
+that the three parameters summarise three kinds of norms. Grounding
+0.1 is a first step. It does not give α, β, and λ a formal meaning in
+terms of norms; that remains open beyond what follows.</p>
+<ul>
+<li class=""><strong>Two indices and a coverage are computed from the file.</strong> J.4
+defines α̂, β̂, and χ as ratios of counts over finite sets that are
+read from one contract. They are reproducible in the sense that two
+processors compute the same numbers from the same file. For α̂ both
+counts rest on annotations of the author (the items and the
+<code>shares:</code> lists), so the index is as good as the annotation.</li>
+<li class=""><strong>Indices are evidence, not meaning.</strong> The indices do not replace
+the declared parameters and do not change Section 5.4.2. They are
+structural facts about the norms of a contract with which a declared
+value can agree or disagree. J.4 says what they cannot capture.</li>
+<li class=""><strong>Declared values are compared with them.</strong> A disagreement between a
+declared α or β and its index is a warning that names the construct
+concerned (J.5). No rule of this appendix makes a file invalid that
+is valid under Appendix F and uses none of the new keys (J.12).</li>
+<li class=""><strong>λ is a scale.</strong> In this appendix λ multiplies the sizes of
+sanctions and rewards; it is not compared with a derived index. χ
+measures something else: how many norms carry a sanction or a reward
+that λ could scale.</li>
+<li class=""><strong>Sanctions get a size, and the model uses it.</strong> <code>magnitude:</code> gives
+the sanction or the reward of a norm a number. In a strategic model,
+a payoff term declared with <code>sanction_of:</code> has, by definition, the
+weight −magnitude·λ, where λ is the parameter bound to the <code>lambda</code>
+of the contract (J.7). That the term represents the sanction, that
+is, that its reward structure counts the violations of the norm,
+remains the author's assumption, and every result computed with such
+a term is reported with it.</li>
+</ul>
+<p><strong>Scope of version 0.1.</strong></p>
+<ul>
+<li class="">An index concerns one contract. Indices are not aggregated over the
+contracts of an SoS.</li>
+<li class="">Information items are declared by the author (<code>grounding.items</code>);
+they are not derived from actor interfaces, predicates, or messages.</li>
+<li class="">The indices are counts. They are not weighted by magnitudes, by
+severities, or by the number of norms a power affects.</li>
+<li class=""><code>magnitude:</code> and <code>on_fulfilment:</code> have no effect on the dynamic
+semantics of Appendix F: verdicts, violations, and reparations are
+unchanged.</li>
+<li class="">The extension does not derive a model from norms and does not check
+that a reward structure of a model counts the violations of a norm
+(H.8 defines no translation between a norm and a model).</li>
+<li class="">No index is defined for the delegations of
+<a class="" href=/cadl-spec/docs/spec/appendix-g-agents/>Appendix G</a> or for the motivation
+parameters ρ and κ of <a class="" href=/cadl-spec/docs/spec/appendix-c-motivation/>Appendix C</a>.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j2-concepts>J.2 Concepts<a href=#j2-concepts class=hash-link aria-label="Direct link to J.2 Concepts" title="Direct link to J.2 Concepts" translate=no>​</a></h2>
+<table><thead><tr><th>Concept<th>Meaning in grounding 0.1<tbody><tr><td><strong>Actor name</strong><td>The identifier of an actor reference, without its index: <code>ROBOT</code> for <code>ROBOT[i]</code>, <code>"ROBOT[*]"</code>, and <code>ROBOT[2]</code>.<tr><td><strong>Party name</strong><td>The actor name of an entry of <code>parties:</code> of the contract. Entries with one actor name are one party.<tr><td><strong>Single actor</strong><td>An actor reference with an integer index, or without an index when the actor is declared without a range.<tr><td><strong>Information item</strong><td>A named piece of information declared in <code>grounding.items</code>, with its <strong>origin</strong>, the party from which it stems. An item has one origin; information that stems from two parties is declared as two items.<tr><td><strong>Sharing norm</strong><td>An obligation or a permission whose content is a message and which has <code>shares:</code>; its message gives the listed items to the receiver.<tr><td><strong>Magnitude</strong><td>A number that is not negative: the size of a sanction or of a reward at full incentive intensity (λ = 1), in the unit of account of the contract.<tr><td><strong>Derived index</strong><td>α̂ or β̂: a rational number in <code>[0, 1]</code> computed from one contract, or undefined.<tr><td><strong>Incentive coverage</strong><td>χ: the fraction of the obligations and prohibitions of a contract that carry a sanction or a reward, or undefined.</table>
+<p>Norm, obligation, permission, prohibition, power, and bearer have the
+meaning of <a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>Appendix F</a>.</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j3-syntax-ebnf-additions-to-a4-f3-and-i2>J.3 Syntax (EBNF additions to A.4, F.3, and I.2)<a href=#j3-syntax-ebnf-additions-to-a4-f3-and-i2 class=hash-link aria-label="Direct link to J.3 Syntax (EBNF additions to A.4, F.3, and I.2)" title="Direct link to J.3 Syntax (EBNF additions to A.4, F.3, and I.2)" translate=no>​</a></h2>
+<p>The grammar uses the notation of
+<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/>Appendix A</a>, which defines <code>identifier</code>,
+<code>actor_ref</code>, <code>number</code>, and <code>text</code>.</p>
+<div class="language-ebnf codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-ebnf codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token definition rule keyword" style=color:#00009f>contract_def</span><span class="token plain">    </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"grounding:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">grounding_block</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>grounding_block</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"items:"</span><span class="token plain">     </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>":"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">actor_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"tolerance:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">number</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>norm_def</span><span class="token plain">        </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"shares:"</span><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"on_fulfilment:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">norm_fulfilment</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>norm_violation</span><span class="token plain">  </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"magnitude:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">number</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>norm_fulfilment</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"reward:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">text</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"magnitude:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">number</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>payoff_term</span><span class="token plain">     </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"reward:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"weight:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">param_expr</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain">                  </span><span class="token comment" style=color:#999988;font-style:italic>(* I.2 *)</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"sanction_of:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">norm_ref</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"reward_of:"</span><span class="token plain">   </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">norm_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>norm_ref</span><span class="token plain">        </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"."</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain">               </span><span class="token comment" style=color:#999988;font-style:italic>(* string *)</span><br/></div></code></pre></div></div>
+<ul>
+<li class=""><code>grounding.items</code> maps the name of each information item to its
+origin. <code>tolerance:</code> is a number in <code>[0, 1]</code>, by default <code>0.25</code>
+(J.5).</li>
+<li class=""><code>shares:</code> lists the information items that the message of a sharing
+norm conveys.</li>
+<li class=""><code>on_violation.magnitude</code> is the size of the sanction of the norm.</li>
+<li class=""><code>on_fulfilment:</code> records a reward for fulfilling the norm:
+<code>reward:</code> describes it in text, as <code>sanction:</code> describes a sanction,
+and <code>magnitude:</code> is its size. The reward is deemed paid when the
+norm instance reaches the state <code>fulfilled</code> of F.5: for an
+obligation, when its content is brought about in time; for a
+prohibition, when its window closes or the contract instance ends
+without a violation. It is not paid when the instance is
+<code>discharged</code>, although the verdict of a discharged instance is
+<code>fulfilled</code>. The block is an annotation and has no effect on the
+semantics of Appendix F.</li>
+<li class="">A <code>norm_ref</code> is a quoted string <code>"C.n"</code>: the <code>id</code> of a contract, a
+dot, and the <code>id</code> of a norm of that contract.</li>
+</ul>
+<p>A text that is empty or consists of white space only
+(<code>sanction: ""</code>, <code>reward: " "</code>) counts as empty, and a YAML null
+counts as absent, for every key of this appendix. A text is taken
+after YAML loading: an unquoted scalar that the loader reads as a
+number or a boolean is the text as written (<code>sanction: 0</code> is the text
+"0" and carries an incentive), and an author SHOULD quote such a text.
+A <code>reward:</code> that is a sequence or a mapping is an error (J-4). A
+magnitude MUST be written as a decimal: a YAML 1.1 loader reads <code>1e3</code>
+as a string, which is an error of J-4, and <code>1.0e-7</code> as a number. An unquoted item name that a YAML 1.1 loader reads as a
+boolean or null MUST be quoted
+(<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>).</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j4-the-derived-indices-and-the-coverage>J.4 The derived indices and the coverage<a href=#j4-the-derived-indices-and-the-coverage class=hash-link aria-label="Direct link to J.4 The derived indices and the coverage" title="Direct link to J.4 The derived indices and the coverage" translate=no>​</a></h2>
+<p>The three quantities are defined for every contract C of a file that
+declares the extension. Each is a ratio of two counts, or
+<strong>undefined</strong> when its denominator is zero. An undefined quantity
+takes part in no comparison of J.5.</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=information-sharing-α̂>Information sharing: α̂<a href=#information-sharing-α̂ class=hash-link aria-label="Direct link to Information sharing: α̂" title="Direct link to Information sharing: α̂" translate=no>​</a></h3>
+<p>Let Π be the set of party names of C, X the set of items of
+<code>grounding.items</code>, and o(x) the origin of an item x (a party name,
+J-2). The <strong>pairs</strong> of C are the pairs (x, q) of an item x and a party
+name q other than o(x): the places where an item can be shared with a
+party.</p>
+<p>Whether a target stands for a whole party follows the matching of
+actor references of F.3. An actor reference T <strong>denotes the whole
+party</strong> q when its actor name is q and it is a single actor <code>A</code>
+(J.2), <code>A[*]</code>, <code>A[i]</code> with an identifier as index, the full range with
+which the actor is declared, or a range with a symbolic bound (which
+matches every member, F.3). A reference with an integer index denotes
+the whole party only when it is equal to the only entry of <code>parties:</code>
+with that actor name. Any other reference with an integer index or a
+range is <strong>member-specific</strong>. A bare set name, <code>A</code> for an actor
+declared with a range, matches no member (F.3): it gives no pair, and
+a processor SHOULD warn (J-3); it is not member-specific. Indices and
+ranges are compared as written; the core parser does not accept white
+space inside an index. For example, with
+<code>parties: [DISPATCHER, "ROBOT[1]", "ROBOT[2]"]</code> the target <code>ROBOT[2]</code>
+is member-specific, and only <code>ROBOT[*]</code>, <code>ROBOT[i]</code>, or a range gives
+the pair of an item and ROBOT.</p>
+<p>A pair (x, q) is given</p>
+<ul>
+<li class=""><strong>by a sharing entry</strong>, when an entry <code>"S -> T : x"</code> of
+<code>information.sharing</code> has the item x and a target T that denotes the
+whole party q; an entry that is not of this form with one item, such
+as <code>"A -> B : x, y"</code> or <code>"A -> B : f(5s)"</code>, which the core parser
+accepts leniently (A.12), gives no pair, and a processor SHOULD warn
+(J-3);</li>
+<li class=""><strong>by an obligation</strong>, or <strong>by a permission</strong>, when a sharing norm of
+that kind lists x in <code>shares:</code> and has as content a message
+<code>S -> T : m</code> whose receiver T denotes the whole party q.</li>
+</ul>
+<p>A pair is <strong>given</strong> when it is given in at least one of the three
+ways.</p>
+<div class="language-text codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-text codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">α̂  =  (number of given pairs) / (number of pairs)</span><br/></div></code></pre></div></div>
+<p>α̂ is undefined when there is no pair (no item, or a single party
+name). α̂ = 0 exactly when no pair is given, which corresponds, for
+the declared items only, to the end point "no sharing" of 5.4.2;
+α̂ = 1 exactly when every pair is given, which corresponds, for the
+declared items only, to "complete sharing". A processor reports, with
+α̂, the number of pairs given in each of the three ways, the pairs
+that are not given, and the <strong>member-specific</strong> entries and norms: an
+entry or norm that would give a pair but whose target is
+member-specific (as in <code>"DISPATCHER -> ROBOT[3] : route"</code>) gives no
+pair and is listed separately, each entry and each norm once, however
+many items it names. A contract that declares <code>alpha: 0</code> and whose
+sharing entries are all member-specific has α̂ = 0 and gets no warning
+of J-6, although a member-specific entry is sharing; the index does
+not see it.</p>
+<p>What the definition does not look at:</p>
+<ul>
+<li class="">The source S is not examined: an entry gives the item to T whoever
+sends it.</li>
+<li class="">An identifier index always counts as the whole party, also where
+the author means one selected member (<code>ROBOT[winner]</code>).</li>
+<li class="">A target that is not a party of the contract gives no pair; a
+processor SHOULD warn (J-3).</li>
+<li class="">The state of a norm is ignored: a sharing norm counts whether or not
+it has a <code>trigger:</code>, an <code>until:</code>, or a <code>deadline:</code>, and whether it
+is active from the start or only as a reparation or by a power.</li>
+<li class="">A prohibition of the same message does not remove a pair; N-12 of
+Appendix F warns about such a conflict.</li>
+<li class="">An obligation and a permission both give a pair. The index records
+that a norm makes or lets a party have an item, not that the party
+has it; the three counts keep the difference visible.</li>
+<li class="">A contract whose parties are one actor set has a single party name
+and no pair, so α̂ is undefined for it. Sharing among peers, which is
+what matters in a collaborative SoS of equal constituents, is
+therefore not measured in version 0.1.</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=concentration-of-powers-β̂>Concentration of powers: β̂<a href=#concentration-of-powers-β̂ class=hash-link aria-label="Direct link to Concentration of powers: β̂" title="Direct link to Concentration of powers: β̂" translate=no>​</a></h3>
+<p>The <strong>decision points</strong> of C are its powers (F.2). A power is the only
+construct of a contract whose exercise changes the state of other
+norms with a defined effect (F.5); <code>authority.decision_scope</code> is text
+and is not counted. For a single actor a (J.2), let k(a) be the number
+of powers of C whose <code>bearer:</code> is the reference a (the same actor
+name and the same index). A power whose bearer is not a single actor,
+as <code>ROBOT[i]</code>, is held by each member for itself and counts for no
+single actor.</p>
+<div class="language-text codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-text codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">β̂  =  (largest k(a) over the single actors a) / (number of powers)</span><br/></div></code></pre></div></div>
+<p>β̂ is 0 when no power is borne by a single actor, and undefined only
+when C has no power. It is the largest share of the decision points of
+the contract that lie with one actor: a <strong>concentration</strong> index. β̂ = 1
+exactly when one single actor bears every power, which corresponds,
+for the powers only, to the end point "single actor decides all" of
+5.4.2; β̂ = 0 exactly when no single actor bears a power.</p>
+<p>β̂ does not depend on <code>authority.decision_holder</code>. A processor reports
+with β̂: the number of powers per bearer; for each power, the number of
+distinct norms named in its <code>effects:</code>; and, when the decision holder names a
+single actor h, the <strong>share of the decision holder</strong> k(h) divided by
+the number of powers. The counts are not weighted by the effects: a
+power that discharges one norm and a power that discharges another
+party's power count alike.</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=incentive-coverage-χ>Incentive coverage: χ<a href=#incentive-coverage-χ class=hash-link aria-label="Direct link to Incentive coverage: χ" title="Direct link to Incentive coverage: χ" translate=no>​</a></h3>
+<p>Let N be the set of obligations and prohibitions of C. A norm of N
+<strong>carries an incentive</strong> when at least one of the following holds:</p>
+<ul>
+<li class="">it has an <code>on_violation.sanction</code> that is not empty;</li>
+<li class="">it has an <code>on_violation.magnitude</code> greater than zero;</li>
+<li class="">it has an <code>on_fulfilment.reward</code> that is not empty, or an
+<code>on_fulfilment.magnitude</code> greater than zero.</li>
+</ul>
+<div class="language-text codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-text codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">χ  =  (number of norms of N that carry an incentive) / (number of norms in N)</span><br/></div></code></pre></div></div>
+<p>χ is undefined when N is empty. χ = 0 exactly when no obligation or
+prohibition carries a sanction or a reward, and χ = 1 exactly when
+each of them does. χ is not an index of λ. It counts the norms that
+have something for λ to scale; λ says by how much (J.7).</p>
+<p>Two further counts are reported separately and are not part of χ: the
+norms of N that carry no incentive and have an
+<code>on_violation.reparation</code> (their violation creates a further duty,
+not a sanction), and the norms of N that have an
+<code>on_violation.transition</code> (their violation moves or ends the contract
+instance). <code>severity:</code> is not counted anywhere: it classifies a
+violation.</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=how-the-quantities-move>How the quantities move<a href=#how-the-quantities-move class=hash-link aria-label="Direct link to How the quantities move" title="Direct link to How the quantities move" translate=no>​</a></h3>
+<p>The three quantities are invariant under renaming and under
+reordering of norms, items, and parties. They are <strong>not</strong> invariant
+under splitting or merging: one power written as two, or two
+obligations merged into one, changes β̂ or χ although the contract
+asks the same of the parties. In each lemma everything not mentioned
+stays the same, and the quantity is defined before and after.</p>
+<ul>
+<li class=""><strong>Lemma 1 (α̂).</strong> Adding an entry to <code>information.sharing</code>, adding
+an item to the <code>shares:</code> of a sharing norm, or adding a sharing norm
+never lowers α̂. <em>Proof.</em> The set of pairs is unchanged, and every
+pair that was given is still given. Adding an item or a party, in
+contrast, adds pairs and can lower α̂.</li>
+<li class=""><strong>Lemma 2 (β̂).</strong> Adding a power whose bearer is a single actor with
+the largest k(a) never lowers β̂, and adding a power whose bearer is
+not a single actor never raises it. <em>Proof.</em> With the largest count
+k among n powers, k ≤ n, so k/n ≤ (k + 1)/(n + 1) and
+k/(n + 1) ≤ k/n.</li>
+<li class=""><strong>Lemma 3 (χ).</strong> Making an obligation or a prohibition carry an
+incentive that carried none (by a sanction text that is not empty,
+or a magnitude greater than zero) raises χ by 1/|N|; a magnitude of
+zero does not. Adding a norm to N that carries an incentive never
+lowers χ, and adding one that carries none never raises it.
+<em>Proof.</em> As for Lemma 2.</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=what-the-quantities-do-not-capture>What the quantities do not capture<a href=#what-the-quantities-do-not-capture class=hash-link aria-label="Direct link to What the quantities do not capture" title="Direct link to What the quantities do not capture" translate=no>​</a></h3>
+<ul>
+<li class="">α̂ counts entitlements and duties to share, not what a party
+observes in operation, and not the quality or the delay of the
+information. The items are those the author lists.</li>
+<li class="">β̂ counts powers. Decisions that are not institutional acts, such as
+who plans a route, are not norms and are not counted; all powers
+weigh the same, whatever their effects.</li>
+<li class="">χ says how many norms carry a sanction or a reward, not how large
+these are or how likely they are to be applied.</li>
+<li class="">Only the product of a magnitude and λ enters any result of J.7.
+Within one contract, λ and the magnitudes are not identified
+separately: doubling every magnitude and halving λ changes nothing.</li>
+<li class="">The core keys <code>incentives.type</code>, <code>incentives.rules</code>, and
+<code>violation.action</code> are text and are ignored; a contract can have
+incentives there that χ does not see.</li>
+<li class="">Under the enforcement of <a class="" href=/cadl-spec/docs/spec/appendix-g-agents/>Appendix G</a>, a
+prohibited message is denied at the boundary and cannot be sent, so
+the prohibition needs no sanction to be effective. A coverage of 0
+in an enforced contract is therefore not "no incentive".</li>
+<li class="">No quantity says anything about behaviour. Whether more sharing or a
+stronger incentive improves a property is a question for the models
+of Appendices H and I.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j5-relation-to-the-declared-parameters>J.5 Relation to the declared parameters<a href=#j5-relation-to-the-declared-parameters class=hash-link aria-label="Direct link to J.5 Relation to the declared parameters" title="Direct link to J.5 Relation to the declared parameters" translate=no>​</a></h2>
+<p>A processor computes the three quantities for every contract and
+reports them (J-5). For <code>alpha</code> and <code>beta</code> it reports the declared
+value, the index, and their difference, and compares them. Every
+disagreement is a <strong>warning</strong>: the indices are evidence about the
+norms, and declaring this extension never invalidates a file that
+declares <code>norms: 0.1</code>.</p>
+<p><strong>A declared end point with a counterexample in the contract.</strong> The
+end points of 5.4.2 are universal statements. When a construct of the
+same contract is a counterexample, a processor SHOULD warn and name
+the construct (J-6):</p>
+<table><thead><tr><th>Declared<th>Counterexample named in the warning<tbody><tr><td><code>alpha: 0</code><td>a given pair, with the entry or sharing norm that gives it; when α̂ is undefined, a non-empty <code>information.sharing</code><tr><td><code>alpha: 1</code><td>the pairs that are not given (absence of a norm does not show that a party lacks an item, so this is the weakest of the four)<tr><td><code>beta: 1</code><td>a power that is not borne by a single actor with the largest count (the first in the order of the file when several have it); every power when β̂ = 0<tr><td><code>beta: 0</code><td>a single actor with the largest count, but only when β̂ exceeds 1 divided by the number of distinct single actors that bear a power</table>
+<p>β̂ is 0 only when every power is borne by an actor set. A contract in
+which several single actors each bear the same number of powers and
+none bears more has β̂ equal to 1 divided by their number, the least
+value possible for these bearers, and <code>beta: 0</code> gets no warning
+there.</p>
+<p><strong>An intermediate value far from the index.</strong> For α and β, a processor
+SHOULD warn when the declared value and the index differ by more than
+the tolerance of the contract and J-6 gives no warning for that
+parameter (J-7). The default tolerance is 0.25: the indices are
+coarse, and a contract with few norms has few possible index values
+(with two powers, β̂ is 0, 1/2, or 1). An author who accepts a larger
+difference states it with <code>grounding.tolerance</code>. A processor SHOULD
+also warn when the decision holder names a single actor whose share is
+smaller than β̂: the powers are then concentrated in another actor.</p>
+<p><strong>λ is not compared with a number.</strong> λ is a scale, and χ is a
+coverage; a contract in which every norm is sanctioned mildly has
+χ = 1 and a small λ and is consistent. A processor reports χ next to
+the declared <code>lambda</code> and SHOULD warn in two cases only (J-8):
+<code>lambda</code> is greater than zero while no obligation or prohibition of
+the contract carries an incentive (χ = 0, or N is empty), so that λ
+has nothing to scale in the norms; and <code>lambda: 0</code> while some norm
+carries an incentive, so that what the norm declares has no effect in
+a model.</p>
+<p><strong>Versions of a contract.</strong> A processor that compares two versions of
+a contract (F.6) reports what changed in the keys of this appendix
+(magnitudes, <code>on_fulfilment:</code>, <code>shares:</code>, items) and SHOULD warn when
+a declared value and its index move in opposite directions (J-13):
+for example, <code>beta</code> is raised while an amendment gives a power to a
+robot.</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j6-the-parameters-in-the-models-of-appendices-h-and-i>J.6 The parameters in the models of Appendices H and I<a href=#j6-the-parameters-in-the-models-of-appendices-h-and-i class=hash-link aria-label="Direct link to J.6 The parameters in the models of Appendices H and I" title="Direct link to J.6 The parameters in the models of Appendices H and I" translate=no>​</a></h2>
+<p><strong>Today.</strong> A parameter of a model is bound to a declared value by
+<code>from: "C.alpha"</code>, <code>"C.beta"</code>, or <code>"C.lambda"</code> (H.3), so that contract
+and model use the same number. What the number does in the model is
+written by the author: in <a class="" href=/cadl-spec/docs/spec/appendix-h-stochastic/>H.12</a>, β is the
+probability that a decision is taken centrally and α multiplies the
+quality of the central plan. Neither appendix derives these
+expressions from the contract, and this appendix does not either.</p>
+<p><strong>What this appendix adds for α and β.</strong> The norms of a contract
+describe the design in which the bound parameter has its declared
+value. A regime that assigns another value describes an operating mode
+(H.6) for which the file has no norms of its own. A processor
+therefore compares the fixed value of a parameter bound to <code>C.alpha</code>
+or <code>C.beta</code> with the index of C in every design, and SHOULD emit an
+informational diagnostic, not a warning, for a design in which they
+differ by more than the tolerance (J-9).</p>
+<p><strong>What stays open.</strong> A regime has no norms of its own, so the values
+that regimes assign to α and β cannot be checked against indices, and
+the ordering of regimes by β cannot be compared with an ordering of
+their norms. Deriving a probability of the model from a sharing norm
+or from a power, and α as what a player observes in a game (RD-7.3),
+are not defined.</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j7-λ-from-the-sanction-of-a-norm-to-a-payoff-term>J.7 λ: from the sanction of a norm to a payoff term<a href=#j7-λ-from-the-sanction-of-a-norm-to-a-payoff-term class=hash-link aria-label="Direct link to J.7 λ: from the sanction of a norm to a payoff term" title="Direct link to J.7 λ: from the sanction of a norm to a payoff term" translate=no>​</a></h2>
+<p>In a strategic model (<a class="" href=/cadl-spec/docs/spec/appendix-i-games/>Appendix I</a>), a payoff
+term may name the norm whose sanction or reward it is declared to
+represent, instead of giving a weight:</p>
+<div class="language-yaml codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-yaml codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reward</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> shortcuts</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>sanction_of</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"DELIVERY.no_shortcut"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><br/></div></code></pre></div></div>
+<p>Let n be the norm <code>C.n</code> that the term names, and let ℓ be the
+parameter of the model that is bound by <code>from: "C.lambda"</code> (there MUST
+be exactly one, J-10). The term has no <code>weight:</code>; its weight is
+defined as</p>
+<table><thead><tr><th>Term<th>Weight<tbody><tr><td><code>sanction_of: "C.n"</code><td>−m · ℓ, with m the <code>on_violation.magnitude</code> of n<tr><td><code>reward_of: "C.n"</code><td>m′ · ℓ, with m′ the <code>on_fulfilment.magnitude</code> of n</table>
+<p>The term is otherwise a term of I.6, and Appendix I applies to it
+unchanged.</p>
+<p><strong>The assumption that is not checked.</strong> The reward structure of the
+term is the author's statement of how often the sanction is applied,
+or the reward paid, in the model. The convention is: the accumulated
+reward of a <code>sanction_of:</code> term counts the violations of the norm,
+and that of a <code>reward_of:</code> term its fulfilments, over all contract
+instances within one run of the model; a run may span several contract
+instances. No processor can check this. Appendix F judges a norm on a
+timed trace and Appendix H evaluates a model in steps, and no
+translation between the two is defined. Every result computed with a
+payoff that has such a term MUST therefore be reported together with
+the assumption, for each term: "the reward structure r is taken to
+count the violations (fulfilments) of C.n" (J-12).</p>
+<p><strong>Who bears it.</strong> A sanction is a loss of the bearer of the norm: a
+<code>sanction_of:</code> term stands in the payoff of the player that stands
+for the bearer, and nowhere else. This appendix does not say where the
+amount goes. When it is a transfer to the counterparty, the author
+writes a second, ordinary term in the payoff of the counterparty's
+player, with the same reward structure and an explicit weight
+(<code>weight: "2 * lambda"</code>); the size of that term is not checked against
+the norm (J-11).</p>
+<p><strong>What a processor checks (J-10, J-11).</strong> The norm exists, is an
+obligation or a prohibition, and declares the magnitude; the player
+of the payoff stands for the bearer of the norm; a norm is named at
+most once by each key; and every norm of C with a magnitude whose
+bearer is a player of the model is named, once the model names any.
+The size and the factor λ hold by definition, since the file states
+the magnitude once.</p>
+<p><strong>The shape of the answer.</strong> Let σ be a profile, D a design, and ℓ a
+parameter, with all other parameters fixed. Consider two conditions:</p>
+<ul>
+<li class=""><strong>(i)</strong> ℓ occurs in no probability and in no reward value of the
+model, and every weight in which ℓ occurs is affine in ℓ (ℓ does
+not occur in it with a power above one).</li>
+<li class=""><strong>(ii) for a player p:</strong> every term of p in whose weight ℓ occurs
+has a weight −m·ℓ with m ≥ 0, as <code>sanction_of:</code> terms have, and
+under σ the expected accumulated value of its reward structure is 0.</li>
+</ul>
+<blockquote>
+<p><strong>Proposition.</strong> Assume (i). Whether D is well-defined and whether σ
+is admissible do not depend on ℓ. Where they hold:</p>
+<ol>
+<li class="">Every gain_p is a convex, piecewise linear function of ℓ. On an
+interval of values of ℓ, the set of values at which σ is an
+ε-equilibrium of D is a closed interval, possibly empty. In
+particular, σ is an ε-equilibrium at every value between a and b
+if it is one at a and at b.</li>
+<li class="">If (ii) holds for p, gain_p is non-increasing in ℓ: if
+gain_p > ε at b, then gain_p > ε at every value below b.</li>
+<li class="">If (ii) holds for every player, the set of 1 is empty or consists
+of the values ℓ ≥ λ* of the interval, for a threshold λ*.</li>
+</ol>
+</blockquote>
+<p><em>Proof.</em> By (i), the probabilities, and with them the graph of the
+game and every expected accumulated reward, do not depend on ℓ, so
+neither do well-definedness and admissibility (H.5, I.6). For a
+strategy τ of p, the payoff of p under σ[p↦τ] is A(τ) + ℓ·B(τ) with
+numbers A(τ) and B(τ) that do not depend on ℓ, because every weight
+is affine in ℓ. BR_p is the maximum of finitely many such functions
+(I.7), hence convex and piecewise linear, and the payoff under σ is
+affine, so gain_p is convex and piecewise linear, and continuous. The
+set where a convex continuous function is at most ε is a closed
+interval, and so is the intersection over the players. Under (ii),
+B(τ) ≤ 0 for every τ, since it is minus a sum of magnitudes times
+expected accumulated rewards, and B is 0 for σ's own strategy; gain_p
+is then a maximum of non-increasing functions minus a constant. A
+closed interval that contains, with a value, every greater one is
+empty or of the form of 3. ∎</p>
+<p><strong>Where it stops.</strong></p>
+<ul>
+<li class="">Without (ii) the set is a closed interval and need not be a
+threshold set. In I.12, <code>shortcut_first</code> incurs the sanction, and it
+is an equilibrium exactly for max(0, T_1, T_2) ≤ λ ≤ T_3. A
+<code>reward_of:</code> term violates (ii) as well, since its value under σ
+grows with ℓ.</li>
+<li class="">With two contracts there are two parameters bound to two <code>lambda</code>
+values. The proposition holds for each of them with the other
+fixed; it says nothing about a region of both.</li>
+<li class="">When ℓ occurs in a probability (the incentive changes how the
+environment behaves), (i) fails, the payoffs are rational functions
+of ℓ, and nothing of the above holds.</li>
+</ul>
+<p><strong>Certification by the end points of a cell.</strong> J-14 turns the
+proposition into a method for an equilibrium map (I.9) whose only
+open parameter is ℓ: one exact evaluation at each end of a cell
+<code>[a, b]</code> certifies <code>equilibrium</code>, and one at b certifies a deviator
+for whom (ii) holds. This is not evaluation at sample points in the
+sense of H.9, because convexity and monotonicity are proved, but it
+is sound only under all the conditions that J-14 lists.</p>
+<p><strong>The example.</strong> The first model of <a class="" href=/cadl-spec/docs/spec/appendix-i-games/>I.12</a> is
+linked to a norm by declaring the two extensions, adding the norm to
+the contract, and replacing the weight of the third term of R:</p>
+<div class="language-yaml codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-yaml codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token key atrule" style=color:#00a4db>sos</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>name</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"RobotDeliveryGame"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>extensions</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>stochastic</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>games</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>grounding</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token comment" style=color:#999988;font-style:italic># actors, transitions as in I.12</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>contracts</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> DELIVERY</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>parties</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">DISPATCHER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[*]"</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>information</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>alpha</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.9</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>authority</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">   </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>decision_holder</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> DISPATCHER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>beta</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.9</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>incentives</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>lambda</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> no_shortcut</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> prohibition</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i]"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>counterparty</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> DISPATCHER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i].handling == Careless"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>on_violation</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>severity</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> Major</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>sanction</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"deduction from the delivery fee"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>magnitude</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>2</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>model</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token comment" style=color:#999988;font-style:italic># as in I.12, except the payoff of R:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token key atrule" style=color:#00a4db>payoffs</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>player</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> R</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>until</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"settled"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>terms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reward</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> fee</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">       </span><span class="token key atrule" style=color:#00a4db>weight</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>10</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reward</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> effort</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">    </span><span class="token key atrule" style=color:#00a4db>weight</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>-1</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reward</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> shortcuts</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>sanction_of</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"DELIVERY.no_shortcut"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>player</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> D</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>until</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"settled"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>terms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reward</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> fee</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>weight</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>5</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><br/></div></code></pre></div></div>
+<p>The weight of the third term is −2·<code>lambda</code>, the weight written by
+hand in I.12, so every number of I.12 is unchanged, and every result
+is reported with the assumption "the reward structure <code>shortcuts</code> is
+taken to count the violations of <code>DELIVERY.no_shortcut</code>". The bearer
+<code>ROBOT[i]</code> is covered by <code>"ROBOT[*]"</code>, for which R stands (J-10).
+<code>shortcuts</code> counts the careless attempts of one run, up to three.
+Appendix F judges a norm once per contract instance, so the count
+agrees with the violations of the norm only if the host starts a
+contract instance for each attempt. That is an assumption about the
+host which nothing in the file expresses; it is the kind of
+assumption the report carries.</p>
+<p>Conditions (i) and (ii) hold for <code>comply</code>: <code>lambda</code> occurs only in
+the weight of the term, which is −2·<code>lambda</code>, and <code>comply</code> takes no
+careless attempt, so the expected value of <code>shortcuts</code> under it is 0
+(reported by J-12). With g the fee, c the cost of effort, s the
+probability that a careful attempt succeeds, and m the magnitude of
+<code>no_shortcut</code>, I.12 derives:</p>
+<blockquote>
+<p>In each design with s·g ≥ c and s &lt; 1, the compliance profile is a
+Nash equilibrium exactly when λ ≥ λ*, where
+λ* = max(0, (c − (s/2)·(g·(1 − s)² + c·(2 − s))) / m).</p>
+</blockquote>
+<p>With g = 10, c = 1, and m = 2, λ* is 0.150108 in CENTRALIZED and
+0.060373 in DISTRIBUTED at the fixed values. The declared λ = 0.1
+makes compliance an equilibrium in DISTRIBUTED only. The threshold is
+inversely proportional to the magnitude. At λ = 0.1, compliance is an
+equilibrium in CENTRALIZED exactly when the magnitude is at least
+480347064349/160000000000 (about 3.0022; 3.002 is not enough), and in
+DISTRIBUTED exactly when it is at least 193194567781/160000000000
+(about 1.2075). For this contract χ = 1/1 = 1 (its one prohibition
+carries a sanction), α̂ is undefined (no items), and β̂ is undefined
+(no power): the coverage is complete, and the question that remains is
+the one the model answers, whether the size m·λ is enough.</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j8-static-semantics>J.8 Static semantics<a href=#j8-static-semantics class=hash-link aria-label="Direct link to J.8 Static semantics" title="Direct link to J.8 Static semantics" translate=no>​</a></h2>
+<p>A processor that implements the extension MUST, in a file that
+declares <code>grounding: 0.1</code>, in addition to existing checks, apply the
+rules below. J-1 to J-4 and J-10 are errors; they concern only the
+keys of this appendix. Where two clauses would report the same fact
+about the same construct, a processor gives one diagnostic.</p>
+<ul>
+<li class="">
+<p><strong>J-1.</strong> A file that declares <code>grounding: 0.1</code> MUST also declare
+<code>norms: 0.1</code>; otherwise the processor reports an error and does not
+interpret the keys of this extension.</p>
+</li>
+<li class="">
+<p><strong>J-2.</strong> Every key of <code>grounding.items</code> MUST be an identifier and
+MUST NOT be a reserved word of
+<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a11-reserved-keywords>A.11</a>; its value MUST
+be an actor reference whose actor name is a party name of the
+contract. <code>tolerance:</code> MUST be a number in <code>[0, 1]</code>.</p>
+</li>
+<li class="">
+<p><strong>J-3.</strong> <code>shares:</code> is allowed only for an obligation or a permission
+whose <code>content:</code> is a <code>message_event</code>. It MUST list at least one
+item, each declared in <code>grounding.items</code> of the same contract and
+each once. A processor SHOULD warn when the receiver of the message
+has the actor name of the origin of a listed item; when the target
+of a sharing entry that names a declared item, or the receiver of a
+sharing norm, is not a party of the contract or is a bare set name
+(J.4); when an entry of <code>information.sharing</code> that names a declared
+item is not of the form of J.4 with one item; and when an entry of <code>information.sharing</code> names an
+item that <code>grounding.items</code> does not declare while the contract
+declares items.</p>
+</li>
+<li class="">
+<p><strong>J-4.</strong> <code>on_violation.magnitude</code> and <code>on_fulfilment.magnitude</code> MUST
+be finite numbers that are not negative. <code>on_fulfilment:</code> is allowed
+only for an obligation or a prohibition (as <code>on_violation:</code>, N-4)
+and MUST have at least one of <code>reward:</code> and <code>magnitude:</code> that is not
+empty (J.3). A <code>reward:</code> MUST be a text (a scalar); a sequence or a
+mapping is an error. A processor SHOULD warn about a <code>magnitude:</code> of zero next to a
+<code>sanction:</code> or <code>reward:</code> text that is not empty.</p>
+</li>
+<li class="">
+<p><strong>J-5.</strong> For every contract of the file, a processor that implements
+the extension and reports MUST compute α̂, β̂, and χ by the
+definitions of J.4, exactly, and report each with its two counts, or
+as undefined with the reason, together with the further counts that
+J.4 names (the three ways of giving a pair, the member-specific
+entries and norms, the powers per bearer and the effects per power,
+the share of the decision holder, the norms with a reparation only
+and with a transition). For <code>alpha</code> and for <code>beta</code>, when declared
+and the index is defined, it MUST report the declared value, the
+index, and their difference. For <code>lambda</code> it reports the declared
+value next to χ and no difference. The comparisons of J-6 to J-9 and
+J-13 are exact; a declared value is the decimal that is written
+(H.2). The quantities are defined for a file without errors: for a
+file with an error of J-2 to J-4, no quantity is reported.</p>
+</li>
+<li class="">
+<p><strong>J-6.</strong> A processor SHOULD warn, and name a construct that is the
+counterexample, when a contract declares <code>alpha: 0</code> and has a given
+pair, or has a non-empty <code>information.sharing</code> while α̂ is
+undefined; <code>alpha: 1</code> and α̂ is defined and less than 1; <code>beta: 1</code>
+and β̂ is defined and less than 1; or <code>beta: 0</code> and β̂ is defined and
+greater than 1 divided by the number of distinct single actors that
+bear a power (J.5).</p>
+</li>
+<li class="">
+<p><strong>J-7.</strong> A processor SHOULD warn when the declared <code>alpha</code> or <code>beta</code>
+and the defined index differ by more than the tolerance of the
+contract and the declared value is neither 0 nor 1 (J-6 tests the
+end points, also where it gives no warning), and when the
+decision holder names a single actor whose share of the powers is
+smaller than β̂.</p>
+</li>
+<li class="">
+<p><strong>J-8.</strong> For a contract that has <code>norms:</code>, a processor SHOULD warn
+when the contract declares a <code>lambda</code>
+greater than zero and none of its obligations and prohibitions
+carries an incentive (J.4), and when it declares <code>lambda: 0</code> and one
+of them does.</p>
+</li>
+<li class="">
+<p><strong>J-9.</strong> In a file that also declares <code>stochastic: 0.1</code>, for every
+design and every parameter bound to <code>C.alpha</code> or <code>C.beta</code> whose
+index is defined, a processor SHOULD emit an informational
+diagnostic when the fixed value of the parameter under the design
+differs from the index by more than the tolerance of C. It is not
+emitted for a design whose fixed value equals the declared value of
+a parameter that J-6 or J-7 already reported. A file without
+<code>transitions:</code> has the one design <code>base</code>.</p>
+</li>
+<li class="">
+<p><strong>J-10.</strong> <code>sanction_of:</code> and <code>reward_of:</code> are allowed only in a file
+that also declares <code>stochastic: 0.1</code> and <code>games: 0.1</code>. A term MUST
+have at most one of <code>weight:</code>, <code>sanction_of:</code>, and <code>reward_of:</code>. The
+value MUST be a string <code>C.n</code> in which <code>C</code> is a declared contract and
+<code>n</code> an obligation or a prohibition of <code>C</code> that has an
+<code>on_violation.magnitude</code> (for <code>sanction_of:</code>) or an
+<code>on_fulfilment.magnitude</code> (for <code>reward_of:</code>) greater than zero. A
+model that has a term naming a norm of <code>C</code> MUST have exactly one
+parameter bound by <code>from: "C.lambda"</code>.
+The player of the payoff MUST list, in <code>actors:</code>, a reference that
+<strong>covers</strong> the bearer of <code>n</code>: the two have the same actor name and
+do not have two different integer indices (<code>"ROBOT[*]"</code> and
+<code>ROBOT[1]</code> cover the bearer <code>ROBOT[i]</code>; <code>ROBOT[1]</code> does not cover
+the bearer <code>ROBOT[2]</code>). In one model, a norm MUST NOT be named by
+more than one <code>sanction_of:</code> term, nor by more than one <code>reward_of:</code>
+term.</p>
+</li>
+<li class="">
+<p><strong>J-11.</strong> When a model has a term that names a norm of a contract
+<code>C</code>, a processor SHOULD warn about every obligation or prohibition
+of <code>C</code> that has a magnitude greater than zero, whose bearer is
+covered by an actor reference of some player, and that no term names
+with the key that corresponds to that magnitude (a norm with both
+magnitudes needs both terms). It SHOULD also warn about a term with a
+<code>weight:</code> in which a parameter bound to <code>C.lambda</code> occurs: the size
+of such a term is not checked against a norm.</p>
+</li>
+<li class="">
+<p><strong>J-12.</strong> A processor that evaluates a payoff with a <code>sanction_of:</code>
+or <code>reward_of:</code> term MUST report, with every result that depends on
+the payoff, the assumption of J.7 for each such term. For every
+<code>sanction_of:</code> and every <code>reward_of:</code> term and every design it SHOULD
+report the expected accumulated value, until the target of the
+payoff, of the reward structure of the term under the compliance
+profile at the fixed values. A value greater than zero is
+information, not a warning: an obligation can be violated by chance
+although the bearer complies. For a <code>sanction_of:</code> term a value of
+zero is condition (ii) of J.7 for the compliance profile; a
+<code>reward_of:</code> term breaks (ii) whatever its value, by the sign of its
+weight.</p>
+</li>
+<li class="">
+<p><strong>J-13.</strong> A processor that compares two versions of a contract
+SHOULD report every change of an <code>on_violation.magnitude</code>, an
+<code>on_fulfilment:</code> block, a <code>shares:</code> list, and <code>grounding.items</code>, and
+SHOULD warn when, for α or for β, the declared value and the index
+are defined in both versions and (x′ − x)·(x̂′ − x̂) is less than
+zero, where x and x̂ are the declared value and the index of the old
+version and x′ and x̂′ those of the new one. When only one of the
+two versions declares the extension, the changes of these keys are
+reported against their absence, the processor says that the indices
+are not compared, and no direction warning is given. A norm that is
+new in the second version is listed with its magnitudes,
+<code>on_fulfilment:</code>, and <code>shares:</code>.</p>
+</li>
+<li class="">
+<p><strong>J-14.</strong> A processor MAY certify a cell <code>[a, b]</code> of an equilibrium
+map (I.9) from evaluations at its end points, and MUST NOT do so
+unless all of the following hold:</p>
+<ol>
+<li class="">the query has exactly one open parameter ℓ (which no regime
+assigns, I-9); ℓ is the open parameter of the query, whether or
+not it is bound to a <code>C.lambda</code>;</li>
+<li class="">condition (i) of J.7 holds for ℓ, checked on the text of the
+model: ℓ occurs in no <code>prob:</code> and in no reward <code>value:</code>, and in
+every <code>weight:</code> of every player, and in every weight defined by
+J.7, ℓ occurs with a power of at most one, counted on the text
+(the powers of the factors of a product add up, and nothing
+cancels: <code>lambda * lambda - lambda * lambda</code> has the power two);</li>
+<li class="">the design is well-defined and the profile admissible at one
+value of ℓ in the cell (by the proposition, then at every value);
+this is a reminder and no separate check, since the evaluations
+of condition 4 establish it at a and at b;</li>
+<li class="">the evaluations at a and at b are exact (I.8);</li>
+<li class="">for a claim that p is a deviator, condition (ii) of J.7 holds for
+p in that design: every weight of p in which ℓ occurs is, at the
+values used for the other parameters, −m·ℓ with m ≥ 0, and the
+expected value 0 under the profile is computed exactly.</li>
+</ol>
+<p>Then the cell is <code>equilibrium</code> when the profile is an ε-equilibrium
+at a and at b, and p is a deviator on the cell when condition 5
+holds and gain_p > ε at b. No other status follows: a gain above ε
+at both ends does not make a player a deviator on the cell without
+condition 5. A processor may report, besides the status, the gain
+bounds <code>[0, max(g(a), g(b))]</code> for each player of an <code>equilibrium</code>
+cell (by convexity) and <code>[g(b), g(a)]</code> for a deviator (by
+monotonicity), where g(a) and g(b) are the gains at the ends, and the
+canonical best response at b as the deviation of a deviator; it does
+not claim <code>from_every_state</code>.</p>
+<p>A processor that uses this rule together with the conditions of I.9
+applies it to cells that those conditions leave <code>undecided</code>; a cell
+carries the deviators that either method establishes. The rule is a
+rule of this appendix: a file that does not declare
+<code>grounding: 0.1</code> cannot use it. Its argument does not use norms; an
+end-point method for a file that declares only <code>games</code> is left to a
+later version of Appendix I.</p>
+</li>
+</ul>
+<p>Rule A.4 that <code>alpha</code>, <code>beta</code>, and <code>lambda</code> lie in <code>[0, 1]</code> is
+unchanged, and so are the rules N-1 to N-12 and I-1 to I-11.</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j9-example>J.9 Example<a href=#j9-example class=hash-link aria-label="Direct link to J.9 Example" title="Direct link to J.9 Example" translate=no>​</a></h2>
+<p>The contract below is that of
+<a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>F.8</a> with the three parameter blocks, a
+<code>grounding:</code> block, two <code>shares:</code> annotations, a magnitude, and one
+more power, <code>decline</code>, by which a robot refuses an assignment. The
+keys that F.8 already has are abridged.</p>
+<div class="language-yaml codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-yaml codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token key atrule" style=color:#00a4db>sos</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>name</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"RobotDeliveryNorms"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>extensions</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>sos-dsl</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>grounding</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.1</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token comment" style=color:#999988;font-style:italic># actors DISPATCHER, ROBOT[1..N], CUSTOMER[1..M] as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  </span><span class="token key atrule" style=color:#00a4db>contracts</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> DELIVERY_SLA</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>parties</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">DISPATCHER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[*]"</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"CUSTOMER[*]"</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>authority</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">   </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>decision_holder</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> DISPATCHER</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>beta</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.9</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>information</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>alpha</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.6</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>sharing</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"DISPATCHER -> ROBOT[*] : route"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[*] -> DISPATCHER : status"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"DISPATCHER -> CUSTOMER[*] : status"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>incentives</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>lambda</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>0.5</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>grounding</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token key atrule" style=color:#00a4db>items</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>route</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">   DISPATCHER</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>status</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain">  </span><span class="token string" style=color:#e3116c>"ROBOT[*]"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>battery</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[*]"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>failure</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[*]"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token comment" style=color:#999988;font-style:italic># assume, guarantee, lifecycle, counts_as as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      </span><span class="token key atrule" style=color:#00a4db>norms</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> acknowledge              </span><span class="token comment" style=color:#999988;font-style:italic># obligation of ROBOT[i], as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>on_violation</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>severity</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> Major</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>reparation</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> report_failure </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> report_failure           </span><span class="token comment" style=color:#999988;font-style:italic># obligation of ROBOT[i], as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i] -> DISPATCHER : failure_report"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>shares</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">failure</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>on_violation</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>severity</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> Critical</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>transition</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> Violated </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> no_low_battery_driving   </span><span class="token comment" style=color:#999988;font-style:italic># prohibition of ROBOT[i], as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>on_violation</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>severity</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> Critical</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>sanction</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"removed from the dispatch pool for one period"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>magnitude</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>4</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> may_return_to_charge     </span><span class="token comment" style=color:#999988;font-style:italic># permission of ROBOT[i], as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i] -> DISPATCHER : charging_request"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>shares</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">battery</span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> reassign                 </span><span class="token comment" style=color:#999988;font-style:italic># power of DISPATCHER, as in F.8</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>-</span><span class="token plain"> </span><span class="token key atrule" style=color:#00a4db>id</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> decline</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>kind</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> power</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>bearer</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i]"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>content</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"ROBOT[i] -> DISPATCHER : decline"</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">          </span><span class="token key atrule" style=color:#00a4db>effects</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">            </span><span class="token key atrule" style=color:#00a4db>discharge</span><span class="token punctuation" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain">acknowledge</span><span class="token punctuation" style=color:#393A34>]</span><br/></div></code></pre></div></div>
+<p><strong>α̂.</strong> The party names are DISPATCHER, ROBOT, and CUSTOMER, and there
+are four items, each with two parties other than its origin: eight
+pairs. Every target denotes a whole party.</p>
+<table><thead><tr><th>Item (origin)<th>DISPATCHER<th>ROBOT<th>CUSTOMER<tbody><tr><td><code>route</code> (DISPATCHER)<td>origin<td>given by a sharing entry<td>not given<tr><td><code>status</code> (ROBOT)<td>given by a sharing entry<td>origin<td>given by a sharing entry<tr><td><code>battery</code> (ROBOT)<td>given by a permission (<code>may_return_to_charge</code>)<td>origin<td>not given<tr><td><code>failure</code> (ROBOT)<td>given by an obligation (<code>report_failure</code>)<td>origin<td>not given</table>
+<p>Three pairs are given by sharing entries, one by an obligation, and
+one by a permission; no entry is member-specific. Five pairs are
+given: α̂ = 5/8 = 0.625. The declared <code>alpha: 0.6</code> differs by 0.025,
+within the tolerance. Had the first entry been
+<code>"DISPATCHER -> ROBOT[3] : route"</code>, it would be member-specific, the
+pair (<code>route</code>, ROBOT) would not be given, and α̂ would be 4/8.</p>
+<p><strong>β̂.</strong> The contract has two powers. <code>reassign</code> is borne by
+DISPATCHER, a single actor; <code>decline</code> is borne by <code>ROBOT[i]</code>, which is
+not a single actor. The largest count of a single actor is 1:
+β̂ = 1/2 = 0.5, and the share of the decision holder is also 1/2.
+<code>reassign</code> names two norms in its effects and <code>decline</code> one. The
+declared <code>beta: 0.9</code> differs by 0.4, more than the tolerance of 0.25,
+and the processor warns (J-7): the contract declares a nearly
+centralised authority while half of its decision points lie with the
+robots. With <code>beta: 1</code> the warning would be that of J-6 and would name
+<code>decline</code>.</p>
+<p><strong>χ.</strong> The contract has three obligations and prohibitions.
+<code>no_low_battery_driving</code> carries a sanction of magnitude 4.
+<code>acknowledge</code> has a reparation and no sanction, and <code>report_failure</code>
+has a lifecycle transition and no sanction; neither carries an
+incentive. χ = 1/3 = 0.333333, with one norm that has a reparation
+only and one that has a transition. The declared <code>lambda: 0.5</code> is
+greater than zero and a norm carries an incentive, so J-8 gives no
+warning.</p>
+<p>By the definition, an amendment that removes <code>decline</code> raises β̂ to
+1/1 = 1, and by Lemma 3 one that gives
+<code>report_failure</code> a sanction raises χ to 2/3.</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j10-intermediate-representation-ir-addition>J.10 Intermediate Representation (IR) addition<a href=#j10-intermediate-representation-ir-addition class=hash-link aria-label="Direct link to J.10 Intermediate Representation (IR) addition" title="Direct link to J.10 Intermediate Representation (IR) addition" translate=no>​</a></h2>
+<p>Each contract under <code>institution.contracts</code> gains the field
+<code>grounding</code>, and each norm of F.9 four fields. For the example of J.9:</p>
+<div class="language-jsonc codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-jsonc codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">{</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "grounding": {</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "items": { "route": "DISPATCHER", "status": "ROBOT[*]", "battery": "ROBOT[*]", "failure": "ROBOT[*]" },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "tolerance": 0.25,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "indices": {</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "alpha":    { "given": 5, "pairs": 8,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    "by_sharing": 3, "by_obligation": 1, "by_permission": 1, "member_specific": 0 },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "beta":     { "largest": 1, "powers": 2, "holder": 1,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                    "bearers": { "DISPATCHER": 1, "ROBOT[i]": 1 } },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "coverage": { "incentive": 1, "norms": 3, "reparation_only": 1, "transition": 1 }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "norms": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    { "id": "no_low_battery_driving",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      // ... the fields of F.9</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "shares": [],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_violation_magnitude": 4,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_fulfilment_reward": null,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      "on_fulfilment_magnitude": null }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  ]</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">}</span><br/></div></code></pre></div></div>
+<p>The field <code>grounding</code> and the four norm fields are absent unless the
+extension is declared (with <code>norms: 0.1</code>); the IR of every other file
+is unchanged. <code>items</code> is
+an empty mapping and <code>tolerance</code> the default when the contract has no
+<code>grounding:</code> block. <code>alpha</code>, <code>beta</code>, or <code>coverage</code> is <code>null</code> when the
+quantity is undefined; otherwise the first two fields are its
+numerator and denominator, so that the exact ratio can be formed.
+<code>by_sharing</code>, <code>by_obligation</code>, and <code>by_permission</code> count pairs and
+may overlap; <code>member_specific</code> counts entries and norms, each once,
+and does not count bare set names. <code>holder</code> is
+the count k(h) of the decision holder, or <code>null</code> when it does not
+name a single actor; <code>bearers</code> maps each bearer reference, as written,
+to its number of powers. Magnitudes are <code>null</code> when absent, and an
+empty text is <code>null</code>.</p>
+<p>A payoff term of the IR of
+<a class="" href=/cadl-spec/docs/spec/appendix-i-games/>I.13</a> gains the fields <code>sanction_of</code> and
+<code>reward_of</code> (a string <code>C.n</code>, or <code>null</code>), written for every term when
+the extension is declared (both <code>null</code> for a term with a written
+weight). For a term with one of them, <code>weight</code> is the defined weight
+as text: <code>-m * p</code> or <code>m * p</code>, with m the magnitude written as a plain
+decimal without exponent (as the numbers of H.11) and p the <code>id</code> of the parameter
+bound to <code>C.lambda</code> (<code>"-2 * lambda"</code> in J.7). Diagnostics are not in
+the IR.</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j11-reference-implementation-status>J.11 Reference implementation status<a href=#j11-reference-implementation-status class=hash-link aria-label="Direct link to J.11 Reference implementation status" title="Direct link to J.11 Reference implementation status" translate=no>​</a></h2>
+<p>The reference implementation implements grounding 0.1 from <code>cadl</code>
+0.3.23 as follows. Up to 0.3.22, the extension name was unknown and
+its keys were ignored without a diagnostic.</p>
+<ul>
+<li class=""><code>cadl check</code> applies the rules J-1 to J-9, and in a strategic
+model J-10 to J-12 (the SHOULDs as warnings, J-9 and J-12 as
+informational diagnostics), and lowers the
+keys to the IR of J.10. An undeclared use gets one warning per file
+(J.12). A key that this appendix does not define inside <code>grounding:</code>
+or <code>on_fulfilment:</code> (a typo such as <code>tolerence:</code>) gets a warning; a
+typo of <code>magnitude:</code> inside <code>on_violation:</code> or of <code>shares:</code> cannot be
+told from an unknown key of the core language and is silent.</li>
+<li class=""><code>cadl norms-indices FILE [--contract ID] [--format text|json]</code>
+reports the quantities of J.4 with all their counts, the comparisons
+of J.5, and the diagnostics of J-9 per design. It refuses a file
+with an error, in particular of J-2 to J-4 (exit status 2); warnings
+do not change the exit status 0.</li>
+<li class=""><code>cadl norms-diff</code> reports the findings of J-13, including a version
+that does not declare the extension. By default it compares the
+contracts that have <code>norms:</code> or <code>counts_as:</code>; a contract without
+norms whose <code>grounding.items</code> change is compared with <code>--contract</code>.</li>
+<li class="">The keys are kept apart from the norms read by Appendix F, so
+<code>cadl norms-eval</code>, <code>cadl agents-run</code>, the boundary decision, and the
+generated monitor give the same verdicts with and without them. The
+generated monitor of an annotated file is identical to that of the
+file without the keys only when every annotated norm already had an
+<code>on_violation:</code> block: adding <code>on_violation: { magnitude: m }</code> to a
+norm without one creates the block, and the monitor then carries
+the default severity, with the same behaviour.</li>
+<li class="">The core parser reads <code>alpha</code>, <code>beta</code>, and <code>lambda</code> as binary
+floating-point numbers; the shortest decimal that round-trips is
+taken as the written decimal (J-5), so a value with more than 17
+significant digits is not recovered. A reference without an index
+to an undeclared actor counts as a single actor (other rules report
+it), and <code>bearers</code> is keyed by the reference without white space.</li>
+<li class="">With Appendix I (<code>cadl game-check</code>), the link of J.7 is
+implemented: a <code>sanction_of:</code> or <code>reward_of:</code> term gets the weight
+of J.7, every
+check and map result carries the assumption of J.7, and J-14 is used
+in <code>--certify</code> in a file that declares <code>grounding: 0.1</code> when its
+conditions hold (the map reports whether it applies and why not;
+cells it certifies carry <code>method: "endpoints (J-14)"</code>). With the link
+implemented, the status <code>not_evaluated</code> of I.13 cannot arise for a
+valid file: an unusable reference is an error of J-1 or J-10.</li>
+<li class="">Verification of the indices: an independent review compared the
+quantities with two scripts on 4 300 and 2 000 random contracts,
+with no disagreement. The invariant of J.12 held on 4 454 random
+files and on 174 sources of the test suite: adding
+<code>- grounding: 0.1</code> to a file that declares <code>norms: 0.1</code> gained no
+error. The lemmas of J.4 were tested as properties on seeded random
+contracts. The verdicts of <code>cadl norms-eval</code> and <code>cadl agents-run</code>
+on the bundled traces were identical with and without magnitudes
+and <code>on_fulfilment:</code> on every norm, and the outputs of the 17
+bundled examples of 0.3.22 (331 files) were identical to 0.3.22.</li>
+<li class="">Verification of the link: an independent review ran 840 generated
+models through the programming interface with the bounds of I.9
+disabled, so that every decided cell came from J-14 (12 416 point
+evaluations), and 320 through the command line (3 496 point
+evaluations), against an oracle that enumerates all strategies: no
+wrong claim. The implementer's fuzzing certified cells by J-14 on
+1 200 models, among them games with ℓ in a probability or in a
+weight that is not affine, which J-14 refused (50 733 point
+evaluations, no wrong claim), and detected injected errors that drop
+conditions 2 and 5.</li>
+<li class="">The example of J.7 gives every result of the first example of I.12
+with the written weight; J-12 reports 0 in both designs. The least
+magnitudes at λ = 0.1 are reproduced exactly: with
+<code>magnitude: 3.00216915218125</code> (480347064349/160000000000)
+<code>comply_nash</code> is an equilibrium in CENTRALIZED and with
+3.00216915218124 it is not; with 1.20746604863125
+(193194567781/160000000000) it is one in DISTRIBUTED and with
+1.20746604863124 it is not. A value written in a file has at most 15
+significant digits (H.2), so the threshold is tested with these two
+neighbours.</li>
+<li class="">The quantities of J.9 are those printed by <code>cadl norms-indices</code> for
+the example, with one warning (J-7 for <code>beta</code>).</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=j12-backward-compatibility>J.12 Backward compatibility<a href=#j12-backward-compatibility class=hash-link aria-label="Direct link to J.12 Backward compatibility" title="Direct link to J.12 Backward compatibility" translate=no>​</a></h2>
+<p>Files written against CADL v0.3 without this extension remain valid
+and are read the same way, and their IR does not change (J.10). The
+extension changes no verdict of Appendix F and no result of Appendices H and I: a term with
+<code>sanction_of:</code> is a term of I.6 with a defined weight.</p>
+<p><strong>Declaring the extension never invalidates a file that declares
+<code>norms: 0.1</code>.</strong> A file that declares <code>norms: 0.1</code>, is valid under
+Appendix F, and uses none of the keys of this appendix remains valid
+when <code>grounding: 0.1</code> is added to its <code>extensions:</code>. Of the rules
+that are errors, J-1 cannot fire for such a file, and J-2, J-3, J-4,
+and J-10 apply only to the keys of this appendix; every comparison of a declared parameter with
+an index (J-6 to J-9) is a warning or an informational diagnostic.</p>
+<p>A file that uses <code>grounding:</code>, <code>shares:</code>, <code>on_fulfilment:</code>,
+<code>on_violation.magnitude</code>, <code>sanction_of:</code>, or <code>reward_of:</code> without
+declaring <code>grounding: 0.1</code> does not conform to this appendix. A
+processor that implements the extension does not interpret these keys
+in such a file and SHOULD report them as undeclared extension keys,
+with one warning per file that lists the keys used (a key whose value
+is null is not used):
+no quantity is computed, and a payoff term with <code>sanction_of:</code> or
+<code>reward_of:</code> is an error by I-7. A file that declares <code>grounding: 0.1</code>
+without <code>norms: 0.1</code> gets the error of J-1.</p>
+<p>A processor that implements Appendix I and not this appendix MUST NOT
+evaluate, in a file that declares both, a payoff that has a
+<code>sanction_of:</code> or <code>reward_of:</code> term, nor a query that needs it; it
+reports the query as not evaluated (I-7). In no case is such a term
+read as a term with the default weight. Processors that do not
+implement the extension MUST NOT reject files that use it; they
+SHOULD emit a single informational diagnostic per file.</div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href=/cadl-spec/docs/spec/appendix-i-games/><div class=pagination-nav__sublabel>Previous</div><div class=pagination-nav__label>Appendix I: Strategic Model Extension</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/cadl-spec/docs/spec/glossary/><div class=pagination-nav__sublabel>Next</div><div class=pagination-nav__label>Glossary</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_VuIf thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#j1-motivation-and-scope class="table-of-contents__link toc-highlight">J.1 Motivation and scope</a><li><a href=#j2-concepts class="table-of-contents__link toc-highlight">J.2 Concepts</a><li><a href=#j3-syntax-ebnf-additions-to-a4-f3-and-i2 class="table-of-contents__link toc-highlight">J.3 Syntax (EBNF additions to A.4, F.3, and I.2)</a><li><a href=#j4-the-derived-indices-and-the-coverage class="table-of-contents__link toc-highlight">J.4 The derived indices and the coverage</a><ul><li><a href=#information-sharing-α̂ class="table-of-contents__link toc-highlight">Information sharing: α̂</a><li><a href=#concentration-of-powers-β̂ class="table-of-contents__link toc-highlight">Concentration of powers: β̂</a><li><a href=#incentive-coverage-χ class="table-of-contents__link toc-highlight">Incentive coverage: χ</a><li><a href=#how-the-quantities-move class="table-of-contents__link toc-highlight">How the quantities move</a><li><a href=#what-the-quantities-do-not-capture class="table-of-contents__link toc-highlight">What the quantities do not capture</a></ul><li><a href=#j5-relation-to-the-declared-parameters class="table-of-contents__link toc-highlight">J.5 Relation to the declared parameters</a><li><a href=#j6-the-parameters-in-the-models-of-appendices-h-and-i class="table-of-contents__link toc-highlight">J.6 The parameters in the models of Appendices H and I</a><li><a href=#j7-λ-from-the-sanction-of-a-norm-to-a-payoff-term class="table-of-contents__link toc-highlight">J.7 λ: from the sanction of a norm to a payoff term</a><li><a href=#j8-static-semantics class="table-of-contents__link toc-highlight">J.8 Static semantics</a><li><a href=#j9-example class="table-of-contents__link toc-highlight">J.9 Example</a><li><a href=#j10-intermediate-representation-ir-addition class="table-of-contents__link toc-highlight">J.10 Intermediate Representation (IR) addition</a><li><a href=#j11-reference-implementation-status class="table-of-contents__link toc-highlight">J.11 Reference implementation status</a><li><a href=#j12-backward-compatibility class="table-of-contents__link toc-highlight">J.12 Backward compatibility</a></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Documentation</div><ul class="footer__items clean-list"><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/quickstart/>Quick Start</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/spec/intro/>Specification</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/handson/>Hands-on</a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Tools</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class=footer__link-item>cadl (compiler / CLI)<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://pypi.org/project/cadl-lang/ target=_blank rel="noopener noreferrer" class=footer__link-item>cadl-lang on PyPI<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class=footer__link-item>CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-raspimouse-simulator target=_blank rel="noopener noreferrer" class=footer__link-item>Hands-on simulator<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Feedback</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl/issues target=_blank rel="noopener noreferrer" class=footer__link-item>Report a problem with the tool<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec/issues target=_blank rel="noopener noreferrer" class=footer__link-item>Report a problem with this site<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec target=_blank rel="noopener noreferrer" class=footer__link-item>Source of this site<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Organization</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://www.ertl.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>ERTL<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://www.nagoya-u.ac.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>Nagoya University<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div></div><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University. Documentation licensed under <a href=https://creativecommons.org/licenses/by/4.0/>CC BY 4.0</a>; code examples and the site source under the <a href=https://www.apache.org/licenses/LICENSE-2.0>Apache License 2.0</a>. Built with Docusaurus.</div></div></div></footer></div></body>
