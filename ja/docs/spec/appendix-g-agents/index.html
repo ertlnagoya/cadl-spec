@@ -1,4 +1,4 @@
-<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-g-agents" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録G. エージェント統治拡張 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録G. エージェント統治拡張 | CADL"/><meta data-rh=true name=description content="エージェント統治拡張（agents 0.1）を規定する。アクターをエージェントとツールサーバに結び付け，メッセージの境界で契約の規範から allow / deny / escalate の決定を決定的に計算し，拒否の後の人へのエスカレーション，来歴連鎖を伴う許可の委任，監査記録，境界方針のコード生成を定める。"/><meta data-rh=true property=og:description content="エージェント統治拡張（agents 0.1）を規定する。アクターをエージェントとツールサーバに結び付け，メッセージの境界で契約の規範から allow / deny / escalate の決定を決定的に計算し，拒否の後の人へのエスカレーション，来歴連鎖を伴う許可の委任，監査記録，境界方針のコード生成を定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents","name":"付録G. エージェント統治拡張","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.255ca780.css /><script src=/cadl-spec/ja/assets/js/runtime~main.e6a1d2d2.js defer></script><script src=/cadl-spec/ja/assets/js/main.00450b78.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-g-agents" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録G. エージェント統治拡張 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録G. エージェント統治拡張 | CADL"/><meta data-rh=true name=description content="エージェント統治拡張（agents 0.1）を規定する。アクターをエージェントとツールサーバに結び付け，メッセージの境界で契約の規範から allow / deny / escalate の決定を決定的に計算し，拒否の後の人へのエスカレーション，来歴連鎖を伴う許可の委任，監査記録，境界方針のコード生成を定める。"/><meta data-rh=true property=og:description content="エージェント統治拡張（agents 0.1）を規定する。アクターをエージェントとツールサーバに結び付け，メッセージの境界で契約の規範から allow / deny / escalate の決定を決定的に計算し，拒否の後の人へのエスカレーション，来歴連鎖を伴う許可の委任，監査記録，境界方針のコード生成を定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents","name":"付録G. エージェント統治拡張","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.255ca780.css /><script src=/cadl-spec/ja/assets/js/runtime~main.69c850a8.js defer></script><script src=/cadl-spec/ja/assets/js/main.00450b78.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-bfa")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=メインコンテンツまでスキップ><a class=skipToContent_fXgn href=#__docusaurus_skipToContent_fallback>メインコンテンツまでスキップ</a></div><nav aria-label=ナビゲーション class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label=ナビゲーションバーを開く aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/ja/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/quickstart/>クイックスタート</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/ja/docs/spec/intro/>仕様書</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/textbook/>テキストブック</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/handson/>ハンズオン</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_nlXk><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>日本語</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class=dropdown__link lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=ja>日本語</a></ul></div><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type=button disabled title=システムモード aria-label=ダークモードを切り替える(現在はシステムモード)><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_Bca1><div class="navbar__search searchBarContainer_NW3z" dir=ltr><input placeholder=検索 aria-label=Search class="navbar__search-input searchInput_YFbd" value="" /><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class=docsWrapper_hBAB><button aria-label=先頭へ戻る class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type=button></button><div class=docRoot_UBD9><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class=sidebarViewport_aRkj><div class=sidebar_njMd><nav aria-label=ドキュメントのサイドバー class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/intro/><span title="CADL仕様書 v0.3" class=linkLabel_WmDU>CADL仕様書 v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/introduction/><span title="1. はじめに" class=linkLabel_WmDU>1. はじめに</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/objectives/><span title="2. 言語の目的" class=linkLabel_WmDU>2. 言語の目的</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/comparison/><span title="3. 既存言語との比較" class=linkLabel_WmDU>3. 既存言語との比較</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/requirements/><span title="4. 要求仕様" class=linkLabel_WmDU>4. 要求仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/language-spec/><span title="5. 言語仕様" class=linkLabel_WmDU>5. 言語仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/design/><span title="6. 設計" class=linkLabel_WmDU>6. 設計</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/examples/><span title="7. 用途別記述例" class=linkLabel_WmDU>7. 用途別記述例</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/use-cases/><span title="8. 活用事例と新規性分析" class=linkLabel_WmDU>8. 活用事例と新規性分析</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/research/><span title="9. 研究方向性と未解決課題" class=linkLabel_WmDU>9. 研究方向性と未解決課題</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/roadmap/><span title="10. 実装ロードマップ" class=linkLabel_WmDU>10. 実装ロードマップ</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-a-syntax/><span title="付録A. 構文リファレンス（EBNF）" class=linkLabel_WmDU>付録A. 構文リファレンス（EBNF）</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-b-references/><span title="付録B. 参考文献" class=linkLabel_WmDU>付録B. 参考文献</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-c-motivation/><span title="付録C. 動機拡張" class=linkLabel_WmDU>付録C. 動機拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-d-codegen/><span title="付録D. コード生成ターゲット一覧" class=linkLabel_WmDU>付録D. コード生成ターゲット一覧</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-e-sos-dsl/><span title="付録E. SoS-DSL拡張" class=linkLabel_WmDU>付録E. SoS-DSL拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-f-norms/><span title="付録F. 規範拡張" class=linkLabel_WmDU>付録F. 規範拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/ja/docs/spec/appendix-g-agents/><span title="付録G. エージェント統治拡張" class=linkLabel_WmDU>付録G. エージェント統治拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-h-stochastic/><span title="付録H. 確率モデル拡張" class=linkLabel_WmDU>付録H. 確率モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/glossary/><span title=用語集 class=linkLabel_WmDU>用語集</span></a></ul></nav></div></div></aside><main class=docMainContainer_TBSr><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_VOVn"><div class=docItemContainer_Djhp><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label=パンくずリストのナビゲーション><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label=ホームページ class=breadcrumbs__link href=/cadl-spec/ja/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_YNFT><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>付録G. エージェント統治拡張</span></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type=button class="clean-btn tocCollapsibleButton_TO0P">このページの見出し</button></div><div class="theme-doc-markdown markdown"><header><h1>付録G. エージェント統治拡張（agents 0.1）</h1></header>
@@ -57,7 +57,7 @@ G.7は，委任された許可に来歴連鎖（provenance chain）を与える�
 メッセージの送信者と受信者は与えられたものとする。境界では，内容がメッセージである規範だけを
 考慮し，メッセージの送信者，受信者，名前だけを考慮して，引数は考慮しない。</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g2-概念>G.2 概念<a href=#g2-概念 class=hash-link aria-label="G.2 概念 への直接リンク" title="G.2 概念 への直接リンク" translate=no>​</a></h2>
-<table><thead><tr><th>概念<th>agents 0.1での意味<tbody><tr><td><strong>ツール呼び出し（tool call）</strong><td>受信者が種別 <code>tool_server</code> のアクターであり，名前がそのアクターの <code>tools:</code> の1つであるメッセージ。<tr><td><strong>強制される契約（enforced contract）</strong><td>キー <code>enforcement:</code> を持つ契約。強制される契約だけが決定に加わる。<tr><td><strong>判定点（enforcement point）</strong><td>ファイルのすべての強制される契約にわたって，メッセージに対する決定を行う1つの論理的な場所。<tr><td><strong>決定（decision）</strong><td><code>allow</code>，<code>deny</code>，<code>escalate</code> のいずれか。メッセージが効果を生じる前に，G.5の決定関数が1つのメッセージについて計算する。<tr><td><strong>根拠（ground）</strong><td>決定関数において，メッセージに適用される禁止。<tr><td><strong>保留（hold）</strong><td>決定が <code>escalate</code> であるメッセージの記録。メッセージは，保留が最終状態に達するまで留め置かれる（G.6）。<tr><td><strong>派生インスタンス（derived instance）</strong><td>被委任者が保持する許可（G.7）。<strong>来歴連鎖</strong>を伴う。来歴連鎖は，元の許可の負担者から保持者までのアクターの列であり，委任1回につき1つのリンクを持つ。<tr><td><strong>監査記録（audit record）</strong><td>判定点が1つの決定について記録するもの（G.8）。</table>
+<table><thead><tr><th>概念<th>agents 0.1での意味<tbody><tr><td><strong>ツール呼び出し（tool call）</strong><td>受信者が種別 <code>tool_server</code> のアクターであり，名前がそのアクターの <code>tools:</code> の1つであるメッセージ。<tr><td><strong>強制される契約（enforced contract）</strong><td>キー <code>enforcement:</code> を持つ契約。強制される契約だけが決定に加わる。<tr><td><strong>判定点（enforcement point）</strong><td>ファイルのすべての強制される契約にわたって，メッセージに対する決定を行う1つの論理的な場所。<tr><td><strong>決定（decision）</strong><td><code>allow</code>，<code>deny</code>，<code>escalate</code> のいずれか。メッセージが効果を生じる前に，G.5の決定関数が1つのメッセージについて計算する。<tr><td><strong>根拠（ground）</strong><td>決定関数において，メッセージに適用される禁止。保留については，根拠を契約インスタンスごとに数える。<strong>保留の根拠</strong>は，ある禁止が適用される1つの契約インスタンスにおける，その禁止である（G.6）。<tr><td><strong>保留（hold）</strong><td>決定が <code>escalate</code> であるメッセージの記録。メッセージは，保留が最終状態に達するまで留め置かれる（G.6）。<tr><td><strong>派生インスタンス（derived instance）</strong><td>被委任者が保持する許可（G.7）。<strong>来歴連鎖</strong>を伴う。来歴連鎖は，元の許可の負担者から保持者までのアクターの列であり，委任1回につき1つのリンクを持つ。<tr><td><strong>監査記録（audit record）</strong><td>判定点が1つの決定について記録するもの（G.8）。</table>
 <p>規範，規範インスタンス，契約インスタンス，制度的事象，観測は，
 <a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>付録F</a>の意味で用いる。</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g3-構文a3a4f3へのebnfの追加>G.3 構文（A.3，A.4，F.3へのEBNFの追加）<a href=#g3-構文a3a4f3へのebnfの追加 class=hash-link aria-label="G.3 構文（A.3，A.4，F.3へのEBNFの追加） への直接リンク" title="G.3 構文（A.3，A.4，F.3へのEBNFの追加） への直接リンク" translate=no>​</a></h2>
@@ -107,6 +107,13 @@ G.7は，委任された許可に来歴連鎖（provenance chain）を与える�
 あれば偽，そうでなく，いずれかが不明であれば不明，それ以外は真である。アクター参照は，
 次のように具体的なアクターに一致する。</p>
 <table><thead><tr><th>参照<th>一致するもの<tbody><tr><td><code>A</code><td>添字なしで宣言したアクター <code>A</code>。添字付きの要素 <code>A[k]</code> には一致しない<tr><td><code>A[3]</code>，<code>A[*]</code>，<code>A[1..3]</code><td><code>A[3]</code>。集合 <code>A</code> のすべての要素。<code>A[1]</code> から <code>A[3]</code> まで<tr><td><code>A[1..N]</code>（記号の上限）<td>集合 <code>A</code> のすべての要素。上下限は比較しない<tr><td><code>A[i]</code><td>具体的なアクターが <code>A</code> の要素でないときは偽。そうでないとき，契約インスタンスが <code>i</code> を <code>v</code> に束縛していればちょうど <code>A[v]</code> に一致し，<code>i</code> に値を束縛していなければ<strong>不明</strong>である。</table>
+<p>この表は<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>F.3</a>の表と同じである。F.3の表は，規範エンジンが
+トレースの事象に用いる。違いは2つある。第1に，F.3はメッセージ事象に書かれた引数を
+メッセージの引数と比較するが，境界は引数を考慮しない。第2に，契約インスタンスが <code>i</code> に
+値を束縛していないとき，F.3では <code>A[i]</code> は集合のすべての要素に一致するが，境界では
+その一致は不明であり，フェイルクローズで解決する（G.5）。第2の違いは，強制される契約の
+事象のうち規範エンジンが評価するものと，権能の行為者にも当てはまる
+（G.5の「不明な発生」）。</p>
 <p><code>A</code> を範囲付きで宣言しており，<code>k</code> がその整数の上下限の内にあるとき，<code>A[k]</code> は集合 <code>A</code> の
 <strong>要素</strong>である（<code>A[1..3]</code> と宣言した集合は <code>A[7]</code> を含まない）。宣言した上限が記号であるときは，
 下限以上のすべての添字が要素である。</p>
@@ -132,7 +139,10 @@ G.7は，委任された許可に来歴連鎖（provenance chain）を与える�
 </ul>
 <p>その場合も，規範は，その負担者または有効な保持者（後述）にだけ適用される。
 判定点は，メッセージを届いた順に1つずつ，それぞれ，それより前のすべての観測が残した状態の
-上で決定する。決定は決定的でなければならない。</p>
+上で決定する。決定は決定的でなければならない。決定は，それより後の観測に決して依存しない。
+これは，述語の中の裸の名前を量として読むか記号的な値として読むか（F.5）にも当てはまる。
+量の名前を与えられた判定点は，最初からそれらを用いる。与えられていない判定点は，
+名前に値を与える最初の観測から，その名前を量として扱い，それより前には扱わない。</p>
 <p><code>content:</code> が <code>message_event</code> である許可または禁止だけが，決定に加わる。
 内容が，述語，時相演算子を含む <code>tpredicate</code>，または制度的事象である許可または禁止は，
 バージョン0.1では<strong>境界で効果を持たず</strong>，付録Fのもとで監視されるだけである。
@@ -154,6 +164,48 @@ G.7は，委任された許可に来歴連鎖（provenance chain）を与える�
 保持者を送信者として内容が一致するとき，適用される。照合の結果が不明であるとき，または
 判定点がフラグを持たないとき，結果は不明である。不明は<strong>フェイルクローズ</strong>（fail-closed）で
 解決する。不明の禁止は適用され，不明の許可は適用されない。</p>
+<p><strong>データの欠落。</strong> ある量がまだ値を持たないためにフラグを決められないときも，判定点は
+フラグを持たない。これは，<code>inactive</code> である禁止の <code>trigger:</code> と，<code>active</code> である許可の
+<code>until:</code> に関わり，2つの形がある。直接の形では，その <code>trigger:</code> または <code>until:</code> が述語であり，
+それが未定義（F.5）である間，フラグは不明である。制度的事象を経る形では，それが，
+<code>counts_as:</code> 規則が述語の <code>when:</code> から作る事象であり，そのような規則の <code>when:</code> または <code>if:</code> が
+未定義である間，フラグは不明である。その事象を作る規則が複数あるときは，そのうちの1つが
+未定義である間，不明である。不明の禁止は適用され，不明の許可は適用されない。
+何も固定されない。規範インスタンスの状態と判定はF.5のとおりであり，F.5では未定義の述語は
+起こらない。述語が値を持てば，フラグはただちに状態に従うものに戻る。2つの場合は，
+F.5がすでに止めるので，規則を必要としない。未定義の <code>trigger:</code> は許可を発動させず，
+未定義の <code>until:</code> は禁止を終わらせない。処理系は，この理由で不明なフラグに基づいて
+メッセージを決定するとき，警告することが望ましい。開始時の帰結は意図したものである。
+そのような述語の量が最初の値を持つ前に届いたメッセージは，拒否またはエスカレーションされる。</p>
+<p>1つの場合は，対象に<strong>ならない</strong>。メッセージの <code>when:</code> と <code>if:</code> を持つ規則は，そのメッセージの
+時点で事象を作るか，決して作らないかのどちらかである。<code>if:</code> が未定義である間にメッセージが
+届くと，事象は作られない（F.5）。事象がメッセージを通すものであれば，これは止める側に働く。
+しかし，事象が禁止に効力を持たせるもの，または許可を終わらせるものであれば，境界は止めない。
+そして，F.5にない状態を作り出さないかぎり，後からフラグを正せる時点もない。G-19は
+そのような契約について警告し，処理系は，そのようなメッセージを観測したとき，警告することが
+望ましい。</p>
+<p><strong>不明な発生。</strong> G-18は，強制される契約のすべての添字変数が当事者の添字であることを求め，
+契約インスタンスは，その当事者の添字を束縛する（F.2）。インスタンスを自ら作る処理系は，
+<code>parties:</code> のすべての添字変数を束縛しない強制される契約のインスタンスを，拒否しなければ
+ならない。したがって，適合する実行では，束縛されない添字はない。次の規則は，それでも
+そのようなインスタンスを渡された処理系のための，第2の防御線である。強制される契約の事象の
+発生，その述語の値，または行為の行為者が誰であるかが，契約インスタンスが束縛しない添字に
+依存するとき，
+それは不明であり，不明は，その発生が何をするかに応じてフェイルクローズで解決する。
+不明な発生は，メッセージを通す効果を決して持たず（許可を発動も再開もさせず，禁止を終了も
+停止も解除もさせず，制度的事象を作らず，権能を行使させず，義務を履行させない），
+止める効果を常に持つ（禁止を発動させ，許可または派生インスタンスを終わらせる）。
+「常に止める」には例外が1つある。権能は，定まった当事者の行為である。そのため，
+不明な行為者は，権能の効果が止めるものである場合（禁止を発動させる，許可を停止または
+解除する）にも，権能を行使しない。この例外は，束縛のないインスタンスを拒否する処理系では
+生じない。処理系は警告することが望ましい。付与と取消しのメッセージは添字変数を名指さず
+（G-11，G-12），不明になることはない。</p>
+<p>インスタンスを拒否するという要求は，契約インスタンスを作る処理系に対するものである。
+G.10の方針の入力は，呼び出し側が与えるインスタンスの記述であり，何も束縛しない
+インスタンスを記述してよい。フィールド <code>instances</code> がないときが，その場合である。
+そのとき，決定関数は，その添字に依存するすべての照合を不明とし（G.4），上のとおり
+フェイルクローズで解決する。両者は矛盾しない。そのような入力に対する決定は定義されており，
+適合するランタイムはそのような入力を作らない。</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id=決定関数>決定関数<a href=#決定関数 class=hash-link aria-label="決定関数 への直接リンク" title="決定関数 への直接リンク" translate=no>​</a></h3>
 <p>メッセージ <code>m</code> について，次の段階が，この順に<strong>結果</strong>（フィールドはG.10）を与える。</p>
 <ol>
@@ -203,13 +255,26 @@ G.7は，委任された許可に来歴連鎖（provenance chain）を与える�
 それらについても方針を閉じる。</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id=決定がトレースに与える効果>決定がトレースに与える効果<a href=#決定がトレースに与える効果 class=hash-link aria-label="決定がトレースに与える効果 への直接リンク" title="決定がトレースに与える効果 への直接リンク" translate=no>​</a></h3>
 <ul>
-<li class=""><strong><code>allow</code>。</strong> メッセージは効果を生じ，決定の時刻を時刻印とする観測になる。</li>
+<li class=""><strong><code>allow</code>。</strong> メッセージは効果を生じ，それを統治する強制される契約のインスタンスにとって，
+決定の時刻を時刻印とする観測になる。強制される契約のインスタンスは，その契約が統治する
+メッセージだけを観測する。どの強制される契約も統治しないメッセージ（段階1）は，
+どの強制される契約の観測にもならず，ある強制される契約が統治するメッセージは，
+それを統治しない別の強制される契約の観測にならない。したがって，メッセージは，
+強制される契約によって決定されることなしに，その契約の規範を発動させることも，
+終わらせることも，履行させることもなく，その契約の中に制度的事象を作ることもない。
+このことから，強制される契約のメッセージ事象のうち，送信者または受信者が当事者でないものは，
+決して起こらないことになる。そのような <code>trigger:</code> を持つ禁止は決して効力を持たず，
+そのような <code>until:</code> を持つ許可は決して終わらない。そのため，G-17はそのような事象を
+エラーにする。強制されない契約については，F.5をそのまま適用する。</li>
 <li class=""><strong><code>deny</code>。</strong> メッセージは効果を生じず，<strong>観測にならない</strong>。規範を発動させず，
 制度的事象を作らず，ライフサイクル遷移を起こさず，義務を履行させず，禁止に違反しない。
 判定点は，結果を送信者に返すことが望ましい。</li>
 <li class=""><strong><code>escalate</code>。</strong> メッセージは保留される（G.6）。保留されている間は観測にならない。</li>
 </ul>
 <p>付録Fの期限は，メッセージが拒否または保留されている間も進み続ける。
+判定点は，メッセージを決定する前に，決定の時刻を観測する。これはメッセージを運ばない観測であり，
+F.5は，この観測で，過ぎたすべての期限と期間を確定させる。したがって，決定が，決定の時刻より前に
+期間が閉じた禁止や，期限が過ぎた義務に基づくことはない。
 拒否された <code>trigger:</code> のメッセージは，その規範を発動させない。F.5の判定への追加として，
 <code>violated</code> になった義務は，その発動から違反までの間に，その内容に一致する負担者の
 メッセージが，義務自身の契約を決定契約に含んで拒否されたか，またはその契約の根拠によって
@@ -224,9 +289,13 @@ G.7は，委任された許可に来歴連鎖（provenance chain）を与える�
 <code>escalate_to:</code> と <code>timeout:</code> は保留を定義する。</p>
 <p>決定が <code>escalate</code> であるとき，判定点は<strong>保留</strong>を作る。保留は，判定点の中で一意な
 <code>hold_id</code>，メッセージ，決定の時刻，根拠，承認者，期限（決定の時刻に結果の <code>timeout</code> を
-加えたもの，またはなし）を持つ。決して終わらない契約インスタンスにおける期限のない保留は，
+加えたもの，またはなし）を持つ。<strong>保留の根拠</strong>は，ある禁止がメッセージに適用される
+1つの契約インスタンスにおける，その禁止である。保留の根拠は，統治するすべての契約にわたる
+そのすべてであり，それらの契約インスタンスを<em>根拠の契約インスタンス</em>と呼ぶ。
+2つの契約インスタンスで適用される禁止は，2つの根拠である。
+決して終わらない契約インスタンスにおける期限のない保留は，
 いつまでも保留される。保留のidが承認者にどのように届くかは，プロトコルに依存する。</p>
-<table><thead><tr><th>状態<th>その状態になるとき<th>終結記録（G.8）<tbody><tr><td><code>held</code><td>保留が作られたとき。最終状態でない唯一の状態<td>—<tr><td><code>approved</code><td>承認者が承認したとき。メッセージは解放される<td><code>allow</code>，理由 <code>approved</code>（または再検査による拒否）<tr><td><code>rejected</code><td>承認者が却下したとき<td><code>deny</code>，理由 <code>rejected</code><tr><td><code>expired</code><td>期限が過ぎたとき<td><code>deny</code>，理由 <code>expired</code>。<code>time</code> は期限<tr><td><code>cancelled</code><td>根拠の契約インスタンスが終わったとき，または根拠の契約が改正されたとき<td><code>deny</code>，理由 <code>cancelled</code></table>
+<table><thead><tr><th>状態<th>その状態になるとき<th>終結記録（G.8）<tbody><tr><td><code>held</code><td>保留が作られたとき。最終状態でない唯一の状態<td>—<tr><td><code>approved</code><td>承認者が承認したとき。メッセージは解放される<td><code>allow</code>，理由 <code>approved</code>（または解放の拒否）<tr><td><code>rejected</code><td>承認者が却下したとき<td><code>deny</code>，理由 <code>rejected</code><tr><td><code>expired</code><td>期限が過ぎたとき<td><code>deny</code>，理由 <code>expired</code>。<code>time</code> は期限<tr><td><code>cancelled</code><td>根拠の契約インスタンスが終わったとき，または根拠の契約が改正されたとき<td><code>deny</code>，理由 <code>cancelled</code></table>
 <p>承認者は，<code>approval</code> と <code>rejection</code> の2つの制度的事象を通じて行為する。それぞれは，
 承認者のメッセージから <code>counts_as:</code> 規則が作る（G-9）。たとえば
 <code>when: "OPERATOR -> PLANNER : approve"</code>，<code>creates: approval</code> である。
@@ -237,23 +306,59 @@ F.5では制度的事象は「事象としてのみ存在」するが，その�
 <p>1つの観測の中での段階の順序（F.5）を，次のように拡張する。</p>
 <ul>
 <li class=""><strong>段階1の後。</strong> <code>approval</code>（<code>rejection</code>）のうち，その保留のidが <code>held</code> の保留を名指し，
-その行為者（F.5の7）がその保留の承認者であるものは，その保留を <code>approved</code>（<code>rejected</code>）に
-する。それ以外の <code>approval</code> または <code>rejection</code> はどの保留も変えず，権限のない行為として
-記録することが望ましい。次に，G.7の付与，取消し，<code>until:</code> の事象を適用する。</li>
+その行為者（F.5の7）がその保留の承認者であり，その保留の根拠の契約インスタンスで
+作られたものは，その保留を <code>approved</code>（<code>rejected</code>）にする。保留が複数の根拠の
+契約インスタンスを持つときは，そのような事象が1つあれば足りる。1つのメッセージが複数の契約インスタンスで作る事象は，
+1つの事象である。それ以外の <code>approval</code> または <code>rejection</code> はどの保留も変えず，
+権限のない行為として記録することが望ましい。次に，G.7の付与，取消し，<code>until:</code> の事象を
+適用する。</li>
 <li class=""><strong>段階6の中。</strong> 契約インスタンスが終わると，その中に根拠を持つ <code>held</code> の保留は，
 その規範を確定させる前に，<code>cancelled</code> になる。</li>
 <li class=""><strong>段階6の後。</strong> この観測で <code>approved</code> になった各保留を，作られた順に解放する。</li>
 </ul>
-<p><strong>解放。</strong> メッセージを現在の状態の上で再検査する。メッセージが今は未宣言のツールの
-呼び出しであれば理由 <code>undeclared_tool</code> で，根拠の契約インスタンスがもはや動作していなければ
-<code>no_instance</code> で，保留の根拠以外の禁止が今は適用されれば <code>prohibition</code>（その禁止を <code>norms</code> に
-含む）で，拒否される。それ以外は再検査しない。承認が許可の代わりになる。
-拒否されなければ，メッセージは，他のどのメッセージが決定されるよりも前に，
+<p><strong>解放。</strong> メッセージを，現在の状態の上で，承認した観測の時刻に，もう一度決定する。
+承認は，許可と根拠の代わりになり，それ以外の代わりにはならない。</p>
+<ol>
+<li class="">メッセージが今は未宣言のツールの呼び出しであれば，<code>deny</code>，理由 <code>undeclared_tool</code> とする。</li>
+<li class="">保留の根拠を持つ統治契約は，その根拠の契約インスタンスのいずれかがもはや動作して
+いなければ理由 <code>no_instance</code> で，その契約の禁止が，保留の根拠になっていない
+契約インスタンスで適用されれば理由 <code>prohibition</code> で，拒否する（<code>norms</code> にそれらの禁止を
+並べる）。根拠である禁止が，たとえば保留の後に作られた別の契約インスタンスで今は
+適用される場合も，これに含まれる。そうでなければ，その契約は許す。許可も既定値も調べない。
+根拠である禁止が，たとえばその <code>until:</code> の後で，承認の時刻にもはや効力を持たない場合も
+同じである。承認がその契約における許可の代わりになり，メッセージは解放される。
+理由 <code>no_instance</code> が生じるのは，承認した観測そのものがその契約インスタンスを終わらせる
+場合（段階6）だけである。それより前に終わったインスタンスは，保留を取り消している。
+リファレンスランタイムは，この場合に到達しない。そこでは，インスタンスの終了が
+それ自体で1つの観測だからである（G.13）。</li>
+<li class="">それ以外の統治契約は，G.5の段階3によって完全に決定し，許さなければならない。許すのは，
+元の許可，今も有効な派生した許可，または既定値による。<code>escalate</code> と決定するはずの契約は，
+理由 <code>prohibition</code> で拒否する。</li>
+<li class="">どの契約も拒否しなければ，メッセージを解放する。そうでなければ，解放を拒否する。
+その結果は，拒否する契約から，G.5の段階4と同じように作る。<code>contracts</code> はそれらの契約を
+並べ，理由は，それらのうち <code>no_instance</code>，<code>prohibition</code>，<code>default</code> の順で最初のものであり，
+<code>prohibition</code> では <code>norms</code>，<code>timeout</code>，<code>fallback</code>，<code>notify</code> をG.10のとおりに埋める。
+<code>escalate_to</code> は <code>null</code> である。</li>
+</ol>
+<p>解放の拒否は最終的である。保留を作らず，保留は <code>approved</code> のままである。これらの規則により，
+解放についても，G.5とG.7が他のすべてのメッセージについて述べることが成り立つ。すなわち，
+2つの強制される契約が統治するメッセージは両方によって許され，どのアクターも，元の権限者が
+もはや持たない権限によって行為することはない。したがって，根拠を持たない契約において，
+保留から承認までの間に委任が取り消されたとき，契約インスタンスが終わったとき，または契約が
+改正されたときは，解放が拒否される。メッセージを解放するとき，メッセージは，
+他のどのメッセージが決定されるよりも前に，
 <strong>承認した観測の時刻印を持つ，直後の観測</strong>として効果を生じる。F.5の3への追加として，
-このメッセージは，その根拠である禁止の内容が起こったことにはならない。承認された例外は，
-それらの禁止に違反しない。承認は1つのメッセージを解放する。送信者，受信者，名前が同じ
-後のメッセージは，改めて決定される。</p>
+このメッセージは，ある禁止が保留の根拠になっている契約インスタンスでは，その禁止の内容が
+起こったことにはならない。承認された例外は，その根拠に違反しない。承認は1つのメッセージを
+解放する。送信者，受信者，名前が同じ後のメッセージは，改めて決定される。</p>
+<p><strong>保留の識別子。</strong> 承認または却下は，保留を，その識別子だけによって名指す。識別子は
+予測できないものである必要はない。保留を守るのは，その承認者だけが，契約が統治する
+メッセージによって保留を閉じることができることであり，識別子が秘密であることではない。
+承認者のメッセージそのものが保留され，後で解放されたときは，そのメッセージは，
+解放された時点でその識別子を持つ保留に適用される。その保留がもはや <code>held</code> でなければ，
+何も変えず，権限のない行為として記録される。</p>
 <p><strong>期限切れ。</strong> <code>held</code> の保留の期限より後の時刻を持つ各決定と各観測の前に，その保留は
+<code>expired</code> になる。同時に期限切れになる保留は，期限の順に，期限が等しければ作られた順に，
 <code>expired</code> になる。ちょうど期限の時刻の承認は期限内とする。</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g7-来歴を伴う委任>G.7 来歴を伴う委任<a href=#g7-来歴を伴う委任 class=hash-link aria-label="G.7 来歴を伴う委任 への直接リンク" title="G.7 来歴を伴う委任 への直接リンク" translate=no>​</a></h2>
 <p><code>delegations:</code> の項目は，1つの許可を<strong>委任可能</strong>にする。<code>norm:</code> はその許可を名指し，
@@ -290,7 +395,8 @@ F.5では制度的事象は「事象としてのみ存在」するが，その�
 <p><strong>終了。</strong> 派生インスタンスは，次のときに <code>discharged</code> になる。(a) その項目の <code>revoke:</code> の
 名前を持つメッセージ <code>X -> Y : r</code> が観測され，<code>Y</code> の連鎖の中で <code>X</code> が <code>Y</code> より前に現れるとき。
 このとき，<code>Y</code> のインスタンスと，連鎖に <code>Y</code> が現れるすべての派生インスタンスが解除される。
-(b) その項目の <code>until:</code> が，規範の <code>until:</code> と同じように起こったとき。(c) 元の許可が
+(b) その項目の <code>until:</code> が，規範の <code>until:</code> と同じように起こったとき。このとき，その観測で
+<code>active</code> である派生インスタンスが解除され，項目は委任可能なままである。(c) 元の許可が
 <code>discharged</code> になったとき，または契約インスタンスが終わったとき。
 (a) を満たさない取消しのメッセージは効果を持たない。解除されたインスタンスは復活しない。
 新しい付与は新しいインスタンスを作る。</p>
@@ -308,83 +414,183 @@ F.5では制度的事象は「事象としてのみ存在」するが，その�
 <p>判定点は，すべての決定を記録することが望ましく，記録を追記専用で保つことが望ましい。
 記録することは推奨であり，形式は規範的である。<strong>監査記録</strong>は，決定の結果（G.10）に
 次の5つのフィールドを加えたものである。</p>
-<table><thead><tr><th>フィールド<th>内容<tbody><tr><td><code>time</code><td>決定の時刻。トレースの時計による。<tr><td><code>message</code><td><code>from</code>，<code>to</code>，<code>name</code>。方針の入力と同じ。<tr><td><code>instances</code><td>統治する契約の動作中のインスタンス。契約の <code>id</code> とインスタンスの識別子。<tr><td><code>hold_id</code><td><code>escalate</code> の決定と，その保留を閉じる記録で値を持つ。それ以外は <code>null</code>。<tr><td><code>outcome</code><td>保留を閉じる記録では，その最終状態。それ以外は <code>null</code>。</table>
+<table><thead><tr><th>フィールド<th>内容<tbody><tr><td><code>time</code><td>決定の時刻。トレースの時計による。<tr><td><code>message</code><td><code>from</code>，<code>to</code>，<code>name</code>。方針の入力と同じ。<tr><td><code>instances</code><td>統治する契約の動作中のインスタンス。契約の <code>id</code> とインスタンスの識別子。終結記録では，動作中かどうかにかかわらず，保留の根拠の契約インスタンス。<tr><td><code>hold_id</code><td><code>escalate</code> の決定と，その保留を閉じる記録で値を持つ。それ以外は <code>null</code>。識別子は判定点の中で一意であり，予測できないものである必要はない（G.6）。<tr><td><code>outcome</code><td>保留を閉じる記録では，その最終状態。それ以外は <code>null</code>。</table>
 <p><code>escalate</code> の決定は，同じ <code>hold_id</code> を持つ2つの記録を与える。1つは保留が作られたときの
 記録であり，もう1つは保留が最終状態に達したときの<strong>終結記録</strong>（closing record）である
-（G.6の表）。終結記録は，再検査が拒否する場合を除いて，保留の <code>contracts</code>，<code>norms</code>，
-<code>escalate_to</code> を保つ。
-付与，取消し，および権限のない行為として記録した行為は，同じログに書くことが望ましい。</p>
+（G.6の表）。終結記録は，保留の <code>contracts</code>，<code>norms</code>，<code>escalate_to</code> を保つ。理由が
+<code>rejected</code>，<code>expired</code>，<code>cancelled</code> のいずれかであるときは，保留の <code>fallback</code> と <code>notify</code> も保つ。
+送信者が，拒否の中にそれらを見いだせるようにするためである。終結記録の <code>timeout</code> は <code>null</code> である。
+解放が拒否されるとき（G.6），終結記録は，これらの代わりにその拒否の結果を持ち，<code>outcome</code> は
+<code>approved</code> である。終結記録の <code>time</code> は，保留を閉じた観測の時刻である。ただし <code>expired</code> では
+期限である。<code>expired</code> の記録は，期限切れが見つかったとき，すなわち次の決定または観測の前に書く。
+したがって，ログの時刻が逆戻りすることはない。</p>
+<p>不明なフラグ（G.5）に基づく拒否またはエスカレーションは，他の場合と同じく，理由
+<code>prohibition</code> を持ち，その規範を <code>norms</code> に並べる。違いは，その決定の方針の入力（フラグが
+<code>in_force</code> にない）と，処理系の警告に現れる。送信者がとるべき対処は異なる。データの欠落では，
+承認者に求めるのではなく，データを待つ。</p>
+<p>付与，取消し，および権限のない行為として記録した行為は，<strong>事象記録</strong>（event record）として，
+同じログに書くことが望ましい。後の決定が基づく状態のそれ以外の変化，すなわち，原因を問わない
+派生インスタンスの終了，契約インスタンスの開始と終了，改正も，同じように書くことが望ましい。
+事象記録は結果を持たない。<code>decision</code> の代わりにフィールド <code>event</code> を
+持ち，次のフィールドを持つ。</p>
+<table><thead><tr><th>フィールド<th>内容<tbody><tr><td><code>time</code>，<code>message</code><td>監査記録と同じ。その事象のもとになった観測とメッセージ。メッセージがないときは，<code>message</code> は <code>null</code>。<tr><td><code>event</code><td><code>grant</code>，<code>revoke</code>，<code>delegation_end</code>（派生インスタンスが取消しのメッセージ以外の原因で終わった。派生インスタンスごとに1つの記録），<code>instance_start</code>，<code>instance_end</code>，<code>amendment</code>，<code>unauthorised_grant</code>，<code>unauthorised_approval</code>，<code>unauthorised_rejection</code>，<code>unauthorised_act</code>（F.5の7が権限のない行為として記録する行為）のいずれか。<tr><td><code>instances</code><td>その事象が起こった契約インスタンス。<code>amendment</code> では，改正された契約の動作中のインスタンス。<tr><td><code>norm</code><td>付与，取消し，または <code>delegation_end</code> では，委任可能な許可。<code>&lt;contract id>.&lt;norm id></code> の形で表す。それ以外は <code>null</code>。<tr><td><code>chain</code><td><code>grant</code> では，受信者の派生インスタンスの連鎖。効果を持つ <code>revoke</code> では，取り消されたインスタンスの連鎖。<code>delegation_end</code> では，終わったインスタンスの連鎖。それ以外は <code>null</code>。<tr><td><code>holders</code><td>その事象が派生インスタンスを作った，または解除した保持者。作られた順に並べる。それ以外は空。<tr><td><code>hold_id</code><td>権限のない承認または却下では，それが運んでいた保留のid。なければ <code>null</code>。それ以外は <code>null</code>。<tr><td><code>reason</code><td>効果を持つ付与または取消しでは <code>null</code>。何もしない付与（G.7の条件5）では <code>holder_exists</code>。(a) を満たさない取消しのメッセージでは <code>no_effect</code>。<code>unauthorised_grant</code> では，最初に成り立たない条件：<code>no_authority</code>（1），<code>not_in_to</code>（2），<code>in_chain</code>（3），<code>max_depth</code>（4）。権限のない承認または却下では，<code>unknown_hold</code>，<code>not_held</code>，<code>not_approver</code>，<code>other_instance</code>（根拠の契約インスタンスで作られていない）のいずれか。<code>unauthorised_act</code> では <code>no_power</code>。<code>delegation_end</code> では，その原因：<code>until</code>，<code>original_discharged</code>，<code>instance_end</code>，<code>amendment</code>。<code>instance_end</code> では <code>end</code> または <code>terminal_state</code>。<code>amendment</code> では新しい版の名前。<code>instance_start</code> では <code>null</code>。</table>
+<p>記録は，判定点がそれを作る順に書く。決定の記録，次にそのメッセージがなる観測の事象記録，
+次にその観測が承認または却下した保留の終結記録である。規範の効力のフラグの変化には，
+それ自体の記録はない。それは，記録されたメッセージ，時刻，および契約の述語が読む値から導かれる。
+本付録は，ハッシュの連鎖や署名のような，
+ログの完全性の保護を定めない。それを必要とする配備は，記録の外でそれを追加する。</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g9-static-semantics>G.9 静的意味論<a href=#g9-static-semantics class=hash-link aria-label="G.9 静的意味論 への直接リンク" title="G.9 静的意味論 への直接リンク" translate=no>​</a></h2>
 <p>エージェント統治拡張を扱う処理系は，<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>付録F</a>の検査に加えて，
 次の検査をしなければならない。</p>
 <ul>
-<li class=""><strong>G-1.</strong> <code>agents: 0.1</code> を宣言するファイルは，<code>norms: 0.1</code> も宣言しなければならない。
-そうでなければ，処理系はエラーを報告し，本拡張のキーを解釈しない。</li>
-<li class=""><strong>G-2.</strong> <code>agent:</code> のマッピングは <code>kind:</code> を持たなければならず，その値は <code>llm_agent</code>，
+<li class="">
+<p><strong>G-1.</strong> <code>agents: 0.1</code> を宣言するファイルは，<code>norms: 0.1</code> も宣言しなければならない。
+そうでなければ，処理系はエラーを報告し，本拡張のキーを解釈しない。</p>
+</li>
+<li class="">
+<p><strong>G-2.</strong> <code>agent:</code> のマッピングは <code>kind:</code> を持たなければならず，その値は <code>llm_agent</code>，
 <code>tool_server</code>，<code>human</code>，<code>service</code> のいずれかである。<code>protocol:</code> は <code>hyphen_name</code> で
-なければならない。</li>
-<li class=""><strong>G-3.</strong> <code>tools:</code> は <code>tool_server</code> にだけ書け，<code>tool_server</code> は少なくとも1つのツールを
+なければならない。</p>
+</li>
+<li class="">
+<p><strong>G-3.</strong> <code>tools:</code> は <code>tool_server</code> にだけ書け，<code>tool_server</code> は少なくとも1つのツールを
 列挙しなければならない。ツールの名前は識別子でなければならず，予約語であってはならず，
 そのアクターの中で一意でなければならない（YAML 1.1のローダーでは，引用符のない <code>yes</code>，
 <code>no</code>，<code>on</code>，<code>off</code>，<code>true</code>，<code>false</code>，<code>null</code> は名前にならない。
-<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>を参照）。</li>
-<li class=""><strong>G-4.</strong> <code>message_event</code> の受信者がツールサーバであるとき，メッセージ名はその <code>tools:</code> の
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>を参照）。</p>
+</li>
+<li class="">
+<p><strong>G-4.</strong> <code>message_event</code> の受信者がツールサーバであるとき，メッセージ名はその <code>tools:</code> の
 1つでなければならない。これは，規範の <code>trigger:</code>，<code>until:</code>，<code>content:</code>，<code>counts_as:</code> 規則の
 <code>when:</code>，ライフサイクル遷移の <code>on:</code>，および <code>fallback:</code> に適用される。
 処理系は，これを満たさないプロトコル（A.5）のメッセージのステップについて警告することが
-望ましい。</li>
-<li class=""><strong>G-5.</strong> <code>enforcement.default</code> は <code>deny</code> または <code>allow</code> でなければならず，
+望ましい。</p>
+</li>
+<li class="">
+<p><strong>G-5.</strong> <code>enforcement.default</code> は <code>deny</code> または <code>allow</code> でなければならず，
 <code>enforcement.point</code> は <code>caller</code>，<code>receiver</code>，<code>gateway</code> のいずれかでなければならない。
-nullまたは空の <code>enforcement:</code> は有効である。</li>
-<li class=""><strong>G-6.</strong> 強制される契約では，許可または禁止の内容である <code>message_event</code> の送信者は，
-その <code>bearer:</code> とテキストとして等しくなければならない。</li>
-<li class=""><strong>G-7.</strong> <code>on_denied:</code> は，強制される契約の，内容が <code>message_event</code> である禁止にだけ書け，
+nullまたは空の <code>enforcement:</code> は有効である。</p>
+</li>
+<li class="">
+<p><strong>G-6.</strong> 強制される契約では，許可または禁止の内容である <code>message_event</code> の送信者は，
+その <code>bearer:</code> とテキストとして等しくなければならない。</p>
+</li>
+<li class="">
+<p><strong>G-7.</strong> <code>on_denied:</code> は，強制される契約の，内容が <code>message_event</code> である禁止にだけ書け，
 少なくとも1つのキーを持たなければならない。<code>timeout:</code> は0より大きい <code>duration_lit</code> で
 なければならず，<code>escalate_to:</code> を必要とする。処理系は，<code>timeout:</code> のない <code>escalate_to:</code> に
-ついて警告することが望ましい。</li>
-<li class=""><strong>G-8.</strong> <code>escalate_to:</code> と <code>notify:</code> は，宣言済みの1つのアクターを名指さなければならない
+ついて警告することが望ましい。</p>
+</li>
+<li class="">
+<p><strong>G-8.</strong> <code>escalate_to:</code> と <code>notify:</code> は，宣言済みの1つのアクターを名指さなければならない
 （N-3と同じ）。<code>escalate_to:</code> は，そのメッセージが統治されるように，契約の当事者を
 名指さなければならず，その禁止の <code>bearer:</code> とテキストとして等しくてはならず，
-<code>agent.kind: human</code> を持つことが望ましい。</li>
-<li class=""><strong>G-9.</strong> <code>escalate_to: A</code> を持つ契約は，送信者が <code>A</code> である <code>message_event</code> から
+<code>agent.kind: human</code> を持つことが望ましい。</p>
+</li>
+<li class="">
+<p><strong>G-9.</strong> <code>escalate_to: A</code> を持つ契約は，送信者が <code>A</code> である <code>message_event</code> から
 <code>approval</code> を作る <code>counts_as:</code> 規則を持たなければならず，<code>rejection</code> についても
 そのような規則を持つことが望ましい。強制される契約では，<code>approval</code> または <code>rejection</code> を
 作るすべての規則は，送信者がその契約の禁止の <code>escalate_to:</code> である <code>message_event</code> を
 <code>when:</code> として持たなければならず，どの規範の <code>id</code> もこの2つの名前のいずれとも等しくては
-ならない。エラーになる使い方はこれらだけである。<code>trigger:</code>，<code>until:</code>，<code>content:</code> での
-この2つの事象への参照は許される。</li>
-<li class=""><strong>G-10.</strong> <code>fallback:</code> は，送信者がその禁止の <code>bearer:</code> とテキストとして等しく，
+ならない。エラーになる使い方はこれらだけである。G-17により，その <code>message_event</code> の
+送信者と受信者は契約の当事者である。そのため，契約は承認者のメッセージを統治し，
+そのインスタンスはそれを観測する。<code>trigger:</code>，<code>until:</code>，<code>content:</code> での
+この2つの事象への参照は許される。</p>
+</li>
+<li class="">
+<p><strong>G-10.</strong> <code>fallback:</code> は，送信者がその禁止の <code>bearer:</code> とテキストとして等しく，
 受信者が宣言済みのアクターである <code>message_event</code> でなければならず，受信者または
-メッセージ名において禁止の内容と異ならなければならない。</li>
-<li class=""><strong>G-11.</strong> <code>delegations:</code> は強制される契約にだけ書ける。<code>norm:</code> は，その契約の，内容が
+メッセージ名において禁止の内容と異ならなければならない。</p>
+</li>
+<li class="">
+<p><strong>G-11.</strong> <code>delegations:</code> は強制される契約にだけ書ける。<code>norm:</code> は，その契約の，内容が
 <code>message_event</code> である許可の <code>id</code> でなければならない。1つの規範を名指してよい項目は
 高々1つである。その許可の <code>bearer:</code> は，契約インスタンスが束縛する添字（<code>ROBOT[i]</code>）を
-持ってはならない。すべての連鎖の最初のアクターをファイルから読み取れるようにするためである。</li>
-<li class=""><strong>G-12.</strong> <code>to:</code> は少なくとも1つの参照を列挙しなければならず，それぞれが宣言済みの
+持ってはならない。すべての連鎖の最初のアクターをファイルから読み取れるようにするためである。</p>
+</li>
+<li class="">
+<p><strong>G-12.</strong> <code>to:</code> は少なくとも1つの参照を列挙しなければならず，それぞれが宣言済みの
 アクターを名指さなければならない。ワイルドカードや範囲は許されるが，契約インスタンスが
 束縛する添字は許されない。<code>to:</code> はツールサーバを名指してはならず，負担者を含まないことが
 望ましい。<code>max_depth:</code> は1以上の整数でなければならない。<code>until:</code> は，規範の <code>until:</code> に
-ついての付録Fの規則（N-9，N-10）を満たさなければならない。</li>
-<li class=""><strong>G-13.</strong> <code>grant:</code> と <code>revoke:</code> は識別子でなければならず，予約語であってはならない。
+ついての付録Fの規則（N-9，N-10）を満たさなければならない。</p>
+</li>
+<li class="">
+<p><strong>G-13.</strong> <code>grant:</code> と <code>revoke:</code> は識別子でなければならず，予約語であってはならない。
 1つの契約の中で，すべての <code>grant:</code> と <code>revoke:</code> の名前は，互いに異なり，<code>approval</code> および
 <code>rejection</code> とも異ならなければならず，いずれも，当事者であるツールサーバのツールであっては
-ならない（G-3のYAML 1.1についての注記が当てはまる）。</li>
-<li class=""><strong>G-14.</strong> 処理系は，強制される契約の許可または禁止のうち，(a) 内容が <code>message_event</code> で
+ならない（G-3のYAML 1.1についての注記が当てはまる）。</p>
+</li>
+<li class="">
+<p><strong>G-14.</strong> 処理系は，強制される契約の許可または禁止のうち，(a) 内容が <code>message_event</code> で
 ないもの（境界で効果を持たないため），または (b) 内容の <code>message_event</code> が引数を持つもの
-（引数は考慮されないため）について警告することが望ましい。</li>
-<li class=""><strong>G-15.</strong> 処理系は，(a) <code>default: allow</code> を持つ強制される契約の当事者のツールのうち，
+（引数は考慮されないため）について警告することが望ましい。</p>
+</li>
+<li class="">
+<p><strong>G-15.</strong> 処理系は，(a) <code>default: allow</code> を持つ強制される契約の当事者のツールのうち，
 その契約のどの許可も禁止も覆わないもの，および (b) どの強制される契約の当事者でもなく，
 そのツール呼び出しが統治されないツールサーバについて警告することが望ましい。
 規範は，その内容の <code>message_event</code> がその受信者とメッセージ名を持つとき，メッセージを
-<em>覆う</em>という。</li>
-<li class=""><strong>G-16.</strong> 処理系は，契約が必要とし，かつ契約自身が拒否することになるメッセージについて
+<em>覆う</em>という。</p>
+</li>
+<li class="">
+<p><strong>G-16.</strong> 処理系は，契約が必要とし，かつ契約自身が拒否することになるメッセージについて
 警告することが望ましい。(a) 義務の内容または <code>fallback:</code> であって，そのメッセージの
 送信者を負担者とする <code>trigger:</code> のない禁止が覆うもの，または，ツール呼び出しの既定値が
 <code>deny</code> であるのに，その送信者のどの許可にも覆われないツール呼び出しであるもの。
 送信者が派生した許可を通じてのみ送ることのできるメッセージにも，この警告を出す。
 委任は実行時の状態だからである。(b) <code>default: deny</code> のもとで，どの許可も覆わない
 <code>grant:</code> または <code>revoke:</code> の名前，あるいは <code>approval</code> または <code>rejection</code> を作る規則の
-<code>when:</code> のメッセージ。</li>
+<code>when:</code> のメッセージ。</p>
+</li>
+<li class="">
+<p><strong>G-17.</strong> 強制される契約では，その契約のすべての <code>message_event</code> の送信者と受信者は，
+<strong>当事者に覆われて</strong>いなければならず，宣言済みの要素だけを名指さなければならない。
+対象は，規範の <code>trigger:</code>，<code>until:</code>，<code>content:</code>，<code>counts_as:</code> 規則の <code>when:</code>，
+委任の <code>until:</code> である。参照は，<code>parties:</code> の<strong>1つの</strong>参照が，それが名指しうるすべての
+アクターに一致するとき（G.5），覆われている。<code>A</code> は当事者 <code>A</code> に，<code>A[3]</code> は当事者 <code>A[3]</code>，
+<code>A[i]</code>，<code>A[*]</code>，または3を含む範囲に，<code>A[1..3]</code> は当事者 <code>A[i]</code>，<code>A[*]</code>，またはそれを含む
+範囲に，<code>A[*]</code> と <code>A[i]</code> は当事者 <code>A[i]</code> または <code>A[*]</code>，あるいは宣言した集合の全体を含む
+当事者の範囲に，覆われる。2つの当事者の参照を合わせることはしない。当事者 <code>A[1..2]</code> と
+<code>A[3]</code> は <code>A[1..3]</code> を覆わない。リテラルの添字または範囲は，宣言した集合の内に
+なければならない。<code>A[1..3]</code> と宣言した集合に対して，<code>A[7]</code> と <code>A[2..5]</code> はエラーである。
+強制される契約のインスタンスは，その契約が統治するメッセージだけを観測する（G.5）。
+そのため，覆われていない事象や，宣言済みの要素を名指さない事象は，それが名指すアクターの
+一部または全部について，決して起こらない。ツール呼び出しの受信者も対象である。
+G-4はそのツールを求め，本規則はそのツールサーバが当事者であることを求める。その送信者も
+対象である。契約は，当事者でないアクターのツール呼び出しを，規範の内容や事象にすることは
+できない。当事者であるツールサーバへのそのような呼び出しは，それでも統治され（G.5），
+契約の既定値と，当事者のために書いた規範によって決定される。これは意図したものである。
+<code>fallback:</code> は対象でない。それは送信者のためのデータであって契約の事象ではなく，
+G-10はその受信者が宣言済みであることだけを求める。当事者でないアクターに送られた
+代替のメッセージは，この契約によって統治されない。</p>
+</li>
+<li class="">
+<p><strong>G-18.</strong> 強制される契約では，すべての添字変数は束縛されていなければならない。
+添字変数とは，添字として，または添字の式の中で用いられる名前である（<code>ROBOT[j]</code>，
+<code>ROBOT[j+1]</code>，<code>ROBOT[SLOT[j].next]</code> の <code>j</code>）。束縛するものは3つある。<code>parties:</code> の参照は，
+その添字変数を契約の全体で束縛する（当事者 <code>ROBOT[i]</code> の <code>i</code>）。限量子は，その変数を
+その述語の中で束縛する（<code>exists j in ROBOT: ROBOT[j].battery &lt; 20</code>，A.10）。内包表記は，
+その変数をその要素の中で束縛する（<code>sum(ROBOT[j].load for j in ROBOT)</code>，A.10）。
+それ以外の添字変数は，契約の式が現れうるどの場所でもエラーである。規範の <code>bearer:</code> と
+<code>counterparty:</code>。<code>escalate_to:</code>，<code>notify:</code>，<code>fallback:</code> の送信者と受信者。G-17が挙げる
+すべての <code>message_event</code> の送信者，受信者，引数（どの種類の規範の <code>content:</code> も含む）。
+そして，契約のすべての述語，すなわち，規範の <code>trigger:</code>，<code>until:</code>，<code>content:</code>，
+<code>counts_as:</code> 規則の <code>when:</code> と <code>if:</code>，委任の <code>until:</code>，<code>assume:</code> と <code>guarantee:</code> の項目である。
+契約インスタンスは，その当事者の添字変数を束縛し（F.2），それ以外は束縛しない。
+束縛するものを持たない変数は，ファイルが説明する値を持たない。F.3によれば，
+そのような変数を持つ事象や権能は集合のすべての要素について成り立つことになり，
+そのような変数を持つ述語は，どのアクターも持たない量を読むことになる。
+限量子がその変数を束縛することは，その述語を有効にする。処理系がその述語を評価できるか
+どうかは，別の問題である（G.13）。</p>
+</li>
+<li class="">
+<p><strong>G-19.</strong> 処理系は，強制される契約において，<code>counts_as:</code> 規則が <code>if:</code> のもとで作る
+制度的事象が，禁止の <code>trigger:</code> または許可の <code>until:</code> であるとき，警告することが望ましい。
+その規則の <code>when:</code> がメッセージであり，<code>if:</code> が未定義である間にそのメッセージが届くと，
+事象は作られず，境界は止めない（G.5の「データの欠落」）。</p>
+</li>
 </ul>
 <p>「しなければならない」の規則はエラーであり，「望ましい」の規則は警告であって，ファイルは
 有効のままである。付録FのN-1からN-12は変わらず適用される。</p>
@@ -406,7 +612,8 @@ nullまたは空の <code>enforcement:</code> は有効である。</li>
 <li class=""><code>instances</code>（省略可能）: すべての強制される契約の，動作中の<strong>すべての</strong>インスタンス。
 項目のない契約には，動作中のインスタンスがない。このフィールドがないとき，方針は，
 各強制される契約に，束縛された添字も派生インスタンスもない動作中のインスタンスが1つあると
-仮定する。インスタンスごとに，<code>bindings</code> は添字の名前を整数に対応付ける。<code>in_force</code> は，
+仮定する。そのとき，添字に依存する照合は不明である（G.4。ランタイムが作るインスタンスとの
+関係はG.5）。インスタンスごとに，<code>bindings</code> は添字の名前を整数に対応付ける。<code>in_force</code> は，
 静的（後述）でない各規範の <code>id</code> を <code>true</code> または <code>false</code> に対応付け，項目がなければ
 不明である。<code>derived</code> は，ランタイムがG.7によって有効と認めた派生インスタンスを，
 その連鎖とともに列挙する。</li>
@@ -430,12 +637,13 @@ nullまたは空の <code>enforcement:</code> は有効である。</li>
 それ以外の理由では空である。</li>
 <li class=""><code>provenance</code>: 適用される派生インスタンスの連鎖。その規範の順，次に入力の順に，
 重複なしで並べる。元の許可だけが適用されたときは空である。</li>
-<li class=""><code>escalate_to</code>: <code>escalate</code> の場合の承認者。具体的なアクターで表す。
-それ以外は <code>null</code>。</li>
+<li class=""><code>escalate_to</code>: <code>escalate</code> の場合と，それを保つ終結記録（G.8）の場合の承認者。
+具体的なアクターで表す。それ以外は <code>null</code>。</li>
 <li class=""><code>timeout</code>（ミリ秒），<code>fallback</code>（テキストとしてのメッセージ事象），
 <code>notify</code>（アクター参照）は，理由が <code>prohibition</code> であるときは常に，<code>escalate</code> だけでなく
 <code>deny</code> についても，根拠から，重複なしで，宣言の順に埋める。それ以外のすべての理由では，
-<code>null</code>，<code>[]</code>，<code>[]</code> である。</li>
+<code>null</code>，<code>[]</code>，<code>[]</code> である。ただし，理由が <code>rejected</code>，<code>expired</code>，<code>cancelled</code> のいずれかである
+終結記録は，その保留の <code>fallback</code> と <code>notify</code> を保つ（G.8）。</li>
 </ul>
 <p>規範は，次のとき<strong>静的</strong>である。内容が <code>message_event</code> である許可または禁止であり，
 <code>trigger:</code>，<code>until:</code>，<code>deadline:</code> を持たず，どの権能も <code>effects:</code> でそれを名指さず，
@@ -506,8 +714,9 @@ OPERATOR → PLANNER → SUMMARIZER を持つ派生インスタンスを <code>S
 承認者 <code>OPERATOR</code> と期限09:13:00を持つ保留 <code>h-1</code> が作られる。09:03:40にオペレータが
 <code>OPERATOR -> PLANNER : approve("h-1")</code> を送る。これは，既定値によって許される
 通常のメッセージである。その観測の段階1の後，<code>OPERATOR</code> が行った事象 <code>approval</code> が
-保留のid <code>h-1</code> を運び，保留は <code>approved</code> になる。段階6の後，再検査は，宣言されたツール，
-動作中のインスタンスを確認し，根拠以外の禁止がないことを確認する。そのため，保留された
+保留のid <code>h-1</code> を運び，保留は <code>approved</code> になる。段階6の後，メッセージをもう一度決定する。
+ツールは宣言されており，根拠のインスタンスは動作中であり，根拠以外に適用される禁止はなく，
+この呼び出しを統治する他の強制される契約もない。そのため，保留された
 メッセージは，時刻印09:03:40を持つ次の観測になる。これは <code>no_delete</code> の内容が
 起こったことにはならず，<code>no_delete</code> は <code>active</code> のままである。オペレータが <code>reject("h-1")</code> を
 送った場合，または09:13:00まで何も送らなかった場合，終結記録は，理由 <code>rejected</code> の <code>deny</code>，
@@ -542,15 +751,164 @@ OPERATOR → PLANNER → SUMMARIZER を持つ派生インスタンスを <code>S
 <code>on_denied_*</code>）は，ファイルが <code>agents: 0.1</code> を宣言するときにだけ存在する。
 <code>norms: 0.1</code> だけを宣言するファイルは，F.9のIRとちょうど同じIRを持つ。</p>
 <p><strong>リファレンス実装。</strong> <code>cadl</code> 0.3.20は，agents 0.1を次のように実装する。
-4つの新しいキーを構文解析し，<code>cadl check</code> でG-1からG-16を適用し（「望ましい」は警告とする），
+4つの新しいキーを構文解析し，<code>cadl check</code> でG-1からG-16を適用し（「望ましい」は警告とする。G-17からG-19は，0.3.21の次の
+リリースから適用する），
 各ブロックを上のIRへ変換する。単なる数値で与えた <code>timeout:</code> は秒として読む。これは，
 <a class="" href=/cadl-spec/ja/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>が
 期限について述べる寛容な形式である。<code>cadl agents-decide</code> は，G.10の方針の入力に対して
-G.5の決定関数を実装する。これは状態を持たない。保留，解放，期限切れ，付与，取消しは
-実装しておらず，有効な派生インスタンスは入力を通じて与える。
+G.5の決定関数を実装する。これは状態を持たない。効力のフラグと有効な派生インスタンスは，
+入力を通じて与える。
 <code>cadl codegen -t agent-rego</code> は，完全な結果を返すRegoの方針を出力し，
-<code>-t agent-cedar</code> は，静的な規範に対するCedarの方針を，付随する表とともに出力する。
-監査記録（G.8）を作るコマンドはない。</p>
+<code>-t agent-cedar</code> は，静的な規範に対するCedarの方針を，付随する表とともに出力する。</p>
+<p><strong>ランタイム。</strong> <code>cadl</code> 0.3.22は，G.5からG.8のリファレンスランタイムである
+<code>cadl agents-run FILE --trace TRACE [--audit OUT.jsonl]</code> を追加する。これは決定的で
+オフラインである。記録済みのメッセージの列を，ファイルのすべての強制される契約にわたる
+1つの判定点に通して再生する。時計はトレースの時刻だけである。メッセージごとに，効力のフラグを
+<code>cadl norms-eval</code> の判定エンジン（F.10）から，有効な派生インスタンスをそれまでに観測した
+付与と取消しから，動作中の契約インスタンスをトレースから得る。それらからG.10の方針の入力を
+組み立て，<code>cadl agents-decide</code> の決定関数を呼ぶ。次に，G.5のとおりに決定を適用し，保留と
+派生インスタンスを保持し（G.6，G.7），承認されたメッセージを解放する前にもう一度決定し，
+G.8の監査記録と事象記録を書く。<code>--audit</code> を与えたときは，
+記録をJSON Linesとして出力する。保留のidは，作られた順に <code>h-1</code>，<code>h-2</code>，…である。</p>
+<p>トレースは <code>cadl norms-eval</code> のトレース（<code>t</code>，<code>bindings</code>，<code>request</code>，<code>values</code>，<code>messages</code>，
+<code>state</code>，<code>amend</code>，<code>end</code> を持つJSON Lines）であり，判定点の全体について読む。キーを2つ追加する。
+<code>epoch</code> は，<code>t = 0</code> の時刻をISO 8601の時刻印で与え，記録の時刻を時刻印にする。<code>instances</code> は，
+ホストが作り，終わらせる契約インスタンスを，その束縛とともに与える。どのインスタンスも，
+その契約の当事者の添字変数を束縛しなければならない。ホストのない契約の唯一のインスタンスは，
+先頭行の <code>bindings</code> によって束縛する。それぞれの値は，当事者が名指す集合の要素の添字で
+なければならない。そうでなければ，契約，インスタンス，変数，値をメッセージに示して，
+トレースを拒否する。どの当事者も持たない変数の束縛は，警告を出して無視する。
+値は，当事者の集合だけでなく，契約の中でその変数が添字として用いられるすべての宣言済みの
+集合の要素の添字でなければならない。先頭行のキー <code>quantities</code> は，実行の量の名前（F.5）を
+与える。そのときは，ちょうどそれらの名前が，最初から，すべてのインスタンスについて，量である。
+このキーがなければ，ランタイムは，名前に値を与える最初の行から，その名前を量として扱う。
+これにより，どの決定も後の行に依存しない（G.5）。それまでに値を持たない裸の名前は，
+記号的な値である。これは，同じ行に対する <code>cadl norms-eval</code> の判定と，名前が最初の値を
+得るより前について異なることがある。述語が用いる名前が，メッセージを決定した後で
+最初の値を得たとき，ランタイムは警告を出す。インスタンスの終了より後のものは，
+そのインスタンスに影響しない。どの契約がホストの作るインスタンスを持つかも，同じく先頭行で
+決まる。先頭行が <code>instances</code> で名指す契約，または，最初のインスタンスが後で作られる場合に
+キー <code>host_instances</code> に挙げる契約は，トレースが作るインスタンスを持ち，それより前には
+インスタンスを持たない。それ以外の強制される契約は，最初から唯一のインスタンスを持ち，
+そのインスタンスを作る後の行は，トレースの誤りである。データの欠落によってフラグが不明で
+ある間にメッセージを決定したとき（G.5），ランタイムは，規範ごとに1回，値を持たない量を
+示して警告を出す。したがって，そのような量が最初の値を持つ前に送られたメッセージは，
+拒否またはエスカレーションされる。それを避けるには，トレースの先頭行で初期値を与える。
+委任可能な許可の <code>until:</code> が未定義である間に送られた付与は，その許可が効力を持つとは
+わからないため，理由 <code>no_authority</code> の <code>unauthorised_grant</code> として記録され，送り直す必要がある。
+データの欠落については，2つの限界が残る。未定義の <code>if:</code> のもとで止める側の事象を作るはずの
+メッセージは，何も作らない（G.5，G-19）。ランタイムは，規則，事象，量を示して警告を出す。
+また，この規則は義務を経る場合には及ばない。義務の述語の <code>trigger:</code> が未定義である間，
+義務は発動されず，したがって違反にならず，その <code>reparation:</code> である禁止は生じない。1つの行は次の順に処理する。
+期限がその行の時刻より前の保留が期限切れになる。インスタンスを作る。行の時刻と値を，
+メッセージなしで，改正とともに観測する（G.5）。各メッセージを決定し，許可されたメッセージは
+1つの観測になる。ライフサイクル状態の変更とインスタンスの終了は，最後の観測になる。
+インスタンスの終了より後のメッセージも，決定し，記録する。</p>
+<p>次の3点は実装の読み方であり，本付録の規則ではない。改正は，2つの版で定義が異なる
+強制される契約に適用し，強制される契約を追加することも削除することもできない。違反の後も，
+禁止の期間の時計は，違反の前と同じく（F.5），禁止が停止されている間は止まる。判定 <code>excused</code> に
+関して，メッセージが義務の内容に一致するかどうかは，境界と同じく，送信者，受信者，名前で調べる。</p>
+<p>既知の限界。ランタイムはプロトコルに接続していない。トレースを再生するだけで，エージェントも
+ツールも実行しない。ログを後からの変更に対して保護しない。ログは，規範の効力のフラグの変化の
+記録を持たない（G.8）。<code>to:</code> の改正の後，派生インスタンスが <code>active</code> であるがもはや有効でない
+保持者には，その許可を再び付与できない。その付与は，条件5により何もしない
+（<code>holder_exists</code>）。トレースの時刻は，絶対値が2<sup>53</sup>以下の有限の数で与える。
+<code>epoch</code> があるときは，すべての時刻と保留のすべての期限が，ISO 8601の時刻印で表せる時点で
+なければならない。後の行のトレースの誤りは，何かを表示したり書いたりする前に報告するが，
+それより前の行はすでにメモリ上で決定している。監査ファイルは，トレースの全体を再生したときに
+だけ書く。ランタイムの関数は，
+<code>cadl check</code> のエラーがあるファイルと，当事者の束縛を持たないインスタンスを拒否する。
+テストのためのスイッチが，その両方を止める。不明な発生の解決（G.5）に到達するのは，
+そのときだけである。決定関数 <code>cadl agents-decide</code> は，引き続き束縛のないインスタンスを
+受け付け，その一致を不明として扱う（G.4）。ランタイムは，<code>cadl norms-eval</code> と同じく，
+限量子またはワイルドカード参照（<code>A[*]</code>）を含む述語を評価しない。<code>trigger:</code>，<code>until:</code>，
+または <code>content:</code> がそのような述語である規範は判定されず，その効力のフラグは実行の全体で
+不明である。G.5により，そのような禁止は常に適用され，そのような許可は決して適用されない。
+フェイルクローズではあるが，作成者が期待するものではないかもしれない。</p>
+<p>テストは，ランタイムの各段階を，ランタイムが計算した状態を与えて決定関数で再実行し，
+OPA 1.22.3のもとで生成したRegoの方針でも再実行する。手で書いた9つのシナリオの81個の決定
+（G.12の3つの呼び出し，却下，タイムアウト，トリガから <code>until:</code> までの間の禁止，深さの制限を
+持つ委任，束縛された添字とホストが作るインスタンスを持つ2つの契約）と，11個のファイルに対して
+生成した26個のトレースの7 800個の決定について，両者の結果は一致した。生成したトレースは，
+束縛の異なるホストが作るインスタンス，宣言された集合の外の送信者と未宣言の送信者，
+2つの契約の一方だけに根拠を持つ保留，保留から承認までの間の取消し，インスタンスの終了，
+改正を含む。それらのトレースの中のすべての解放（176件，うち拒否15件。無作為な改正のもとで
+さらに13件，うち拒否8件）を，記録した方針の入力から，G.6の規則に照らして検査した。
+レビュー担当者がリファレンス実装のコードを使わずに付録の文面から書いた，G.4からG.7とF.3の
+第2のモデルは，7つのファイルに対するさらに108個のトレースについて，同じ8 102個の決定の記録と
+終結記録を与えた。そのうち60個は，すべての添字を束縛したトレースであり，<code>cadl agents-run</code> と
+同じように実行した。48個は，何も束縛しないインスタンスを持つトレース，または <code>cadl check</code> が
+G-17とG-18によって拒否する2つのファイルのトレースであり，テストのためのスイッチを使って
+実行した。このモデルは，権能も義務も持たない。権能と義務については，2つのファイルに対して
+生成した，200個のメッセージからなる60個のトレースが，束縛がなければ，権能が行使されず，
+制度的事象が作られず，義務が履行されないこと，束縛があれば，束縛された要素だけがそれらを
+行うことを検査する。シナリオのテストが
+期待する記録は，ランタイムを実行する前に本付録の文面から導いたものであり，ランタイムは
+そのとおりの記録を出力した。</p>
+<p>ランタイムの最初の版の独立したレビューは，これらのテストが示さなかった欠陥を，実装と文面の
+両方に見つけた。そのすべてが，効果を生じるべきでないメッセージに効果を生じさせるものであり，
+すべて修正した。保留の根拠を，契約インスタンスごとではなく契約ごとに保持していたため，
+承認が，後から作られたインスタンスにおける同じ禁止にも及んでいた（G.6）。解放される
+メッセージの再検査が新しい禁止だけを調べていたため，たとえば取消しの後で，統治する別の契約が
+もはや許さないメッセージが解放されていた（G.6。文面は「それ以外は再検査しない」としていた）。
+<code>trigger:</code>，<code>until:</code>，<code>counts_as:</code> 規則の中の範囲付きのアクター参照が，その名前のすべての
+アクターに一致し，<code>A[*]</code> が宣言された集合の外のアクターに一致していた。これは，0.3.20以来の
+<code>cadl norms-eval</code> の欠陥である（F.3，F.10）。インスタンスが，その契約が統治しないメッセージを
+観測していた（G.5）。生成したトレースも，欠陥を1つ示していた。同時に期限切れになる保留を，
+期限の順ではなく作られた順に閉じていた。</p>
+<p>2回目のレビューは，これらの修正を確認したうえで，統治される観測の規則が開いた穴を見つけた。
+強制される契約のメッセージ事象のうち，当事者でないアクターを名指すものは決して起こらないため，
+そのようなアクターによって発動される禁止は決して効力を持たなかった。G-17は，今はそれを
+エラーにする。契約インスタンスが束縛しない添字変数は，<code>trigger:</code>，<code>until:</code>，<code>counts_as:</code> 規則で
+集合のすべての要素に一致したため，どの要素も，許可を発動させ，禁止を解くことができた。
+G-18はそれを排除し，ランタイムは不明な発生をフェイルクローズで解決する（G.5）。
+上限が記号である集合は，決定関数，Regoの方針，<code>cadl norms-eval</code> において，下限より小さい
+添字を要素として扱っていた。</p>
+<p>3回目のレビューは，束縛されない添字が，第2のモデルが持たない権能と義務については，
+まだ通り道になっていることを見つけた。負担者が <code>SUP[k]</code> で <code>k</code> の束縛がないとき，<code>SUP</code> の
+どの要素も，禁止を停止する権能や許可を発動する権能を行使でき，どの要素へのメッセージも，
+修復が禁止である義務を履行させていた。原因はどの場合も同じで，添字が束縛されないまま動作する
+契約インスタンスである。今は，これを根本から取り除いている。G-18は強制される契約のすべての
+添字変数を対象とし，ランタイムは当事者の添字を束縛しないインスタンスを拒否し，その関数は
+エラーのあるファイルを拒否する。G.5のフェイルクローズの解決は完全なものになり，第2の防御線
+として残る。G-17は，宣言した集合の外のリテラルの添字も拒否し，覆うのは当事者の1つの参照で
+あることを述べる。</p>
+<p>4回目のレビューは，同じ原因を，規則がまだ名指していなかった場所にもう一度見つけた。
+述語の中の添字変数である。<code>trigger:</code> が <code>W[j].alarm == true</code> で，当事者 <code>W[j]</code> を持たない
+禁止は，検査を通り，決して効力を持たなかった。G-18は，今は，限量子が束縛する変数を除いて，
+強制される契約のすべての述語を対象とし，ランタイムは，そのような述語を不明な発生として解決する。
+このレビューは，さらに2つのことを見つけた。ランタイムがインスタンスの量の名前をトレースの
+全体から取っていたため，インスタンスの終了より後に与えた値が，その判定を違反から履行に
+変えることがあった。また，宣言した集合の外の束縛を受け付けていたため，<code>W[i]</code> の禁止が
+誰にも適用されなかった。どちらも修正した。</p>
+<p>5回目のレビューは，決定がトレースの後の行に依存していたことを見つけた。ランタイムは，
+最初の版から量の名前をトレースの全体から取っており，4回目のレビューの後の修正は，
+それをインスタンスの行に狭めただけであった。後の行が名前に与えた値が，それより前の述語がその名前を読む読み方を
+変え，それとともに，前の決定を拒否から許可に変えていた。ランタイムは，今は因果的に決定する
+（G.5）。名前はトレースとともに与えるか，名前は最初の値とともに量になる。テストは，
+生成したトレースのすべての接頭部分について，接頭部分に対する決定が，トレースの全体に対する
+最初の決定と等しいことを検査する。この不変条件が欠けていた。G-18は，添字の式の中の
+添字変数と，メッセージ事象の引数の中の添字変数も見落としていた。今は，G-18を，束縛するものに
+よって述べており，検査は契約のすべての式をたどる。</p>
+<p>6回目のレビューは，同じ種類の先読みをもう1つ見つけた。契約がホストの作るインスタンスを
+持つかどうかをトレースの全体から読んでいたため，後の行の <code>instances</code> の項目が，最初からの
+唯一のインスタンスを取り除き，前の拒否を許可に変えていた。今は，これは先頭行で決まる。
+このレビューは，G.5のデータの欠落の規則にもつながった。値がないために <code>trigger:</code> を評価
+できない禁止は効力を持たず，判定点が持っていないデータに基づいてメッセージが許可されていた。</p>
+<p>7回目のレビューは，この規則が規範自身の述語だけを見ていたことを見つけた。<code>trigger:</code> が，
+規則が述語から作る制度的事象である禁止は，その述語が値を持たない間，効力を持たなかった。
+G.5の規則は，今は，そのような事象を経る場合にも及ぶ。G-19と上の2つの限界は，
+この規則が及ばないものを述べる。</p>
+<p>ランタイムを書き，レビューする過程で，agents 0.1の文面に次の不足が見つかった。本付録の
+この改訂は，これらを補う。メッセージを決定する状態が，最後の観測より後に過ぎた期限を
+含んでおらず，許可されたメッセージをどの契約インスタンスが観測するかを述べていなかった
+（G.5）。保留の根拠，<code>approval</code> を作る必要のある契約インスタンス，解放のときの決定，
+同時に期限切れになる保留の順序を，述べていなかったか，述べ方が弱すぎた（G.6）。
+委任の <code>until:</code> が項目を終わらせるのか，そのインスタンスを終わらせるのかが定まっていなかった
+（G.7）。G.12が終結記録の中に送信者が見いだすとする <code>fallback</code> を，G.10が除外していた。
+付与，取消し，権限のない行為，その他の状態の変化の記録には形式がなかった（G.8）。
+契約が，その事象が名指すメッセージを統治すること，またはその事象が用いる添字を束縛することを
+求める規則がなかった（G-17とG-18。G.9の末尾に追加した。それより前の規則は変更しない）。</p>
 <p>生成した方針は，OPA 1.22.3とCedar CLI 4.14.1で実行し，<code>cadl agents-decide</code> と比較した。
 OPAでは，20 400個の入力について，結果の全体が一致した（強制される2つの契約，アクターの集合，
 契約インスタンス，有効フラグ，委任の連鎖を持つファイルの3つの変種）。Cedarでは，5 640個の
@@ -567,7 +925,9 @@ OPAでは，20 400個の入力について，結果の全体が一致した（�
 強制されず，その規範は<a class="" href=/cadl-spec/ja/docs/spec/appendix-f-norms/>付録F</a>の意味をそのまま保つ。
 強制される契約について，本付録はF.5に次の追加を行い，それ以外の変更は行わない。
 ホストのない契約のインスタンスは，判定点の開始時から存在する。拒否または保留された
-メッセージは観測にならない。許可と禁止は，効力を持つかどうかのフラグを持つ。
+メッセージは観測にならない。強制される契約のインスタンスは，その契約が統治するメッセージだけを
+観測し，束縛されていない添字に依存する発生は不明である。効力のフラグは，それが依存する量が
+値を持たない間，不明である。F.5の状態は変えない。決定の時刻は，メッセージを決定する前に観測する。許可と禁止は，効力を持つかどうかのフラグを持つ。
 内容を契約自身が拒否または保留した義務は <code>excused</code> になる（以上はすべてG.5）。
 <code>approval</code> と <code>rejection</code> は保留のidを運び，段階の順序を拡張し，解放されたメッセージは
 その根拠に違反しない（G.6）。許可は派生インスタンスを持つ（G.7）。</p>

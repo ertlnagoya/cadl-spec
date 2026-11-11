@@ -1,4 +1,4 @@
-<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-g-agents" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix G: Agent Governance Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix G: Agent Governance Extension | CADL"/><meta data-rh=true name=description content="Agent governance extension (agents 0.1): binding of actors to agents and tool servers, a deterministic allow / deny / escalate decision computed from the norms of a contract at the message boundary, escalation to a human after a denial, delegation of permissions with a provenance chain, audit records, and boundary-policy code generation."/><meta data-rh=true property=og:description content="Agent governance extension (agents 0.1): binding of actors to agents and tool servers, a deterministic allow / deny / escalate decision computed from the norms of a contract at the message boundary, escalation to a human after a denial, delegation of permissions with a provenance chain, audit records, and boundary-policy code generation."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents","name":"Appendix G: Agent Governance Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.255ca780.css /><script src=/cadl-spec/assets/js/runtime~main.b7318e32.js defer></script><script src=/cadl-spec/assets/js/main.74047eaa.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-g-agents" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix G: Agent Governance Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix G: Agent Governance Extension | CADL"/><meta data-rh=true name=description content="Agent governance extension (agents 0.1): binding of actors to agents and tool servers, a deterministic allow / deny / escalate decision computed from the norms of a contract at the message boundary, escalation to a human after a denial, delegation of permissions with a provenance chain, audit records, and boundary-policy code generation."/><meta data-rh=true property=og:description content="Agent governance extension (agents 0.1): binding of actors to agents and tool servers, a deterministic allow / deny / escalate decision computed from the norms of a contract at the message boundary, escalation to a human after a denial, delegation of permissions with a provenance chain, audit records, and boundary-policy code generation."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents","name":"Appendix G: Agent Governance Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.255ca780.css /><script src=/cadl-spec/assets/js/runtime~main.725d74df.js defer></script><script src=/cadl-spec/assets/js/main.74047eaa.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-689")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label="Skip to main content"><a class=skipToContent_fXgn href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/docs/quickstart/>Quick Start</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/docs/spec/intro/>Specification</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/textbook/>Textbook</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/handson/>Hands-on</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_nlXk><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>English</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class=dropdown__link lang=ja>日本語</a></ul></div><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_Bca1><div class="navbar__search searchBarContainer_NW3z" dir=ltr><input placeholder=Search aria-label=Search class="navbar__search-input searchInput_YFbd" value="" /><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class=docsWrapper_hBAB><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type=button></button><div class=docRoot_UBD9><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class=sidebarViewport_aRkj><div class=sidebar_njMd><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/intro/><span title="CADL Specification v0.3" class=linkLabel_WmDU>CADL Specification v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/introduction/><span title="1. Introduction" class=linkLabel_WmDU>1. Introduction</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/objectives/><span title="2. Language Objectives" class=linkLabel_WmDU>2. Language Objectives</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/comparison/><span title="3. Comparison with Existing Languages" class=linkLabel_WmDU>3. Comparison with Existing Languages</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/requirements/><span title="4. Requirements Specification" class=linkLabel_WmDU>4. Requirements Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/language-spec/><span title="5. Language Specification" class=linkLabel_WmDU>5. Language Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/design/><span title="6. Design" class=linkLabel_WmDU>6. Design</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/examples/><span title="7. Domain-Specific Description Examples" class=linkLabel_WmDU>7. Domain-Specific Description Examples</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/use-cases/><span title="8. Use Cases and Novelty Analysis" class=linkLabel_WmDU>8. Use Cases and Novelty Analysis</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/research/><span title="9. Research Directions and Open Challenges" class=linkLabel_WmDU>9. Research Directions and Open Challenges</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/roadmap/><span title="10. Implementation Roadmap" class=linkLabel_WmDU>10. Implementation Roadmap</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-a-syntax/><span title="Appendix A: Syntax Reference (EBNF)" class=linkLabel_WmDU>Appendix A: Syntax Reference (EBNF)</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-b-references/><span title="Appendix B: References" class=linkLabel_WmDU>Appendix B: References</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-c-motivation/><span title="Appendix C: Motivation Extension" class=linkLabel_WmDU>Appendix C: Motivation Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-d-codegen/><span title="Appendix D: Codegen Target Catalog" class=linkLabel_WmDU>Appendix D: Codegen Target Catalog</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><span title="Appendix E: SoS-DSL Extension" class=linkLabel_WmDU>Appendix E: SoS-DSL Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-f-norms/><span title="Appendix F: Norms Extension" class=linkLabel_WmDU>Appendix F: Norms Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/docs/spec/appendix-g-agents/><span title="Appendix G: Agent Governance Extension" class=linkLabel_WmDU>Appendix G: Agent Governance Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-h-stochastic/><span title="Appendix H: Stochastic Model Extension" class=linkLabel_WmDU>Appendix H: Stochastic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/glossary/><span title=Glossary class=linkLabel_WmDU>Glossary</span></a></ul></nav></div></div></aside><main class=docMainContainer_TBSr><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_VOVn"><div class=docItemContainer_Djhp><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/cadl-spec/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_YNFT><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Appendix G: Agent Governance Extension</span></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type=button class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Appendix G — Agent Governance Extension (agents 0.1)</h1></header>
@@ -67,7 +67,7 @@ of a message are taken as given. At the boundary it considers only
 norms whose content is a message, and only the sender, the receiver,
 and the name of a message, not its arguments.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g2-concepts>G.2 Concepts<a href=#g2-concepts class=hash-link aria-label="Direct link to G.2 Concepts" title="Direct link to G.2 Concepts" translate=no>​</a></h2>
-<table><thead><tr><th>Concept<th>Meaning in agents 0.1<tbody><tr><td><strong>Tool call</strong><td>A message whose receiver is an actor of kind <code>tool_server</code> and whose name is one of the <code>tools:</code> of that actor.<tr><td><strong>Enforced contract</strong><td>A contract that has the key <code>enforcement:</code>. Only enforced contracts take part in decisions.<tr><td><strong>Enforcement point</strong><td>The one logical place where the decision for a message is made, over all enforced contracts of the file.<tr><td><strong>Decision</strong><td><code>allow</code>, <code>deny</code>, or <code>escalate</code>, computed for one message by the decision function of G.5 before the message takes effect.<tr><td><strong>Ground</strong><td>A prohibition that applies to a message in the decision function.<tr><td><strong>Hold</strong><td>The record of a message whose decision is <code>escalate</code>; the message is kept back until the hold reaches a final state (G.6).<tr><td><strong>Derived instance</strong><td>A permission held by a delegate (G.7), with its <strong>provenance chain</strong>: the actors from the bearer of the original permission to the holder, one link per delegation.<tr><td><strong>Audit record</strong><td>What an enforcement point records for one decision (G.8).</table>
+<table><thead><tr><th>Concept<th>Meaning in agents 0.1<tbody><tr><td><strong>Tool call</strong><td>A message whose receiver is an actor of kind <code>tool_server</code> and whose name is one of the <code>tools:</code> of that actor.<tr><td><strong>Enforced contract</strong><td>A contract that has the key <code>enforcement:</code>. Only enforced contracts take part in decisions.<tr><td><strong>Enforcement point</strong><td>The one logical place where the decision for a message is made, over all enforced contracts of the file.<tr><td><strong>Decision</strong><td><code>allow</code>, <code>deny</code>, or <code>escalate</code>, computed for one message by the decision function of G.5 before the message takes effect.<tr><td><strong>Ground</strong><td>A prohibition that applies to a message in the decision function. For a hold, grounds are counted per contract instance: a <strong>ground of a hold</strong> is a prohibition in one contract instance in which it applies (G.6).<tr><td><strong>Hold</strong><td>The record of a message whose decision is <code>escalate</code>; the message is kept back until the hold reaches a final state (G.6).<tr><td><strong>Derived instance</strong><td>A permission held by a delegate (G.7), with its <strong>provenance chain</strong>: the actors from the bearer of the original permission to the holder, one link per delegation.<tr><td><strong>Audit record</strong><td>What an enforcement point records for one decision (G.8).</table>
 <p>Norm, norm instance, contract instance, institutional event, and
 observation have the meaning of <a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>Appendix F</a>.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g3-syntax-ebnf-additions-to-a3-a4-and-f3>G.3 Syntax (EBNF additions to A.3, A.4, and F.3)<a href=#g3-syntax-ebnf-additions-to-a3-a4-and-f3 class=hash-link aria-label="Direct link to G.3 Syntax (EBNF additions to A.3, A.4, and F.3)" title="Direct link to G.3 Syntax (EBNF additions to A.3, A.4, and F.3)" translate=no>​</a></h2>
@@ -126,6 +126,15 @@ conjunction: false when any component is false, otherwise unknown when
 any is unknown, otherwise true. An actor reference matches a concrete
 actor as follows:</p>
 <table><thead><tr><th>Reference<th>Matches<tbody><tr><td><code>A</code><td>the actor <code>A</code>, declared without index; never an indexed member <code>A[k]</code><tr><td><code>A[3]</code>, <code>A[*]</code>, <code>A[1..3]</code><td><code>A[3]</code>; every member of the set <code>A</code>; <code>A[1]</code> to <code>A[3]</code><tr><td><code>A[1..N]</code> (symbolic bound)<td>every member of the set <code>A</code>; the bounds are not compared<tr><td><code>A[i]</code><td>false when the concrete actor is not a member of <code>A</code>. Otherwise: exactly <code>A[v]</code> when the contract instance binds <code>i</code> to <code>v</code>, and <strong>unknown</strong> when it binds no value to <code>i</code>.</table>
+<p>The table is that of <a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>F.3</a>, which the norms
+engine uses for the events of a trace, with two differences. First,
+F.3 compares the arguments written in a message event with those of the
+message, and the boundary does not consider arguments. Second, where
+the contract instance binds no value to <code>i</code>, F.3 lets <code>A[i]</code> match
+every member of the set, and at the boundary the match is unknown and
+is resolved fail-closed (G.5). The second difference also holds for the
+events of an enforced contract that the norms engine evaluates, and for
+the performer of a power (G.5, "Unknown occurrences").</p>
 <p><code>A[k]</code> is a <strong>member</strong> of the set <code>A</code> when <code>A</code> is declared with a range
 and <code>k</code> lies within its integer bounds (a set declared as <code>A[1..3]</code>
 does not contain <code>A[7]</code>); when the declared upper bound is symbolic,
@@ -156,7 +165,12 @@ sender and its receiver each match a party.</li>
 <p>A norm still applies only to its bearer or to a valid holder (below).
 The enforcement point decides the messages one at a time, in
 the order in which they arrive, each on the state left by all earlier
-observations, and the decision MUST be deterministic.</p>
+observations, and the decision MUST be deterministic. A decision never
+depends on a later observation. This holds also for the reading of a
+bare name in a predicate as a quantity or as a symbolic value (F.5): an
+enforcement point that is given the quantity names uses them from the
+start, and one that is not takes a name as a quantity from the first
+observation on that gives it a value, never earlier.</p>
 <p>Only a permission or a prohibition whose <code>content:</code> is a
 <code>message_event</code> takes part in a decision. One whose content is a
 predicate, a <code>tpredicate</code> with temporal operators, or an institutional
@@ -186,6 +200,67 @@ the holder as sender. The result is unknown when the match is unknown
 or the enforcement point does not have the flag. Unknown is resolved
 <strong>fail-closed</strong>: an unknown prohibition applies, an unknown permission
 does not.</p>
+<p><strong>Missing data.</strong> The enforcement point also does not have the flag
+when it cannot determine it because a quantity has no value yet. This
+concerns the <code>trigger:</code> of a prohibition that is <code>inactive</code> and the
+<code>until:</code> of a permission that is <code>active</code>, in two forms. Directly:
+while that <code>trigger:</code> or <code>until:</code> is a predicate that is undefined
+(F.5), the flag is unknown. Through an institutional event: while it
+is an event that a <code>counts_as:</code> rule creates from a predicate <code>when:</code>,
+and the <code>when:</code> or the <code>if:</code> of such a rule is undefined, the flag is
+unknown; with several rules for the event, as long as one of them is
+undefined. An unknown prohibition applies and an unknown permission
+does not. Nothing is latched: the state of the norm instance and its
+verdict are those of F.5, where an undefined predicate does not occur;
+as soon as the predicates have values, the flag is the one of the
+state again. Two cases need no rule, because F.5 already blocks: an
+undefined <code>trigger:</code> does not activate a permission, and an undefined
+<code>until:</code> does not end a prohibition. A processor SHOULD warn when it
+decides a message on a flag that is unknown for this reason. The
+consequence at the start is intended: a message that arrives before
+the quantities of such a predicate have their first values is denied
+or escalated.</p>
+<p>One case is <strong>not</strong> covered. A rule with a message <code>when:</code> and an
+<code>if:</code> creates its event at the moment of that message or never. When
+the message arrives while the <code>if:</code> is undefined, no event is created
+(F.5); that blocks where the event would let a message through, but
+where the event would bring a prohibition into force or end a
+permission, the boundary does not block, and there is no later moment
+at which the flag could be corrected without inventing a state that
+F.5 does not have. G-19 warns about such a contract, and a processor
+SHOULD warn when it observes such a message.</p>
+<p><strong>Unknown occurrences.</strong> G-18 requires every index variable of an
+enforced contract to be the index of a party, and a contract instance
+binds the indices of its parties (F.2). A processor that creates the
+instances itself MUST refuse an instance of an enforced contract that
+does not bind every index variable of its <code>parties:</code>. So no index is
+unbound in a conforming run. The following rule is a second line of
+defence for a processor that is handed such an instance all the same.
+Where the occurrence of an event of an enforced contract, the value of
+one of its predicates, or the identity of the performer of an act
+depends on an index that the contract instance does not bind, it is
+unknown, and unknown is resolved
+fail-closed by what the occurrence would do: an unknown occurrence
+never has an effect that lets a message through (it does not activate
+or resume a permission, end, suspend, or discharge a prohibition,
+create an institutional event, exercise a power, or fulfil an
+obligation), and it always has the effects that block (it activates a
+prohibition and ends a permission or a derived instance). There is one
+exception to "always blocks": a power is the act of a determined
+party, so a performer who is unknown exercises no power, also when the
+effects of the power would block (activate a prohibition, suspend or
+discharge a permission). The exception cannot arise in a processor that
+refuses instances without bindings. A processor SHOULD warn. Grant and
+revoke messages name no index variable (G-11, G-12) and are never
+unknown.</p>
+<p>The requirement to refuse an instance is on a processor that creates
+contract instances. The policy input of G.10 is a description of
+instances that a caller supplies, and it may describe an instance that
+binds nothing, as it does when the field <code>instances</code> is absent; the
+decision function then takes every match that depends on the index as
+unknown (G.4) and resolves it fail-closed as above. The two do not
+conflict: the decision for such an input is defined, and a conforming
+runtime does not produce such an input.</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id=the-decision-function>The decision function<a href=#the-decision-function class=hash-link aria-label="Direct link to The decision function" title="Direct link to The decision function" translate=no>​</a></h3>
 <p>For a message <code>m</code>, the following steps give a <strong>result</strong> (fields in
 G.10), in this order.</p>
@@ -241,7 +316,20 @@ stop them all. <code>default: deny</code> closes the policy for them too.</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id=effect-of-a-decision-on-the-trace>Effect of a decision on the trace<a href=#effect-of-a-decision-on-the-trace class=hash-link aria-label="Direct link to Effect of a decision on the trace" title="Direct link to Effect of a decision on the trace" translate=no>​</a></h3>
 <ul>
 <li class=""><strong><code>allow</code>.</strong> The message takes effect and becomes an observation,
-with the time of the decision as its time stamp.</li>
+with the time of the decision as its time stamp, for the instances of
+the enforced contracts that govern it. An instance of an enforced
+contract observes a message only when its contract governs the
+message: a message that no enforced contract governs (step 1) is an
+observation for no enforced contract, and a message that one enforced
+contract governs is no observation for another that does not. So a
+message cannot trigger, end, or fulfil a norm of an enforced contract,
+or create an institutional event in it, without having been decided by
+that contract. It follows that a message event of an enforced
+contract whose sender or receiver is not a party could never occur:
+a prohibition with such a <code>trigger:</code> would never come into force,
+and a permission with such an <code>until:</code> would never end. G-17
+therefore makes such an event an error. Contracts that are not
+enforced keep F.5 unchanged.</li>
 <li class=""><strong><code>deny</code>.</strong> The message does not take effect and is <strong>not an
 observation</strong>: it triggers no norm, creates no institutional event,
 fires no lifecycle transition, fulfils no obligation, and violates no
@@ -251,7 +339,12 @@ sender.</li>
 observation.</li>
 </ul>
 <p>The deadlines of Appendix F keep running while a message is denied or
-held. A denied <code>trigger:</code> message does not activate its norm. As an
+held. Before a message is decided, the enforcement point observes the
+time of the decision: an observation that carries no message, at which
+F.5 settles every deadline and every window that has passed. A decision
+therefore never rests on a prohibition whose window closed, or on an
+obligation whose deadline passed, before the time of the decision. A
+denied <code>trigger:</code> message does not activate its norm. As an
 addition to the verdicts of F.5, a <code>violated</code> obligation has the
 verdict <strong><code>excused</code></strong> when, between its activation and the violation, a
 message of its bearer that matches its content was denied with the
@@ -269,10 +362,14 @@ any other message. <code>escalate_to:</code> and <code>timeout:</code> define ho
 <strong>hold</strong> with a <code>hold_id</code> unique within the enforcement point, the
 message, the time of the decision, the grounds, the approver, and a
 deadline (the time of the decision plus the <code>timeout</code> of the result, or
-none). A hold without deadline in a contract instance that never ends
+none). A <strong>ground of a hold</strong> is a prohibition in one contract
+instance in which it applies to the message. The grounds of a hold are
+all of them, over all governing contracts, and their contract instances
+are the <em>contract instances of the grounds</em>. A prohibition that applies
+in two contract instances is two grounds. A hold without deadline in a contract instance that never ends
 is held for ever. How the hold id reaches the approver depends on the
 protocol.</p>
-<table><thead><tr><th>State<th>Entered when<th>Closing record (G.8)<tbody><tr><td><code>held</code><td>the hold is created; the only state that is not final<td>—<tr><td><code>approved</code><td>the approver approves; the message is released<td><code>allow</code>, reason <code>approved</code> (or the denial of the re-check)<tr><td><code>rejected</code><td>the approver rejects<td><code>deny</code>, reason <code>rejected</code><tr><td><code>expired</code><td>the deadline has passed<td><code>deny</code>, reason <code>expired</code>, with the deadline as <code>time</code><tr><td><code>cancelled</code><td>a contract instance of a ground ends, or a contract of a ground is amended<td><code>deny</code>, reason <code>cancelled</code></table>
+<table><thead><tr><th>State<th>Entered when<th>Closing record (G.8)<tbody><tr><td><code>held</code><td>the hold is created; the only state that is not final<td>—<tr><td><code>approved</code><td>the approver approves; the message is released<td><code>allow</code>, reason <code>approved</code> (or the denial of the release)<tr><td><code>rejected</code><td>the approver rejects<td><code>deny</code>, reason <code>rejected</code><tr><td><code>expired</code><td>the deadline has passed<td><code>deny</code>, reason <code>expired</code>, with the deadline as <code>time</code><tr><td><code>cancelled</code><td>a contract instance of a ground ends, or a contract of a ground is amended<td><code>deny</code>, reason <code>cancelled</code></table>
 <p>The approver acts through two institutional events, <code>approval</code> and
 <code>rejection</code>, each created by a <code>counts_as:</code> rule from a message of the
 approver (G-9), for example <code>when: "OPERATOR -> PLANNER : approve"</code>,
@@ -284,31 +381,81 @@ governed and decided by G.5.</p>
 <p>The order of steps within one observation (F.5) is extended:</p>
 <ul>
 <li class=""><strong>After step 1:</strong> an <code>approval</code> (<code>rejection</code>) whose hold id names a
-<code>held</code> hold and whose performer (F.5, item 7) is the approver of that
-hold makes it <code>approved</code> (<code>rejected</code>). Any other <code>approval</code> or
-<code>rejection</code> changes no hold and SHOULD be recorded as unauthorised.
-Then the grants, revocations, and <code>until:</code> events of G.7 are applied.</li>
+<code>held</code> hold, whose performer (F.5, item 7) is the approver of that
+hold, and which was created in a contract instance of a ground of the
+hold makes it <code>approved</code> (<code>rejected</code>). When the hold has several
+contract instances of grounds, one such event is enough; an event
+that one message creates in several contract instances is one event.
+Any other <code>approval</code> or <code>rejection</code> changes no hold and SHOULD be
+recorded as unauthorised. Then the grants, revocations, and <code>until:</code>
+events of G.7 are applied.</li>
 <li class=""><strong>In step 6:</strong> when a contract instance ends, the <code>held</code> holds with a
 ground in it become <code>cancelled</code>, before its norms are settled.</li>
 <li class=""><strong>After step 6:</strong> each hold that became <code>approved</code> at this
 observation is released, in the order of creation.</li>
 </ul>
-<p><strong>Release.</strong> The message is re-checked on the current state. It is
-denied with the reason <code>undeclared_tool</code> if it is now a call of an
-undeclared tool, <code>no_instance</code> if a contract instance of a ground is no
-longer running, and <code>prohibition</code> (with that prohibition in <code>norms</code>) if
-a prohibition outside the grounds of the hold now applies. Nothing else
-is re-checked: the approval stands in for the permission. Otherwise the
-message takes effect as <strong>the immediately following observation, with
+<p><strong>Release.</strong> The message is decided again, on the current state and at
+the time of the approving observation. The approval stands in for the
+permission and for the grounds, and for nothing else:</p>
+<ol>
+<li class="">If the message is now a call of an undeclared tool: <code>deny</code>, reason
+<code>undeclared_tool</code>.</li>
+<li class="">A governing contract that has a ground of the hold denies with the
+reason <code>no_instance</code> when a contract instance of one of its grounds
+is no longer running, and with the reason <code>prohibition</code> when one of
+its prohibitions applies in a contract instance in which it is not a
+ground of the hold (<code>norms</code> lists these prohibitions). This includes
+a prohibition of the grounds that now applies in another contract
+instance, for example one created after the hold. Otherwise the
+contract allows: it tests neither a permission nor its default. This
+is so also when a prohibition of the grounds is no longer in force
+at the time of the approval, for example after its <code>until:</code>: the
+approval stands in for the permission in that contract, and the
+message is released. The reason <code>no_instance</code> arises only when the
+approving observation itself ends that contract instance (step 6);
+an instance that ended earlier has cancelled the hold. The reference
+runtime does not reach it, because there the end of an instance is
+an observation of its own (G.13).</li>
+<li class="">Every other governing contract decides in full by step 3 of G.5 and
+has to allow, by a permission, original or derived and valid now, or
+by its default. A contract that would decide <code>escalate</code> denies, with
+the reason <code>prohibition</code>.</li>
+<li class="">If no contract denies, the message is released. Otherwise the
+release is denied; the result is formed as in step 4 of G.5 from the
+contracts that deny: <code>contracts</code> lists them, the reason is the first
+of <code>no_instance</code>, <code>prohibition</code>, <code>default</code> among them, and for
+<code>prohibition</code> the <code>norms</code>, <code>timeout</code>, <code>fallback</code>, and <code>notify</code> are
+those of G.10. <code>escalate_to</code> is <code>null</code>.</li>
+</ol>
+<p>A denial of the release is final: it creates no hold, and the hold
+stays <code>approved</code>. With these rules a release keeps what G.5 and G.7
+state for every other message: a message governed by two enforced
+contracts is allowed by both, and no actor acts on an authority that
+its originator no longer has. A delegation revoked, a contract instance
+ended, or a contract amended between the hold and the approval in a
+contract without a ground therefore denies the release. If the message
+is released, it
+takes effect as <strong>the immediately following observation, with
 the time stamp of the approving observation</strong>, before any other message
 is decided. As an addition to F.5, item 3, it is not an occurrence of
-the content of the prohibitions among its grounds: an approved
-exception does not violate them. An approval releases one message; a
+the content of a prohibition in a contract instance in which that
+prohibition is a ground of the hold: an approved exception does not
+violate its grounds. An approval releases one message; a
 later message with the same sender, receiver, and name is decided
 again.</p>
+<p><strong>Hold identifiers.</strong> An approval or a rejection names a hold by its
+identifier and by nothing else. An identifier need not be
+unpredictable: what protects a hold is that only its approver can
+close it, through a message that the contract governs, and not the
+secrecy of the identifier. An approver's message that is itself held
+and released later applies to the hold that has the identifier when
+that message is released; if that hold is no longer <code>held</code>, it changes
+nothing and is recorded as unauthorised.</p>
 <p><strong>Expiry.</strong> Before each decision and each observation whose time is
 later than the deadline of a <code>held</code> hold, that hold becomes <code>expired</code>.
-An approval at exactly the deadline is in time.</p>
+Holds that expire together do so in the order of their deadlines, and
+of their creation when the deadlines are equal. An approval at exactly
+the deadline is in time.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g7-delegation-with-provenance>G.7 Delegation with provenance<a href=#g7-delegation-with-provenance class=hash-link aria-label="Direct link to G.7 Delegation with provenance" title="Direct link to G.7 Delegation with provenance" translate=no>​</a></h2>
 <p>An entry of <code>delegations:</code> makes one permission <strong>delegable</strong>: <code>norm:</code>
 names it, <code>to:</code> lists the actors that may hold a derived instance at
@@ -353,7 +500,9 @@ authority and does not transfer it.</p>
 <code>X -> Y : r</code> with the <code>revoke:</code> name of the entry is observed and <code>X</code>
 occurs before <code>Y</code> in the chain of <code>Y</code>: the instance of <code>Y</code> and every
 derived instance in whose chain <code>Y</code> occurs are discharged; (b) the
-<code>until:</code> of the entry occurs, as for the <code>until:</code> of a norm; (c) the
+<code>until:</code> of the entry occurs, as for the <code>until:</code> of a norm: the
+derived instances that are <code>active</code> at that observation are discharged,
+and the entry stays delegable; (c) the
 original permission becomes <code>discharged</code> or the contract instance ends.
 A revoke message that does not satisfy (a) has no effect. A discharged
 instance is not revived; a new grant creates a new one.</p>
@@ -374,91 +523,153 @@ discharged by the amendment, is <code>discharged</code>.</p>
 records append-only. Recording is a recommendation; the format is
 normative. An <strong>audit record</strong> is the result of the decision (G.10)
 with five more fields:</p>
-<table><thead><tr><th>Field<th>Content<tbody><tr><td><code>time</code><td>The time of the decision, on the clock of the trace.<tr><td><code>message</code><td><code>from</code>, <code>to</code>, and <code>name</code>, as in the policy input.<tr><td><code>instances</code><td>The running instances of the governing contracts: contract <code>id</code> and an identifier of the instance.<tr><td><code>hold_id</code><td>For an <code>escalate</code> decision and for the record that closes the hold; otherwise <code>null</code>.<tr><td><code>outcome</code><td>In the record that closes a hold, its final state; otherwise <code>null</code>.</table>
+<table><thead><tr><th>Field<th>Content<tbody><tr><td><code>time</code><td>The time of the decision, on the clock of the trace.<tr><td><code>message</code><td><code>from</code>, <code>to</code>, and <code>name</code>, as in the policy input.<tr><td><code>instances</code><td>The running instances of the governing contracts: contract <code>id</code> and an identifier of the instance. In a closing record: the contract instances of the grounds of the hold, whether they are still running or not.<tr><td><code>hold_id</code><td>For an <code>escalate</code> decision and for the record that closes the hold; otherwise <code>null</code>. The identifier is unique within the enforcement point and need not be unpredictable (G.6).<tr><td><code>outcome</code><td>In the record that closes a hold, its final state; otherwise <code>null</code>.</table>
 <p>An <code>escalate</code> decision gives two records with the same <code>hold_id</code>: one
 when the hold is created and a <strong>closing record</strong> when it reaches a
-final state (table of G.6); the closing record keeps the <code>contracts</code>,
-<code>norms</code>, and <code>escalate_to</code> of the hold, unless the re-check denies.
-Grants, revocations, and acts recorded as
-unauthorised SHOULD be written to the same log.</p>
+final state (table of G.6). The closing record keeps the <code>contracts</code>,
+<code>norms</code>, and <code>escalate_to</code> of the hold; when its reason is <code>rejected</code>,
+<code>expired</code>, or <code>cancelled</code>, it also keeps the <code>fallback</code> and <code>notify</code> of
+the hold, so that the sender finds them in the denial. Its <code>timeout</code> is
+<code>null</code>. When the release is denied (G.6), the closing record has the
+result of that denial instead, and its <code>outcome</code> is <code>approved</code>. The
+<code>time</code> of a closing record is the time of the observation that closed
+the hold, except for <code>expired</code>, where it is the deadline; such a record
+is written when the expiry is found, before the next decision or
+observation, so the times of a log never decrease.</p>
+<p>A denial or an escalation that rests on a flag that is unknown (G.5)
+has the reason <code>prohibition</code> and lists the norm in <code>norms</code>, like any
+other. What distinguishes it is in the policy input of the decision,
+where the flag is absent from <code>in_force</code>, and in the warning of the
+processor. The remedy of the sender differs: for missing data it is to
+wait for the data, not to ask the approver.</p>
+<p>Grants, revocations, and acts recorded as unauthorised SHOULD be
+written to the same log, as <strong>event records</strong>, and so SHOULD every
+other change of the state on which later decisions rest: the end of a
+derived instance for any cause, the start and the end of a contract
+instance, and an amendment. An event record has no result; it has the
+field <code>event</code> in place of <code>decision</code>, and these fields:</p>
+<table><thead><tr><th>Field<th>Content<tbody><tr><td><code>time</code>, <code>message</code><td>As in an audit record: the observation and the message that the event comes from; <code>message</code> is <code>null</code> when there is none.<tr><td><code>event</code><td><code>grant</code>, <code>revoke</code>, <code>delegation_end</code> (a derived instance ended for another cause than a revoke message; one record per derived instance), <code>instance_start</code>, <code>instance_end</code>, <code>amendment</code>, <code>unauthorised_grant</code>, <code>unauthorised_approval</code>, <code>unauthorised_rejection</code>, or <code>unauthorised_act</code> (an act that F.5, item 7 records as unauthorised).<tr><td><code>instances</code><td>The contract instance or instances in which the event took place; for <code>amendment</code>, the running instances of the amended contracts.<tr><td><code>norm</code><td>For a grant, a revocation, or a <code>delegation_end</code>, the delegable permission as <code>&lt;contract id>.&lt;norm id></code>; otherwise <code>null</code>.<tr><td><code>chain</code><td>For a <code>grant</code>, the chain of the derived instance of the receiver; for a <code>revoke</code> that has an effect, the chain of the revoked instance; for a <code>delegation_end</code>, the chain of the instance that ended; otherwise <code>null</code>.<tr><td><code>holders</code><td>The holders whose derived instance the event created or discharged, in the order of creation; otherwise empty.<tr><td><code>hold_id</code><td>For an unauthorised approval or rejection, the hold id it carried, if any; otherwise <code>null</code>.<tr><td><code>reason</code><td><code>null</code> for a grant or a revocation that has an effect; <code>holder_exists</code> for a grant that is a no-op (condition 5 of G.7); <code>no_effect</code> for a revoke message that does not satisfy (a); for <code>unauthorised_grant</code> the first condition that fails: <code>no_authority</code> (1), <code>not_in_to</code> (2), <code>in_chain</code> (3), <code>max_depth</code> (4); for an unauthorised approval or rejection <code>unknown_hold</code>, <code>not_held</code>, <code>not_approver</code>, or <code>other_instance</code> (not created in a contract instance of a ground); for <code>unauthorised_act</code>, <code>no_power</code>; for <code>delegation_end</code> the cause: <code>until</code>, <code>original_discharged</code>, <code>instance_end</code>, or <code>amendment</code>; for <code>instance_end</code>, <code>end</code> or <code>terminal_state</code>; for <code>amendment</code>, the name of the new version; for <code>instance_start</code>, <code>null</code>.</table>
+<p>Records are written in the order in which the enforcement point
+produces them: the record of a decision, then the event records of the
+observation that the message becomes, then the closing records of the
+holds that this observation approved or rejected. A change of the
+in-force flag of a norm has no record of its own: it follows from the
+recorded messages, from the times, and from the values that the
+predicates of the contract read. This appendix defines
+no integrity protection for the log, such as a hash chain or a
+signature; a deployment that needs one adds it outside the record.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=g9-static-semantics>G.9 Static semantics<a href=#g9-static-semantics class=hash-link aria-label="Direct link to G.9 Static semantics" title="Direct link to G.9 Static semantics" translate=no>​</a></h2>
 <p>An agents-aware processor MUST, in addition to the checks of
 <a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>Appendix F</a>:</p>
 <ul>
-<li class=""><strong>G-1.</strong> A file that declares <code>agents: 0.1</code> MUST also declare
+<li class="">
+<p><strong>G-1.</strong> A file that declares <code>agents: 0.1</code> MUST also declare
 <code>norms: 0.1</code>; otherwise the processor reports an error and does not
-interpret the keys of this extension.</li>
-<li class=""><strong>G-2.</strong> An <code>agent:</code> mapping MUST have <code>kind:</code>, one of <code>llm_agent</code>,
+interpret the keys of this extension.</p>
+</li>
+<li class="">
+<p><strong>G-2.</strong> An <code>agent:</code> mapping MUST have <code>kind:</code>, one of <code>llm_agent</code>,
 <code>tool_server</code>, <code>human</code>, <code>service</code>; <code>protocol:</code> MUST be a
-<code>hyphen_name</code>.</li>
-<li class=""><strong>G-3.</strong> <code>tools:</code> is allowed only for a <code>tool_server</code>, which MUST
+<code>hyphen_name</code>.</p>
+</li>
+<li class="">
+<p><strong>G-3.</strong> <code>tools:</code> is allowed only for a <code>tool_server</code>, which MUST
 list at least one tool. A tool name MUST be an identifier, not a
 reserved word, and unique within its actor. (Under a YAML 1.1 loader
 an unquoted <code>yes</code>, <code>no</code>, <code>on</code>, <code>off</code>, <code>true</code>, <code>false</code>, or <code>null</code> is
 not a name; see
-<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>.)</li>
-<li class=""><strong>G-4.</strong> When the receiver of a <code>message_event</code> is a tool server, the
+<a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>.)</p>
+</li>
+<li class="">
+<p><strong>G-4.</strong> When the receiver of a <code>message_event</code> is a tool server, the
 message name MUST be one of its <code>tools:</code>. This applies to the
 <code>trigger:</code>, <code>until:</code>, and <code>content:</code> of a norm, the <code>when:</code> of a
 <code>counts_as:</code> rule, the <code>on:</code> of a lifecycle transition, and a
 <code>fallback:</code>. A processor SHOULD warn about a message step of a
-protocol (A.5) that does not satisfy it.</li>
-<li class=""><strong>G-5.</strong> <code>enforcement.default</code> MUST be <code>deny</code> or <code>allow</code>, and
+protocol (A.5) that does not satisfy it.</p>
+</li>
+<li class="">
+<p><strong>G-5.</strong> <code>enforcement.default</code> MUST be <code>deny</code> or <code>allow</code>, and
 <code>enforcement.point</code> one of <code>caller</code>, <code>receiver</code>, <code>gateway</code>. A null or
-empty <code>enforcement:</code> is valid.</li>
-<li class=""><strong>G-6.</strong> In an enforced contract, the sender of the <code>message_event</code>
+empty <code>enforcement:</code> is valid.</p>
+</li>
+<li class="">
+<p><strong>G-6.</strong> In an enforced contract, the sender of the <code>message_event</code>
 content of a permission or a prohibition MUST be textually equal to
-its <code>bearer:</code>.</li>
-<li class=""><strong>G-7.</strong> <code>on_denied:</code> is allowed only on a prohibition whose content
+its <code>bearer:</code>.</p>
+</li>
+<li class="">
+<p><strong>G-7.</strong> <code>on_denied:</code> is allowed only on a prohibition whose content
 is a <code>message_event</code>, in an enforced contract, and MUST have at least
 one key. <code>timeout:</code> MUST be a <code>duration_lit</code> greater than zero and
 requires <code>escalate_to:</code>. A processor SHOULD warn about an
-<code>escalate_to:</code> without <code>timeout:</code>.</li>
-<li class=""><strong>G-8.</strong> <code>escalate_to:</code> and <code>notify:</code> MUST name single declared
+<code>escalate_to:</code> without <code>timeout:</code>.</p>
+</li>
+<li class="">
+<p><strong>G-8.</strong> <code>escalate_to:</code> and <code>notify:</code> MUST name single declared
 actors (as N-3). <code>escalate_to:</code> MUST name a party of the contract, so
 that its messages are governed, MUST NOT be textually equal to the
-<code>bearer:</code> of its prohibition, and SHOULD have <code>agent.kind: human</code>.</li>
-<li class=""><strong>G-9.</strong> A contract with an <code>escalate_to: A</code> MUST have a <code>counts_as:</code>
+<code>bearer:</code> of its prohibition, and SHOULD have <code>agent.kind: human</code>.</p>
+</li>
+<li class="">
+<p><strong>G-9.</strong> A contract with an <code>escalate_to: A</code> MUST have a <code>counts_as:</code>
 rule that creates <code>approval</code> from a <code>message_event</code> whose sender is
 <code>A</code>, and SHOULD have one for <code>rejection</code>. In an enforced contract,
 every rule that creates <code>approval</code> or <code>rejection</code> MUST have as
 <code>when:</code> a <code>message_event</code> whose sender is the <code>escalate_to:</code> of a
 prohibition of the contract, and no norm <code>id</code> may equal either name;
-these are the only uses that are errors. A reference to the two
-events in a <code>trigger:</code>, <code>until:</code>, or <code>content:</code> is allowed.</li>
-<li class=""><strong>G-10.</strong> A <code>fallback:</code> MUST be a <code>message_event</code> whose sender is
+these are the only uses that are errors. By G-17 the sender and the
+receiver of that <code>message_event</code> are parties of the contract, so the
+contract governs the approver's message and its instances observe
+it. A reference to the two
+events in a <code>trigger:</code>, <code>until:</code>, or <code>content:</code> is allowed.</p>
+</li>
+<li class="">
+<p><strong>G-10.</strong> A <code>fallback:</code> MUST be a <code>message_event</code> whose sender is
 textually equal to the <code>bearer:</code> of its prohibition and whose
 receiver is a declared actor, and MUST differ from the content of the
-prohibition in receiver or message name.</li>
-<li class=""><strong>G-11.</strong> <code>delegations:</code> is allowed only in an enforced contract.
+prohibition in receiver or message name.</p>
+</li>
+<li class="">
+<p><strong>G-11.</strong> <code>delegations:</code> is allowed only in an enforced contract.
 <code>norm:</code> MUST be the <code>id</code> of a permission of the contract whose
 content is a <code>message_event</code>; at most one entry may name a norm. The
 <code>bearer:</code> of that permission MUST NOT have an index bound by the
 contract instance (<code>ROBOT[i]</code>), so that the first actor of every
-chain can be read from the file.</li>
-<li class=""><strong>G-12.</strong> <code>to:</code> MUST list at least one reference, each naming
+chain can be read from the file.</p>
+</li>
+<li class="">
+<p><strong>G-12.</strong> <code>to:</code> MUST list at least one reference, each naming
 declared actors; a wildcard or a range is allowed, an index bound by
 the contract instance is not. <code>to:</code> MUST NOT name a tool server and
 SHOULD NOT include the bearer. <code>max_depth:</code> MUST be an integer of at
 least 1. <code>until:</code> MUST satisfy the rules of Appendix F for the
-<code>until:</code> of a norm (N-9, N-10).</li>
-<li class=""><strong>G-13.</strong> <code>grant:</code> and <code>revoke:</code> MUST be identifiers and not reserved
+<code>until:</code> of a norm (N-9, N-10).</p>
+</li>
+<li class="">
+<p><strong>G-13.</strong> <code>grant:</code> and <code>revoke:</code> MUST be identifiers and not reserved
 words. Within a contract, all <code>grant:</code> and <code>revoke:</code> names MUST
 differ from each other and from <code>approval</code> and <code>rejection</code>, and none
 may be a tool of a tool server that is a party. (The YAML 1.1 note of
-G-3 applies.)</li>
-<li class=""><strong>G-14.</strong> A processor SHOULD warn, in an enforced contract, about a
+G-3 applies.)</p>
+</li>
+<li class="">
+<p><strong>G-14.</strong> A processor SHOULD warn, in an enforced contract, about a
 permission or prohibition (a) whose content is not a <code>message_event</code>,
 because it has no effect at the boundary, or (b) whose
 <code>message_event</code> content has arguments, because they are not
-considered.</li>
-<li class=""><strong>G-15.</strong> A processor SHOULD warn about (a) a tool of a party of an
+considered.</p>
+</li>
+<li class="">
+<p><strong>G-15.</strong> A processor SHOULD warn about (a) a tool of a party of an
 enforced contract with <code>default: allow</code> that no permission or
 prohibition of the contract covers, and (b) a tool server that is a
 party of no enforced contract, whose tool calls are ungoverned. A
 norm <em>covers</em> a message when its <code>message_event</code> content has that
-receiver and message name.</li>
-<li class=""><strong>G-16.</strong> A processor SHOULD warn about a message that a contract
+receiver and message name.</p>
+</li>
+<li class="">
+<p><strong>G-16.</strong> A processor SHOULD warn about a message that a contract
 needs and would itself deny: (a) the content of an obligation, or a
 <code>fallback:</code>, that a prohibition without <code>trigger:</code> whose bearer is
 the sender of that message covers, or that is a tool call covered by
@@ -467,7 +678,71 @@ no permission of its sender while the default for tool calls is
 permission still gets the warning, because delegations are runtime
 state; (b) under <code>default: deny</code>, a <code>grant:</code> or <code>revoke:</code>
 name, or the <code>when:</code> message of a rule that creates <code>approval</code> or
-<code>rejection</code>, that no permission covers.</li>
+<code>rejection</code>, that no permission covers.</p>
+</li>
+<li class="">
+<p><strong>G-17.</strong> In an enforced contract, the sender and the receiver of
+every <code>message_event</code> of the contract MUST be <strong>covered by the
+parties</strong> and MUST name declared members only: the <code>trigger:</code>,
+<code>until:</code>, and <code>content:</code> of its norms, the <code>when:</code> of its
+<code>counts_as:</code> rules, and the <code>until:</code> of its delegations. A reference
+is covered when <strong>one</strong> reference in <code>parties:</code> matches every actor
+that it can name (G.5): <code>A</code> by a party <code>A</code>; <code>A[3]</code> by a party <code>A[3]</code>,
+<code>A[i]</code>, <code>A[*]</code>, or a range that contains 3; <code>A[1..3]</code> by a party
+<code>A[i]</code>, <code>A[*]</code>, or a range that contains it; <code>A[*]</code> and <code>A[i]</code> by a
+party <code>A[i]</code> or <code>A[*]</code>, or by a party range that contains the whole
+declared set. Two party references are not combined: the parties
+<code>A[1..2]</code> and <code>A[3]</code> do not cover <code>A[1..3]</code>. A literal index or a
+range MUST lie within the declared set: for a set declared as
+<code>A[1..3]</code>, <code>A[7]</code> and <code>A[2..5]</code> are errors. An instance of an
+enforced contract observes only the messages that the contract
+governs (G.5), so an event that is not covered, or that names no
+declared member, could never occur for some or all of the actors it
+names. The receiver of a tool call is included: G-4 requires the
+tool, and this rule that the tool server is a party. So is its
+sender: a contract cannot make the tool call of an actor that is not
+a party the content or the event of a norm. Such a call to a tool
+server that is a party is governed all the same (G.5); it is decided
+by the default of the contract and by the norms written for parties,
+and that is intended. A <code>fallback:</code> is not included: it is data for
+the sender and no event of the contract, G-10 requires its receiver
+only to be declared, and a fallback sent to an actor that is not a
+party is not governed by this contract.</p>
+</li>
+<li class="">
+<p><strong>G-18.</strong> In an enforced contract, every index variable MUST be
+bound. An index variable is a name that is used as an index or inside
+an index expression (<code>j</code> in <code>ROBOT[j]</code>, in <code>ROBOT[j+1]</code>, and in
+<code>ROBOT[SLOT[j].next]</code>). There are three binders: a reference in
+<code>parties:</code> binds its index variable for the whole contract (<code>i</code> for a
+party <code>ROBOT[i]</code>); a quantifier binds its variable within its
+predicate (<code>exists j in ROBOT: ROBOT[j].battery &lt; 20</code>, A.10); and a
+comprehension binds its variable within its element
+(<code>sum(ROBOT[j].load for j in ROBOT)</code>, A.10). Every other index
+variable is an error, wherever an expression of the contract can
+stand: in the <code>bearer:</code> and the <code>counterparty:</code> of a norm; in
+<code>escalate_to:</code>, <code>notify:</code>, and the sender and receiver of a
+<code>fallback:</code>; in the sender, the receiver, and the arguments of every
+<code>message_event</code> that G-17 names, including the <code>content:</code> of a norm
+of any kind; and in every predicate of the contract, which are the
+<code>trigger:</code>, <code>until:</code>, and <code>content:</code> of its norms, the <code>when:</code> and
+<code>if:</code> of its <code>counts_as:</code> rules, the <code>until:</code> of its delegations, and
+its <code>assume:</code> and <code>guarantee:</code> items. The contract instance binds the
+index variables of its parties (F.2) and no others; a variable
+without a binder has no value that the file accounts for: by F.3 an
+event or a power with such a variable would hold for every member of
+the set, and a predicate with it would read a quantity that no actor
+has. That a quantifier binds its variable makes the predicate valid;
+whether a processor can evaluate it is a separate matter (G.13).</p>
+</li>
+<li class="">
+<p><strong>G-19.</strong> A processor SHOULD warn, in an enforced contract, about an
+institutional event that a <code>counts_as:</code> rule creates under an <code>if:</code>
+and that is the <code>trigger:</code> of a prohibition or the <code>until:</code> of a
+permission. When the <code>when:</code> of the rule is a message that arrives
+while the <code>if:</code> is undefined, the event is not created and the
+boundary does not block (G.5, "Missing data").</p>
+</li>
 </ul>
 <p>The MUST rules are errors; the SHOULD rules are warnings and leave the
 file valid. N-1 to N-12 of Appendix F apply unchanged.</p>
@@ -492,7 +767,9 @@ decision.</li>
 <li class=""><code>instances</code> (optional): <strong>every</strong> running instance of every enforced
 contract; a contract without an entry has no running instance. When
 the field is absent, the policy assumes one running instance of each
-enforced contract, with no index bound and no derived instance. Per
+enforced contract, with no index bound and no derived instance; a
+match that depends on an index is then unknown (G.4, and G.5 for the
+relation to the instances a runtime creates). Per
 instance: <code>bindings</code> maps index names to integers; <code>in_force</code> maps
 the <code>id</code> of each norm that is not static (below) to <code>true</code> or
 <code>false</code>, and a missing entry is unknown; <code>derived</code> lists the derived
@@ -522,13 +799,15 @@ declaration; empty for the other reasons.</li>
 <li class=""><code>provenance</code>: the chains of the applying derived instances, in the
 order of their norms and then of the input, without duplicates;
 empty when only original permissions applied.</li>
-<li class=""><code>escalate_to</code>: the approver for <code>escalate</code>, as a concrete actor;
-otherwise <code>null</code>.</li>
+<li class=""><code>escalate_to</code>: the approver for <code>escalate</code> and in a closing record
+that keeps it (G.8), as a concrete actor; otherwise <code>null</code>.</li>
 <li class=""><code>timeout</code> (milliseconds), <code>fallback</code> (message events as text), and
 <code>notify</code> (actor references) are filled whenever the reason is
 <code>prohibition</code>, for <code>deny</code> as well as for <code>escalate</code>, from the
 grounds, without duplicates, in the order of declaration; for every
-other reason they are <code>null</code>, <code>[]</code>, and <code>[]</code>.</li>
+other reason they are <code>null</code>, <code>[]</code>, and <code>[]</code>, except that a closing
+record with the reason <code>rejected</code>, <code>expired</code>, or <code>cancelled</code> keeps
+the <code>fallback</code> and <code>notify</code> of its hold (G.8).</li>
 </ul>
 <p>A norm is <strong>static</strong> when it is a permission or a prohibition whose
 content is a <code>message_event</code>, it has no <code>trigger:</code>, <code>until:</code>, or
@@ -615,9 +894,11 @@ decision is <code>escalate</code>. The hold <code>h-1</code> is created with the
 <code>OPERATOR -> PLANNER : approve("h-1")</code>, an ordinary message that the
 default allows. After step 1 of that observation the event <code>approval</code>,
 performed by <code>OPERATOR</code>, carries the hold id <code>h-1</code>, and the hold
-becomes <code>approved</code>. After step 6 the re-check finds a declared tool, a
-running instance, and no prohibition outside the grounds, so the held
-message becomes the next observation, with the time stamp 09:03:40. It
+becomes <code>approved</code>. After step 6 the message is decided again: the
+tool is declared, the instance of the ground is running, no prohibition
+applies outside the grounds, and no other enforced contract governs the
+call, so the held message becomes the next observation, with the time
+stamp 09:03:40. It
 is not an occurrence of the content of <code>no_delete</code>, which stays
 <code>active</code>. Had the operator sent <code>reject("h-1")</code>, or nothing until
 09:13:00, the closing record would be a <code>deny</code> with the reason
@@ -656,16 +937,230 @@ only when the file declares <code>agents: 0.1</code>; a file that declares only
 <code>norms: 0.1</code> has exactly the IR of F.9.</p>
 <p><strong>Reference implementation.</strong> <code>cadl</code> 0.3.20 implements agents 0.1 as
 follows. It parses the four new keys, applies G-1 to G-16 in
-<code>cadl check</code> (the SHOULDs as warnings), and lowers the blocks to the IR
+<code>cadl check</code> (the SHOULDs as warnings; G-17 to G-19 from <code>cadl</code> 0.3.22), and lowers the blocks to the IR
 above; a <code>timeout:</code> given as a bare number is read as seconds, the
 lenient form that
 <a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>
 describes for deadlines. <code>cadl agents-decide</code> implements the decision
-function of G.5 over the policy input of G.10. It is stateless: holds,
-release, expiry, grants, and revocations are not implemented, and valid
-derived instances come in through the input. <code>cadl codegen -t agent-rego</code> emits a Rego policy that returns the full result, and
-<code>-t agent-cedar</code> emits Cedar policies for the static norms with a side
-table. No command produces audit records (G.8).</p>
+function of G.5 over the policy input of G.10. It is stateless: the
+in-force flags and the valid derived instances come in through the
+input. <code>cadl codegen -t agent-rego</code> emits a Rego policy that returns
+the full result, and <code>-t agent-cedar</code> emits Cedar policies for the
+static norms with a side table.</p>
+<p><strong>Runtime.</strong> <code>cadl</code> 0.3.22 adds
+<code>cadl agents-run FILE --trace TRACE [--audit OUT.jsonl]</code>, a reference
+runtime for G.5 to G.8. It is deterministic and offline: it replays a
+recorded sequence of messages through one enforcement point over all
+enforced contracts of the file, and its only clock is the time of the
+trace. For each message it takes the in-force flags from the verdict
+engine of <code>cadl norms-eval</code> (F.10), the valid derived instances from
+the grants and revocations observed so far, and the running contract
+instances from the trace; it builds the policy input of G.10 from them
+and calls the decision function of <code>cadl agents-decide</code>. It then
+applies the decision as G.5 says, keeps the holds and the derived
+instances (G.6, G.7), decides an approved message again before it
+releases it, and writes the audit records and event records of G.8, as
+JSON Lines when <code>--audit</code> is given. Hold ids are <code>h-1</code>,
+<code>h-2</code>, and so on, in the order of creation.</p>
+<p>The trace is that of <code>cadl norms-eval</code> (JSON Lines with <code>t</code>,
+<code>bindings</code>, <code>request</code>, <code>values</code>, <code>messages</code>, <code>state</code>, <code>amend</code>, <code>end</code>),
+read for the whole enforcement point, with two more keys: <code>epoch</code>, the
+time of <code>t = 0</code> as an ISO 8601 time stamp, which makes the times of
+the records time stamps; and <code>instances</code>, the contract instances that a
+host creates and ends, with their bindings. Every instance has to
+bind the index variables of the parties of its contract, the single
+instance of a contract without host through the <code>bindings</code> of the first
+line, and each value has to be the index of a member of the set that
+the party names; otherwise the trace is rejected, with the contract,
+the instance, the variable, and the value in the message. A binding of
+a variable that no party has is ignored, with a warning. A value has
+to be the index of a member of every declared set that the variable
+indexes in the contract, not only of the party's set. The key
+<code>quantities</code> of the first line gives the quantity names of the run
+(F.5); then exactly these names are quantities, from the start and for
+every instance. Without it the runtime takes a name as a quantity from
+the first line on that gives it a value, so that no decision depends on
+a later line (G.5); a bare name without a value so far is a symbolic
+value. This can differ from the verdicts of <code>cadl norms-eval</code> on the
+same lines for a name before its first value, and the runtime warns
+when a name that a predicate uses gets its first value after a message
+was decided. Nothing after the end of an instance has an effect on
+it. Which contracts have host-created instances is likewise fixed on
+the first line: a contract that the first line names in <code>instances</code>,
+or lists under the key <code>host_instances</code> when its first instance is
+created later, has the instances that the trace creates, and none
+before; every other enforced contract has its single instance from the
+start, and a later line that creates an instance of it is a trace
+error. When a message is decided while a flag is unknown for missing
+data (G.5), the runtime warns once per norm and names the quantity
+without a value. Messages sent before the first values of such
+quantities are therefore denied or escalated; a trace gives the initial
+values on its first line to avoid that. A grant that is sent while the
+<code>until:</code> of the delegable permission is undefined is recorded as
+<code>unauthorised_grant</code> with the reason <code>no_authority</code>, because the
+permission is not known to be in force, and has to be sent again. Two
+limits remain for missing data. A message that would create a blocking
+event under an <code>if:</code> that is undefined creates nothing (G.5, G-19);
+the runtime warns and names the rule, the event, and the quantity. And
+the rule does not reach through an obligation: while the predicate
+<code>trigger:</code> of an obligation is undefined, the obligation is not
+activated, so it is not violated, and a prohibition that is its
+<code>reparation:</code> does not arise. One line is processed in
+this order: holds whose deadline lies before its time expire; instances
+are created; the time and the values of the line are observed without
+message (G.5), together with an amendment; each message is decided, and
+an allowed one is one observation; a change of lifecycle state and the
+end of instances are a last observation. Messages after the end of an
+instance are still decided and recorded.</p>
+<p>Three points are readings of the implementation and not rules of this
+appendix. An amendment applies to the enforced contracts whose
+definition differs between the two versions, and it may not add or
+remove an enforced contract. After a violation, the window clock of a
+prohibition stops while the prohibition is suspended, as it does before
+(F.5). A message matches the content of an obligation, for the verdict
+<code>excused</code>, as at the boundary: on sender, receiver, and name.</p>
+<p>Known limits. The runtime is not connected to a protocol: it replays a
+trace and does not run agents or tools. It does not protect the log
+against later changes. The log has no record for a change of the
+in-force flag of a norm (G.8). A holder whose derived instance is
+<code>active</code> but no longer valid after an amendment of <code>to:</code> cannot be
+granted the permission again: the grant is the no-op of condition 5
+(<code>holder_exists</code>). A trace gives time as a finite number of at most
+2<sup>53</sup> in absolute value; with an <code>epoch</code>, every time and every
+deadline of a hold has to be an instant that an ISO 8601 time stamp can
+express. A trace error on a later line is raised before anything is
+printed or written, but after the earlier lines have been decided in
+memory; the audit file is written only when the whole trace was
+replayed. The functions of the runtime refuse a file with errors of
+<code>cadl check</code> and an instance without the bindings of its parties; a
+switch for tests turns both off, and only then is the resolution of
+unknown occurrences (G.5) reached. The decision function
+<code>cadl agents-decide</code> still takes instances without bindings and treats
+the match as unknown (G.4). The runtime, like <code>cadl norms-eval</code>, does not evaluate
+a predicate with a quantifier or a wildcard reference (<code>A[*]</code>); a norm
+whose <code>trigger:</code>, <code>until:</code>, or <code>content:</code> is such a predicate is not
+judged, and its in-force flag is unknown for the whole run. By G.5 a
+prohibition of that kind then always applies and a permission never
+does: fail-closed, but perhaps not what the author expects.</p>
+<p>The tests replay each step of the runtime through the decision function
+with the state the runtime computed, and through the generated Rego
+policy under OPA 1.22.3: 81 decisions of nine hand-written scenarios
+(the three calls of G.12, rejection, timeout, a prohibition between a
+trigger and an <code>until:</code>, delegation with a depth limit, two contracts
+with bound indices and host-created instances) and 7 800 decisions of
+26 generated traces over eleven files gave the same result in both. The
+generated traces have host-created instances with different bindings,
+senders outside the declared sets and undeclared senders, a hold with a
+ground in one of two contracts, and revocations, ends of instances, and
+amendments between a hold and its approval. Every release in them, 176
+with 15 denied, and 13 more with 8 denied under random amendments, was
+checked from its recorded policy input against the rules of G.6. A
+second model of G.4 to G.7 and F.3, written by the reviewer from the
+text of the appendices without code of the reference implementation,
+gave the same 8 102 decision and closing records on 108 further traces
+over seven files: 60 traces with every index bound, run as
+<code>cadl agents-run</code> runs them, and 48 with instances that bind nothing or
+with two files that <code>cadl check</code> rejects by G-17 and G-18, run with the
+switch for tests. That model has no powers and no obligations. For
+them, 60 generated traces of 200 messages over two files check that
+without a binding no power is exercised, no institutional event is
+created, and no obligation is fulfilled, and that with a binding only
+the bound member does these things. The expected records
+of the scenario tests were derived from the text of this appendix
+before the runtime was run, and the runtime produced them.</p>
+<p>An independent review of the first version of the runtime found
+defects that these tests had not shown, in the implementation and in
+the text. All of them let a message take effect that should not have,
+and all are corrected. The grounds of a hold were kept per contract and
+not per contract instance, so an approval also covered the same
+prohibition in an instance created later (G.6). The re-check of a
+released message tested only new prohibitions, so a message was
+released although another governing contract no longer allowed it, for
+example after a revocation (G.6; the text said "nothing else is
+re-checked"). An actor reference with a range in a <code>trigger:</code>, an
+<code>until:</code>, or a <code>counts_as:</code> rule matched every actor of that name, and
+<code>A[*]</code> matched actors outside the declared set; this was a defect of
+<code>cadl norms-eval</code> since 0.3.20 (F.3, F.10). An instance observed
+messages that its contract does not govern (G.5). The generated traces
+had also shown one defect: holds that expired together were closed in
+the order of creation, not of their deadlines.</p>
+<p>A second review confirmed these corrections and found what the rule of
+governed observations had opened. A message event of an enforced
+contract that names an actor who is not a party could never occur, so a
+prohibition triggered by such an actor never came into force; G-17 now
+makes that an error. An index variable that the contract instance does
+not bind matched every member of the set in a <code>trigger:</code>, an <code>until:</code>,
+or a <code>counts_as:</code> rule, so any member could activate a permission or
+lift a prohibition; G-18 excludes it, and the runtime resolves the
+unknown occurrence fail-closed (G.5). A set with a symbolic upper bound
+took an index below its lower bound as a member, in the decision
+function, the Rego policy, and <code>cadl norms-eval</code>.</p>
+<p>A third review found that the unbound index was still a way through
+for powers and obligations, which the second model does not have: with
+a bearer <code>SUP[k]</code> and no binding for <code>k</code>, any member of <code>SUP</code> exercised
+a power that suspends a prohibition or activates a permission, and a
+message to any member fulfilled an obligation whose reparation is a
+prohibition. The cause was the same in every case, a contract instance
+that runs with an index unbound, and it is now removed at the root:
+G-18 covers every index variable of an enforced contract, the runtime
+refuses an instance that does not bind the indices of its parties, and
+its functions refuse a file with errors. The fail-closed resolution of
+G.5 is complete and remains as a second line. G-17 also rejects a
+literal index outside the declared set, and says that coverage is by
+one party reference.</p>
+<p>A fourth review found the same cause once more, in a place the rule
+did not yet name: an index variable in a predicate. A prohibition with
+the <code>trigger:</code> <code>W[j].alarm == true</code> and no party <code>W[j]</code> passed the
+check and never came into force. G-18 now covers every predicate of an
+enforced contract, with the exception of a variable that a quantifier
+binds, and the runtime resolves such a predicate as an unknown
+occurrence. The review also found that the runtime took the quantity
+names of an instance from the whole trace, so a value given after the
+end of an instance could change its verdict from violated to
+fulfilled, and that it accepted a binding outside the declared set, so
+a prohibition of <code>W[i]</code> applied to nobody; both are corrected.</p>
+<p>A fifth review found that decisions depended on later lines of the
+trace. The runtime had taken the quantity names from the whole trace
+since its first version, and the correction after the fourth review
+had only narrowed that to the lines of the instance: a value that a
+later line gave to a name changed how an earlier predicate read that
+name, and with it an earlier decision from deny to allow. The runtime now
+decides causally (G.5): the names are given with the trace, or a name
+becomes a quantity with its first value. The tests check, for every
+prefix of generated traces, that the decisions on the prefix are the
+first decisions on the whole trace; that invariant was missing. G-18
+also missed an index variable inside an index expression and inside
+the arguments of a message event; it is now stated by its binders, and
+the checker walks every expression of the contract.</p>
+<p>A sixth review found one more look-ahead of the same kind: whether a
+contract has host-created instances was read from the whole trace, so
+an <code>instances</code> entry on a later line removed the single instance from
+the start and changed an earlier denial into an allowance. It is now
+fixed on the first line. The review also led to the rule for missing
+data in G.5: a prohibition whose <code>trigger:</code> could not be evaluated for
+want of a value was not in force, and a message was allowed on data
+that the enforcement point did not have.</p>
+<p>A seventh review found that this rule looked only at the predicate of
+the norm itself: a prohibition whose <code>trigger:</code> is an institutional
+event that a rule creates from a predicate was not in force while that
+predicate had no value. The rule of G.5 now reaches through such an
+event, and G-19 and the two limits above state what it does not
+reach.</p>
+<p>Writing and reviewing the runtime showed these gaps in the text of
+agents 0.1, which this revision of the appendix closes: the state on
+which a message is decided did not include deadlines that had passed
+since the last observation, and it was not said which contract
+instances observe an allowed message (G.5); the grounds of a hold, the
+contract instance in which an <code>approval</code> has to be created, the
+decision at a release, and the order of holds that expire together were
+not stated or were stated too weakly (G.6); whether the <code>until:</code> of a
+delegation ends the entry or its instances was open (G.7); the
+<code>fallback</code> that G.12 lets the sender find in a closing record was
+excluded by G.10; the records of grants, revocations, unauthorised
+acts, and other changes of state had no format (G.8); and nothing
+required the contract to govern the messages its events name, or to
+bind the indices they use (G-17 and G-18, added at the end of G.9; no
+earlier rule changes).</p>
 <p>The generated policies have been run with OPA 1.22.3 and the Cedar CLI
 4.14.1 and compared with <code>cadl agents-decide</code>. Under OPA the full
 result was equal for 20 400 inputs (three variants of a file with two
@@ -689,7 +1184,12 @@ keep exactly the meaning of <a class="" href=/cadl-spec/docs/spec/appendix-f-nor
 enforced contract this appendix makes these additions to F.5 and no
 other change: the instance of a contract without host exists from the
 start of the enforcement point; a denied or held message is not an
-observation; permissions and prohibitions have an in-force flag; an
+observation; an instance of an enforced contract observes only the
+messages that its contract governs, and an occurrence that depends on
+an unbound index is unknown; the in-force flag is unknown while a
+quantity that it depends on has no value, without a change to the
+states of F.5; the time of a decision is observed
+before the message is decided; permissions and prohibitions have an in-force flag; an
 obligation whose content the contract itself denied or held is
 <code>excused</code> (all G.5); <code>approval</code> and <code>rejection</code> carry a hold id, the
 order of steps is extended, and a released message does not violate

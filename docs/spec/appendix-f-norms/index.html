@@ -1,4 +1,4 @@
-<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-f-norms" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix F: Norms Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix F: Norms Extension | CADL"/><meta data-rh=true name=description content="Norms extension (norms 0.1): obligations, permissions, prohibitions and powers as first-class objects of a contract, counts-as rules, bounded temporal operators, four-valued verdicts, and the continuity of norms across amendments."/><meta data-rh=true property=og:description content="Norms extension (norms 0.1): obligations, permissions, prohibitions and powers as first-class objects of a contract, counts-as rules, bounded temporal operators, four-valued verdicts, and the continuity of norms across amendments."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms","name":"Appendix F: Norms Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.255ca780.css /><script src=/cadl-spec/assets/js/runtime~main.b7318e32.js defer></script><script src=/cadl-spec/assets/js/main.74047eaa.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-f-norms" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix F: Norms Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix F: Norms Extension | CADL"/><meta data-rh=true name=description content="Norms extension (norms 0.1): obligations, permissions, prohibitions and powers as first-class objects of a contract, counts-as rules, bounded temporal operators, four-valued verdicts, and the continuity of norms across amendments."/><meta data-rh=true property=og:description content="Norms extension (norms 0.1): obligations, permissions, prohibitions and powers as first-class objects of a contract, counts-as rules, bounded temporal operators, four-valued verdicts, and the continuity of norms across amendments."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms","name":"Appendix F: Norms Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.255ca780.css /><script src=/cadl-spec/assets/js/runtime~main.725d74df.js defer></script><script src=/cadl-spec/assets/js/main.74047eaa.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-689")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label="Skip to main content"><a class=skipToContent_fXgn href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/docs/quickstart/>Quick Start</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/docs/spec/intro/>Specification</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/textbook/>Textbook</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/handson/>Hands-on</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_nlXk><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>English</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-f-norms/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-f-norms/ target=_self rel="noopener noreferrer" class=dropdown__link lang=ja>日本語</a></ul></div><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_Bca1><div class="navbar__search searchBarContainer_NW3z" dir=ltr><input placeholder=Search aria-label=Search class="navbar__search-input searchInput_YFbd" value="" /><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class=docsWrapper_hBAB><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type=button></button><div class=docRoot_UBD9><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class=sidebarViewport_aRkj><div class=sidebar_njMd><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/intro/><span title="CADL Specification v0.3" class=linkLabel_WmDU>CADL Specification v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/introduction/><span title="1. Introduction" class=linkLabel_WmDU>1. Introduction</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/objectives/><span title="2. Language Objectives" class=linkLabel_WmDU>2. Language Objectives</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/comparison/><span title="3. Comparison with Existing Languages" class=linkLabel_WmDU>3. Comparison with Existing Languages</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/requirements/><span title="4. Requirements Specification" class=linkLabel_WmDU>4. Requirements Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/language-spec/><span title="5. Language Specification" class=linkLabel_WmDU>5. Language Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/design/><span title="6. Design" class=linkLabel_WmDU>6. Design</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/examples/><span title="7. Domain-Specific Description Examples" class=linkLabel_WmDU>7. Domain-Specific Description Examples</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/use-cases/><span title="8. Use Cases and Novelty Analysis" class=linkLabel_WmDU>8. Use Cases and Novelty Analysis</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/research/><span title="9. Research Directions and Open Challenges" class=linkLabel_WmDU>9. Research Directions and Open Challenges</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/roadmap/><span title="10. Implementation Roadmap" class=linkLabel_WmDU>10. Implementation Roadmap</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-a-syntax/><span title="Appendix A: Syntax Reference (EBNF)" class=linkLabel_WmDU>Appendix A: Syntax Reference (EBNF)</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-b-references/><span title="Appendix B: References" class=linkLabel_WmDU>Appendix B: References</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-c-motivation/><span title="Appendix C: Motivation Extension" class=linkLabel_WmDU>Appendix C: Motivation Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-d-codegen/><span title="Appendix D: Codegen Target Catalog" class=linkLabel_WmDU>Appendix D: Codegen Target Catalog</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><span title="Appendix E: SoS-DSL Extension" class=linkLabel_WmDU>Appendix E: SoS-DSL Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/docs/spec/appendix-f-norms/><span title="Appendix F: Norms Extension" class=linkLabel_WmDU>Appendix F: Norms Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-g-agents/><span title="Appendix G: Agent Governance Extension" class=linkLabel_WmDU>Appendix G: Agent Governance Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-h-stochastic/><span title="Appendix H: Stochastic Model Extension" class=linkLabel_WmDU>Appendix H: Stochastic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/glossary/><span title=Glossary class=linkLabel_WmDU>Glossary</span></a></ul></nav></div></div></aside><main class=docMainContainer_TBSr><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_VOVn"><div class=docItemContainer_Djhp><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/cadl-spec/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_YNFT><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Appendix F: Norms Extension</span></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type=button class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Appendix F — Norms Extension (norms 0.1)</h1></header>
@@ -76,6 +76,20 @@ larger predicate (<code>reassignment AND x > 0</code>) is a state variable, not 
 event. Values that contain <code>[</code>, <code>]</code>, <code>*</code>, <code>-></code>, or <code>": "</code> SHOULD be quoted
 and MUST be quoted inside a flow sequence, as for every scalar of
 <a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/>Appendix A</a>.</p>
+<p>A <code>message_event</code> <code>S -> R : m</code> <strong>occurs</strong> at an observation that
+carries a message with the name <code>m</code> whose sender matches <code>S</code> and whose
+receiver matches <code>R</code>; when <code>m</code> is written with arguments, they must
+equal the arguments of the message. An actor reference matches a
+concrete actor of a message as follows, wherever a <code>message_event</code>
+stands: in a <code>trigger:</code>, an <code>until:</code>, a <code>content:</code>, and the <code>when:</code> of
+a <code>counts_as:</code> rule.</p>
+<table><thead><tr><th>Reference<th>Matches<tbody><tr><td><code>A</code><td>the actor <code>A</code>, declared without index; never an indexed member <code>A[k]</code><tr><td><code>A[3]</code><td>the member <code>A[3]</code><tr><td><code>A[*]</code><td>every member of the declared set <code>A</code><tr><td><code>A[1..3]</code><td>the members <code>A[1]</code> to <code>A[3]</code>; with a symbolic bound (<code>A[1..N]</code>), every member of the set<tr><td><code>A[i]</code><td>the member <code>A[v]</code> when the contract instance binds <code>i</code> to <code>v</code>; every member of the set when it binds no value to <code>i</code> (a processor SHOULD warn)</table>
+<p><code>A[k]</code> is a <strong>member</strong> of the set <code>A</code> when <code>A</code> is declared with a range
+and <code>k</code> lies within its integer bounds: a set declared as <code>A[1..3]</code>
+does not contain <code>A[7]</code>. When the declared upper bound is symbolic
+(<code>A[1..N]</code>), every index from the lower bound on is a member, and
+<code>A[0]</code> is not. An actor that is not declared, or that lies
+outside the bounds of its set, matches no reference.</p>
 <p>In these predicates the reserved identifiers of
 <a class="" href=/cadl-spec/docs/spec/appendix-e-sos-dsl/#e4-static-semantics>Appendix E, E.4</a> are
 available as in a <code>rule</code>: <code>now</code>, <code>request</code>, and, when the contract has a
@@ -125,6 +139,38 @@ contract instance". To state an invariant, write it with <code>throughout</code>
 A <code>tpredicate</code> in <code>content:</code> is evaluated at observation times after
 the norm's activation (F.5). A predicate without temporal operators
 keeps the meaning it has in the core language.</p>
+<p><strong>When their value is known.</strong> The value of an operator at time t can
+depend on observations after t. It is <strong>decided</strong> at the first
+observation that determines it; before that it is not decided, and a
+decided value does not change.</p>
+<p>For an operator whose operands contain no temporal operator, the rule is
+as follows. <code>within(d, p)</code> is decided true, and <code>throughout(d, p)</code>
+false, at the observation in <code>[t, t + d]</code> that shows it;
+<code>until(p, q, d)</code> is decided true at the observation at which <code>q</code> holds,
+and false at an observation at which <code>p</code> fails before <code>q</code> has held.
+Otherwise the value is decided at the first observation whose time stamp
+is after <code>t + d</code>. The interval is then over: <code>within</code> and <code>until</code> are
+false and <code>throughout</code> is true, unless an operand was undefined (F.5) at
+an observation of the interval and a value of that operand could have
+decided it otherwise; in that case the value is undefined. For
+<code>until(p, q, d)</code> this is so only for an undefined <code>q</code>, or for an
+undefined <code>p</code> at an observation before one at which <code>q</code> held: an
+undefined <code>p</code> does not matter when <code>q</code> never held, and the value is then
+false. Likewise <code>until</code> is not decided false by a failing <code>p</code> at an
+observation before which <code>q</code> was undefined; its value is then undefined. The end
+of an interval is therefore not known at the time <code>t + d</code> itself but at
+the first observation after it; that observation need not change any
+quantity (F.5).</p>
+<p>An operator whose operand contains a temporal operator is decided once
+the values of the operand on which it depends are decided, each by the
+same rule at its own observation. This can be later than <code>t + d</code>.
+<code>within(2s, throughout(5s, p))</code> at time t needs the value of
+<code>throughout(5s, p)</code> at the observations of <code>[t, t + 2s]</code>, and that
+value, when <code>p</code> keeps holding, is decided only by an observation more
+than 5 s later: the operator can stay undecided until an observation
+after <code>t + 7s</code>. In general the value of a <code>tpredicate</code> at time t is
+decided at the latest by the first observation after t plus the largest
+sum of the durations of operators nested in one another.</p>
 <p>A file that does not declare <code>norms: 0.1</code> reads <code>within</code>, <code>throughout</code>,
 and <code>until</code> as ordinary function names, as in the core language.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=f5-dynamic-semantics>F.5 Dynamic semantics<a href=#f5-dynamic-semantics class=hash-link aria-label="Direct link to F.5 Dynamic semantics" title="Direct link to F.5 Dynamic semantics" translate=no>​</a></h2>
@@ -138,6 +184,23 @@ and ends contract instances in the same way, without states; with no
 host, a single instance starts at the first observation and ends at the
 last. A trace that stops while the contract instance is still running
 is a <em>prefix</em>: the instance has not ended, and nothing is settled.</p>
+<p>A processor that receives the observations one at a time, while the
+system runs, does not know that an observation is the last one when it
+processes it. For such a processor the end of the instance is signalled
+separately, after that observation, and the norms are then settled
+(item 6 below) at the last observation received, with its time stamp,
+as in step 6 of that observation. An observation that arrives after the
+contract instance has ended is not part of the instance and has no
+effect on it.</p>
+<p>An observation need not change anything. An observation that carries
+only a time stamp is an observation like any other: predicates are
+evaluated and deadlines are checked at it. A passed deadline and the end
+of an interval are detected at an observation and not between
+observations (items 2 and 3 below, F.4). A processor that monitors a
+running system SHOULD therefore make an observation soon after the
+deadline of an active norm passes; without one, the violation, and with
+it the decision between <code>violated</code> and <code>excused</code>, waits for the next
+observation.</p>
 <p>A predicate has one of three values at an observation: true, false, or
 <strong>undefined</strong>, when it refers to a quantity that has no value yet;
 <code>AND</code>, <code>OR</code>, and <code>NOT</code> follow Kleene's three-valued logic. An undefined
@@ -147,6 +210,17 @@ not occur on it, and an assumption or guarantee is not decided by it.
 the previous observation of the instance or no previous observation.
 In a contract with a <code>lifecycle:</code> block, <code>state</code> in a predicate is the
 lifecycle state before the transitions of the current observation.</p>
+<p>A name that stands alone in a predicate, such as <code>load</code> in <code>load > 5</code> or
+<code>Delivered</code> in <code>ROBOT[i].status == Delivered</code>, is an observed quantity
+or a symbolic value. The set of names that are observed quantities is
+fixed for the contract instance: it is given to the processor when the
+instance starts, or, for a recorded trace, it is the set of names that
+have a value in some observation of the instance. A name of this set is
+a quantity at every observation of the instance, and is undefined, not a
+symbolic value, at the observations before its first value. Every other
+name that stands alone is a symbolic value. A symbolic value can only be
+compared with a text value, by <code>==</code>, <code>!=</code>, or <code>IN</code>; a predicate that
+uses it in another way is undefined.</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id=norm-instances>Norm instances<a href=#norm-instances class=hash-link aria-label="Direct link to Norm instances" title="Direct link to Norm instances" translate=no>​</a></h3>
 <p>A norm instance is in one of six states:</p>
 <table><thead><tr><th>State<th>Meaning<tbody><tr><td><code>inactive</code><td>Not yet in force.<tr><td><code>active</code><td>In force; an obligation or prohibition is being judged.<tr><td><code>suspended</code><td>Temporarily not in force (by a power). Its deadline and window clocks stop.<tr><td><code>fulfilled</code><td>An obligation whose content was brought about in time, or a prohibition whose window closed without the content occurring.<tr><td><code>violated</code><td>An obligation whose deadline passed without the content, or a prohibition whose content occurred.<tr><td><code>discharged</code><td>Ended without being fulfilled or violated: by <code>until:</code>, by a power, by the end of the contract instance, or by an amendment (F.6).</table>
@@ -209,7 +283,9 @@ obligation whose deadline has not yet passed becomes <code>discharged</code>; a
 prohibition becomes <code>fulfilled</code>; every other norm instance, including
 an <code>inactive</code> one, becomes <code>discharged</code>. Two exceptions: a norm
 instance that became active at the observation at which the instance
-ends was never judged and becomes <code>discharged</code>; and an obligation or
+ends, and that step 4 of that observation did not make final,
+becomes <code>discharged</code>, since no observation followed its activation;
+and an obligation or
 prohibition whose <code>tpredicate</code> content is still undecided stays as it
 is, with the verdict <code>pending</code>. A violation that arises from this
 settlement is reported with its severity, but its <code>reparation:</code> and
@@ -279,8 +355,10 @@ has ended, settle its norms (item 6).</li>
 operators, on the finite trace observed so far is one of four values:</p>
 <table><thead><tr><th>Verdict<th>Norm instance<th>Guarantee of a contract<tbody><tr><td><code>pending</code><td><code>inactive</code>, <code>active</code>, or <code>suspended</code><td>not yet decided on the observed prefix<tr><td><code>fulfilled</code><td><code>fulfilled</code>, or <code>discharged</code><td>holds on every continuation of the prefix<tr><td><code>violated</code><td><code>violated</code> while no assumption of the contract had failed<td>fails on every continuation, while no assumption had failed<tr><td><code>excused</code><td><code>violated</code> at or after the observation at which an assumption of the contract failed<td>fails at or after the observation at which an assumption failed</table>
 <p>An assumption <strong>fails</strong> at the first observation at which its value
-becomes false; an assumption whose value is not yet decided, or is
-undefined, has not failed. An <code>assume:</code> or <code>guarantee:</code> item without
+becomes false (for an item with temporal operators, the observation at
+which its value is decided false, F.4); an assumption whose value is not
+yet decided, or is undefined, has not failed. An <code>assume:</code> or
+<code>guarantee:</code> item without
 temporal operators is a state predicate and is evaluated at every
 observation: it fails at the first observation at which it is false,
 and a guarantee that has not failed when the contract instance ends is
@@ -296,6 +374,22 @@ place, not at the time of the deadline. When a trace ends, <code>pending</code>
 verdicts stay <code>pending</code>: a trace that stops before a deadline or the
 end of an interval does not decide it, and neither does the end of the
 contract instance for a temporal item whose interval is not over.</p>
+<p>With the set of observed quantities fixed for the contract instance
+(see "Contract instances" above), the verdicts after an observation are
+those of the trace up to that observation, read as a prefix with the
+same set. They do not depend on later observations, and a verdict other
+than <code>pending</code> does not change afterwards. A processor MAY therefore
+compute the verdicts while the system runs, observation by observation;
+given the same set of quantities, it gives the verdicts that a processor
+reading the recorded trace gives.</p>
+<p>A processor that is not given the names of the quantities and learns
+them from the observations reads a name as a symbolic value until its
+first value arrives. For a predicate that uses such a name before its
+first value, it MAY give a verdict that differs from the one above. This
+is the only permitted difference. Such a processor SHOULD be given the
+names; the difference arises only where the name is compared with a text
+value, since any other use of a symbolic value is undefined, as is the
+quantity without a value.</p>
 <p><code>excused</code> separates "the bearer failed" from "the bearer was not given
 what the contract assumes", which is the basis of assigning blame in
 deontic runtime verification
@@ -462,8 +556,10 @@ of F.9.</li>
 <li class="">The SMT checks of <code>cadl verify</code> leave out <code>assume:</code> and <code>guarantee:</code>
 items that contain temporal operators and report each one as not
 checked (F.7). <code>cadl codegen</code> leaves the same items out of the
-generated code of every target, with a comment in the code and a
-warning; it does not translate temporal operators.</li>
+contract code of every target, with a comment in the code and a
+warning; it does not translate temporal operators into the target
+languages. The Python target monitors them in a separate module (see
+below).</li>
 <li class="">A numeric <code>deadline:</code> of a norm is read as seconds, the lenient form
 that <a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>
 describes for lifecycle deadlines. <code>cadl check</code> looks for temporal
@@ -477,14 +573,65 @@ observation per line; the format is described in the README of the
 <code>cadl</code> repository), and applies the amendments of F.6 that the trace
 names. It takes the lifecycle state from the trace and does not run
 the lifecycle state machine: a <code>transition:</code> requested by a violation
-is reported, not applied. A norm or item that contains a function call
+is reported, not applied. Up to <code>cadl</code> 0.3.21 it matched the actor
+references of message events too widely: a range such as <code>A[1..2]</code>
+matched every actor named <code>A[k]</code>, and <code>A[*]</code> and an unbound <code>A[i]</code>
+also matched actors outside the declared set. <code>cadl</code> 0.3.22
+matches them by the table of F.3; verdicts computed
+for a file that uses such references in a <code>trigger:</code>, an <code>until:</code>, a
+<code>content:</code>, or a <code>counts_as:</code> rule SHOULD be computed again. It also
+tests the lower bound of a set with a symbolic upper bound. The time
+of a trace is a finite number of at most 2<sup>53</sup> in absolute
+value, so epoch seconds and epoch milliseconds are accepted. The
+actors and the name of a message of a trace are read as written:
+<code>ROBOT[ 2 ]</code>, which 0.3.21 read as <code>ROBOT[2]</code>, is a trace error. This
+is deliberate, because two spellings of one actor in a recorded trace
+defeat a check that compares names. It
+also ignores the observations after the end of the contract instance
+entirely: up to 0.3.21 it took the names of the observed quantities
+(F.5) also from them, so that such an observation could change a
+verdict. A norm or item that contains a function call
 other than a temporal operator, a quantifier, or a wildcard reference
 is not evaluated and stays <code>pending</code>. <code>cadl norms-diff</code> compares two
 versions of a file and reports what F.6 does to the norms of each
 contract, including every carried-over norm whose <code>content</code> or
 <code>deadline:</code> changes and a <code>transform:</code> target that the new version
 lacks.</li>
-<li class="">The generated runtimes (Python, Unity C#) do not monitor norms, and
+<li class="">From <code>cadl</code> 0.3.22,
+<code>cadl codegen -t python</code> writes, for a file that declares
+<code>norms: 0.1</code>, a module <code>norms_monitor.py</code> into the generated package
+(<a class="" href=/cadl-spec/docs/spec/appendix-d-codegen/>Appendix D, D.1</a>). It monitors one
+contract instance while the system runs: the host makes a
+monitor for the instance, passes it one observation at a time, and
+gets back the norm instances, guarantees, and assumptions whose state
+or verdict changed at that observation, with time and reason; it
+signals the end of the instance, and can ask for the current verdicts.
+The module contains the evaluation code of <code>cadl norms-eval</code>, copied
+verbatim, and the contracts of the file as data; it does not need
+<code>cadl</code> at run time, and for a recorded trace it gives the result of
+<code>cadl norms-eval</code>. As that command, it takes the lifecycle state from
+the observations and reports a <code>transition:</code> without applying it. It
+reads the points that F.4 and F.5 state for a processor that receives
+the observations one at a time as follows. A passed deadline and the
+end of an interval are detected at the next observation; the monitor
+tells the host the earliest time stamp at which an observation is
+certain to decide something that only waits for time (a little after
+the deadline or the end of the interval, since content at the
+deadline itself is in time; times are compared with a tolerance of
+10<sup>-9</sup> s). The host names the quantities that are written
+without an actor; a name it does not name is read as a symbolic value
+until its first value, which is the difference F.5 permits
+(<code>cadl norms-eval</code> takes the names from the observations of the
+instance in the trace). An observation after the end of the instance
+has no effect and is counted in a warning. An observation that is
+malformed, or whose amendment cannot be applied, is refused and leaves
+the monitor as it was. The monitor keeps the observations of the
+instance until it is dropped. An amendment (F.6) is applied when the
+host supplies the data of the monitor generated from the new version;
+the monitor cannot read a CADL file. Before <code>cadl codegen</code> writes the
+module it checks that the module compiles and that every name it uses
+is defined in it, and it refuses to generate otherwise.</li>
+<li class="">The Solidity, OPA, and Unity C# targets do not monitor norms, and
 translation of norms to a model checker for design-time checking is
 not implemented.</li>
 </ul>

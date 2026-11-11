@@ -1,4 +1,4 @@
-<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-h-stochastic" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録H. 確率モデル拡張 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-h-stochastic/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録H. 確率モデル拡張 | CADL"/><meta data-rh=true name=description content="確率モデル拡張（stochastic 0.1）を規定する。制度パラメータが現れる宣言的なパラメトリック離散時間マルコフ連鎖，設計としてのモード，PCTL風の性質，認証付きセルを持つモードマップ問い合わせ，PRISMモデリング言語への規範的なエクスポートを定める。"/><meta data-rh=true property=og:description content="確率モデル拡張（stochastic 0.1）を規定する。制度パラメータが現れる宣言的なパラメトリック離散時間マルコフ連鎖，設計としてのモード，PCTL風の性質，認証付きセルを持つモードマップ問い合わせ，PRISMモデリング言語への規範的なエクスポートを定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-h-stochastic/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-h-stochastic/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-h-stochastic/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-h-stochastic/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-h-stochastic","name":"付録H. 確率モデル拡張","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.255ca780.css /><script src=/cadl-spec/ja/assets/js/runtime~main.e6a1d2d2.js defer></script><script src=/cadl-spec/ja/assets/js/main.00450b78.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-h-stochastic" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録H. 確率モデル拡張 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-h-stochastic/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録H. 確率モデル拡張 | CADL"/><meta data-rh=true name=description content="確率モデル拡張（stochastic 0.1）を規定する。制度パラメータが現れる宣言的なパラメトリック離散時間マルコフ連鎖，設計としてのモード，PCTL風の性質，認証付きセルを持つモードマップ問い合わせ，PRISMモデリング言語への規範的なエクスポートを定める。"/><meta data-rh=true property=og:description content="確率モデル拡張（stochastic 0.1）を規定する。制度パラメータが現れる宣言的なパラメトリック離散時間マルコフ連鎖，設計としてのモード，PCTL風の性質，認証付きセルを持つモードマップ問い合わせ，PRISMモデリング言語への規範的なエクスポートを定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-h-stochastic/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-h-stochastic/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-h-stochastic/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-h-stochastic/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-h-stochastic","name":"付録H. 確率モデル拡張","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.255ca780.css /><script src=/cadl-spec/ja/assets/js/runtime~main.69c850a8.js defer></script><script src=/cadl-spec/ja/assets/js/main.00450b78.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-bfa")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=メインコンテンツまでスキップ><a class=skipToContent_fXgn href=#__docusaurus_skipToContent_fallback>メインコンテンツまでスキップ</a></div><nav aria-label=ナビゲーション class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label=ナビゲーションバーを開く aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/ja/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/quickstart/>クイックスタート</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/ja/docs/spec/intro/>仕様書</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/textbook/>テキストブック</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/handson/>ハンズオン</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_nPIU><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_nlXk><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>日本語</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-h-stochastic/ target=_self rel="noopener noreferrer" class=dropdown__link lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-h-stochastic/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=ja>日本語</a></ul></div><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type=button disabled title=システムモード aria-label=ダークモードを切り替える(現在はシステムモード)><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_Bca1><div class="navbar__search searchBarContainer_NW3z" dir=ltr><input placeholder=検索 aria-label=Search class="navbar__search-input searchInput_YFbd" value="" /><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class=docsWrapper_hBAB><button aria-label=先頭へ戻る class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type=button></button><div class=docRoot_UBD9><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class=sidebarViewport_aRkj><div class=sidebar_njMd><nav aria-label=ドキュメントのサイドバー class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/intro/><span title="CADL仕様書 v0.3" class=linkLabel_WmDU>CADL仕様書 v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/introduction/><span title="1. はじめに" class=linkLabel_WmDU>1. はじめに</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/objectives/><span title="2. 言語の目的" class=linkLabel_WmDU>2. 言語の目的</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/comparison/><span title="3. 既存言語との比較" class=linkLabel_WmDU>3. 既存言語との比較</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/requirements/><span title="4. 要求仕様" class=linkLabel_WmDU>4. 要求仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/language-spec/><span title="5. 言語仕様" class=linkLabel_WmDU>5. 言語仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/design/><span title="6. 設計" class=linkLabel_WmDU>6. 設計</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/examples/><span title="7. 用途別記述例" class=linkLabel_WmDU>7. 用途別記述例</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/use-cases/><span title="8. 活用事例と新規性分析" class=linkLabel_WmDU>8. 活用事例と新規性分析</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/research/><span title="9. 研究方向性と未解決課題" class=linkLabel_WmDU>9. 研究方向性と未解決課題</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/roadmap/><span title="10. 実装ロードマップ" class=linkLabel_WmDU>10. 実装ロードマップ</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-a-syntax/><span title="付録A. 構文リファレンス（EBNF）" class=linkLabel_WmDU>付録A. 構文リファレンス（EBNF）</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-b-references/><span title="付録B. 参考文献" class=linkLabel_WmDU>付録B. 参考文献</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-c-motivation/><span title="付録C. 動機拡張" class=linkLabel_WmDU>付録C. 動機拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-d-codegen/><span title="付録D. コード生成ターゲット一覧" class=linkLabel_WmDU>付録D. コード生成ターゲット一覧</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-e-sos-dsl/><span title="付録E. SoS-DSL拡張" class=linkLabel_WmDU>付録E. SoS-DSL拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-f-norms/><span title="付録F. 規範拡張" class=linkLabel_WmDU>付録F. 規範拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-g-agents/><span title="付録G. エージェント統治拡張" class=linkLabel_WmDU>付録G. エージェント統治拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/ja/docs/spec/appendix-h-stochastic/><span title="付録H. 確率モデル拡張" class=linkLabel_WmDU>付録H. 確率モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/glossary/><span title=用語集 class=linkLabel_WmDU>用語集</span></a></ul></nav></div></div></aside><main class=docMainContainer_TBSr><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_VOVn"><div class=docItemContainer_Djhp><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label=パンくずリストのナビゲーション><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label=ホームページ class=breadcrumbs__link href=/cadl-spec/ja/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_YNFT><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>付録H. 確率モデル拡張</span></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type=button class="clean-btn tocCollapsibleButton_TO0P">このページの見出し</button></div><div class="theme-doc-markdown markdown"><header><h1>付録H. 確率モデル拡張（stochastic 0.1）</h1></header>
@@ -34,7 +34,7 @@ PRISMモデリング言語を読む
 <li class=""><strong>意味論は変換である。</strong> モデルとモードは，パラメトリックな離散時間マルコフ連鎖を定める（H.7）。
 処理系はこれを，固定の規則によってPRISMモデリング言語へエクスポートする（H.11）。</li>
 <li class=""><strong>モードマップの問いは定義するが，解かない。</strong> H.9は，問い合わせが何を問い，何が正しい答えであるかを
-定義する。それをどう計算するかは定義しない。</li>
+定義する。それをどう計算するかは定義しない。リファレンス実装の方法はH.14に述べる。</li>
 </ul>
 <p><strong>バージョン0.1の範囲。</strong></p>
 <ul>
@@ -137,8 +137,11 @@ YAMLの数値スカラーは，ローダーが生成した浮動小数点値に�
 その割当て<em>において良定義である</em>。H.7からH.9は，そこでのみ定義される。S-11は固定値でそれを要求し，
 S-14はモードマップの領域の上でそれを要求する。</p>
 <p><strong>グラフ保存。</strong> 領域は，設計のコマンドのどの確率も，その領域のすべての付値で0である場合を除いて，
-領域のどの付値でも0にならないとき，その設計について<em>グラフ保存</em>である。処理系は，そうでない
-セルの認証を見送ってよい。そのときセルは <code>undecided</code> になる（H.9）。</p>
+領域のどの付値でも0にならないとき，その設計について<em>グラフ保存</em>である。確率が0になるところでは，
+解関数（H.7）は連続であるとは限らない。ある状態に到達する確率が0に落ちることがあり，期待報酬が
++∞ になることがある。処理系は，グラフ保存でないセルの認証を見送ってよい。そのときセルは
+<code>undecided</code> になる（H.9）。そのようなセルを認証する処理系は，この仮定がなくても健全な方法を
+用いなければならない。グラフ保存を仮定する方法を，そのようなセルに適用してはならない。</p>
 <p><strong>アクションラベル。</strong> <code>action:</code> はコマンドに名前を付ける。複数のコマンドが1つの名前を共有してよい。
 コマンドはその名前で同期しない。遷移報酬がこれを参照し（H.8），エクスポートしたモデルに現れる（H.11）。</p>
 <p><strong>デッドロック。</strong> どのコマンドも有効でない状態は，確率1でその状態にとどまる。これは誤りではない。
@@ -222,7 +225,8 @@ P(s, s) = 1 であり，他のすべての s′ について P(s, s′) = 0 で�
 J_R(v) は，モード R の設計での，付値 v における問い合わせの値である（H.7）。「x は y と同等以上に
 良い」を x ⪰ y と書く。<code>maximize:</code> では x ≥ y，<code>minimize:</code> では x ≤ y である。</li>
 <li class=""><strong><code>constraint:</code></strong> は，省略可能な閾値性質である。R の設計が v において制約を満たし（制約がなければ真），
-かつ <code>minimize:</code> では J_R(v) が有限であることを，sat_R(v) と書く。</li>
+かつ <code>minimize:</code> では J_R(v) が有限であることを，sat_R(v) と書く。<code>maximize:</code> では，値 +∞ を
+認め，それはどの値とも同等以上に良い。</li>
 <li class=""><strong><code>resolution:</code></strong> は，0 &lt; r &lt; 1 である数 r であり，B の体積のうち未決定のまま残ってよい割合である。</li>
 </ul>
 <p>比較するどの設計も，B のすべての付値において良定義でなければならない（S-14）。</p>
@@ -251,7 +255,28 @@ J_R(v) は，モード R の設計での，付値 v における問い合わせ�
 これらの主張をしてはならない。これは，ただ1点についての主張にも当てはまる。パラメータリフティングによる
 領域検証と，解関数の上の厳密な推論は，そのような方法である。標本点での評価は，どれほど多くても
 そうではない。<code>resolution:</code> に算入するのは，そのような認証付きのセルだけである。要求された
-分解能に達することができない処理系も，マップを報告し，達しなかったことを述べる。</p>
+分解能に達することができない処理系も，マップを報告し，達しなかったことを述べる。処理系は，
+マップとともに方法の名前を示すことが望ましい。</p>
+<p>これらの主張は，セルの上でH.7が定義されていることを前提とする。処理系は，比較するどの設計も
+セルのすべての付値において良定義（H.5）である場合を除いて，セルについて <code>decided</code> または
+<code>infeasible</code> を主張してはならない。確率が開いているパラメータについて多重アフィンである設計では，
+S-14の頂点の検査がこれを確立する。それ以外の設計では，処理系は，セルについてこれを確立するか，
+セルを <code>undecided</code> のままにしなければならない。</p>
+<p><strong>上下界によるセルの決定。</strong> ある方法が，比較する各モード R について，セル C のすべての付値で
+成り立つ J_R の下界 l_R と上界 u_R を与え（界は +∞ であってよい），制約の量についても同様に
+上下界を与えるとする。上下界が，すべての v ∈ C について sat_R(v) を示すとき，R は C の上で
+<em>内</em>であるといい，すべての v ∈ C について sat_R(v) が成り立たないことを示すとき，C の上で
+<em>外</em>であるという。このとき，次が成り立つ。</p>
+<ul>
+<li class="">比較するどのモードも C の上で外であるとき，C は実行不能である。</li>
+<li class="">R が C の上で内であり，かつ，比較する他のどのモード R′ についても，R′ が C の上で外であるか，
+<code>maximize:</code> では l_R ≥ u_R′（<code>minimize:</code> では u_R ≤ l_R′）であるとき，R は C の上で最適である。</li>
+</ul>
+<p>これらの条件は十分条件であり，必要条件ではない。条件は，ある解関数の界を別の解関数の界と比べる
+ものであり，2つの関数を同じ付値で比べるものではない。したがって，2つのモードが並ぶ点の近くのセルは，
+一方のモードがその上で最適であっても，<code>undecided</code> のまま残ることがある。また，セル全体で並ぶ
+モードの両方が見つかるのは，それらの上下界が一致するとき，または2つの解関数が同じであることを
+処理系が知っているときに限られる。</p>
 <p><strong>推定。</strong> 処理系は，これに加えて，たとえばシミュレーションによる，標本点での目的の推定を，
 その信頼度とともに報告してよい。推定はセルとは分けて報告する。推定はそれらの点だけについての
 主張であり，セルの状態を変えることはなく，<code>resolution:</code> に算入することもない。</p>
@@ -365,7 +390,11 @@ S-3の誤りに加えて，この診断を出す。</li>
 <li class="">各ラベルについて，宣言の順に，
 <code>label "name" = (tr(pred));</code>。</li>
 <li class="">各報酬構造について，<code>rewards "id"</code>，続いてその項目を順に書く。状態報酬は
-<code>tr(guard) : (value);</code>，遷移報酬は <code>[a] tr(guard) : (value);</code> と書く。続いて <code>endrewards</code>。</li>
+<code>tr(guard) : (value);</code>，遷移報酬は <code>[a] tr(guard) : (value);</code> と書く。続いて <code>endrewards</code>。
+設計のどのコマンドも持たないアクションラベルの遷移報酬は書かない。その設計では決して得られず，
+PRISMとStormは，モデルにないアクションを挙げる項目を受け付けないからである。ある構造の項目を
+1つも書かないときは，代わりにただ1つの項目 <code>true : (0);</code> を書く。Stormが空の報酬構造を
+受け付けないからである。</li>
 </ol>
 <p><strong>数</strong>は，往復変換で戻る最短の10進小数として，指数なしで書く（<code>0.9</code>，<code>1</code>，<code>0.001</code>）。</p>
 <p><strong>識別子。</strong> パラメータ，変数，アクションの名前，および生成される名前 <code>x_L</code> は，そのまま書く。
@@ -394,7 +423,8 @@ PRISMでは，ラベルと報酬構造はそれぞれ独自の名前空間を持
 括弧で囲む。
 <code>P=? [ F&lt;=3 "delivered" ]</code>。</p>
 <p>領域，比較するモード，および <code>resolution:</code> は解析の引数であり，エクスポートしない。
-古典的な形のパラメータリフティングは，パラメータについて多重アフィンである確率と，
+古典的な形のパラメータリフティング
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[Quatmann+, ATVA 2016]</a>は，パラメータについて多重アフィンである確率と，
 グラフ保存（H.5）である領域を仮定する
 <a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[Heck+, ATVA 2025]</a>。モードマップは既存のツールの機能ではない。
 処理系は，複数のモードモデルの複数の解析からそれを組み立てる。</p>
@@ -448,6 +478,13 @@ s_D = 0.61695 である。本節の計算値は，小数第6位までに丸め�
 [f₁, f₂] × [l₁, l₂] はその頂点によって認証される。(1 − f₂)(1 − l₂) ≥ 2/3 のとき，その上で
 CENTRALIZED が最適であり，(1 − f₁)(1 − l₁) ≤ 2/3 のとき DISTRIBUTED が最適であり，
 それ以外のときは曲線がセルを横切り，セルは <code>undecided</code> である。</p>
+<p>2つの設計の上下界からセルを決定する方法（H.9）が決定するセルは，これより少ない。セルの上での
+x の最小値と最大値を，x_min = (1 − f₂)(1 − l₂)，x_max = (1 − f₁)(1 − l₁) と書く。
+どちらの設計についても，セルの上での値の範囲は，x が x_min から x_max までを動くときの
+1 − (1 − s)³ の範囲にちょうど一致する。これらの範囲を比べると，x_min における s_C が
+x_max における s_D 以上であるとき，すなわち 0.81·x_min − 0.09·x_max ≥ 0.48 のとき
+CENTRALIZED に決定し，0.81·x_max − 0.09·x_min ≤ 0.48 のとき DISTRIBUTED に決定する。
+どちらも満たさないセルは，曲線がセルを横切らないときも，<code>undecided</code> である。</p>
 <p><strong>エクスポート。</strong> H.11により，設計 CENTRALIZED のモデルファイルは次のとおりである。
 p_fail と p_loss は，モードマップが <code>over:</code> に挙げているため，開いている。DISTRIBUTED のファイルは，
 <code>const double beta = 0.1;</code> だけが異なる。</p>
@@ -477,20 +514,94 @@ S-7とS-9は状態空間を列挙して検査し，200 000状態を超える場�
 H.13のIRへ変換する。</li>
 <li class=""><code>cadl model-export</code> は，H.11のファイルを書き出す。</li>
 <li class=""><code>cadl model-check</code> は，固定したパラメータの値における1つの設計を対象とする，厳密な有理数算術による
-小さな参照評価器である。H.8の性質を，2 000個の未知数まで評価する。モードマップの目的を格子の点で
-評価することもできる。これらは標本点での推定として報告し（H.9），決定済みのセルとしては
-報告しない。</li>
-<li class="">リファレンス実装は，外部のモデル検査器を実行せず，認証付きのモードマップを計算しない。
-<code>cadl regime-map</code> は，これまでどおりモード名と遷移のグラフを報告する。</li>
+小さな参照評価器である。H.8の性質を，2 000個の未知数まで評価する。<code>--regime-map ID</code> を付けると，
+モードマップの目的を格子の点で評価する。これらは標本点での推定として報告し（H.9），決定済みの
+セルとしては報告しない。</li>
+<li class=""><code>cadl model-check --regime-map ID --certify</code> は，<code>cadl</code> 0.3.22から，H.9の
+モードマップを計算する。外部のモデル検査器は実行しない。方法は，厳密な有理数算術による
+パラメータリフティング <a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[Quatmann+, ATVA 2016]</a>である。セルの上で，
+設計をマルコフ決定過程に緩和する。この過程では，各状態が，他の状態とは独立に，その状態から出る
+確率に現れる開いているパラメータについて，セルの頂点の1つを選ぶ。それらの確率が多重アフィンで
+あるとき，セルのどの付値における連鎖も，ある1つの確率的な方策のもとでのこの過程であるので，
+過程の最小値と最大値は，セル全体で解関数の下界と上界になる。ステップ上限のある性質は
+後ろ向き帰納法で解き，上限のない性質は，連立一次方程式を厳密に解く方策反復で解く。セルは，
+これらの上下界から，H.9の条件によって決定する。未決定のセルは，領域に対する区間の幅の比が
+最も大きいパラメータに沿って二分する。未決定のセルのうち最も大きいものから二分し，未決定の割合が
+<code>resolution:</code> 以下になるか，予算が尽きるまで続ける（<code>--max-depth</code>，既定では1つのセルを
+24回まで二分する。<code>--max-cells</code>，既定では20 000セルまで）。後者の場合，分解能に達しなかった
+ことを述べてマップを報告し，終了ステータスは1である。同じ主張を持つ2つの半分は，1つのセルとして
+報告する。コマンドは，方法，セル，状態ごとのセルの数，および厳密な数としての未決定の割合を
+報告する。推定（<code>--grid</code>）と認証付きのマップ（<code>--certify</code>）は別の出力であり，同時には指定できない。</li>
+<li class="">認証付きのマップの限界は，次のとおりである。<!-- -->
+<ul>
+<li class="">2つの設計の上下界を比べるのであり，それらの差を比べるのではない。そのため，境界に隣り合うセルは
+<code>undecided</code> のまま残る（H.9，H.12）。セルの上で並ぶモードをともに挙げるのは，それらの上下界が
+一致するとき，またはそれらの設計が同じモデルを持つときに限られる。</li>
+<li class="">開いているパラメータについて多重アフィンでない確率は，その単項式の上の厳密な区間演算で囲み，
+状態は，これらの区間に入る分布の集合の頂点の1つを選ぶ。これは健全であるが，より粗い。
+そのような設計は，区間が <code>[0, 1]</code> に入るときにだけ，セルの上で良定義であるとみなす。
+そうでないとき，セルは <code>undecided</code> であり，報告はこの理由を示す。区間演算は過大に見積もるので，
+そのような確率が0または1になる付値の近くでは，セルをどれほど小さくしても，これを確立できない
+ことがある。</li>
+<li class="">グラフ保存でないセルは，見送らずに解析する。確率の上下界は，決定過程の上下界である。
+期待報酬が有限の上界を持つのは，過程のどの方策も確率1で目標に到達するときに限られる。
+どの方策もそうでないとき，期待報酬はセル全体で +∞ である。その下界は，方策が蓄積する
+期待報酬のうち最小のものである。</li>
+<li class="">計算量は，セルの数と状態の数とともに増える。セルの数は，開いているパラメータの数とともに増える。
+どの方策も，2 000個までの未知数を持つ厳密な連立一次方程式で評価する。</li>
+<li class="">S-14は，<code>cadl check</code> が領域の角で検査する。多重アフィンでない確率は，領域の内側でだけ
+<code>[0, 1]</code> を外れうる。認証付きのモードは，セルの中心または角でそれが分かるとき，誤りとして
+報告する（終了状態2）。分からないときは，そのセルを <code>undecided</code> のままにする。</li>
+<li class="">有効数字が15桁を超えるYAMLの数は，H.2が禁じているが，ファイルの読み込み時に丸められ，
+報告されない。そのとき，主張は丸めた後のモデルについてのものになる。</li>
+</ul>
+</li>
+<li class="">H.12の例（<code>resolution: 0.05</code>）では，認証付きのマップは95個のセルを持ち，60個が <code>decided</code>，
+35個が <code>undecided</code> である。これは121個のセルの分割をまとめた結果である。解析したセルは241個で，
+1つのセルの二分は多くとも10回である。CENTRALIZED は領域の 235/1024 で認証され（最適であるのは
+領域の 0.2521 である），DISTRIBUTED は 738/1024 で認証され（最適であるのは 0.7479），
+未決定の割合は 51/1024 = 0.0498 である。曲線は，未決定の35個のセルのうち31個を横切り，
+残りの4個は曲線に隣り合う。計算はノートPCで約0.1秒である。<code>resolution: 0.01</code> では0.8秒
+（まとめる前のセルは726個），<code>resolution: 0.002</code> では3.8秒（3 632個）である。</li>
+<li class="">認証付きのマップは，2つの方法で確認した。リファレンス実装のテストは両方を繰り返す。2つ目には
+<code>stormpy</code> が必要である。対象の8つのマップは，H.12のマップと，第2のモデルの7つのマップである。
+第2のモデルは，3つのモード，サイクル，<code>minimize:</code> と期待報酬（1つのモードではどこでも +∞ であり，
+他のモードでは領域の1つの面で +∞ である），領域の一部を実行不能にする制約，多重アフィンでない確率，
+グラフ保存でないセル，セル全体での並び，および3つの開いているパラメータを含む。<!-- -->
+<ul>
+<li class="">8つのマップの <code>decided</code> と <code>infeasible</code> のセルすべて，212個を，その頂点，中心，および6個の
+無作為な有理数の点で，厳密な参照評価器によって評価した。点での評価は2 512回である。そのどの点でも，
+主張のとおり，<code>best</code> のどのモードも最適であるか，どのモードも制約を満たさない。</li>
+<li class="">エクスポートしたファイルの上で，上下界をStorm（stormpy 2.0.0，厳密なパラメータリフティングの
+エンジン）と比較した。対象は，設計と，その設計についてグラフ保存であるセルとの134個の組である。
+確率が多重アフィンである設計では，<code>cadl</code> の下界と上界は，Stormのものと有理数として等しい
+（159組の上下界）。Stormが細分によってセルの上で見つける極値は，<code>cadl</code> の上下界の中にある
+（213組）。セルについての制約に対するStormの判定（すべての付値が満たす，すべてが違反する，
+どちらでもない）は，79件のうち79件で <code>cadl</code> の主張と一致する。</li>
+<li class="">Stormのパラメータリフティングは，グラフ保存である領域を仮定する。stormpyの <code>verify</code> は，
+そうでない領域を拒否する。また，各ステップで確率 p で <code>done</code> に到達する設計について，
+0 ≤ p ≤ 1/2 の上で，その極値の計算は <code>P=? [ F done ]</code> の最小値として1を返した。
+p = 0 での値は0である。そのため，グラフ保存でないセルは，参照評価器だけで確認した。</li>
+</ul>
+</li>
+<li class="">独立したレビューが，認証付きのモードを破ろうと試み，誤った主張を見つけなかった。乱数で生成した
+3 290個のモデルについて，56 782個の <code>decided</code> または <code>infeasible</code> のセルを，1 731 349個の厳密な点で
+検査した。グラフを保存しないセルと，多重アフィンでない設計を含む。決定過程の解法は，60 000個の
+乱数で生成した過程について，すべての無記憶方策の総当たりと一致した。コードに注入した4つの
+健全性の誤りは，いずれも検査の仕組みが検出した。</li>
+<li class=""><code>cadl regime-map</code> は，これまでどおりモード名と遷移のグラフを報告する。</li>
 <li class="">エクスポートしたファイルは，PRISM 4.11とStorm（stormpy 2.0.0）で実行して確認した。対象は，
-H.12の例と，<code>when:</code>，3分岐の更新，ガード付きの状態報酬と遷移報酬，<code>U</code>，<code>U&lt;=k</code>，キーワードと
-同じ名前を使う第2のモデルであり，4つの設計の27個の性質である。状態数は一致し，すべての値は，
-Stormと，PRISMの厳密エンジンのもとで，<code>cadl model-check</code> と有理数として一致する。
-PRISMの厳密エンジンはステップ上限（<code>F&lt;=k</code>，<code>U&lt;=k</code>）を扱えないので，それらの性質は，PRISMとは
-浮動小数点で比較した。リファレンス実装のテストは，<code>prism</code> または <code>stormpy</code> がインストールされて
-いるときに，この比較を繰り返す。この実行で，<code>cadl</code> 0.3.20が，キーワードと同じ名前のラベルや
-報酬構造をそのまま書き出しており，どちらのツールもそれを読み込めないことが分かった。
-0.3.21は，H.11が現在述べるとおりに名前を変える。</li>
+H.12の例，<code>when:</code>，3分岐の更新，ガード付きの状態報酬と遷移報酬，<code>U</code>，<code>U&lt;=k</code>，キーワードと
+同じ名前を使う第2のモデル，および上の認証付きのマップのモデルであり，7つの設計の39個の性質である。
+状態数は一致し，すべての値は，Stormと，PRISMの厳密エンジンのもとで，<code>cadl model-check</code> と
+有理数として一致する。PRISMの厳密エンジンはステップ上限（<code>F&lt;=k</code>，<code>U&lt;=k</code>）を扱えないので，
+それらの性質は，PRISMとは浮動小数点で比較した。リファレンス実装のテストは，<code>prism</code> または
+<code>stormpy</code> がインストールされているときに，この比較を繰り返す。これらの実行で，エクスポートの
+2つの不具合が分かった。<code>cadl</code> 0.3.20は，キーワードと同じ名前のラベルや報酬構造をそのまま
+書き出しており，どちらのツールもそれを読み込めなかった。0.3.21は，H.11が現在述べるとおりに
+名前を変える。<code>cadl</code> 0.3.21までは，設計のどのコマンドも持たないアクションの遷移報酬を
+書き出しており，どちらのツールもそれを読み込めなかった。0.3.22は，H.11が
+現在述べるとおりに，それを書かない。</li>
 </ul>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id=h15-後方互換性>H.15 後方互換性<a href=#h15-後方互換性 class=hash-link aria-label="H.15 後方互換性 への直接リンク" title="H.15 後方互換性 への直接リンク" translate=no>​</a></h2>
 <p>本拡張を用いないCADL v0.3のファイルは引き続き有効であり，同じように読まれる。本拡張は
