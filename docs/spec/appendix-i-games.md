@@ -643,9 +643,18 @@ face, and since admissibility depends on the graph only:
 > every open parameter is at the lower end, the middle, or the upper
 > end of its interval).
 
-I-9 requires this check. When it succeeds for such a design, the
-profile is admissible on every cell, and nothing remains to be
-established per cell. For a design with a probability that is not
+I-9 requires this check. For such a design, a failure at the centre
+of a face means that the profile is not admissible at any valuation
+of that face. A region that touches a degenerate end, for example a
+retry loop whose success probability is 0 at `lo`, is therefore an
+error of the file, and the author shrinks the interval. When the
+check succeeds for such a design, the profile is admissible on every
+cell, and nothing remains to be established per cell for
+admissibility; a bounding method may still fail on a cell, for
+example the relaxation on a cell that touches such a face; that cell
+is `undecided` with the reason `bounds`. The reason `not_admissible`
+of an undecided cell can therefore occur only for a design that is
+not multi-affine. For a design with a probability that is not
 multi-affine, the processor establishes admissibility for each cell,
 for example by the relaxation below, or leaves the cell `undecided`
 with the reason `not_admissible`.
@@ -662,11 +671,14 @@ C:
 - b_p ≥ BR_p(v), an upper bound of the best-response value;
 - for one or more strategies τ of p, d_p(τ) ≤ U_p(τ, v), a lower bound
   of the payoff of p under the profile in which p plays τ;
-- for every state s of R_C(p), bounds l_p(s) ≤ V_p(s, v) ≤ u_p(s) of
-  the payoff of p from s under the profile (both 0 when φ_p holds in
-  s), and, for every state s of p in R_C(p) in which φ_p does not
-  hold and every command c of En(s), a number
-  q_p(s, c) ≥ Q_p(s, c, v). Such a number is obtained from an upper
+- for every state s of R_C(p), numbers l_p(s) and u_p(s) with
+  l_p(s) ≤ V_p(s, v) ≤ u_p(s) for every v in C and every state s of
+  Reach_p at θ(v) (both 0 when φ_p holds in s), and, for every state
+  s of p in R_C(p) in which φ_p does not hold and every command c of
+  En(s), a number q_p(s, c) with q_p(s, c) ≥ Q_p(s, c, v) for every v
+  in C at which s is a state of Reach_p at θ(v). Nothing is required
+  at a valuation at which s is not reachable, where V_p(s, v) need
+  not exist. Such a number is obtained from an upper
   bound of the step payoff ρ_p(s, c) on C and the **upper** bounds
   u_p(s′) of the successors: q_p(s, c) is at least
   ρ_p(s, c) + Σ_s′ μ(s′) · u_p(s′) for every distribution μ that the
@@ -808,7 +820,8 @@ here, and in addition:
   the centre of every face of the region (I.9: every open parameter at
   the lower end, the middle, or the upper end of its interval, 3ⁿ
   valuations); a failure at one of these valuations is an error of the
-  file. For a design whose probabilities are multi-affine in the open
+  file (for a multi-affine design the profile is then inadmissible on
+  the whole face, I.9). For a design whose probabilities are multi-affine in the open
   parameters these checks decide both properties on the whole region
   (S-14, I.9). For any other design they do not; the processor then
   establishes both for each cell or leaves the cell `undecided`, and
@@ -1366,7 +1379,7 @@ this shape).** Exact numbers are strings: an integer, or a fraction
   "designs": [
     { "design": "CENTRALIZED",
       "parameters": { "p_fail": "1/20", "lambda": "1/10" /* ... every parameter */ },
-      "status": "not_equilibrium",            // equilibrium | not_equilibrium | inconclusive
+      "status": "not_equilibrium",            // equilibrium | not_equilibrium | inconclusive | not_evaluated
       "deviators": ["R"],                     // [] unless not_equilibrium
       "from_every_state": null,               // true | false | null
       "players": [
@@ -1390,6 +1403,7 @@ The result of an equilibrium map query:
   "over": { "lambda": ["0", "1"] }, "resolution": "1/20",
   "designs": [
     { "design": "CENTRALIZED", "method": "...",
+      "parameters": { "p_fail": "1/20" /* ... every parameter that is not open */ },
       "cells": [
         { "box": { "lambda": ["0", "1/8"] }, "status": "not_equilibrium", "deviators": ["R"] },
         { "box": { "lambda": ["1/8", "5/32"] }, "status": "undecided", "reason": "bounds" },
@@ -1399,6 +1413,14 @@ The result of an equilibrium map query:
     // ... DISTRIBUTED
   ] }
 ```
+
+When a processor does not evaluate a query because a payoff has a
+`sanction_of:` or `reward_of:` term that it does not implement (I-7),
+the result of each design, in a check and in a map, is
+`{ "design": "...", "status": "not_evaluated", "reason": "..." }`,
+where `reason` names the term, and has no other field. A map result
+carries, per design, a field `parameters` like that of a check, with
+the fixed values of the parameters that are not open.
 
 `players` is in the order of declaration, and `cells` in the
 lexicographic order of their lower corners, with the parameters in the
@@ -1415,13 +1437,14 @@ as a command MUST distinguish three outcomes by its exit status:
 | Exit status | Meaning |
 | --- | --- |
 | 0 | every requested result was computed, whatever the answers (`equilibrium` or `not_equilibrium`, any number of `undecided` cells within the resolution) |
-| 1 | some result is `inconclusive`, or some map did not reach its `resolution:` |
-| 2 | nothing can be claimed: a static error of the file, or a design that is not well-defined or a profile that is not admissible at the values at which the command was asked to evaluate |
+| 1 | some result is `inconclusive` or `not_evaluated`, or some map did not reach its `resolution:` |
+| 2 | nothing can be claimed: a static error of the file, a usage error of the command, or a design that is not well-defined or a profile that is not admissible at the values at which the command was asked to evaluate |
 
 When the command lets the user give a parameter another value than its
 fixed value (as `--set` of `cadl model-check` does), the value MUST
-lie in the declared range, a parameter that the evaluated query lists
-in `over:` cannot be set, and the processor MUST check the conditions
+lie in the declared range, giving a value to a parameter that the
+evaluated query lists in `over:` is a usage error (exit status 2),
+and the processor MUST check the conditions
 of I-8 again at the values it uses (and those of I-9 for a map) before
 it evaluates.
 

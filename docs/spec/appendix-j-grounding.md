@@ -186,13 +186,17 @@ J-2). The **pairs** of C are the pairs (x, q) of an item x and a party
 name q other than o(x): the places where an item can be shared with a
 party.
 
-An actor reference T **denotes the whole party** q when its actor
-name is q and it has no index, the index `*`, an identifier as index
-(an index variable such as `i`, which stands for every member in
-turn), or the range with which the actor is declared; it also does
-when it has an integer index and is the only entry of `parties:` with
-that actor name. Otherwise (an integer index, or another range) it is
-**member-specific**. Indices and ranges are compared as written,
+Whether a target stands for a whole party follows the matching of
+actor references of F.3. An actor reference T **denotes the whole
+party** q when its actor name is q and it is a single actor `A`
+(J.2), `A[*]`, `A[i]` with an identifier as index, the full range with
+which the actor is declared, or a range with a symbolic bound (which
+matches every member, F.3). A reference with an integer index denotes
+the whole party only when it is equal to the only entry of `parties:`
+with that actor name. Any other reference with an integer index or a
+range is **member-specific**. A bare set name, `A` for an actor
+declared with a range, matches no member (F.3): it gives no pair, and
+a processor SHOULD warn. Indices and ranges are compared as written,
 ignoring white space.
 
 A pair (x, q) is given
@@ -226,6 +230,8 @@ What the definition does not look at:
 
 - The source S is not examined: an entry gives the item to T whoever
   sends it.
+- An identifier index always counts as the whole party, also where
+  the author means one selected member (`ROBOT[winner]`).
 - A target that is not a party of the contract gives no pair; a
   processor SHOULD warn (J-3).
 - The state of a norm is ignored: a sharing norm counts whether or not
@@ -354,7 +360,8 @@ A processor computes the three quantities for every contract and
 reports them (J-5). For `alpha` and `beta` it reports the declared
 value, the index, and their difference, and compares them. Every
 disagreement is a **warning**: the indices are evidence about the
-norms, and declaring this extension never makes a valid file invalid.
+norms, and declaring this extension never invalidates a file that
+declares `norms: 0.1`.
 
 **A declared end point with a counterexample in the contract.** The
 end points of 5.4.2 are universal statements. When a construct of the
@@ -365,8 +372,14 @@ the construct (J-6):
 | --- | --- |
 | `alpha: 0` | a given pair, with the entry or sharing norm that gives it; when α̂ is undefined, a non-empty `information.sharing` |
 | `alpha: 1` | the pairs that are not given (absence of a norm does not show that a party lacks an item, so this is the weakest of the four) |
-| `beta: 1` | a power whose bearer is not the single actor with the largest share |
-| `beta: 0` | a single actor that bears a power |
+| `beta: 1` | a power that is not borne by a single actor with the largest count (the first in the order of the file when several have it); every power when β̂ = 0 |
+| `beta: 0` | a single actor with the largest count, but only when β̂ exceeds 1 divided by the number of distinct single actors that bear a power |
+
+β̂ is 0 only when every power is borne by an actor set. A contract in
+which several single actors each bear the same number of powers and
+none bears more has β̂ equal to 1 divided by their number, the least
+value possible for these bearers, and `beta: 0` gets no warning
+there.
 
 **An intermediate value far from the index.** For α and β, a processor
 SHOULD warn when the declared value and the index differ by more than
@@ -638,7 +651,7 @@ about the same construct, a processor gives one diagnostic.
   each once. A processor SHOULD warn when the receiver of the message
   has the actor name of the origin of a listed item; when the target
   of a sharing entry or the receiver of a sharing norm is not a party
-  of the contract; and when an entry of `information.sharing` names an
+  of the contract, or is a bare set name (J.4); and when an entry of `information.sharing` names an
   item that `grounding.items` does not declare while the contract
   declares items.
 - **J-4.** `on_violation.magnitude` and `on_fulfilment.magnitude` MUST
@@ -665,13 +678,15 @@ about the same construct, a processor gives one diagnostic.
   pair, or has a non-empty `information.sharing` while α̂ is
   undefined; `alpha: 1` and α̂ is defined and less than 1; `beta: 1`
   and β̂ is defined and less than 1; or `beta: 0` and β̂ is defined and
-  greater than 0.
+  greater than 1 divided by the number of distinct single actors that
+  bear a power (J.5).
 - **J-7.** A processor SHOULD warn when the declared `alpha` or `beta`
   and the defined index differ by more than the tolerance of the
   contract and J-6 gives no warning for that parameter, and when the
   decision holder names a single actor whose share of the powers is
   smaller than β̂.
-- **J-8.** A processor SHOULD warn when a contract declares a `lambda`
+- **J-8.** For a contract that has `norms:`, a processor SHOULD warn
+  when the contract declares a `lambda`
   greater than zero and none of its obligations and prohibitions
   carries an incentive (J.4), and when it declares `lambda: 0` and one
   of them does.
@@ -686,8 +701,9 @@ about the same construct, a processor gives one diagnostic.
   value MUST be a string `C.n` in which `C` is a declared contract and
   `n` an obligation or a prohibition of `C` that has an
   `on_violation.magnitude` (for `sanction_of:`) or an
-  `on_fulfilment.magnitude` (for `reward_of:`) greater than zero. The
-  model MUST have exactly one parameter bound by `from: "C.lambda"`.
+  `on_fulfilment.magnitude` (for `reward_of:`) greater than zero. A
+  model that has a term naming a norm of `C` MUST have exactly one
+  parameter bound by `from: "C.lambda"`.
   The player of the payoff MUST list, in `actors:`, a reference that
   **covers** the bearer of `n`: the two have the same actor name and
   do not have two different integer indices (`"ROBOT[*]"` and
@@ -729,6 +745,8 @@ about the same construct, a processor gives one diagnostic.
      J.7, ℓ occurs with a power of at most one;
   3. the design is well-defined and the profile admissible at one
      value of ℓ in the cell (by the proposition, then at every value);
+     this is a reminder and no separate check, since the evaluations
+     of condition 4 establish it at a and at b;
   4. the evaluations at a and at b are exact (I.8);
   5. for a claim that p is a deviator, condition (ii) of J.7 holds for
      p in that design: the form of the weights is checked on the text,
@@ -841,8 +859,8 @@ only and one that has a transition. The declared `lambda: 0.5` is
 greater than zero and a norm carries an incentive, so J-8 gives no
 warning.
 
-By Lemma 2, an amendment that makes DISPATCHER the bearer of
-`decline` raises β̂ to 1, and by Lemma 3 one that gives
+By the definition, an amendment that removes `decline` raises β̂ to
+1/1 = 1, and by Lemma 3 one that gives
 `report_failure` a sanction raises χ to 2/3.
 
 ## J.10 Intermediate Representation (IR) addition
@@ -925,11 +943,12 @@ and are read the same way. The extension changes no verdict of
 Appendix F and no result of Appendices H and I: a term with
 `sanction_of:` is a term of I.6 with a defined weight.
 
-**Declaring the extension never invalidates a file.** A file that is
-valid under Appendix F and uses none of the keys of this appendix
-remains valid when `grounding: 0.1` is added to its `extensions:`.
-The rules that are errors (J-2, J-3, J-4, J-10) apply only to the
-keys of this appendix; every comparison of a declared parameter with
+**Declaring the extension never invalidates a file that declares
+`norms: 0.1`.** A file that declares `norms: 0.1`, is valid under
+Appendix F, and uses none of the keys of this appendix remains valid
+when `grounding: 0.1` is added to its `extensions:`. Of the rules
+that are errors, J-1 cannot fire for such a file, and J-2, J-3, J-4,
+and J-10 apply only to the keys of this appendix; every comparison of a declared parameter with
 an index (J-6 to J-9) is a warning or an informational diagnostic.
 
 A file that uses `grounding:`, `shares:`, `on_fulfilment:`,

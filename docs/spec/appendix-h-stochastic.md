@@ -575,12 +575,13 @@ declares `stochastic: 0.1`, in addition to existing checks:
 - **S-1.** `model:` MUST have `variables:` with at least one variable
   and `commands:`, which may be an empty list. `kind:`, if present,
   MUST be `dtmc`. One case is not an error of this rule: in a file
-  that declares `games: 0.1` ([Appendix I](./appendix-i-games.md)), a
+  that declares the extension `games`, in any version
+  ([Appendix I](./appendix-i-games.md)), a
   processor that does not implement that extension does not interpret
   a model whose `kind:` is present and is not `dtmc`. It emits one
   informational diagnostic, applies none of S-2 to S-15 to the block,
   and MUST NOT evaluate, lower, or export the block as a Markov chain
-  (H.15). In a file that does not declare `games: 0.1`, such a `kind:`
+  (H.15). In a file that does not declare `games`, such a `kind:`
   is an error.
 - **S-2.** The `id` of a parameter, variable, reward structure,
   property, and regime map, every label name, every enumeration
@@ -1200,8 +1201,8 @@ as an undeclared extension key. Processors that do not implement the
 extension MUST NOT reject a file because of `model:`; they SHOULD emit
 a single informational diagnostic per file.
 
-A file may declare `games: 0.1` ([Appendix I](./appendix-i-games.md))
-and carry a model with `kind: smg`, which is a game and not a Markov
+A file may declare the extension `games`, in any version
+([Appendix I](./appendix-i-games.md)), and carry a model with `kind: smg`, which is a game and not a Markov
 chain. A processor that implements this appendix and not Appendix I
 skips such a model (S-1): it reports it with one informational
 diagnostic, `stochastic_model` is `null`, and it MUST NOT check,
