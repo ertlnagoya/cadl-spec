@@ -272,7 +272,9 @@ and Z3 is used only for satisfiability. The norms extension
 RD-6.1, RD-6.2, RD-6.3, and RD-6.5: it defines first-class norms,
 bounded temporal operators with four-valued verdicts, counts-as rules,
 and what happens to running norms on an amendment. The
-generated Python code monitors norms at run time
+generated Python code monitors norms at run time, and so do the
+generated Rego, as a step function over a stored state, and Solidity,
+for contracts without quantifiers and aggregates
 ([F.10](./appendix-f-norms.md#f10-reference-implementation-status)).
 The grounding extension
 ([Appendix J](./appendix-j-grounding.md), `grounding` 0.1) is a first
@@ -283,8 +285,9 @@ with them, measures how many norms carry a sanction or a reward, and
 gives sanctions a numeric magnitude that λ scales. The indices are
 counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
-design-time checking by a model checker, monitoring in the other
-generated runtimes, indices that are weighted or aggregated over the
+design-time checking by a model checker, monitoring in the Unity C#
+runtime, monitoring of quantifiers, aggregates, and amendments in the
+generated Rego and Solidity, indices that are weighted or aggregated over the
 contracts of an SoS, norms per regime, and the derivation of model
 probabilities from norms remain open. We found no work that handles first-class norm
 objects together with the institutional parameters α, β, and λ, the
