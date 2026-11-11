@@ -1,4 +1,4 @@
-<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-g-agents" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録G. エージェント統治拡張 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録G. エージェント統治拡張 | CADL"/><meta data-rh=true name=description content="エージェント統治拡張（agents 0.1）を規定する。アクターをエージェントとツールサーバに結び付け，メッセージの境界で契約の規範から allow / deny / escalate の決定を決定的に計算し，拒否の後の人へのエスカレーション，来歴連鎖を伴う許可の委任，監査記録，境界方針のコード生成を定める。"/><meta data-rh=true property=og:description content="エージェント統治拡張（agents 0.1）を規定する。アクターをエージェントとツールサーバに結び付け，メッセージの境界で契約の規範から allow / deny / escalate の決定を決定的に計算し，拒否の後の人へのエスカレーション，来歴連鎖を伴う許可の委任，監査記録，境界方針のコード生成を定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents","name":"付録G. エージェント統治拡張","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.aceecb03.css /><script src=/cadl-spec/ja/assets/js/runtime~main.b21d840e.js defer></script><script src=/cadl-spec/ja/assets/js/main.0c5a27c4.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-g-agents" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録G. エージェント統治拡張 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録G. エージェント統治拡張 | CADL"/><meta data-rh=true name=description content="エージェント統治拡張（agents 0.1）を規定する。アクターをエージェントとツールサーバに結び付け，メッセージの境界で契約の規範から allow / deny / escalate の決定を決定的に計算し，拒否の後の人へのエスカレーション，来歴連鎖を伴う許可の委任，監査記録，境界方針のコード生成を定める。"/><meta data-rh=true property=og:description content="エージェント統治拡張（agents 0.1）を規定する。アクターをエージェントとツールサーバに結び付け，メッセージの境界で契約の規範から allow / deny / escalate の決定を決定的に計算し，拒否の後の人へのエスカレーション，来歴連鎖を伴う許可の委任，監査記録，境界方針のコード生成を定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents","name":"付録G. エージェント統治拡張","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.aceecb03.css /><script src=/cadl-spec/ja/assets/js/runtime~main.b0407b3c.js defer></script><script src=/cadl-spec/ja/assets/js/main.0c5a27c4.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-bfa")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=メインコンテンツまでスキップ><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>メインコンテンツまでスキップ</a></div><nav aria-label=ナビゲーション class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label=ナビゲーションバーを開く aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/ja/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/quickstart/>クイックスタート</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/ja/docs/spec/intro/>仕様書</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/textbook/>テキストブック</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/handson/>ハンズオン</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>日本語</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class=dropdown__link lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title=システムモード aria-label=ダークモードを切り替える(現在はシステムモード)><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=検索 aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label=先頭へ戻る class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label=ドキュメントのサイドバー class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/intro/><span title="CADL仕様書 v0.3" class=linkLabel_E58b>CADL仕様書 v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/introduction/><span title="1. はじめに" class=linkLabel_E58b>1. はじめに</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/objectives/><span title="2. 言語の目的" class=linkLabel_E58b>2. 言語の目的</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/comparison/><span title="3. 既存言語との比較" class=linkLabel_E58b>3. 既存言語との比較</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/requirements/><span title="4. 要求仕様" class=linkLabel_E58b>4. 要求仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/language-spec/><span title="5. 言語仕様" class=linkLabel_E58b>5. 言語仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/design/><span title="6. 設計" class=linkLabel_E58b>6. 設計</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/examples/><span title="7. 用途別記述例" class=linkLabel_E58b>7. 用途別記述例</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/use-cases/><span title="8. 活用事例と新規性分析" class=linkLabel_E58b>8. 活用事例と新規性分析</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/research/><span title="9. 研究方向性と未解決課題" class=linkLabel_E58b>9. 研究方向性と未解決課題</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/roadmap/><span title="10. 実装ロードマップ" class=linkLabel_E58b>10. 実装ロードマップ</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-a-syntax/><span title="付録A. 構文リファレンス（EBNF）" class=linkLabel_E58b>付録A. 構文リファレンス（EBNF）</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-b-references/><span title="付録B. 参考文献" class=linkLabel_E58b>付録B. 参考文献</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-c-motivation/><span title="付録C. 動機拡張" class=linkLabel_E58b>付録C. 動機拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-d-codegen/><span title="付録D. コード生成ターゲット一覧" class=linkLabel_E58b>付録D. コード生成ターゲット一覧</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-e-sos-dsl/><span title="付録E. SoS-DSL拡張" class=linkLabel_E58b>付録E. SoS-DSL拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-f-norms/><span title="付録F. 規範拡張" class=linkLabel_E58b>付録F. 規範拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/ja/docs/spec/appendix-g-agents/><span title="付録G. エージェント統治拡張" class=linkLabel_E58b>付録G. エージェント統治拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-h-stochastic/><span title="付録H. 確率モデル拡張" class=linkLabel_E58b>付録H. 確率モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-i-games/><span title="付録I. 戦略モデル拡張" class=linkLabel_E58b>付録I. 戦略モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-j-grounding/><span title="付録J. 制度パラメータの根拠付け" class=linkLabel_E58b>付録J. 制度パラメータの根拠付け</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/glossary/><span title=用語集 class=linkLabel_E58b>用語集</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=パンくずリストのナビゲーション><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label=ホームページ class=breadcrumbs__link href=/cadl-spec/ja/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>付録G. エージェント統治拡張</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">このページの見出し</button></div><div class="theme-doc-markdown markdown"><header><h1>付録G. エージェント統治拡張（agents 0.1）</h1></header>
@@ -457,7 +457,11 @@ F.5では制度的事象は「事象としてのみ存在」するが，その�
 呼び出しの引数のダイジェスト，認証された承認では承認者の鍵のIDとノンスを示す。承認者の
 メッセージの決定の前に書く），転送しなかった要求（<code>method_refused</code>。<code>reason</code> はメソッド），
 処理中の要求がない応答（<code>unsolicited_response</code>），許可または解放されたが送れなかった呼び出し
-（<code>forward_failed</code>）である。これらの記録は決定を変えない。また，その信頼性は書いたホストの
+（<code>forward_failed</code>），およびA2Aのゲートウェイでは，認証された送信者のない要求
+（<code>unauthenticated_request</code>），他のクライアントのタスクやコンテキストを名指す要求
+（<code>task_refused</code>），送ったが正しい応答が返らなかった要求（<code>invalid_response</code>），タスクの取消し
+（エージェントに渡すもの，または保留を取り下げるもの。<code>task_cancel</code>），同時に処理する要求についての
+ゲートウェイの上限を超えた要求（<code>overloaded</code>），期限内に読み終わらなかった要求（<code>read_timeout</code>）である。これらの記録は決定を変えない。また，その信頼性は書いたホストの
 信頼性を超えない。誰でも書けるトレースから再生したログは，これらの記録について何も証明しない。</p>
 <p><strong>ログの完全性。</strong> 判定点は，ハッシュ連鎖によってログを後からの変更から保護してもよい。
 保護するときは，判定点を知らない検証者が検査できるように，ログは次の形式を持つ。
@@ -755,7 +759,8 @@ Cedarの答えだけからは，そのような方針による拒否や言語の
 対応を示す。Model Context Protocolのリビジョン2026-07-28
 <a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[MCP Specification 2026-07-28]</a> と，Agent2Agentプロトコルの
 バージョン1.0.0 <a class="" href=/cadl-spec/ja/docs/spec/appendix-b-references/>[A2A Specification 1.0.0]</a> である。
-リファレンス実装はMCPのゲートウェイを持つ（G.13）。A2Aへの対応は実装していない。
+リファレンス実装はMCPのゲートウェイを持ち，<code>cadl</code> 0.3.25からはA2AのJSON-RPCバインディングの
+ゲートウェイも持つ（G.13）。
 規範的な事項はこの節に依存しない。</p>
 <table><thead><tr><th>CADL（agents 0.1）<th>MCP 2026-07-28<th>A2A 1.0.0<tbody><tr><td><code>kind: tool_server</code>，ツール，ツール呼び出し<td>MCPサーバ，<code>tools/list</code> のツール，<code>tools/call</code> の要求<td>—<tr><td><code>kind: llm_agent</code><td>ツールを呼び出すときのMCPクライアント<td>クライアントとしてもサーバとしても動くA2Aエージェント<tr><td>エージェント間の通常のメッセージ<td>—<td>あるエージェントから別のエージェントへの <code>SendMessage</code> の要求<tr><td>メッセージの名前<td><code>tools/call</code> の <code>params.name</code><td>プロトコルは運ばない。拡張から得る（後述）<tr><td><code>point: gateway</code><td>クライアントとサーバの間の代理。Streamable HTTPでは，ヘッダ <code>Mcp-Method</code> と <code>Mcp-Name</code> がメソッドとツールを示す。本体を構文解析せずにこれらで判定してよいのは，ヘッダと本体が異なる要求をサーバが拒否する（<code>HeaderMismatch</code>）場合だけである。stdioでは，ゲートウェイは本体を構文解析する<td>エージェント間の仲介者<tr><td><code>deny</code><td><code>isError: true</code> のツール結果<td>状態 <code>TASK_STATE_REJECTED</code> のタスク<tr><td><code>escalate</code>，保留のid，承認者<td>プロトコルの範囲外<td>プロトコルの範囲外</table>
 <p><strong>MCP。</strong> ゲートウェイは，ツール呼び出しを送るアクターであるMCPクライアントと，
@@ -806,7 +811,8 @@ MCP 2026-07-28では，サーバは <code>tools/call</code> に，さらに入�
 <code>SendMessage</code> の要求は <code>Message</code> を運ぶ。<code>Message</code> は <code>role</code>，<code>parts</code>，<code>messageId</code> を持ち，
 <code>contextId</code>，<code>taskId</code>，<code>metadata</code>，<code>extensions</code> を持ってもよい。A2Aのどのバインディング
 （JSON-RPC，gRPC，HTTPとJSON）についても，<em>Y</em> の前に置くゲートウェイは，そのような要求を
-次のようにメッセージ <code>X -> Y : e</code> に対応づけることになる。これは提案であり，実装していない。</p>
+次のようにメッセージ <code>X -> Y : e</code> に対応づける。<code>cadl</code> 0.3.25から，リファレンス実装はJSON-RPCの
+バインディングについてこれを行う。その解釈はG.13に示す。</p>
 <ul>
 <li class=""><em>X</em> は要求の認証されたクライアントである。A2Aは，<em>Y</em> のエージェントカードのセキュリティスキームで
 クライアントを認証する。ゲートウェイはその身元をファイルのアクターに対応づける。認証された身元が
@@ -822,7 +828,10 @@ MCP 2026-07-28では，サーバは <code>tools/call</code> に，さらに入�
 <code>TASK_STATE_INPUT_REQUIRED</code> と <code>TASK_STATE_AUTH_REQUIRED</code> は保留に合わない。これらは送信者に
 入力を求める状態であり，保留が待つのは承認者である。</li>
 <li class="">承認者の承認は，それ自体が，名前 <code>approve</code> を持ち，保留のidを最初の引数とする承認者のA2Aの
-メッセージであってよい（G.12と同じ）。それは他のメッセージと同じく判定される（G.6）。</li>
+メッセージであってよい（G.12と同じ）。それは他のメッセージと同じく判定される（G.6）。
+そのようなメッセージは保留だけを名指すので，他の通信路による承認と同じく（上記），保留中の
+メッセージとその引数に結び付ける必要がある。リファレンス実装のゲートウェイは，承認をA2Aの
+メッセージとしては受け付けない（G.13）。</li>
 </ul>
 <h2 class="anchor anchorTargetStickyNavbar_MWp5" id=g12-例>G.12 例<a href=#g12-例 class=hash-link aria-label="G.12 例 への直接リンク" title="G.12 例 への直接リンク" translate=no>​</a></h2>
 <p>人のオペレータが，LLMのプランナーに報告書の作成を依頼する。プランナーは2つのツールサーバの
@@ -928,7 +937,7 @@ CADLファイルのハッシュ，<code>--run-id</code> は実行，<code>--anch
 最終行 <code>{"t": t}</code> にあたる。<code>cadl agents-run</code> は同じ処理の繰り返しである。</p>
 <p><strong>MCPのゲートウェイ。</strong> <code>cadl mcp-gateway FILE --agent A --server-actor S --audit OUT.jsonl -- COMMAND</code>（0.3.24）は，MCP 2026-07-28のstdioトランスポート（JSON-RPC 2.0，1行に1つの
 メッセージ）上の，G.11のMCPのゲートウェイである。COMMANDでサーバを起動し，自らの標準入出力で
-クライアントと通信する。G.11についての読み方は次のとおりである。</p>
+クライアントと通信する。G.11についての解釈は次のとおりである。</p>
 <ul>
 <li class="">両方向のすべての行を厳密に構文解析する。末尾の1つのCRLF以外の復帰文字，不正なUTF-8，
 どの深さでも重複したキー，NaN，無限大，無限大にあふれる数（<code>1e999</code>），100を超える配列や
@@ -975,7 +984,7 @@ SHA-256，承認者の鍵のID，ノンスを示す。MACが検証
 <code>run_id</code> と，<code>t = 0</code> の実時刻としての <code>epoch</code> を与える。ゲートウェイは，各処理を判定する前に
 トレースに書く。判定した各メッセージ，保留の期限が過ぎたときの行 <code>{"t": t}</code>，<code>withdraw</code> と
 <code>host_events</code> の行，停止するときの最終行 <code>{"t": t}</code> である。そのトレースに対する
-<code>cadl agents-run</code> は，同じ判定をし，同じ監査ログをバイト単位で同じに書く。</li>
+<code>cadl agents-run</code> は，同じ判定をし，バイト単位で同じ監査ログを書く。</li>
 </ul>
 <p>連鎖のテストは，10行のログ2つ（鍵なしと鍵つき，それぞれ約5 100バイト）のすべてのバイトを，
 それぞれ2通りに変える。変えた20 434個のログは，すべて検証を通らない。行の削除，同じログまたは
@@ -1000,7 +1009,7 @@ SHA-256，承認者の鍵のID，ノンスを示す。MACが検証
 転送する。メソッドは一覧によって通し，応答は処理中の要求に対するものだけを通す。承認は認証し，
 実行，保留，保留中のメッセージに結び付ける。取り消された呼び出しは取り下げる。どのシナリオでも，
 サーバは許可または解放されていない呼び出しを受け取らず，ゲートウェイが書いたトレースに対する
-<code>cadl agents-run</code> は，ゲートウェイと同じ監査ログをバイト単位で同じに書く。ランタイムの変更は，
+<code>cadl agents-run</code> は，ゲートウェイとバイト単位で同じ監査ログを書く。ランタイムの変更は，
 <code>cadl</code> 0.3.23と照合した。309組のファイルとトレース（同梱のトレース，テストのレビュー用ファイルの
 すべての組，不正なトレース4つ）に対する <code>agents-run</code> は，テキストとJSONの両方で，終了ステータス，
 出力，エラーメッセージ，監査ログの値が同じであった。テストスイートが実行する1 917回の再生のうち，
@@ -1011,6 +1020,132 @@ SHA-256，承認者の鍵のID，ノンスを示す。MACが検証
 承認者が承認する呼び出しの引数を見られないことを見つけた。いずれも修正し，修正の前には失敗した
 テストがある（送信の失敗を注入するテストと，同じツールの2つの呼び出しを同じ時刻に異なる引数で
 保留し，一方の承認が他方を解放しないことを確かめるテスト）。</p>
+<p><strong>A2Aのゲートウェイ。</strong> <code>cadl</code> 0.3.25から，<code>cadl a2a-gateway FILE --agent-actor Y --upstream URL --client-keys KEYS.json --audit OUT.jsonl</code> は，A2A 1.0.0のJSON-RPCバインディングについての，G.11の
+A2Aのゲートウェイである。ファイルのエージェント <code>Y</code>（<code>kind: llm_agent</code>，<code>protocol: a2a</code>）の前に
+置くHTTPサーバであり，要求をURLのエージェントに渡す。判定点，トレース，ログ，保留，受け箱は
+MCPのゲートウェイと共通であり，そのトレースに対する <code>cadl agents-run</code> はバイト単位で同じ監査ログを
+書く。G.11が実装に任せている点では，要求を通す場合が少なくなる方を選ぶ。解釈は次のとおりである。</p>
+<ul>
+<li class="">送信者は，本文をJSONとして読む前に，要求ごとに認証する。A2Aは方式をエージェントカードに
+委ねている。ゲートウェイは，承認と同じくアクターの鍵を使う。要求はヘッダ
+<code>Authorization: CADL-HMAC actor="X", nonce="N", mac="M"</code> をちょうど一つ持つ。<code>X</code> は具体的な
+アクター，<code>N</code> は小文字の16進数32桁，<code>M</code> は小文字の16進数64桁である。<code>M</code> は，オブジェクト
+<code>{"scheme": "cadl-a2a-request/1", "actor": X, "run_id": R, "nonce": N, "method": "POST", "path": "/", "body_sha256": D}</code> のG.8の正規形JSONに対する，<code>X</code> の鍵でのHMAC-SHA256である。
+<code>R</code> はゲートウェイの実行ID，<code>D</code> は本文のSHA-256を小文字の16進数で書いたものである。フィールド
+<code>scheme</code> は，このMACを受け箱のファイルのMACと区別する。一つのアクターが両方に同じ鍵を使う場合も
+区別できる。ヘッダ <code>A2A-Version</code> と <code>Content-Type</code> はMACの対象ではない。ノンスは一つの実行の中で
+一度だけ受け付ける。ゲートウェイは実行中のノンスをアクターごとにメモリに保持するので，メモリは
+認証された要求の数とともに増える。一つのアクターの要求が1000000に達すると，ゲートウェイを起動し
+直して実行IDが変わるまで，そのアクターの以後の要求を拒否する（理由 <code>nonce_limit</code>）。他のアクターの
+要求には影響しない。Bearerトークンは，見た者が誰でも送り直せるので
+受け付けない。鍵を持つアクターは，すべてファイルのアクターでなければならない。正しいヘッダのない
+要求には，実行IDを添えてHTTP 401で応答し，<code>unauthenticated_request</code> として記録し，判定はしない。</li>
+<li class="">G.11の拡張のURIは <code>https://www.ertl.jp/cadl-spec/a2a/agents-message/v0.1</code> である。その値は
+<code>{"name": e, "args": [...]}</code> であり，<code>e</code> は64文字以下の識別子，引数は256文字以下の文字列で16個
+までである。拡張を持たないメッセージには拒否のタスクで応答し，判定せずに，理由 <code>no_name</code> の
+<code>unauthorised_message</code> として記録する。値の形が違うときは，JSON-RPCのエラー -32602 である。
+<code>--agent-card</code> で与えるエージェントカードは，<code>capabilities.extensions</code> にこの拡張を宣言して
+いなければならない。宣言していなければ，ゲートウェイは起動しない。</li>
+<li class="">承認はA2Aのメッセージとしては受け付けない。<code>approval</code> または <code>rejection</code> を作る <code>counts_as:</code> 規則の
+メッセージと同じ名前のメッセージは，規則の受信者が何であっても拒否し，理由 <code>approval_as_message</code> の
+<code>unauthorised_message</code> として記録する。承認は，MCPのゲートウェイと同じく受け箱から届き，保留中の
+メッセージの引数，すなわちその <code>SendMessage</code> の <code>params</code> の全体に結び付く。A2Aのメッセージで
+承認を送ると，保留のIDしか運べず，承認者が見た内容に結び付けられない。受け箱からの承認は
+ランタイムに与えるだけで，どこにも届けない。そのため，そのような規則の受信者が集合，範囲，または
+添字変数であるときは，次のとおり具体的なアクターとする。参照がゲートウェイのアクター（<code>Y</code>，MCPの
+ゲートウェイではツールサーバ）に一致しうるときはそのアクター，そうでなく，MCPのゲートウェイで
+参照がそのクライアント（<code>--agent</code>）に一致しうるときはそのクライアント，どちらでもないときは集合の
+最初に宣言された要素である。ゲートウェイのアクターが当事者である契約が保留を作るのに，<code>approval</code> を
+作る <code>counts_as:</code> 規則を持たないとき，ゲートウェイは起動しない。そのようなファイルは，すでにG-9に
+よって誤りである。</li>
+<li class="">判定するのは <code>SendMessage</code> だけである。<code>GetTask</code> と <code>CancelTask</code> はアクター間のメッセージを
+運ばない。これらは，この実行の中でエージェントまたはゲートウェイが同じアクターに与えたタスクに
+ついてだけ，判定せずに通す。<code>CancelTask</code> はエージェントの状態を変えるので，渡す前に <code>task_cancel</code>
+として記録する。<code>GetTask</code> は記録しない。<code>SendMessage</code> が名指すタスク（<code>taskId</code>，<code>referenceTaskIds</code>）と
+コンテキスト（<code>contextId</code>）も，そのようなものに限る。それ以外は <code>TaskNotFoundError</code>（-32001）であり，
+<code>task_refused</code> として記録する。ゲートウェイが見たことのないコンテキストIDも拒否する。他の
+クライアントや以前の実行のコンテキストかもしれないからである。タスクはIDで区別するので，<code>tenant</code> は
+拒否する（-32602）。<code>SendStreamingMessage</code>，<code>SubscribeToTask</code>，<code>ListTasks</code>，<code>GetExtendedAgentCard</code> は
+<code>UnsupportedOperationError</code>（-32004）で拒否し，プッシュ通知のメソッドと，プッシュ通知の設定を持つ
+<code>SendMessage</code> は <code>PushNotificationNotSupportedError</code>（-32003）で拒否し，その他のメソッドは -32601 で
+拒否する。いずれも <code>method_refused</code> として記録する。ヘッダ <code>A2A-Version</code> は，前後のスペースを除いて
+<code>1.0</code> または <code>1.0.N</code> でなければならない。そうでないとき，ヘッダがないときも含めて，要求は
+<code>VersionNotSupportedError</code>（-32009）になる。A2A 1.0.0では，ヘッダがないことはバージョン0.3を
+意味するからである。</li>
+<li class="">拒否は，状態 <code>TASK_STATE_REJECTED</code> のゲートウェイのタスクであり，その状態のメッセージに理由，
+規範，保留，代替のメッセージ，<code>notify</code> を書く。保留された要求のうち，応答を待つ（ブロッキングの）
+要求には，保留が閉じるまで応答しない。<code>returnImmediately</code> があれば，クライアントは状態
+<code>TASK_STATE_SUBMITTED</code> のゲートウェイのタスクを受け取る。このタスクは解放の後もIDを変えず，
+エージェントのタスクをそのIDで示す。解放した要求を渡せなかったときは，このタスクを
+<code>TASK_STATE_FAILED</code> にし，ログに <code>forward_failed</code> を書く。保留中の要求のタスクを取り消した
+クライアントと，保留中の応答を待つ（ブロッキングの）要求の接続を閉じたクライアントは，要求を
+取り下げる（G.6）。要求が保留されている間にクライアントが送るバイトは，読んで捨てる。送信側だけを
+閉じた接続（ハーフクローズ）も閉じたものとみなし，要求を取り下げる。取り下げは判定点の処理の
+一つであり，応答は保留を閉じた記録に従う。その処理の前に期限が過ぎていた保留は <code>expired</code> に
+なり，クライアントは拒否のタスクを受け取る。</li>
+<li class="">要求は，1 MiB以下の <code>Content-Length</code> を一つ持ち，<code>Transfer-Encoding</code> を持たないものとして読み，
+一つの接続で一つの要求だけを読む。本文はMCPのゲートウェイの行と同じく厳密に構文解析し，
+ゲートウェイのJSON-RPCのIDとヘッダを付けて，直列化し直して渡す。クライアントの <code>Authorization</code> は
+渡さない。エージェントが別のアクターに与えたタスクやコンテキストは，そのアクターには示さない
+（-32006，<code>invalid_response</code>）。許可または解放の後に送れなかった要求は -32603 と <code>forward_failed</code>
+になり，送ったが正しい応答が返らなかった要求は -32006 と <code>invalid_response</code> になる。ループバック
+以外のアドレスにはTLSが必要であり，<code>--upstream-token</code> には <code>https</code> のエージェントかループバックの
+アドレスが必要である。</li>
+<li class="">要求行，ヘッダ，本文は，合わせて10秒以内に届かなければならない（<code>--read-timeout</code>）。届かない
+ときは接続を閉じ，<code>read_timeout</code> として記録する。認証の前に同時に読む接続は，一つのリモート
+アドレス（IPv4のアドレス，またはIPv6のアドレスの/64のプレフィックス。一つのホストは通常/64を
+まとめて持つからである。IPv4射影IPv6アドレスはそのIPv4アドレスとして数える）について4個まで（<code>--max-readers-per-address</code>），全体で64個まで（<code>--max-readers</code>）である。
+すでに4個の接続を読んでいるアドレスからの接続はすぐに閉じる（<code>overloaded</code>，<code>address</code>）。64個が
+すべて使われているときは，接続は空きを最大1秒待ち，空かなければHTTP 503を受け取る
+（<code>overloaded</code>，<code>readers</code>）。同時に処理する要求には，認証された要求だけを数え，保留中の要求も
+数える。その数は64個までであり（<code>--max-handlers</code>），それを超えるときはHTTP 503で応答する
+（<code>overloaded</code>，<code>handlers</code>）。したがって，認証されていない接続がクライアントの処理の枠を
+使うことはない。一つのアクターについては，同時に処理する要求を16個まで
+（<code>--max-handlers-per-actor</code>。保留中の応答を待つ要求と，遅いエージェントへの要求も数える），
+保留を，応答を待つかどうかにかかわらず64個まで（<code>--max-holds-per-actor</code>）とする。そのアクターの
+それを超える要求には，判定の前にHTTP 503で応答する（<code>overloaded</code>。理由は <code>handlers_per_actor</code>
+または <code>holds_per_actor</code> とアクター）。これにより，一つのクライアントが同時に処理できる数をすべて
+使うことも，保留を際限なく作ることもない。保留の上限に達したアクターは，保留にならない
+メッセージも送れない。<code>unauthenticated_request</code>，<code>overloaded</code>，<code>read_timeout</code> の記録は，事象ごとに
+1秒に20件までとする。その事象の次の記録は，記録しなかった要求の数を <code>reason</code> に
+<code>;not_recorded_before=N</code> として書く。多数のホストから接続し続ければ，64個の読み込みをすべて
+使い続けることができ，その間ゲートウェイは要求を拒否する。これが問題になる場合は，接続の数を制限する
+プロキシやファイアウォールの後ろにゲートウェイを置く。プロキシの後ろでは，すべてのクライアントが
+プロキシのアドレスを持つので，<code>--max-readers-per-address</code> を大きくするか，要求を受け取り終えてから
+渡すプロキシを使う。</li>
+</ul>
+<p>ゲートウェイは，ヘッダ <code>A2A-Extensions</code> を読まず，<code>ExtensionSupportRequiredError</code>（-32008）を
+返さず，クエリパラメータとしての <code>A2A-Version</code> を読まず，部分 <code>raw</code> がbase64であることを検査しない。</p>
+<p>A2Aのゲートウェイは，テストのスレッドで動く偽のA2Aエージェントと偽のクライアントにより，標準
+ライブラリだけを使って，75のテストで試験している。対象は，許可，既定による拒否，名前のない
+メッセージ，承認・却下・期限切れになる保留（<code>returnImmediately</code> の有無の両方），署名済みの承認が
+届く前または期限の後に取り消される保留中のタスク，TCP（追加のバイトを送った後に閉じる場合と
+ハーフクローズの場合を含む）とTLSのそれぞれで保留中の要求の接続を閉じるクライアント，受け箱からの
+付与，引数の異なる他の保留中のメッセージに宛て直した承認，両方のゲートウェイでの受信者が集合または
+範囲である承認の規則，8種類の認証の失敗，27種類の不正な入力，止まっているエージェントと誤った応答を
+返すエージェント，解放した後に渡せなかった要求，処理できる数を超える要求，本文を1バイトずつ送る
+遅い接続，読める数を超える接続，すぐに接続し直す同じアドレスからの接続，一つのアクターについて
+上限を超える要求と保留，アクターごとのノンスの上限，タスクとコンテキストの分離である。どのシナリオでも，エージェントは
+許可または解放されていない要求を受け取らず，トレースに対する <code>cadl agents-run</code> はゲートウェイと同じ
+監査ログを書く。最初のバージョンの独立したレビューは，次のことを見つけた。ゲートウェイが見たことの
+ないコンテキストIDは，以後の実行でも，最初に名指した者のものになり，クライアントが他者の
+コンテキストを続けられた。<code>tenant</code> によって，同じIDを持つ他のテナントのタスクを読めた。受信者が
+集合である承認の規則を認識せず，承認がA2Aのメッセージとして，保留中の引数に結び付かずに届き，
+エージェントにも渡された。close_notifyを送って閉じたTLSのクライアントは，保留中の要求を
+取り下げなかった。2回目のレビューは，次のことを見つけた。3番目の欠陥の修正の後も，そのような
+規則のもとでは承認できない保留が残り，MCPのゲートウェイでも同じであった。追加のバイトを送ってから
+閉じたクライアントを，接続が切れたとみなさなかった。期限が過ぎた後，タイマーがそれを観測する前の
+取消しには取消しとして応答し，ログには <code>expired</code> と書いた。取消しは記録なしにエージェントに届いた。
+3回目のレビューは，次のことを見つけた。要求を読み込んで認証する前に同時処理の数に数え，時間切れは
+1回の読み込みごとにしか働かなかったため，認証されていない遅い接続が同時処理の上限をすべて使えた。受信者が
+集合である規則についての修正により，<code>cadl</code> 0.3.24が受け付けたファイルでゲートウェイが起動しなく
+なった。一つのクライアントが，すべてのクライアントに共通のノンスの上限を使い切れた。4回目の
+レビューは，次のことを見つけた。同じアドレスからすぐに接続し直す相手が，読み込みの枠をすべて使い
+続けられた。<code>returnImmediately</code> の要求の保留には，アクターごとの上限がなかった。一つのアクターが，
+遅いエージェントへの要求で同時処理の上限をすべて使えた。いずれも修正し，
+それぞれにテストがある。どのレビューも，判定を経ずにエージェントに届いた要求を見つけなかった。
+最初のレビューは，12のスレッドによる実行でもこれを確かめた。その280件の記録の
+ログを <code>cadl agents-run</code> が再現した。</p>
 <p>トレースは <code>cadl norms-eval</code> のトレース（<code>t</code>，<code>bindings</code>，<code>request</code>，<code>values</code>，<code>messages</code>，
 <code>state</code>，<code>amend</code>，<code>end</code> を持つJSON Lines）であり，判定点の全体について読む。キーを追加する。
 <code>epoch</code> は，<code>t = 0</code> の時刻をISO 8601の時刻印で与え，記録の時刻を時刻印にする。<code>instances</code> は，
@@ -1054,10 +1189,12 @@ SHA-256，承認者の鍵のID，ノンスを示す。MACが検証
 関して，メッセージが義務の内容に一致するかどうかは，境界と同じく，送信者，受信者，名前で調べる。</p>
 <p>既知の限界は次のとおりである。鍵がなければ，ログの連鎖は，変更した行から後を書き直したログを
 検出しない。それを検出するには，最後のダイジェストを別の場所に保管する（<code>--anchor</code>）か，鍵を使う。
-ヘッダの <code>hash</code> フィールドは認証されないので，検証者はログが鍵つきかどうかを知っている必要がある。実装したのは
-stdio上のMCPのゲートウェイだけであり，試験は偽のサーバと偽のクライアントで行った。他の実装の
-MCPクライアントやサーバとは試験していない。A2AはG.11で対応を示しただけである。ゲートウェイが
-観測するのはメッセージと時刻であり，<code>values</code> は観測しない。量を読む規範には，その量はデータの欠落として
+ヘッダの <code>hash</code> フィールドは認証されないので，検証者はログが鍵つきかどうかを知っている必要がある。
+stdio上のMCPのゲートウェイとJSON-RPC上のA2Aのゲートウェイは，偽のサーバ，エージェント，
+クライアントで試験しており，他者の実装とは試験していない。A2Aのゲートウェイには，ヘッダ
+<code>CADL-HMAC</code> を計算するクライアントが必要である。タスクの所有者は一つの実行の間だけ保持し，
+ストリーミング，プッシュ通知，<code>ListTasks</code>，テナント，gRPCとHTTPとJSONのバインディングには
+対応しない。ゲートウェイが観測するのはメッセージと時刻であり，<code>values</code> は観測しない。量を読む規範には，その量はデータの欠落として
 現れる（G.5）。ゲートウェイは，1行目より後に，ホストが作る契約インスタンスを作成も終了もしない。
 承認者の道具は，ゲートウェイが公開する保留中のメッセージに署名するので，表示される内容に
 ついてはゲートウェイを信頼する。承認者の鍵が承認者どうしを区別するのは，各承認者が自分の

@@ -1,4 +1,4 @@
-<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-g-agents" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix G: Agent Governance Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix G: Agent Governance Extension | CADL"/><meta data-rh=true name=description content="Agent governance extension (agents 0.1): binding of actors to agents and tool servers, a deterministic allow / deny / escalate decision computed from the norms of a contract at the message boundary, escalation to a human after a denial, delegation of permissions with a provenance chain, audit records, and boundary-policy code generation."/><meta data-rh=true property=og:description content="Agent governance extension (agents 0.1): binding of actors to agents and tool servers, a deterministic allow / deny / escalate decision computed from the norms of a contract at the message boundary, escalation to a human after a denial, delegation of permissions with a provenance chain, audit records, and boundary-policy code generation."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents","name":"Appendix G: Agent Governance Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.db8fabac.js defer></script><script src=/cadl-spec/assets/js/main.60e54b48.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-g-agents" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix G: Agent Governance Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix G: Agent Governance Extension | CADL"/><meta data-rh=true name=description content="Agent governance extension (agents 0.1): binding of actors to agents and tool servers, a deterministic allow / deny / escalate decision computed from the norms of a contract at the message boundary, escalation to a human after a denial, delegation of permissions with a provenance chain, audit records, and boundary-policy code generation."/><meta data-rh=true property=og:description content="Agent governance extension (agents 0.1): binding of actors to agents and tool servers, a deterministic allow / deny / escalate decision computed from the norms of a contract at the message boundary, escalation to a human after a denial, delegation of permissions with a provenance chain, audit records, and boundary-policy code generation."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-g-agents/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-g-agents","name":"Appendix G: Agent Governance Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.da6d0b72.js defer></script><script src=/cadl-spec/assets/js/main.60e54b48.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-689")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label="Skip to main content"><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/docs/quickstart/>Quick Start</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/docs/spec/intro/>Specification</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/textbook/>Textbook</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/handson/>Hands-on</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>English</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-g-agents/ target=_self rel="noopener noreferrer" class=dropdown__link lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=Search aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/intro/><span title="CADL Specification v0.3" class=linkLabel_E58b>CADL Specification v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/introduction/><span title="1. Introduction" class=linkLabel_E58b>1. Introduction</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/objectives/><span title="2. Language Objectives" class=linkLabel_E58b>2. Language Objectives</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/comparison/><span title="3. Comparison with Existing Languages" class=linkLabel_E58b>3. Comparison with Existing Languages</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/requirements/><span title="4. Requirements Specification" class=linkLabel_E58b>4. Requirements Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/language-spec/><span title="5. Language Specification" class=linkLabel_E58b>5. Language Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/design/><span title="6. Design" class=linkLabel_E58b>6. Design</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/examples/><span title="7. Domain-Specific Description Examples" class=linkLabel_E58b>7. Domain-Specific Description Examples</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/use-cases/><span title="8. Use Cases and Novelty Analysis" class=linkLabel_E58b>8. Use Cases and Novelty Analysis</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/research/><span title="9. Research Directions and Open Challenges" class=linkLabel_E58b>9. Research Directions and Open Challenges</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/roadmap/><span title="10. Implementation Roadmap" class=linkLabel_E58b>10. Implementation Roadmap</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-a-syntax/><span title="Appendix A: Syntax Reference (EBNF)" class=linkLabel_E58b>Appendix A: Syntax Reference (EBNF)</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-b-references/><span title="Appendix B: References" class=linkLabel_E58b>Appendix B: References</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-c-motivation/><span title="Appendix C: Motivation Extension" class=linkLabel_E58b>Appendix C: Motivation Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-d-codegen/><span title="Appendix D: Codegen Target Catalog" class=linkLabel_E58b>Appendix D: Codegen Target Catalog</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><span title="Appendix E: SoS-DSL Extension" class=linkLabel_E58b>Appendix E: SoS-DSL Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-f-norms/><span title="Appendix F: Norms Extension" class=linkLabel_E58b>Appendix F: Norms Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/docs/spec/appendix-g-agents/><span title="Appendix G: Agent Governance Extension" class=linkLabel_E58b>Appendix G: Agent Governance Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-h-stochastic/><span title="Appendix H: Stochastic Model Extension" class=linkLabel_E58b>Appendix H: Stochastic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-i-games/><span title="Appendix I: Strategic Model Extension" class=linkLabel_E58b>Appendix I: Strategic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-j-grounding/><span title="Appendix J: Grounding of the Institutional Parameters" class=linkLabel_E58b>Appendix J: Grounding of the Institutional Parameters</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/glossary/><span title=Glossary class=linkLabel_E58b>Glossary</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/cadl-spec/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Appendix G: Agent Governance Extension</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Appendix G — Agent Governance Extension (agents 0.1)</h1></header>
@@ -585,8 +585,15 @@ of the held call, and for an authenticated approval the key id of the
 approver and the nonce; written before the decision of the approver's
 message), a request that it does not pass on (<code>method_refused</code>, with
 the method as <code>reason</code>), a response for which no request is in flight
-(<code>unsolicited_response</code>), and a call that was allowed or released but
-could not be sent (<code>forward_failed</code>). These records change no decision,
+(<code>unsolicited_response</code>), a call that was allowed or released but
+could not be sent (<code>forward_failed</code>), and, at an A2A gateway, a request
+without an authenticated sender (<code>unauthenticated_request</code>), a request
+that names a task or a context of another client (<code>task_refused</code>), a
+request that was sent but got no valid response (<code>invalid_response</code>), a
+cancellation of a task that is passed on or withdraws a hold
+(<code>task_cancel</code>), a request beyond a limit of the gateway on the
+requests handled at the same time (<code>overloaded</code>), and a request that was
+not read within its deadline (<code>read_timeout</code>). These records change no decision,
 and they are only as trustworthy as the host that writes them: a log
 replayed from a trace that anyone could write proves nothing about
 them.</p>
@@ -969,8 +976,9 @@ Context Protocol, revision 2026-07-28
 <a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[MCP Specification 2026-07-28]</a>, and the
 Agent2Agent protocol, version 1.0.0
 <a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[A2A Specification 1.0.0]</a>. The reference
-implementation has a gateway for MCP (G.13); the mapping to A2A is not
-implemented. Nothing normative depends on this section.</p>
+implementation has a gateway for MCP and, from <code>cadl</code> 0.3.25, one for the
+JSON-RPC binding of A2A (G.13). Nothing normative depends on this
+section.</p>
 <table><thead><tr><th>CADL (agents 0.1)<th>MCP 2026-07-28<th>A2A 1.0.0<tbody><tr><td><code>kind: tool_server</code>; tool; tool call<td>An MCP server; a tool of <code>tools/list</code>; a <code>tools/call</code> request<td>—<tr><td><code>kind: llm_agent</code><td>An MCP client, when it calls tools<td>An A2A agent, as client and as server<tr><td>Ordinary message between agents<td>—<td>A <code>SendMessage</code> request from one agent to another<tr><td>Name of the message<td><code>params.name</code> of <code>tools/call</code><td>Not carried by the protocol; taken from an extension (below)<tr><td><code>point: gateway</code><td>A proxy between client and server. Over Streamable HTTP the headers <code>Mcp-Method</code> and <code>Mcp-Name</code> name the method and the tool; a gateway may decide on them without parsing the body only when the server rejects a request whose headers differ from its body (<code>HeaderMismatch</code>). Over stdio the gateway parses the body<td>An intermediary between the agents<tr><td><code>deny</code><td>A tool result with <code>isError: true</code><td>A task in the state <code>TASK_STATE_REJECTED</code><tr><td><code>escalate</code>, hold id, approver<td>Outside the protocol<td>Outside the protocol</table>
 <p><strong>MCP.</strong> A gateway sits between an MCP client, which is the actor that
 sends the tool calls, and an MCP server, which is a tool server of the
@@ -1039,9 +1047,9 @@ again, as G.6 says of a message sent again.</p>
 of agent <em>X</em> to agent <em>Y</em> carries a <code>Message</code> with <code>role</code>, <code>parts</code>,
 <code>messageId</code>, and optionally <code>contextId</code>, <code>taskId</code>, <code>metadata</code>, and
 <code>extensions</code>. A gateway in front of <em>Y</em>, for any of the bindings of
-A2A (JSON-RPC, gRPC, HTTP and JSON), would map such a request to the
-message <code>X -> Y : e</code> as follows; this is a proposal and is not
-implemented.</p>
+A2A (JSON-RPC, gRPC, HTTP and JSON), maps such a request to the message
+<code>X -> Y : e</code> as follows. From <code>cadl</code> 0.3.25 the reference implementation
+does so for the JSON-RPC binding; G.13 gives its readings.</p>
 <ul>
 <li class=""><em>X</em> is the authenticated client of the request: A2A authenticates
 the client by the security schemes of the agent card of <em>Y</em>, and the
@@ -1065,7 +1073,10 @@ forwarded or rejected. The states <code>TASK_STATE_INPUT_REQUIRED</code> and
 input, whereas a hold waits for the approver.</li>
 <li class="">The approver's approval can itself be an A2A message of the approver
 with the name <code>approve</code> and the hold id as its first argument, as in
-G.12; it is decided like any other message (G.6).</li>
+G.12; it is decided like any other message (G.6). Such a message names
+only the hold, so it has to be bound to the held message and its
+arguments as an approval through another channel is (above); the
+reference gateway does not accept approvals as A2A messages (G.13).</li>
 </ul>
 <h2 class="anchor anchorTargetStickyNavbar_MWp5" id=g12-example>G.12 Example<a href=#g12-example class=hash-link aria-label="Direct link to G.12 Example" title="Direct link to G.12 Example" translate=no>​</a></h2>
 <p>A human operator asks an LLM planner to prepare a report. The planner
@@ -1316,6 +1327,190 @@ corrected, with tests that failed before (an injected failure of the
 sending, and two held calls of the same tool at the same time with
 different arguments, of which an approval of one does not release the
 other).</p>
+<p><strong>A2A gateway.</strong> From <code>cadl</code> 0.3.25, <code>cadl a2a-gateway FILE --agent-actor Y --upstream URL --client-keys KEYS.json --audit OUT.jsonl</code> is the A2A gateway of G.11 for the JSON-RPC binding of A2A
+1.0.0: an HTTP server in front of the agent <code>Y</code> of the file
+(<code>kind: llm_agent</code>, <code>protocol: a2a</code>), which passes requests on to the
+agent at URL. It shares the enforcement point, the trace, the log, the
+holds, and the inbox with the MCP gateway, and <code>cadl agents-run</code> on its
+trace writes the same audit log, byte for byte. Where G.11 leaves a
+choice, the gateway takes the one that lets less through. Its readings
+are these.</p>
+<ul>
+<li class="">The sender is authenticated for every request, before the body is
+read as JSON. A2A leaves the scheme to the agent card; the gateway
+uses keys of the actors, as the approvals do. The request carries
+exactly one header <code>Authorization: CADL-HMAC actor="X", nonce="N", mac="M"</code>, where <code>X</code> is a concrete actor, <code>N</code> 32 and <code>M</code> 64
+lowercase hexadecimal digits. <code>M</code> is the HMAC-SHA256 under the key
+of <code>X</code> of the canonical JSON of G.8 of the object
+<code>{"scheme": "cadl-a2a-request/1", "actor": X, "run_id": R, "nonce": N, "method": "POST", "path": "/", "body_sha256": D}</code>, where
+<code>R</code> is the run id of the gateway and <code>D</code> the SHA-256 of the body in
+lowercase hexadecimal. The field <code>scheme</code> separates this MAC from the
+MAC of an inbox file, also when an actor uses one key for both. The
+headers <code>A2A-Version</code> and <code>Content-Type</code> are not covered by the MAC.
+A nonce is accepted once in a run. The gateway keeps the nonces of
+each actor in memory, so memory grows with the authenticated requests
+of a run; after 1 000 000 requests of one actor it refuses the further
+requests of that actor (reason <code>nonce_limit</code>) until it is started
+again, with a new run id. The other actors are not affected. A bearer
+token, which whoever sees it can send again, is not accepted. Every
+actor of the keys is an actor of the file. A request without a valid
+header gets HTTP 401 with the run id, is recorded as
+<code>unauthenticated_request</code>, and is not decided.</li>
+<li class="">The extension of G.11 has the URI
+<code>https://www.ertl.jp/cadl-spec/a2a/agents-message/v0.1</code>; its value is
+<code>{"name": e, "args": [...]}</code>, where <code>e</code> is an identifier of at most
+64 characters and the arguments are at most 16 strings of at most 256
+characters. A message without it is answered with a rejected task and
+recorded as <code>unauthorised_message</code> with the reason <code>no_name</code>, without
+a decision; a value of another form is a JSON-RPC error -32602. An
+agent card given with <code>--agent-card</code> has to declare the extension
+under <code>capabilities.extensions</code>, or the gateway does not start.</li>
+<li class="">Approvals do not come as A2A messages. A message whose name is that of
+a <code>counts_as:</code> rule that creates <code>approval</code> or <code>rejection</code>, whatever
+the receiver of the rule, is rejected and recorded as
+<code>unauthorised_message</code> with the reason <code>approval_as_message</code>.
+Approvals come through the inbox, as for the MCP gateway, bound to the
+arguments of the held message, which are the whole <code>params</code> of its
+<code>SendMessage</code>; an A2A message would carry the hold id and nothing that
+binds it to what the approver saw. An approval through the inbox is
+given to the runtime and never delivered, so the receiver of such a
+rule, when it is a set, a range, or an index variable, is resolved to
+a concrete actor: the actor of the gateway (<code>Y</code>, or the tool server of
+the MCP gateway) when the reference can match it, else, at the MCP
+gateway, its client (<code>--agent</code>) when the reference can match it, else
+the first declared member of the set. A gateway does not start when a
+contract that its actor is a party of escalates and has no
+<code>counts_as:</code> rule that creates <code>approval</code>; G-9 already makes such a
+file an error.</li>
+<li class="">Only <code>SendMessage</code> is decided. <code>GetTask</code> and <code>CancelTask</code> carry no
+message between actors; they pass, without a decision, for tasks that
+the agent or the gateway gave to the same actor in this run.
+<code>CancelTask</code> changes the state of the agent and is recorded as
+<code>task_cancel</code> before it is passed on; <code>GetTask</code> is not recorded. A
+<code>SendMessage</code> likewise names only such tasks (<code>taskId</code>,
+<code>referenceTaskIds</code>) and contexts (<code>contextId</code>). Anything else is
+<code>TaskNotFoundError</code> (-32001) and is recorded as <code>task_refused</code>; a
+context id that the gateway has not seen is refused too, because it
+may be a context of another client or of an earlier run. <code>tenant</code> is
+refused (-32602), because tasks are kept by their id.
+<code>SendStreamingMessage</code>, <code>SubscribeToTask</code>, <code>ListTasks</code>, and
+<code>GetExtendedAgentCard</code> are refused with <code>UnsupportedOperationError</code>
+(-32004), the methods of push notifications and a <code>SendMessage</code> with a
+push notification configuration with
+<code>PushNotificationNotSupportedError</code> (-32003), and any other method
+with -32601; all are recorded as <code>method_refused</code>. The header
+<code>A2A-Version</code> has to be <code>1.0</code> or <code>1.0.N</code>, with surrounding spaces
+removed; otherwise, also when it is missing, the request gets
+<code>VersionNotSupportedError</code> (-32009), because under A2A 1.0.0 a missing
+header means version 0.3.</li>
+<li class="">A denial is a task of the gateway in <code>TASK_STATE_REJECTED</code> whose
+status message names the reason, the norms, the hold, the fallback,
+and <code>notify</code>. A held request that waits for its answer (a blocking
+request) waits until the hold closes; with <code>returnImmediately</code> the
+client gets a task of the gateway in <code>TASK_STATE_SUBMITTED</code>, which
+keeps its id after a release and shows the agent's task under it. If
+the released request cannot be passed on, that task becomes
+<code>TASK_STATE_FAILED</code> and the log gets <code>forward_failed</code>. A client that
+cancels the task of a held request, or closes the connection of a
+held blocking request, withdraws the request (G.6). Bytes that the
+client sends while its request is held are read and dropped; a
+half-closed connection (the client has shut down its sending side)
+counts as closed, which withdraws the request. A withdrawal is a step
+of the enforcement point, and the answer comes from the closing record
+of the hold: a hold whose deadline passed before the step is
+<code>expired</code>, and the client gets a rejected task.</li>
+<li class="">A request is read with one <code>Content-Length</code> of at most 1 MiB and
+without <code>Transfer-Encoding</code>, one request per connection; the body is
+parsed as strictly as a line of the MCP gateway and passed on
+re-serialised, with a JSON-RPC id and headers of the gateway; the
+client's <code>Authorization</code> is not passed on. A task or context that the
+agent gives to a second actor is not shown to it (-32006,
+<code>invalid_response</code>). A request that cannot be sent after an allow or a
+release gives -32603 and <code>forward_failed</code>; one that was sent and got
+no valid response gives -32006 and <code>invalid_response</code>. An address
+other than loopback needs TLS, and <code>--upstream-token</code> needs an
+<code>https</code> agent or a loopback address.</li>
+<li class="">The request line, the headers, and the body of a request have to
+arrive within 10 seconds in all (<code>--read-timeout</code>); otherwise the
+connection is closed and recorded as <code>read_timeout</code>. Before
+authentication, at most 4 connections of one remote address (an IPv4
+address, or the /64 prefix of an IPv6 address, since one host usually
+has a whole /64; an IPv4-mapped IPv6 address counts as its IPv4
+address) (<code>--max-readers-per-address</code>) and at most 64 connections in all
+(<code>--max-readers</code>) are read at the same time. A further connection of
+an address that has 4 is closed at once (<code>overloaded</code>, <code>address</code>); when
+all 64 are in use, a connection waits up to one second for one and then
+gets HTTP 503 (<code>overloaded</code>, <code>readers</code>). A request is counted against
+the 64 requests handled at the same time (<code>--max-handlers</code>) only after
+it is authenticated, also while it is held; beyond that it gets HTTP
+503 (<code>overloaded</code>, <code>handlers</code>). So unauthenticated connections cannot
+take the places of the clients. One actor may have at most 16 requests
+handled at the same time (<code>--max-handlers-per-actor</code>), held blocking
+requests and requests to a slow agent included, and at most 64 holds,
+blocking or not (<code>--max-holds-per-actor</code>); a further request of that
+actor gets HTTP 503 before its decision (<code>overloaded</code>, with the reason
+<code>handlers_per_actor</code> or <code>holds_per_actor</code> and the actor). So one client
+cannot take every place, or create holds without end; the cap on holds
+also refuses that actor's messages that would not be held. The records
+of <code>unauthenticated_request</code>, <code>overloaded</code>, and <code>read_timeout</code> are kept
+to at most 20 a second for each event; the next record of the event
+counts the requests that were not recorded (<code>;not_recorded_before=N</code>
+in its <code>reason</code>). Many hosts together can still keep the 64 readers
+busy and make the gateway refuse requests for as long as they go on;
+where this matters, the gateway belongs behind a proxy or a firewall
+that limits connections. Behind a proxy every client has the address
+of the proxy, so <code>--max-readers-per-address</code> has to be raised there,
+or the proxy has to buffer the requests before it passes them on.</li>
+</ul>
+<p>The gateway does not read the header <code>A2A-Extensions</code>, does not answer
+<code>ExtensionSupportRequiredError</code> (-32008), does not read <code>A2A-Version</code> as
+a query parameter, and does not check that a part <code>raw</code> is base64.</p>
+<p>The A2A gateway is tested with a fake A2A agent in a thread of the test
+and a fake client, standard library only, in 75 tests: allow,
+denial by the default, a message without name, escalation that is
+approved, rejected, or expires, with and without <code>returnImmediately</code>, a
+held task that is cancelled before a signed approval arrives or after
+its deadline, a client that closes the connection of a held request over
+TCP (also after sending more bytes, or by a half-close) and over TLS, a
+grant through the inbox, an approval re-addressed to another held
+message with other arguments, approval rules with a set or a range as
+receiver at both gateways,
+eight kinds of failed authentication, 27 kinds of malformed input, an
+agent that is down or answers wrongly, a release that cannot be passed
+on, more requests than handlers, slow connections that send their
+body a byte at a time, more connections than readers, peers of one
+address that reconnect at once, more requests and more holds of one actor
+than allowed, the nonces of one actor, and the isolation of
+tasks and contexts. In every scenario the agent receives no request that was not
+allowed or released, and <code>cadl agents-run</code> on the trace writes the same
+audit log as the gateway. An independent review of the first version
+found that a context id that the gateway had not seen was claimed by
+whoever named it first, also in a later run, so that a client could
+continue the context of another; that <code>tenant</code> let a client read the
+task of another tenant with the same id; that an approval rule with a
+set as receiver was not recognised, so that an approval came as an A2A
+message, not bound to the held arguments, and was passed on to the
+agent; and that a TLS client that closed with close_notify did not
+withdraw its held request. A second review found that the correction of
+the third defect left holds under such a rule that could never be
+approved, also at the MCP gateway; that a client that sent more bytes
+and then closed was not seen as gone; that a cancellation after a
+deadline that the ticker had not yet observed was answered as cancelled
+while the log said <code>expired</code>; and that a cancellation reached the agent
+without a record. A third review found that slow unauthenticated
+connections could take every handler slot, because a slot was taken
+before the request was read and authenticated and the timeout applied
+to each read only; that the correction of the set receiver refused to
+start with files that <code>cadl</code> 0.3.24 accepted; and that one client could
+use up the cap of the nonces for all. A fourth review found that peers
+of one address that reconnected at once kept every reader busy, that the
+holds of <code>returnImmediately</code> requests were not capped per actor, and
+that one actor could take every handler with requests to a slow agent.
+Each is corrected and has a test.
+None of the reviews found a request that reached the agent without a
+decision; the first checked
+this also in a run of 12 threads whose log of 280 records
+<code>cadl agents-run</code> reproduced.</p>
 <p>The trace is that of <code>cadl norms-eval</code> (JSON Lines with <code>t</code>,
 <code>bindings</code>, <code>request</code>, <code>values</code>, <code>messages</code>, <code>state</code>, <code>amend</code>, <code>end</code>),
 read for the whole enforcement point, with more keys: <code>epoch</code>, the
@@ -1381,10 +1576,13 @@ prohibition stops while the prohibition is suspended, as it does before
 log that is rewritten from a changed line on; keeping the last digest
 elsewhere (<code>--anchor</code>), or a key, does; the <code>hash</code> field of the header
 is not authenticated, so the verifier has to know whether a log is
-keyed. Only the MCP gateway over stdio is implemented, and it has been
-tested with a fake server and a fake client, not with an MCP client or
-server of another implementation; A2A is mapped in G.11 only. The
-gateway observes messages and time, not <code>values</code>: a norm that reads a
+keyed. The MCP gateway over stdio and the A2A gateway over JSON-RPC
+have been tested with fake servers, agents, and clients, not with
+implementations of others. The A2A gateway needs a client that computes
+the header <code>CADL-HMAC</code>, keeps the owners of tasks only for one run, and
+does not support streaming, push notifications, <code>ListTasks</code>, tenants,
+or the gRPC and the HTTP and JSON bindings. A gateway
+observes messages and time, not <code>values</code>: a norm that reads a
 quantity sees missing data (G.5). It does not create or end
 host-created contract instances after its first line. The approver's
 tool signs the held message that the gateway publishes, so it trusts

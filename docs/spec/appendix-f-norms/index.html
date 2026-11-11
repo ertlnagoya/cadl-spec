@@ -1,4 +1,4 @@
-<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-f-norms" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix F: Norms Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix F: Norms Extension | CADL"/><meta data-rh=true name=description content="Norms extension (norms 0.1): obligations, permissions, prohibitions and powers as first-class objects of a contract, counts-as rules, bounded temporal operators, four-valued verdicts, and the continuity of norms across amendments."/><meta data-rh=true property=og:description content="Norms extension (norms 0.1): obligations, permissions, prohibitions and powers as first-class objects of a contract, counts-as rules, bounded temporal operators, four-valued verdicts, and the continuity of norms across amendments."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms","name":"Appendix F: Norms Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.db8fabac.js defer></script><script src=/cadl-spec/assets/js/main.60e54b48.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-f-norms" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix F: Norms Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix F: Norms Extension | CADL"/><meta data-rh=true name=description content="Norms extension (norms 0.1): obligations, permissions, prohibitions and powers as first-class objects of a contract, counts-as rules, bounded temporal operators, four-valued verdicts, and the continuity of norms across amendments."/><meta data-rh=true property=og:description content="Norms extension (norms 0.1): obligations, permissions, prohibitions and powers as first-class objects of a contract, counts-as rules, bounded temporal operators, four-valued verdicts, and the continuity of norms across amendments."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms","name":"Appendix F: Norms Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.da6d0b72.js defer></script><script src=/cadl-spec/assets/js/main.60e54b48.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-689")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label="Skip to main content"><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/docs/quickstart/>Quick Start</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/docs/spec/intro/>Specification</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/textbook/>Textbook</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/handson/>Hands-on</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>English</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-f-norms/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-f-norms/ target=_self rel="noopener noreferrer" class=dropdown__link lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=Search aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/intro/><span title="CADL Specification v0.3" class=linkLabel_E58b>CADL Specification v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/introduction/><span title="1. Introduction" class=linkLabel_E58b>1. Introduction</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/objectives/><span title="2. Language Objectives" class=linkLabel_E58b>2. Language Objectives</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/comparison/><span title="3. Comparison with Existing Languages" class=linkLabel_E58b>3. Comparison with Existing Languages</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/requirements/><span title="4. Requirements Specification" class=linkLabel_E58b>4. Requirements Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/language-spec/><span title="5. Language Specification" class=linkLabel_E58b>5. Language Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/design/><span title="6. Design" class=linkLabel_E58b>6. Design</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/examples/><span title="7. Domain-Specific Description Examples" class=linkLabel_E58b>7. Domain-Specific Description Examples</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/use-cases/><span title="8. Use Cases and Novelty Analysis" class=linkLabel_E58b>8. Use Cases and Novelty Analysis</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/research/><span title="9. Research Directions and Open Challenges" class=linkLabel_E58b>9. Research Directions and Open Challenges</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/roadmap/><span title="10. Implementation Roadmap" class=linkLabel_E58b>10. Implementation Roadmap</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-a-syntax/><span title="Appendix A: Syntax Reference (EBNF)" class=linkLabel_E58b>Appendix A: Syntax Reference (EBNF)</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-b-references/><span title="Appendix B: References" class=linkLabel_E58b>Appendix B: References</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-c-motivation/><span title="Appendix C: Motivation Extension" class=linkLabel_E58b>Appendix C: Motivation Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-d-codegen/><span title="Appendix D: Codegen Target Catalog" class=linkLabel_E58b>Appendix D: Codegen Target Catalog</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><span title="Appendix E: SoS-DSL Extension" class=linkLabel_E58b>Appendix E: SoS-DSL Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/docs/spec/appendix-f-norms/><span title="Appendix F: Norms Extension" class=linkLabel_E58b>Appendix F: Norms Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-g-agents/><span title="Appendix G: Agent Governance Extension" class=linkLabel_E58b>Appendix G: Agent Governance Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-h-stochastic/><span title="Appendix H: Stochastic Model Extension" class=linkLabel_E58b>Appendix H: Stochastic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-i-games/><span title="Appendix I: Strategic Model Extension" class=linkLabel_E58b>Appendix I: Strategic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-j-grounding/><span title="Appendix J: Grounding of the Institutional Parameters" class=linkLabel_E58b>Appendix J: Grounding of the Institutional Parameters</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/glossary/><span title=Glossary class=linkLabel_E58b>Glossary</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/cadl-spec/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Appendix F: Norms Extension</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Appendix F — Norms Extension (norms 0.1)</h1></header>
@@ -53,7 +53,7 @@ already active.</li>
 </ol>
 <p>Norms 0.1 deliberately stays small: it fixes the vocabulary and the
 static and dynamic semantics, so that design-time checking (by
-translation to a model checker) and runtime monitoring can be added by
+translation to a model checker, F.12) and runtime monitoring can be added by
 processors without changing the language. It does not give the
 institutional parameters α, β, and λ a formal meaning for norms (F.7);
 the grounding extension (<a class="" href=/cadl-spec/docs/spec/appendix-j-grounding/>Appendix J</a>)
@@ -798,8 +798,8 @@ items that contain temporal operators and report each one as not
 checked (F.7). <code>cadl codegen</code> leaves the same items out of the
 contract code of every target, with a comment in the code and a
 warning; it does not translate temporal operators into the target
-languages. The Python target monitors them in a separate module (see
-below).</li>
+languages. The Python target monitors them in a separate module, and
+from <code>cadl</code> 0.3.25 the OPA and Solidity targets too (see below).</li>
 <li class="">A numeric <code>deadline:</code> of a norm is read as seconds, the lenient form
 that <a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/#a12-reference-implementation-status-v03>A.12</a>
 describes for lifecycle deadlines. <code>cadl check</code> looks for temporal
@@ -892,9 +892,51 @@ host supplies the data of the monitor generated from the new version;
 the monitor cannot read a CADL file. Before <code>cadl codegen</code> writes the
 module it checks that the module compiles and that every name it uses
 is defined in it, and it refuses to generate otherwise.</li>
-<li class="">The Solidity, OPA, and Unity C# targets do not monitor norms, and
-translation of norms to a model checker for design-time checking is
-not implemented.</li>
+<li class="">From <code>cadl</code> 0.3.25, <code>cadl codegen -t opa</code> and <code>-t solidity</code> write a
+monitor of the norms for each contract of a file that declares
+<code>norms: 0.1</code> (<a class="" href=/cadl-spec/docs/spec/appendix-d-codegen/#d5-norms-monitors-of-the-opa-and-solidity-targets>Appendix D, D.5</a>).
+The Rego monitor is a step function: it computes the next state of the
+monitor (a JSON object that the host stores) and the changes from the
+previous state and one observation. The Solidity monitor is a contract
+that stores the state and takes the time of an observation as an
+argument. Both follow the order of one observation of F.5 as
+<code>cadl norms-eval</code> does, and read the points of F.4 and F.5 for a
+processor that receives observations one at a time as the Python
+monitor does. They do not evaluate quantifiers, aggregates, wildcard
+or range references in predicates, index expressions, or amendments:
+a contract that uses one of them in a norm, a counts-as rule, or an
+<code>assume:</code> item gets no monitor, with a warning that names the
+construct, and such a <code>guarantee:</code> item is left out with a warning.
+The Solidity monitor also refuses <code>*</code>, <code>/</code>, literals with more than
+six decimals, a temporal operator inside another one, and a monitor
+whose creation code would exceed the limit of EIP-3860, and it refuses
+an observation that would make a bare name read inside a temporal
+operator known after the first observation; the gas of a norm whose
+content has a temporal operator grows with the observations inside its
+open window. Their
+arithmetic is decimal (Rego) or fixed-point with six decimals
+(Solidity), and they compute times exactly, where <code>cadl norms-eval</code>
+computes with binary floating point and a tolerance; D.5 lists these
+and the other differences. The reference implementation
+compares both with <code>cadl norms-eval</code> after every observation, the
+Solidity monitor on an EVM.</li>
+<li class="">The Unity C# target does not monitor norms.</li>
+<li class="">From <code>cadl</code> 0.3.25, <code>cadl norms-check</code> implements F.12: it builds the
+model of one contract instance (<code>--bindings</code>, <code>--members</code>, <code>--step</code>,
+<code>--horizon</code>), runs the questions with PRISM 4.11 (<code>prism</code> on PATH;
+explicit engine, with strategies exported), and evaluates every
+witness with the engine of <code>cadl norms-eval</code>. <code>--timeout</code> bounds the
+time of all runs of PRISM together (600 s by default). Without PRISM
+it reports that nothing was checked, exits with status 0, and can
+still write the model and the properties (<code>--export</code>);
+<code>--require-checker</code> makes a missing PRISM an error. Storm is not
+used. The translation is tested against <code>cadl norms-eval</code> by running
+the generated PRISM text, with an interpreter of the subset it uses,
+on random paths of environment choices and on every path of at most
+two observations of one contract, and comparing the state of every
+norm at every observation; the interpreter is in turn compared with
+paths of the PRISM simulator, and the answers of PRISM with explicit
+fixpoints over the reachable states.</li>
 <li class="">The other components read a wildcard reference outside a domain in
 their own way, and <code>cadl</code> 0.3.24 does not change them. <code>cadl verify</code>
 reads <code>A[*].q</code> as one unconstrained variable per group, shared by
@@ -922,4 +964,206 @@ its <code>norms:</code> and <code>counts_as:</code> blocks (they are not checked
 lowered to the IR), and SHOULD report them as undeclared extension
 keys. Processors that do not implement the extension MUST NOT reject
 such files; they SHOULD emit a single informational diagnostic per
-file.</div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><div class=pagination-nav__sublabel>Previous</div><div class=pagination-nav__label>Appendix E: SoS-DSL Extension</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/cadl-spec/docs/spec/appendix-g-agents/><div class=pagination-nav__sublabel>Next</div><div class=pagination-nav__label>Appendix G: Agent Governance Extension</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_VuIf thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#f1-motivation class="table-of-contents__link toc-highlight">F.1 Motivation</a><li><a href=#f2-concepts class="table-of-contents__link toc-highlight">F.2 Concepts</a><li><a href=#f3-syntax-ebnf-additions-to-a4 class="table-of-contents__link toc-highlight">F.3 Syntax (EBNF additions to A.4)</a><li><a href=#f4-temporal-predicates class="table-of-contents__link toc-highlight">F.4 Temporal predicates</a><li><a href=#f5-dynamic-semantics class="table-of-contents__link toc-highlight">F.5 Dynamic semantics</a><ul><li><a href=#contract-instances class="table-of-contents__link toc-highlight">Contract instances</a><li><a href=#quantifiers-and-aggregates class="table-of-contents__link toc-highlight">Quantifiers and aggregates</a><li><a href=#wildcard-and-range-references class="table-of-contents__link toc-highlight">Wildcard and range references</a><li><a href=#norm-instances class="table-of-contents__link toc-highlight">Norm instances</a><li><a href=#counts-as class="table-of-contents__link toc-highlight">Counts-as</a><li><a href=#order-within-one-observation class="table-of-contents__link toc-highlight">Order within one observation</a><li><a href=#verdicts class="table-of-contents__link toc-highlight">Verdicts</a></ul><li><a href=#f6-amendments class="table-of-contents__link toc-highlight">F.6 Amendments</a><li><a href=#f7-static-semantics class="table-of-contents__link toc-highlight">F.7 Static semantics</a><ul><li><a href=#relation-to-the-core-checks class="table-of-contents__link toc-highlight">Relation to the core checks</a><li><a href=#relation-to-the-institutional-parameters-informative class="table-of-contents__link toc-highlight">Relation to the institutional parameters (informative)</a></ul><li><a href=#f8-example class="table-of-contents__link toc-highlight">F.8 Example</a><li><a href=#f9-intermediate-representation-ir-addition class="table-of-contents__link toc-highlight">F.9 Intermediate Representation (IR) addition</a><li><a href=#f10-reference-implementation-status class="table-of-contents__link toc-highlight">F.10 Reference implementation status</a><li><a href=#f11-backward-compatibility class="table-of-contents__link toc-highlight">F.11 Backward compatibility</a></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Documentation</div><ul class="footer__items clean-list"><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/quickstart/>Quick Start</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/spec/intro/>Specification</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/handson/>Hands-on</a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Tools</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class=footer__link-item>cadl (compiler / CLI)<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://pypi.org/project/cadl-lang/ target=_blank rel="noopener noreferrer" class=footer__link-item>cadl-lang on PyPI<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class=footer__link-item>CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-raspimouse-simulator target=_blank rel="noopener noreferrer" class=footer__link-item>Hands-on simulator<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Feedback</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl/issues target=_blank rel="noopener noreferrer" class=footer__link-item>Report a problem with the tool<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec/issues target=_blank rel="noopener noreferrer" class=footer__link-item>Report a problem with this site<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec target=_blank rel="noopener noreferrer" class=footer__link-item>Source of this site<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Organization</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://www.ertl.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>ERTL<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://www.nagoya-u.ac.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>Nagoya University<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div></div><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University. Documentation licensed under <a href=https://creativecommons.org/licenses/by/4.0/>CC BY 4.0</a>; code examples and the site source under the <a href=https://www.apache.org/licenses/LICENSE-2.0>Apache License 2.0</a>. Built with Docusaurus.</div></div></div></footer></div></body>
+file.</p>
+<h2 class="anchor anchorTargetStickyNavbar_MWp5" id=f12-design-time-checking>F.12 Design-time checking by a model checker<a href=#f12-design-time-checking class=hash-link aria-label="Direct link to F.12 Design-time checking by a model checker" title="Direct link to F.12 Design-time checking by a model checker" translate=no>​</a></h2>
+<p>F.5 judges the norms of one contract instance on one trace. This section
+defines a translation of the norms of one contract instance into a
+finite Markov decision process (MDP) in the PRISM language
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Kwiatkowska+, CAV 2011]</a>, whose paths are
+all the traces of the instance up to a bounded length. A model checker
+then answers questions over all behaviours before any trace exists: can
+a norm be violated at all, is every activation of an obligation
+followed by a way to keep it, are two norms in conflict, is a power ever
+exercised. The model has no probabilities: every choice is a
+nondeterministic choice of the environment, and the questions are
+qualitative. Detecting norms that oblige and forbid the same act is a
+known problem of normative multi-agent systems
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Vasconcelos+, JAAMAS 2009]</a>; SymboleoPC
+checks properties of legal contracts with the model checker nuXmv
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Parvizimosaed+, SoSyM 2025]</a>. This
+section is for processors that offer such a check; it does not change
+F.1 to F.11.</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=the-contract-instance>The contract instance<a href=#the-contract-instance class=hash-link aria-label="Direct link to The contract instance" title="Direct link to The contract instance" translate=no>​</a></h3>
+<p>The model is built for one contract and one contract instance. The index
+variables of the contract (<code>i</code> in <code>ROBOT[i]</code>) have fixed values, and
+every set of actors has a fixed number of members, <code>A[lo]</code> to
+<code>A[lo+n-1]</code>; for a set with an integer upper bound, n is at most the
+declared size. A reference <code>A[*]</code>, <code>A[lo..hi]</code>, or an unbound <code>A[i]</code> in
+a message event stands for the members of the instance that the table
+of F.3 makes it match.</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=what-the-environment-chooses>What the environment chooses<a href=#what-the-environment-chooses class=hash-link aria-label="Direct link to What the environment chooses" title="Direct link to What the environment chooses" translate=no>​</a></h3>
+<p>At each observation the environment chooses three things.</p>
+<ol>
+<li class=""><strong>Messages.</strong> The message events of the model are the concrete
+messages (sender, receiver, name, arguments) that the message events
+of the translated triggers, <code>until:</code>s, contents of obligations,
+prohibitions and powers, and <code>when:</code>s of counts-as rules denote in
+the instance. A message that no such term matches does not change
+the state of a translated norm and is left out. The environment
+chooses a subset of the message events; each occurs at most once in
+an observation, in a fixed order (the order of the model).</li>
+<li class=""><strong>Values.</strong> The predicates of v0.1 compare one quantity with
+literals. The literals compared with a quantity cut its domain into
+classes on which every such comparison has the same value: for
+numbers c<sub>1</sub> &lt; … &lt; c<sub>k</sub>, the classes below
+c<sub>1</sub>, each c<sub>j</sub>, each open interval between two of
+them, and above c<sub>k</sub>; for symbolic and text values, each
+literal and one other value; for a boolean quantity, true and false.
+One representative stands for each class, and <em>no value</em> is a class
+of every quantity, for which the predicates that use it are
+undefined (F.5). The environment chooses one class per quantity; the
+choices are grouped by the predicates they decide, so that two
+choices that give every predicate the same three-valued value are
+one choice. The classes assume that every value of a quantity has
+the type of the literals it is compared with (numbers, booleans, or
+symbols and texts), or that it has no value. A trace with a value of
+another type, such as a text where numbers are compared or a boolean
+compared with numbers, can give a predicate a value that no class
+gives it (true, false or undefined); the answers do not cover such
+traces.</li>
+<li class=""><strong>The end.</strong> Whether the instance ends at this observation (step 6
+of F.5). This covers both the end signalled for an instance without
+<code>lifecycle:</code> and a terminal lifecycle state.</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=time>Time<a href=#time class=hash-link aria-label="Direct link to Time" title="Direct link to Time" translate=no>​</a></h3>
+<p>Observations take place at the multiples of a <strong>step</strong> Δ: observation n
+is at time nΔ. Δ is given, or is the greatest common divisor of the
+durations of the translated deadlines, temporal operators, and
+assumptions (1 s when there are none); a given Δ must divide each of
+them. A deadline d becomes d/Δ steps and an interval w of <code>within</code>,
+<code>throughout</code>, or <code>until</code> becomes w/Δ steps.</p>
+<p>The model is exact for the traces whose observations are the
+multiples of Δ, from 0 to the end of the instance: every time that F.5
+compares (the active time of a norm with its deadline, an observation
+with the end of an interval) is then a whole number of steps, so the
+comparison in steps has the same result as the comparison in seconds,
+and an observation that carries nothing is an observation like any
+other (F.5). The model does not cover observations between two
+multiples of Δ, nor traces that skip a multiple: an observation between
+two ticks can detect a passed deadline earlier, or see a value that
+holds only between ticks. A check of a property of such traces needs a
+smaller Δ.</p>
+<p>The <strong>horizon</strong> H bounds the instance: it ends at observation H at the
+latest. By default H = 2 + Σ (d + w + 2) over the translated obligations
+and prohibitions, with d and w the deadline and the interval of the
+content in steps (0 when absent), so that each norm can be activated,
+judged, and followed by a reparation in turn. The answers are about
+instances of at most H + 1 observations; a larger horizon covers longer
+instances.</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=the-state-and-the-transition>The state and the transition<a href=#the-state-and-the-transition class=hash-link aria-label="Direct link to The state and the transition" title="Direct link to The state and the transition" translate=no>​</a></h3>
+<p>The state of the model after an observation consists of the step
+number; whether the instance has ended; for every translated norm its
+state (F.5; <code>discharged</code> is split into the norms that were in force and
+those that the end of the instance found <code>inactive</code>, and <code>violated</code> into
+the verdicts <code>violated</code> and <code>excused</code>), whether it was activated at that
+observation, its active time in steps (counted up to deadline + 1), and,
+for a content with a temporal operator, the pending candidates by their
+age with the information F.4 needs to decide them (whether an undefined
+value was seen; for <code>until</code>, also whether the prefix was undefined), and
+whether a candidate decided true or not true is still waiting for the
+norm to be judged (while it is <code>suspended</code>); for every predicate whose
+rising edge is an event, its value at the previous observation; for
+every temporal assumption, its status, and whether an assumption has
+failed; for every power whether it has been exercised, and for every
+obligation or prohibition with a reparation whether the reparation has
+been activated.</p>
+<p>One transition of the model is one observation: the steps of F.5 in
+their order ("Order within one observation"), each applied to the state
+left by the previous one, for the choice of the environment. After the
+end of the instance the state does not change.</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=what-is-translated>What is translated<a href=#what-is-translated class=hash-link aria-label="Direct link to What is translated" title="Direct link to What is translated" translate=no>​</a></h3>
+<p>Version 0.1 of the translation translates message events (with
+literal arguments or names), institutional events of counts-as rules,
+and predicates made of comparisons of a quantity (<code>A.q</code>, <code>A[k].q</code>, or
+<code>A[i].q</code> with <code>i</code> bound) with a literal (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>></code>,
+<code>>=</code>, <code>IN</code>), a boolean quantity used as a condition, <code>AND</code>, <code>OR</code>, and
+<code>NOT</code>; a content that is one bounded temporal operator over such
+predicates; deadlines; <code>until:</code>; counts-as rules with <code>if:</code>; powers and
+their effects; reparations; and <code>assume:</code> items of these forms (for the
+verdict <code>excused</code>). It does not translate quantifiers, aggregates,
+wildcard references in predicates, arithmetic, comparisons of two
+quantities, <code>request</code> fields, <code>now</code>, <code>state</code>, a temporal operator
+combined with other operators or nested in another, and amendments
+(F.6). A norm with such a part is reported as <strong>not translated</strong>, with
+the reason, and so is a norm whose behaviour depends on one: the
+reparation of a norm that is not translated, the target of an effect of
+a power that is not translated, and a norm whose trigger, content, or
+<code>until:</code> is an event of a counts-as rule that is not translated. When an
+<code>assume:</code> item is not translated, a violation may be <code>excused</code> in the
+traces, and the model does not tell. Norms that F.10 does not judge
+(not evaluable) stay <code>inactive</code> in the model, as in the traces.
+<code>guarantee:</code> items do not change norm states and are not translated.</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=questions>Questions<a href=#questions class=hash-link aria-label="Direct link to Questions" title="Direct link to Questions" translate=no>​</a></h3>
+<p>The questions are PRISM properties over labels of the model. Two
+readings of the end are used. In the <strong>any end</strong> reading
+(<code>early_end=true</code>) the instance may end at every observation; it is used
+for questions of possibility. In the <strong>full</strong> reading
+(<code>early_end=false</code>) the instance runs to the horizon; it is used for
+questions of necessity, since ending the instance early discharges an
+obligation before its deadline and would answer every such question
+trivially.</p>
+<table><thead><tr><th>Question<th>Reading<th>Property<th>Answer<tbody><tr><td>Can norm n be activated?<td>any end<td><code>Pmax=? [ F "a_n" ]</code><td>yes when > 0<tr><td>Can it be violated?<td>any end<td><code>Pmax=? [ F "v_n" ]</code><td>yes when > 0<tr><td>Can it be fulfilled?<td>any end<td><code>Pmax=? [ F "f_n" ]</code><td>yes when > 0<tr><td>Is it violated in every instance?<td>full<td><code>Pmin=? [ F "v_n" ]</code><td>yes when = 1<tr><td>Can every activation be kept?<td>full<td><code>Pmax=? [ F (!"end" & !(P&lt;=0 [ X "j_n" ]) & P&lt;=0 [ X ("j_n" & !"v_n" & !(P>=1 [ F "v_n" ])) ]) ]</code><td>no when > 0<tr><td>Are n and m in conflict?<td>full<td><code>Pmax=? [ F (!"v_n" & !"v_m" & !(P&lt;1 [ G !"v_n" ]) & !(P&lt;1 [ G !"v_m" ]) & P>=1 [ F ("v_n" | "v_m") ]) ]</code><td>yes when > 0<tr><td>Can power p be exercised?<td>any end<td><code>Pmax=? [ F "x_p" ]</code><td>yes when > 0<tr><td>Can the reparation of n be activated?<td>any end<td><code>Pmax=? [ F "r_n" ]</code><td>yes when > 0</table>
+<p><code>"a_n"</code> holds once n has been activated, <code>"v_n"</code> when it is violated
+(with either verdict), <code>"f_n"</code> when it is fulfilled, <code>"j_n"</code> in the
+state after the observation at which n was activated (whatever its
+state after that observation), <code>"x_p"</code> once p has been exercised,
+<code>"r_n"</code> once the reparation of n has been activated, and <code>"end"</code> once
+the instance has ended. In an MDP, <code>P>=1 [ F φ ]</code> says that every
+resolution of the choices reaches φ, <code>!(P&lt;1 [ G !φ ])</code> that some
+resolution avoids φ forever, <code>P&lt;=0 [ X φ ]</code> that no choice of the
+next observation leads to φ, and <code>!(P&lt;=0 [ X φ ])</code> that some choice
+does.</p>
+<p>An activation <strong>cannot be kept</strong> when, before an observation, some
+choice of the environment activates the norm and every choice that
+activates it leads to a state from which every continuation violates
+it. The question is asked in the state before the activating
+observation, because that observation contains the choice of the
+environment: an obligation with a deadline of 0 s that is triggered by
+a message can be kept, since the content may occur at the same
+observation, while a reparation with a deadline of 0 s cannot, since it
+is first judged at the next observation (F.5, step 5). The question is
+asked at activations, because any obligation with a deadline reaches,
+by inaction of its bearer, a state from which it is violated whatever
+follows. Two obligations or
+prohibitions n and m are <strong>in conflict</strong> when a state is reachable in
+which neither is violated, each can still be kept on its own, and every
+continuation violates one of them, for example an obligation whose
+content a prohibition forbids while both are in force. A conflict may
+arise through a reparation: keeping n violates a third norm whose
+reparation is m.</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=witnesses>Witnesses<a href=#witnesses class=hash-link aria-label="Direct link to Witnesses" title="Direct link to Witnesses" translate=no>​</a></h3>
+<p>Every answer that something is possible comes with a <strong>witness</strong>: a
+trace in the format of the reference implementation, with one
+observation at each multiple of Δ, that F.5 evaluates to the claimed
+verdict. It is the path of the strategy the model checker gives for the
+<code>Pmax</code> property, followed, after the target is reached, by observations
+without messages and without values until the instance ends. For an
+activation that cannot be kept the witness reaches the state before
+the activating observation. The processor evaluates by F.5, for every
+choice of the environment at that observation, whether it activates
+the norm, which must agree with the model, and, for every activating
+choice followed by observations without messages and values to the
+horizon, that the norm is violated. That every other continuation of
+an activating choice violates the norm as well rests on the model
+checker; the witness trace is one of the activating choices. When
+there are more than 512 choices at that observation, the processor
+MAY check a sample of 512 of them instead of every choice, and then
+SHALL say in the report that the check was sampled. For a conflict
+there are two witnesses from the state of conflict: one keeps n and
+violates m, the other keeps m and violates n. For a norm violated in
+every instance, the instance without messages and values serves as an
+example. A processor SHOULD evaluate every witness by F.5 and report a
+witness that does not give the claimed verdict as its own error.</p>
+<h3 class="anchor anchorTargetStickyNavbar_MWp5" id=limits>Limits<a href=#limits class=hash-link aria-label="Direct link to Limits" title="Direct link to Limits" translate=no>​</a></h3>
+<p>Version 0.1 refuses a horizon of more than 1 000 observations, more than
+16 message events, more than 8 192 choices of the environment per
+observation, and quantities with more than 20 000 combinations of
+classes in one group of predicates. The model checker explores the
+reachable states explicitly; the number of transitions is the number of
+reachable states times the number of choices, which grows with the
+message events and the classes of values. The time of a check grows
+with the number of commands of the model (four per choice of the environment) and
+of reachable states: an instance with 12 message events (4 096
+choices, 16 384 commands) took more than ten minutes. A processor
+SHOULD bound the time of the model checker and report when the bound is
+exceeded.</div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><div class=pagination-nav__sublabel>Previous</div><div class=pagination-nav__label>Appendix E: SoS-DSL Extension</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/cadl-spec/docs/spec/appendix-g-agents/><div class=pagination-nav__sublabel>Next</div><div class=pagination-nav__label>Appendix G: Agent Governance Extension</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_VuIf thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#f1-motivation class="table-of-contents__link toc-highlight">F.1 Motivation</a><li><a href=#f2-concepts class="table-of-contents__link toc-highlight">F.2 Concepts</a><li><a href=#f3-syntax-ebnf-additions-to-a4 class="table-of-contents__link toc-highlight">F.3 Syntax (EBNF additions to A.4)</a><li><a href=#f4-temporal-predicates class="table-of-contents__link toc-highlight">F.4 Temporal predicates</a><li><a href=#f5-dynamic-semantics class="table-of-contents__link toc-highlight">F.5 Dynamic semantics</a><ul><li><a href=#contract-instances class="table-of-contents__link toc-highlight">Contract instances</a><li><a href=#quantifiers-and-aggregates class="table-of-contents__link toc-highlight">Quantifiers and aggregates</a><li><a href=#wildcard-and-range-references class="table-of-contents__link toc-highlight">Wildcard and range references</a><li><a href=#norm-instances class="table-of-contents__link toc-highlight">Norm instances</a><li><a href=#counts-as class="table-of-contents__link toc-highlight">Counts-as</a><li><a href=#order-within-one-observation class="table-of-contents__link toc-highlight">Order within one observation</a><li><a href=#verdicts class="table-of-contents__link toc-highlight">Verdicts</a></ul><li><a href=#f6-amendments class="table-of-contents__link toc-highlight">F.6 Amendments</a><li><a href=#f7-static-semantics class="table-of-contents__link toc-highlight">F.7 Static semantics</a><ul><li><a href=#relation-to-the-core-checks class="table-of-contents__link toc-highlight">Relation to the core checks</a><li><a href=#relation-to-the-institutional-parameters-informative class="table-of-contents__link toc-highlight">Relation to the institutional parameters (informative)</a></ul><li><a href=#f8-example class="table-of-contents__link toc-highlight">F.8 Example</a><li><a href=#f9-intermediate-representation-ir-addition class="table-of-contents__link toc-highlight">F.9 Intermediate Representation (IR) addition</a><li><a href=#f10-reference-implementation-status class="table-of-contents__link toc-highlight">F.10 Reference implementation status</a><li><a href=#f11-backward-compatibility class="table-of-contents__link toc-highlight">F.11 Backward compatibility</a><li><a href=#f12-design-time-checking class="table-of-contents__link toc-highlight">F.12 Design-time checking by a model checker</a><ul><li><a href=#the-contract-instance class="table-of-contents__link toc-highlight">The contract instance</a><li><a href=#what-the-environment-chooses class="table-of-contents__link toc-highlight">What the environment chooses</a><li><a href=#time class="table-of-contents__link toc-highlight">Time</a><li><a href=#the-state-and-the-transition class="table-of-contents__link toc-highlight">The state and the transition</a><li><a href=#what-is-translated class="table-of-contents__link toc-highlight">What is translated</a><li><a href=#questions class="table-of-contents__link toc-highlight">Questions</a><li><a href=#witnesses class="table-of-contents__link toc-highlight">Witnesses</a><li><a href=#limits class="table-of-contents__link toc-highlight">Limits</a></ul></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Documentation</div><ul class="footer__items clean-list"><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/quickstart/>Quick Start</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/spec/intro/>Specification</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/docs/handson/>Hands-on</a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Tools</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class=footer__link-item>cadl (compiler / CLI)<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://pypi.org/project/cadl-lang/ target=_blank rel="noopener noreferrer" class=footer__link-item>cadl-lang on PyPI<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class=footer__link-item>CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-raspimouse-simulator target=_blank rel="noopener noreferrer" class=footer__link-item>Hands-on simulator<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Feedback</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl/issues target=_blank rel="noopener noreferrer" class=footer__link-item>Report a problem with the tool<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec/issues target=_blank rel="noopener noreferrer" class=footer__link-item>Report a problem with this site<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec target=_blank rel="noopener noreferrer" class=footer__link-item>Source of this site<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Organization</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://www.ertl.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>ERTL<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://www.nagoya-u.ac.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>Nagoya University<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div></div><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University. Documentation licensed under <a href=https://creativecommons.org/licenses/by/4.0/>CC BY 4.0</a>; code examples and the site source under the <a href=https://www.apache.org/licenses/LICENSE-2.0>Apache License 2.0</a>. Built with Docusaurus.</div></div></div></footer></div></body>
