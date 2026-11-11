@@ -1264,7 +1264,13 @@ every set of actors has a fixed number of members, `A[lo]` to
 `A[lo+n-1]`; for a set with an integer upper bound, n is at most the
 declared size. A reference `A[*]`, `A[lo..hi]`, or an unbound `A[i]` in
 a message event stands for the members of the instance that the table
-of F.3 makes it match.
+of F.3 makes it match. For a set with a symbolic upper bound
+(`ROBOT[1..N]`), the instance binds N to the last index of its members,
+as a trace that binds N does; quantifiers, aggregates, and wildcard
+references in predicates (F.5) then range over a closed domain, the
+members of the instance. For a set with integer bounds the domain is
+the declared set; its members beyond the n of the instance send no
+message and have no value in the model, and the report says so.
 
 ### What the environment chooses
 
@@ -1294,7 +1300,13 @@ At each observation the environment chooses three things.
    in a trace: undefined where norms-eval cannot compare the two values,
    false where it compares them as unequal. The environment chooses one
    class per quantity; combinations of classes that give every predicate
-   the same three-valued value are one choice.
+   the same three-valued value are one choice. When a quantity occurs
+   only in comparisons with literals and as a condition (also inside a
+   quantifier or as the element of `count`), two values that give every
+   such comparison the same value give every predicate the same value,
+   and the model keeps one value for them; a quantity whose value is used
+   in another way (by `min`, `max`, `sum`, `avg`, or arithmetic) keeps a
+   value of each class.
 3. **The end.** Whether the instance ends at this observation (step 6
    of F.5). This covers both the end signalled for an instance without
    `lifecycle:` and a terminal lifecycle state.
@@ -1354,18 +1366,22 @@ end of the instance the state does not change.
 
 ### What is translated
 
-Version 0.1 of the translation translates message events (with
-literal arguments or names), institutional events of counts-as rules,
-and predicates made of comparisons of a quantity (`A.q`, `A[k].q`, or
-`A[i].q` with `i` bound) with a literal (`==`, `!=`, `<`, `<=`, `>`,
-`>=`, `IN`), a boolean quantity used as a condition, `AND`, `OR`, and
-`NOT`; a content that is one bounded temporal operator over such
-predicates; deadlines; `until:`; counts-as rules with `if:`; powers and
-their effects; reparations; and `assume:` items of these forms (for the
-verdict `excused`). It does not translate quantifiers, aggregates,
-wildcard references in predicates, arithmetic, comparisons of two
-quantities, `request` fields, `now`, `state`, a temporal operator
-combined with other operators or nested in another, and amendments
+The translation translates message events (with literal arguments or
+names), institutional events of counts-as rules, and predicates built
+from comparisons (`==`, `!=`, `<`, `<=`, `>`, `>=`, `IN`) of a quantity
+(`A.q`, `A[k].q`, `A[i].q` with `i` bound, `r.q` for a variable `r` over
+a set, `A[j+1].q` for a quantifier variable `j`) with a literal or with
+`count` of a comprehension, quantities used as conditions, `AND`, `OR`,
+`NOT`, the quantifiers `exists` and `for all`, the aggregates `count`,
+and `min` and `max` compared with a literal, of comprehensions over a
+set or a range, and wildcard and range references in predicates, which
+F.5 reads as quantifiers or comprehensions; a content that is one bounded
+temporal operator over such predicates; deadlines; `until:`; counts-as
+rules with `if:`; powers and their effects; reparations; and `assume:`
+items of these forms (for the verdict `excused`). It does not translate
+arithmetic, `sum`, `avg`, comparisons of two quantities, `request`
+fields, `now`, `state`, a temporal operator combined with other
+operators or nested in another, and amendments
 (F.6). A norm with such a part is reported as **not translated**, with
 the reason, and so is a norm whose behaviour depends on one: the
 reparation of a norm that is not translated, the target of an effect of
@@ -1458,7 +1474,11 @@ witness that does not give the claimed verdict as its own error.
 Version 0.1 refuses a horizon of more than 1 000 observations, more than
 16 message events, more than 8 192 choices of the environment per
 observation, and quantities with more than 20 000 combinations of
-classes in one group of predicates. The model checker explores the
+classes in one group of predicates. A predicate over the members of a
+set reads one quantity per member, and the classes of these quantities
+multiply: with c classes per quantity, m members, and q quantities read
+per member, a group has up to c<sup>m q</sup> combinations, which is
+what the limit of 20 000 bounds. The model checker explores the
 reachable states explicitly; the number of transitions is the number of
 reachable states times the number of choices, which grows with the
 message events and the classes of values. The time of a check grows
