@@ -57,7 +57,7 @@ the check fails.
 the details. The `solidity` and `opa` targets leave the items with
 temporal operators out of the contract policy, with a comment, and
 monitor them, with the norms, in a separate file per contract (from
-`cadl` 0.3.24; D.5). The `unity-csharp` target does not monitor norms.
+`cadl` 0.3.25; D.5). The `unity-csharp` target does not monitor norms.
 
 ## D.2 Two-tier generator layout
 
@@ -117,7 +117,7 @@ this processor") rather than silently skipping it.
 ## D.5 Norms monitors of the `opa` and `solidity` targets {/* #d5-norms-monitors-of-the-opa-and-solidity-targets */}
 
 For a file that declares `norms: 0.1`, the `opa` and `solidity` targets
-of the reference implementation emit, from `cadl` 0.3.24, one monitor of
+of the reference implementation emit, from `cadl` 0.3.25, one monitor of
 the norms per contract next to the contract policy: `opa` the Rego
 package `cadl.norms_monitor.<contract>` in
 `norms_monitor_<contract>.rego`, and `solidity` the contract
@@ -142,9 +142,13 @@ gets no monitor, and the processor reports which construct prevents it;
 such a `guarantee:` item, on which no other verdict depends, is left
 out of the monitor with a warning. The Solidity monitor uses
 fixed-point numbers with six decimals and therefore also refuses `*`,
-`/`, and literals with more than six decimals. An observation with
-`amend` is refused at run time. A construct is never evaluated in a way
-that differs from F.5.
+`/`, and literals with more than six decimals; it scans the window of a
+temporal operator once, as the observations arrive, and therefore also
+refuses a temporal operator inside another one; and it refuses a
+contract whose creation code would exceed the 49152 bytes of EIP-3860
+(`cadl codegen` estimates the size from the generated constructor). In
+a `guarantee:` item these lead to the item being left out, as above. An
+observation with `amend` is refused at run time.
 
 **The Rego monitor.** The Rego monitor is a step function. OPA keeps no state, so the
 policy computes the next state of the monitor from the previous state
@@ -186,15 +190,22 @@ state is a JSON object with these keys:
 | `items` | `assume` and `guarantee`: per item `value` (null, `true`, `false`, or `"undefined"`), `seen` (a state predicate held at some observation), `verdict`, `time` |
 | `failed_at` | Time at which the first assumption failed, or null |
 
-**The Solidity monitor.** The Solidity monitor is a contract that keeps the state. It stores the state
-of one contract instance. `begin(bindings, request, quantities)` may be
-called before the first observation, `observe(t, values, messages,
-hasState, state, end)` records one observation, and `finish()` ends the
-instance at its last observation. `verdicts()` returns the states and
-verdicts of the norms and the marks of the items; `ok()`,
-`nextDeadline()`, `observations()`, `ended()`, and the events
+**The Solidity monitor.** The Solidity monitor is a contract that
+keeps the state of one contract instance. Its constructor takes the
+address of the reporter (the deployer when it is the zero address,
+`reporter()`); only the reporter may call `begin`, `observe`,
+`addQuantities`, and `finish`. `begin(bindings, request, quantities)`
+may be called before the first observation, `observe(t, values,
+messages, hasState, state, end)` records one observation,
+`addQuantities(names)` adds names of quantities written without an
+actor, and `finish()` ends the instance at its last observation.
+`verdicts()` returns the states and verdicts of the norms and the marks
+of the items, in the order of `normIds()`; `contractId()`, `ok()`,
+`nextDeadline()`, `observations()`, `lastT()` (the time of the last
+observation, also of one after the end), `ended()`, and `ignored()` (the
+number of observations after the end) can be read, and the events
 `NormChanged`, `ItemChanged`, `Violation`, `InstitutionalEvent`,
-`PowerExercised`, and `Unauthorised` report the rest. A value is a
+`PowerExercised`, and `Unauthorised` report the changes of each call. A value is a
 tuple of a name, a kind (null, boolean, number, string), a number, and
 a string; numbers, including the time, are fixed-point numbers times
 10<sup>6</sup>. The time is an argument of `observe` so that a trace can
@@ -203,7 +214,53 @@ be replayed and tested; a deployment MAY pass `block.timestamp` times
 as it was. The contract stores the model of the CADL contract as data,
 filled in by its constructor, and interprets it; two libraries hold the
 evaluation of predicates and the functions without state, so that each
-runtime code stays within the size limit of EIP-170.
+runtime code stays within the size limit of EIP-170. The cost of an
+observation does not grow with the number of earlier observations: the
+window of a temporal operator is scanned once (each observation adds
+its own value to the scans that are open), a value is found by binary
+search, and the values that no later step can read are deleted, a few
+per new value. It grows with the number of open scans, that is, with
+the observations inside an open window of a norm's content. In the
+tests, an observation of the example of F.8 costs about
+6.4 × 10<sup>5</sup> gas over 320 observations at one per second while
+the 300-second window of its assumption is open and after it (at most
+1.1 × 10<sup>6</sup>, at the first observation), and one of a contract
+with two items over a window of 10<sup>5</sup> seconds about
+3.6 × 10<sup>5</sup> gas at the 320th observation.
+
+**Differences from `cadl norms-eval`.** The monitors decide each
+observation with the observations received so far, as the Python
+monitor does: a passed deadline is detected at the next observation,
+the instance ends with `finish` or with an observation that ends it,
+and the names of quantities written without an actor are those given
+with `quantities` (or `addQuantities`) and those observed so far. Where
+they differ from `cadl norms-eval` (which this appendix does not
+change):
+
+- Arithmetic is decimal in Rego and fixed-point with six decimals in
+  Solidity; `cadl norms-eval` computes with binary floating point. Sums
+  such as `0.1 + 0.2 == 0.3` hold in the monitors and not in
+  `cadl norms-eval`; on integers they agree.
+- Times are computed exactly: in Rego as decimals, with the tolerance of
+  10<sup>-9</sup> s, and in Solidity in microseconds. `cadl norms-eval`
+  compares floating-point times with that tolerance, which is below the
+  spacing of the floating-point numbers at large times, such as epoch
+  seconds with fractions: there a deadline or a window that ends within
+  that spacing of an observation can be judged differently.
+- The monitors refuse inputs that `cadl norms-eval` accepts: a binding
+  that is not an integer written as one (`1.0` and `1e2` are refused) or
+  a string, a value of `values` that is a list or an object (in Rego a
+  list anywhere in `request` too), in Rego two keys of `values` that
+  differ only in whitespace, and an observation with `amend`. The Solidity monitor
+  takes the request as leaves (`"a.b"`), the names of values in ASCII,
+  and the actors and names of messages in ASCII letters, digits, and
+  `_`. It receives bindings as integers or strings, so its host refuses
+  a binding written with a fraction or an exponent.
+- The Rego monitor trusts the state it is given: it checks the format
+  and the contract of the state, not its content. The host keeps the
+  states it stores intact and passes each one to the next step only.
+- Reasons, warnings, and the timeline of `cadl norms-eval` are not
+  reported.
 
 **Strings of the file.** No text of the `.cadl` file is code in either
 monitor: the Rego carries the contract as one JSON text and writes the
@@ -212,10 +269,11 @@ hex literal. The input check of `cadl codegen` applies first.
 
 **Verification.** The reference implementation compares both monitors
 with `cadl norms-eval` after every observation: the norm states and
-verdicts, the item verdicts, the violations, the institutional events,
-and the unauthorised acts, on the example traces, the traces of its
-test suite, and random traces. The Rego runs in `opa eval`, the
-Solidity on an EVM.
+verdicts, the item verdicts, the changes, the violations (with severity
+and sanction), the institutional events, the exercised powers, the
+unauthorised acts, and the next deadline, on the example traces, the
+traces of its test suite, random traces, and a long trace. The Rego
+runs in `opa eval`, the Solidity on an EVM.
 
 ## D.6 Cross-reference
 

@@ -942,7 +942,7 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   contract code of every target, with a comment in the code and a
   warning; it does not translate temporal operators into the target
   languages. The Python target monitors them in a separate module, and
-  from `cadl` 0.3.24 the OPA and Solidity targets too (see below).
+  from `cadl` 0.3.25 the OPA and Solidity targets too (see below).
 - A numeric `deadline:` of a norm is read as seconds, the lenient form
   that [A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)
   describes for lifecycle deadlines. `cadl check` looks for temporal
@@ -1024,7 +1024,7 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   the monitor cannot read a CADL file. Before `cadl codegen` writes the
   module it checks that the module compiles and that every name it uses
   is defined in it, and it refuses to generate otherwise.
-- From `cadl` 0.3.24, `cadl codegen -t opa` and `-t solidity` write a
+- From `cadl` 0.3.25, `cadl codegen -t opa` and `-t solidity` write a
   monitor of the norms for each contract of a file that declares
   `norms: 0.1` ([Appendix D, D.5](./appendix-d-codegen.md#d5-norms-monitors-of-the-opa-and-solidity-targets)).
   The Rego monitor is a step function: it computes the next state of the
@@ -1039,9 +1039,13 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   a contract that uses one of them in a norm, a counts-as rule, or an
   `assume:` item gets no monitor, with a warning that names the
   construct, and such a `guarantee:` item is left out with a warning.
-  Their arithmetic is decimal (Rego) or fixed-point with six decimals
-  (Solidity), where `cadl norms-eval` computes with binary floating
-  point; the two agree on integers. The reference implementation
+  The Solidity monitor also refuses `*`, `/`, literals with more than
+  six decimals, a temporal operator inside another one, and a monitor
+  whose creation code would exceed the limit of EIP-3860. Their
+  arithmetic is decimal (Rego) or fixed-point with six decimals
+  (Solidity), and they compute times exactly, where `cadl norms-eval`
+  computes with binary floating point and a tolerance; D.5 lists these
+  and the other differences. The reference implementation
   compares both with `cadl norms-eval` after every observation, the
   Solidity monitor on an EVM.
 - The Unity C# target does not monitor norms, and translation of norms
