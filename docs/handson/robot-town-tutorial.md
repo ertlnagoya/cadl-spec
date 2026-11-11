@@ -883,18 +883,23 @@ LLM cost about US$1.3 per run in the §10 records (Claude Opus 5.5).
 
 ## 13. What the specification cannot express yet
 
-Building this exercise exposed these gaps in CADL 0.3 / `cadl` 0.3.18:
+Building this exercise exposed these gaps in CADL 0.3. They are still there in `cadl` 0.3.22:
 
 - `cadl sim-ir` does not emit `sos.transitions[*].safety_invariant` into the IR (`cadl check` does
   check it as an expression). The exercise reads it from the checked source file.
 - An operating mode (regime) is only a name; there is no syntax to bind parameter values or
   contracts to it. What changes in centralized mode (bays, exclusive edges) is decided by the
-  simulator.
+  simulator. The stochastic model extension assigns parameter values per regime with
+  `model.regimes:` ([Appendix H, H.6](../spec/appendix-h-stochastic.md)), but only inside its
+  probabilistic model; the simulation and the generated code do not use them.
 - Which layer (rule or contract) a parameter belongs to, and who decides its amendment, is written
   in `constitution.yaml` and in `# @amend:` comments, not in CADL.
 - When a new version of the rules takes effect, there is no syntax for which version applies to
   contract instances already running (transitional provisions), or for when a version takes
-  effect (§12, Exercise 12-3).
+  effect (§12, Exercise 12-3). The norms extension defines, with `on_amendment:`, what happens to
+  the norm instances that are running when an amendment takes effect
+  ([Appendix F, F.6](../spec/appendix-f-norms.md)); when a version takes effect is outside it, and
+  this exercise does not use norms.
 - A `metrics` `target` is a single expression: there is no syntax for a KPI that changes over time,
   or for the choice of how a KPI is measured, and none to link the record of human decisions (GSN)
   to a version of the rules. The exercise keeps `kpi.md`, `decisions.md` and `gsn.yaml` outside the

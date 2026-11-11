@@ -6,7 +6,7 @@ title: "付録 B — 記法の早見表"
 
 # 付録 B — 記法の早見表
 
-本書で使う CADL の書き方、コマンド、ファイルの場所を 1 ページにまとめます。それぞれの意味は第 3 章で説明しています。この付録の CADL の例は、つなげると 1 つのファイルになり、`cadl` 0.3.18 の `cadl check` と `cadl verify` を通ります。
+本書で使う CADL の書き方、コマンド、ファイルの場所を 1 ページにまとめます。それぞれの意味は第 3 章で説明しています。この付録の CADL の例は、つなげると 1 つのファイルになり、`cadl` 0.3.22 の `cadl check` と `cadl verify` を通ります。
 
 ## B.1 ファイルの骨組み
 
@@ -130,7 +130,7 @@ sos:
 | `cadl check <file>` | 構文、型、SoS-DSL の静的な規則を検査する | 3.9、4.3 |
 | `cadl verify <file>` | `cadl check` に加え、前提と保証の矛盾、プロトコルのデッドロックを検査する | 3.9 |
 | `cadl sim-ir <file> --format json` | IR を JSON で出力する | 4.3、5.3 |
-| `cadl codegen --target unity-csharp -o <dir> <file>` | IR から Unity の C# を生成する（`--target` は `python`、`solidity`、`opa`、`unity-csharp`） | 7.6 |
+| `cadl codegen --target unity-csharp -o <dir> <file>` | IR から Unity の C# を生成する（`--target` は `python`、`solidity`、`opa`、`unity-csharp`。`agent-rego` と `agent-cedar` は、エージェント統治拡張の境界の方針を生成する） | 7.6 |
 | `./scripts/sos_dsl_handson_e2e.sh <file> --unity <dir>` | 検査、IR の出力、C# の生成、Unity プロジェクトへの配置をまとめて行う。`--unity ""` で配置を省く | 7.3 |
 | `python3 -m cadl.runtime.multi_robot_demo [--summary] [--log <file>] [--ir <file>]` | 参照ランタイムで 5 台のデモを動かす。`--summary` は終わりの状態の表、`--log` は NDJSON のトレース、`--ir` は自分の IR を使う | 7.5、7.9 |
 | `streamlit run app.py`（`cadl-explorer` で） | cadl-explorer を起動する | 6.3 |

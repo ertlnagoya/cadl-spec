@@ -20,12 +20,20 @@ ranges. Available in `cadl` 0.3.
 
 **Verification Engine (Verifier):** Performs formal verification on AST.
 `cadl` 0.3 provides consistency verification with an SMT solver (Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md)), protocol
-deadlock detection, and graph analysis of regime transitions. Model
-checking and reachability analysis of continuous dynamics are planned.
+deadlock detection, and graph analysis of regime transitions. For a file
+that declares the stochastic model extension
+([Appendix H](./appendix-h-stochastic.md)), `cadl model-check` evaluates
+the properties of the parametric Markov model with an internal reference
+evaluator in exact arithmetic and computes certified regime maps, and
+`cadl model-export` writes the model in the PRISM language for PRISM and
+Storm. Model checking of protocols and reachability analysis of
+continuous dynamics are planned.
 
 **Code Generator:** Generates code from CADL descriptions. `cadl` 0.3 targets
 Python (runtime), Solidity [[Solidity Documentation]](./appendix-b-references.md), OPA/Rego [[Open Policy Agent]](./appendix-b-references.md), and Unity C# (for the SoS-DSL
-extension, [Appendix E](./appendix-e-sos-dsl.md)), and also emits
+extension, [Appendix E](./appendix-e-sos-dsl.md)), and the boundary
+policies of the agent governance extension in Rego and Cedar
+([Appendix G](./appendix-g-agents.md)), and also emits
 simulator configurations; the targets are listed in
 [Appendix D](./appendix-d-codegen.md). TypeScript
 generation and conversion to SysMLv2 [[OMG, 2025]](./appendix-b-references.md) and AADL [[Feiler & Gluch, 2012]](./appendix-b-references.md) are planned.
@@ -33,7 +41,9 @@ generation and conversion to SysMLv2 [[OMG, 2025]](./appendix-b-references.md) a
 **Runtime Monitor:** Monitors execution of deployed institutions,
 detects contract violations, executes institutional transitions, and
 performs logging. `cadl` 0.3 provides these as classes in the generated
-runtime code, not as a separate monitoring service.
+runtime code, not as a separate monitoring service. For a file that
+declares the norms extension ([Appendix F](./appendix-f-norms.md)), the
+generated Python code also monitors the norms while the system runs.
 
 The pipeline below shows the stages as provided by `cadl` 0.3.
 
@@ -110,6 +120,18 @@ provides the following commands.
   ([Appendix D](./appendix-d-codegen.md)).
 - `cadl ai` drafts a CADL file from a natural-language description
   through an LLM API, then parses and type-checks it.
+- `cadl norms-eval` computes the verdicts of the norms of one contract
+  instance on a recorded trace, and `cadl norms-diff` reports what an
+  amendment from one version of a file to the next does to the norms
+  (norms extension, [Appendix F](./appendix-f-norms.md)).
+- `cadl agents-decide` decides one message at the boundary (allow, deny,
+  or escalate), and `cadl agents-run` replays a recorded sequence of
+  messages through the reference runtime, with holds, delegations, and
+  audit records (agent governance extension,
+  [Appendix G](./appendix-g-agents.md)). Both work offline.
+- `cadl model-check` and `cadl model-export` are described under the
+  Verification Engine in Section 6.1 (stochastic model extension,
+  [Appendix H](./appendix-h-stochastic.md)).
 
 ## 6.3 Verification Engine
 The verification engine is designed to integrate four verification
@@ -119,7 +141,7 @@ the last column shows what `cadl` 0.3 provides for each technique.
 | **Verification Technique** | **Verification Target** | **Tool Foundation (design)** | **Reference implementation (`cadl` 0.3)** |
 |---|---|---|---|
 | SMT-Based Verification | Consistency between contracts. Logical consistency of guarantees. | Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), CVC5 [[Barbosa+, 2022]](./appendix-b-references.md) | Available with Z3: consistency within each contract and between contracts that share a party, satisfiability of the assumptions of each contract, exclusivity of transition conditions. Whether the guarantees follow from the assumptions is reported as information only. CVC5 is not integrated. |
-| Model Checking | Deadlock and livelock detection in protocols. Exhaustive search of reachable states. | UPPAAL [[Larsen+, 1997]](./appendix-b-references.md), NuSMV [[Cimatti+, 2002]](./appendix-b-references.md) | Not integrated. Deadlock detection is done by structural analysis instead (mutual sends between the branches of a `parallel` block, barrier reachability, circular fallback chains). Steps written in sequence are ordered and are not treated as circular waits. Livelock detection is planned. |
+| Model Checking | Deadlock and livelock detection in protocols. Exhaustive search of reachable states. | UPPAAL [[Larsen+, 1997]](./appendix-b-references.md), NuSMV [[Cimatti+, 2002]](./appendix-b-references.md) | Not integrated. Deadlock detection is done by structural analysis instead (mutual sends between the branches of a `parallel` block, barrier reachability, circular fallback chains). Steps written in sequence are ordered and are not treated as circular waits. Livelock detection is planned. The probabilistic models of the stochastic model extension can be exported to PRISM and Storm (Section 6.1). |
 | Reachability Analysis | Preservation of safety invariants during institutional transitions. Hamilton-Jacobi reachability analysis [[Bansal+, 2017]](./appendix-b-references.md). | hj_reachability [[Stanford ASL]](./appendix-b-references.md) | Not integrated. Available instead: reachability, dead-state, and cycle analysis on the regime transition graph, and a satisfiability check of each safety invariant with Z3. The initial regime is inferred from the transitions, and a regime with no outgoing transition is reported as a failure. |
 | Compositional Verification | Differential verification when actors join/leave. Impact analysis on existing contracts. | Custom implementation | Planned. |
 
