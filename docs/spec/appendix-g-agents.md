@@ -688,9 +688,57 @@ observation that the message becomes, then the closing records of the
 holds that this observation approved or rejected. A change of the
 in-force flag of a norm has no record of its own: it follows from the
 recorded messages, from the times, and from the values that the
-predicates of the contract read. This appendix defines
-no integrity protection for the log, such as a hash chain or a
-signature; a deployment that needs one adds it outside the record.
+predicates of the contract read.
+
+**Integrity of the log.** An enforcement point MAY protect its log
+against later changes with a hash chain. When it does, the log has the
+format below, so that a verifier that does not know the enforcement
+point can check it. The chain adds lines and fields; it changes no
+field of a record.
+
+The log is a file of JSON Lines in UTF-8, each line ended by a line
+feed. Its first line is a **header record**, then come the audit
+records and event records in the order in which they were written, and
+a complete log ends with an **end record**:
+
+| Line | Fields before the integrity fields |
+| --- | --- |
+| Header | `audit_format`: `"cadl-audit/1"`. `hash`: `"sha256"`, or `"hmac-sha256"` for a keyed log. `key_id`: in a keyed log, the first 16 hexadecimal digits of HMAC-SHA256(*key*, `cadl-audit key id`), otherwise `null`. `source_sha256`: the SHA-256 of the bytes of the CADL file, in hexadecimal. `epoch`: the time of `t = 0` as an ISO 8601 time stamp in UTC, or `null` when the times are those of the trace. |
+| Record | The fields of the audit record or event record, in the order of the tables above. |
+| End record | `audit_end`: `true`. `records`: the number of records between the header and the end record. |
+
+Every line ends with three **integrity fields**: `seq`, the number of
+the line, `0` for the header; `prev`, the `digest` of the previous line,
+64 zeros in the header; and `digest`, the SHA-256 of the canonical JSON
+of the line without its field `digest`, or in a keyed log its
+HMAC-SHA256 with the key, as 64 lowercase hexadecimal digits. The
+**canonical JSON** of a value has the keys of every object in the order
+of their code points, no whitespace outside strings, `,` and `:` as
+separators, strings in UTF-8 with only the escapes that JSON requires
+(`\"`, `\\`, `\b`, `\f`, `\n`, `\r`, `\t`, and `\u00XX` for the
+other control characters), integers in decimal, other numbers as the
+shortest decimal that reads back to the same IEEE 754 binary64 value,
+written as Python's `repr` writes it (`0.5`, `1e-07`), and no NaN or
+infinity. A line is **written** as the same serialization with the
+fields in their order (the fields of the record, then `seq`, `prev`,
+`digest`) and the separators `, ` and `: `. A verifier reads each line,
+recomputes its digest from its values, compares `seq` and `prev` with
+the line before, and requires the line to be in the written form, so
+that a change of whitespace or of an escape that leaves the values
+equal is detected as well. The key of a keyed log is not part of the
+log, of the trace, or of a command line.
+
+What the chain detects depends on the key. Without a key it detects a
+change of any byte, a line deleted, inserted, or moved, a line taken
+from another log, a changed header, and a log cut at its tail, which
+lacks the end record. It does not detect a log that is rewritten from
+the changed line on, digests and end record included, because anyone
+can compute SHA-256; this is detected only when the last digest was
+kept elsewhere. With a key, only a holder of the key can write a chain
+that verifies, and a log that claims to be unkeyed does not verify
+against a key. A log without end record was cut or its writer did not
+finish (an enforcement point that is still running, or one that
+failed); a verifier reports it as such.
 
 ## G.9 Static semantics {/* #g9-static-semantics */}
 
@@ -988,16 +1036,96 @@ the runtime decides the rest.
 
 ## G.11 Mapping to agent protocols (informative)
 
-The decision function does not depend on a protocol. The table gives
-the intended correspondence; nothing normative depends on it.
+The decision function does not depend on a protocol. This section
+gives the correspondence with two protocols for agents: the Model
+Context Protocol, revision 2026-07-28
+[[MCP Specification 2026-07-28]](./appendix-b-references.md), and the
+Agent2Agent protocol, version 1.0.0
+[[A2A Specification 1.0.0]](./appendix-b-references.md). The reference
+implementation has a gateway for MCP (G.13); the mapping to A2A is not
+implemented. Nothing normative depends on this section.
 
-| CADL (agents 0.1) | MCP [[MCP, 2026-07-28]](./appendix-b-references.md) | A2A [[Linux Foundation, A2A 2025]](./appendix-b-references.md) (to be confirmed) |
+| CADL (agents 0.1) | MCP 2026-07-28 | A2A 1.0.0 |
 | --- | --- | --- |
-| `kind: tool_server`; tool; tool call | An MCP server; a tool of it; a request to call the tool | — |
-| `kind: llm_agent` | An MCP client, when it calls tools | An A2A agent |
-| Ordinary message between agents | — | A message from one agent to another |
-| `point: gateway` | A gateway in front of the server; the specification requires the headers `Mcp-Method` and `Mcp-Name` so that gateways can route and meter requests without parsing their bodies | An intermediary between the agents |
-| `escalate_to:`, hold id | Outside the protocol | Outside the protocol |
+| `kind: tool_server`; tool; tool call | An MCP server; a tool of `tools/list`; a `tools/call` request | — |
+| `kind: llm_agent` | An MCP client, when it calls tools | An A2A agent, as client and as server |
+| Ordinary message between agents | — | A `SendMessage` request from one agent to another |
+| Name of the message | `params.name` of `tools/call` | Not carried by the protocol; taken from an extension (below) |
+| `point: gateway` | A proxy between client and server; over Streamable HTTP, the headers `Mcp-Method` and `Mcp-Name` let it decide without parsing the body | An intermediary between the agents |
+| `deny` | A tool result with `isError: true` | A task in the state `TASK_STATE_REJECTED` |
+| `escalate`, hold id, approver | Outside the protocol | Outside the protocol |
+
+**MCP.** A gateway sits between an MCP client, which is the actor that
+sends the tool calls, and an MCP server, which is a tool server of the
+file. It forwards every message unchanged except `tools/call`. A
+`tools/call` with the name *n* from the client of actor *A* to the
+server of actor *S* is the message `A -> S : n` at the time of its
+arrival. MCP has no field that names the sender: over stdio, one
+gateway process serves one client, and which actor that client is
+belongs to the configuration of the gateway, not to the protocol. The
+arguments of the call are not part of the message (G.4).
+
+- `allow`: the request is forwarded, and the response of the server
+  comes back unchanged.
+- `deny`: the gateway answers with a tool result with `isError: true`
+  whose text names the reason, the norms, the hold, and the `fallback`
+  and `notify` of the result. MCP distinguishes errors of tool
+  execution, which a client gives to the model so that it can correct
+  itself, from protocol errors, which are meant for requests that the
+  model is unlikely to correct. A denial is of the first kind: the
+  sender can act on it, for example by sending the fallback.
+- `escalate`: the request is held and the client gets no answer yet.
+  MCP lets a client have several requests in flight, so a held call
+  does not block the others. When the hold closes, a released call is
+  forwarded, and any other closing (G.6) is answered as a denial. A
+  client that cancels a held request (`notifications/cancelled`) ends
+  the wait; the request is not forwarded later.
+- A request that the gateway cannot read as a `tools/call`, such as a
+  line that is not JSON or a call without a name, is answered with a
+  JSON-RPC error and is never forwarded; a tool name that is not an
+  identifier cannot be a message of a file (G.3) and is answered as an
+  unknown tool.
+
+A `tools/list` result can be reduced to the tools that the file
+declares for the server: a call of another tool is denied by step 2 of
+G.5 anyway. The approver's message (G.6) and the messages between
+agents, such as grants (G.7), do not pass through an MCP gateway; they
+reach it through a channel of the deployment. Under MCP 2026-07-28, a
+server can answer `tools/call` with a result that asks for more input,
+and the client then sends the call again as a new request; the gateway
+decides it again, as G.6 says of a message sent again.
+
+**A2A.** A2A connects agents with each other; a request `SendMessage`
+of agent *X* to agent *Y* carries a `Message` with `role`, `parts`,
+`messageId`, and optionally `contextId`, `taskId`, `metadata`, and
+`extensions`. A gateway in front of *Y*, for any of the bindings of
+A2A (JSON-RPC, gRPC, HTTP and JSON), would map such a request to the
+message `X -> Y : e` as follows; this is a proposal and is not
+implemented.
+
+- *X* is the authenticated client of the request: A2A authenticates
+  the client by the security schemes of the agent card of *Y*, and the
+  gateway maps the identity to an actor of the file. Without an
+  authenticated identity there is no sender, and the message is denied.
+- A2A messages have no name of an operation. The name *e* and its
+  arguments, such as the hold id of an approval, come from an
+  extension: the message lists the extension's URI in `extensions` and
+  carries `{"name": "approve", "args": ["h-1"]}` under that URI in
+  `metadata`. A message without the extension has no name and is
+  denied.
+- `allow`: the request is forwarded. `deny`: the gateway answers with a
+  task in the state `TASK_STATE_REJECTED`, which A2A defines as "the
+  agent has decided to not perform the task", whose status message
+  names the reason and the fallback. `escalate`: the gateway does not
+  forward the request; a blocking `SendMessage` waits until the hold
+  closes, and with `returnImmediately` the gateway answers with a task
+  of its own in `TASK_STATE_SUBMITTED` and settles it later, as
+  forwarded or rejected. The states `TASK_STATE_INPUT_REQUIRED` and
+  `TASK_STATE_AUTH_REQUIRED` do not fit a hold: they ask the sender for
+  input, whereas a hold waits for the approver.
+- The approver's approval can itself be an A2A message of the approver
+  with the name `approve` and the hold id as its first argument, as in
+  G.12; it is decided like any other message (G.6).
 
 ## G.12 Example
 
@@ -1216,6 +1344,80 @@ releases it, and writes the audit records and event records of G.8, as
 JSON Lines when `--audit` is given. Hold ids are `h-1`,
 `h-2`, and so on, in the order of creation.
 
+**Integrity and online use.** `cadl` 0.3.24 writes the audit log in
+the format of G.8, "Integrity of the log": `--audit` gives a chain of
+SHA-256 digests, and `--audit-key FILE` keys it with HMAC-SHA256 with
+the key in FILE (at least 16 bytes); only the Python standard library
+is used. `cadl audit-verify AUDIT.jsonl [--key FILE] [--source
+FILE.cadl] [--open]` reports the first line that does not verify, with
+the expected and the found value; `--source` also requires the hash of
+the CADL file, and `--open` accepts a log without end record. The exit
+status is 0 for a valid log, 1 for an invalid one, and 2 for a usage
+error, among them a keyed log without key. The records themselves, and
+the order and bytes of their fields, are those of 0.3.23. The same
+release makes the runtime usable online: an enforcement point is
+opened on a file, each trace line is given to it when it happens, and
+closing it is the line `{"t": t}` at the end; `cadl agents-run` is a
+loop over the same steps.
+
+**MCP gateway.** `cadl mcp-gateway FILE --agent A --server-actor S
+--audit OUT.jsonl -- COMMAND` (0.3.24) is the MCP gateway of G.11 over
+the stdio transport of MCP 2026-07-28: JSON-RPC 2.0, one message per
+line. It starts the server with COMMAND and speaks to the client on its
+own standard input and output. Its readings of G.11 are these. A tool
+call is decided at the time of its arrival, and calls are decided one
+at a time in the order of arrival. A denial is a tool result with
+`isError: true`. `tools/list` results keep only the declared tools,
+unless `--no-filter-tools` is given. Malformed input is answered with
+the JSON-RPC errors -32700, -32600, or -32602 and never forwarded; a
+batch is malformed, because MCP has none. The gateway fails closed:
+when the decision step raises or the trace or the log cannot be
+written, the call is denied and so is every later call, and the log
+gets no end record. When the server exits, the requests in flight and
+the held calls are answered with the error -32603. Approvals,
+rejections, and other messages come through a directory: `cadl
+mcp-approve DIR HOLD_ID approve|reject --as ACTOR` drops a file that
+the gateway turns into the approver's message of the `counts_as:` rule
+that creates `approval` (`rejection`), with the hold id as its first
+argument, and `cadl mcp-message DIR 'X -> Y : n'` drops any other
+message, such as a grant. A file that cannot be read or names no rule
+is set aside and is not an approval. The time is that of a monotonic
+clock since the start, in seconds rounded to milliseconds, and the
+first line of the trace gives the wall-clock time of `t = 0` as
+`epoch`. The gateway writes every step to a trace before it decides
+it: each decided message, a line `{"t": t}` when the deadline of a hold
+has passed, and a last line `{"t": t}` when it stops. `cadl agents-run`
+on that trace makes the same decisions and writes the same audit log,
+byte for byte.
+
+The tests of the chain alter every byte of two logs of ten lines, one
+unkeyed and one keyed (about 5 000 bytes each), in two ways each; all
+20 250 altered logs fail verification. So does every deletion of a
+line, every insertion of a line of the same or of another log, every
+exchange of neighbouring lines, every cut of the tail, a rewritten
+header, whitespace or an escape changed without changing a value, and
+a log of another CADL file checked against this one. A rewrite of the
+whole log passes without a key and fails with one, as stated in G.8.
+The gateway is tested with a fake MCP server and a fake client in
+separate processes, without network, on the scenarios of G.12 (allow,
+deny without permission, undeclared tool, escalation that is approved,
+rejected, or expires with its fallback, grant and delegated call, and
+revocation), malformed input, a server that exits, a client that
+disconnects with a held call, approvals that cannot be read or name
+another hold, and two calls in flight while a third is held. In every
+scenario the server receives no call that was not allowed or released,
+and `cadl agents-run` on the trace written by the gateway writes the
+same audit log, byte for byte, as the gateway. A failure of the
+decision step and a trace that cannot be written are tested in
+process: the call and every later one are denied. The changes to the
+runtime were checked against `cadl` 0.3.23: `agents-run` on 309 pairs
+of a file and a trace (the bundled traces, every pair of the review
+files of the tests, and four malformed traces), in text and JSON, gave
+the same exit status, output, and error messages, and the same records
+in the audit log; and every replay that the test suite runs, 1 881
+runs, gave the same result, or the same error, as the runtime of
+0.3.23.
+
 The trace is that of `cadl norms-eval` (JSON Lines with `t`,
 `bindings`, `request`, `values`, `messages`, `state`, `amend`, `end`),
 read for the whole enforcement point, with two more keys: `epoch`, the
@@ -1275,9 +1477,20 @@ prohibition stops while the prohibition is suspended, as it does before
 (F.5). A message matches the content of an obligation, for the verdict
 `excused`, as at the boundary: on sender, receiver, and name.
 
-Known limits. The runtime is not connected to a protocol: it replays a
-trace and does not run agents or tools. It does not protect the log
-against later changes. The log has no record for a change of the
+Known limits. Without a key, the chain of the log does not detect a
+log that is rewritten from a changed line on; keeping the last digest
+elsewhere, or a key, does. Only the MCP gateway over stdio is
+implemented, and it has been tested with a fake server and a fake
+client, not with an MCP client or server of another implementation; A2A
+is mapped in G.11 only. The gateway observes messages and time, not
+`values`: a norm that reads a quantity sees missing data (G.5). It does
+not create or end host-created contract instances after its first
+line. Its directory for approvals does not authenticate: whoever can
+write into it can speak for any actor, so the directory has to be
+protected by the permissions of the file system. A held call that the
+client cancels and the approver then approves is recorded as released,
+although the gateway does not send it. The log has no record for a
+change of the
 in-force flag of a norm (G.8). A holder whose derived instance is
 `active` but no longer valid after an amendment of `to:` cannot be
 granted the permission again: the grant is the no-op of condition 5

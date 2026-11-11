@@ -231,3 +231,7 @@ description: "References cited in the CADL specification."
 [113] C. Mu, "Automated Game-Theoretic Verification of Security Systems," in Proc. QEST, LNCS 11785, Springer, pp. 239-256, 2019, doi:10.1007/978-3-030-30281-8_14.
 
 [114] C. Baier and J.-P. Katoen, Principles of Model Checking, MIT Press, Cambridge, MA, 2008, ISBN 978-0-262-02649-9.
+
+[115] Model Context Protocol, "Specification," revision 2026-07-28, https://modelcontextprotocol.io/specification/2026-07-28 (accessed Nov. 2026); in particular "Transports: stdio" and "Server Features: Tools".
+
+[116] Agent2Agent (A2A) Project, "Agent2Agent (A2A) Protocol Specification," version 1.0.0, https://a2a-protocol.org/latest/specification/ (accessed Nov. 2026).
