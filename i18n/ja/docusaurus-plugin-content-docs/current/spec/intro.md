@@ -167,7 +167,7 @@ Version 0.1 のファイルの読み方に影響する変更は次のとおり�
   箇所がありました。
 - **SoS-DSL拡張（[付録E](./appendix-e-sos-dsl.md)）**：`on_violation.transition` と
   `on_match.transition` は移り先の**状態**を指し（規則 L-5，M-3），
-  `on_match.violation` は宣言を必要としないラベルです（規則 M-2）。拡張の版は
+  `on_match.violation` は宣言を必要としないラベルです（規則 M-2）。拡張のバージョンは
   `sos-dsl: 0.1` のままです。
 - **`sharing:` の要素は引用符で囲んだ文字列で書かなければなりません**
   （`- "TAXI[*] -> CENTRAL : position"`）。引用符がないと，YAML はこれを文字列ではなく
@@ -182,8 +182,8 @@ Version 0.1 のファイルの読み方に影響する変更は次のとおり�
 
 [動機拡張](./appendix-c-motivation.md)は，独自のラベル v0.1-ext のままです。
 
-仕様書とリファレンス実装の版は，独立に番号を付けています。本仕様書は Version 0.3 です。
-内容の確認に用いたリファレンス実装の版と，その版の文法との違いは，
+仕様書とリファレンス実装のバージョンは，独立に番号を付けています。本仕様書は Version 0.3 です。
+内容の確認に用いたリファレンス実装のバージョンと，そのバージョンの文法との違いは，
 [付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)に示します。
 
 フィードバックや議論は[GitHub Issues](https://github.com/ertlnagoya/cadl/issues)で歓迎します。

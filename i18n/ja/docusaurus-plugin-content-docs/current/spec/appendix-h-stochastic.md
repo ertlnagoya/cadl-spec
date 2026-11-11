@@ -56,7 +56,7 @@ PRISMモデリング言語を読む
 - ゲーム意味論はない。モデルをアクター間のゲームとして読み，その均衡の上で遵守が成り立つかを問うこと
   （[9.7節](./09-research.md)のRD-7.1とRD-7.2。合理的検証
   [[Gutierrez+, AI 2020]](./appendix-b-references.md)，並行確率ゲームの相関均衡
-  [[Kwiatkowska+, TACAS 2022]](./appendix-b-references.md)）は，後の版に委ねる。そのために
+  [[Kwiatkowska+, TACAS 2022]](./appendix-b-references.md)）は，後のバージョンに委ねる。そのために
   次のものを**予約**し，別の意味では用いない。キー `owner:`（変数またはコマンドの）と `sync:`
   （コマンドの），
   `model:` の `players:`，`payoffs:`，`equilibria:`，`kind:` の値 `mdp`，およびパラメータの出所

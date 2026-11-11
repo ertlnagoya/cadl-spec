@@ -15,7 +15,7 @@ title: "クイックスタート"
 
 ## 経路 A — ブラウザで試す（CADL Explorer） {/* #path-a */}
 
-**[CADL Explorer](https://cadl-explorer.streamlit.app/)** を使えばインストールは不要です。以下の手順は CADL Explorer v0.5.8 の画面にもとづいています（公開アプリでは，サイドバーのページ一覧の下に版が表示されます）。
+**[CADL Explorer](https://cadl-explorer.streamlit.app/)** を使えばインストールは不要です。以下の手順は CADL Explorer v0.5.8 の画面にもとづいています（公開アプリでは，サイドバーのページ一覧の下にバージョンが表示されます）。
 
 ### A-1. CADL Explorer を開く
 
@@ -63,7 +63,7 @@ streamlit run app.py
 :::note
 v0.4.1 までは，D-SoS のテンプレートに A-SoS という名前が付いていました。
 A-SoS は Acknowledged SoS の略称なので，v0.5.0 で名前が改められました。
-以前の版で共有したリンクは，同じ設計を開きます。
+以前のバージョンで共有したリンクは，同じ設計を開きます。
 :::
 
 B と比べる相手を変えるには，**A — baseline** を開いて同じように選びます。
