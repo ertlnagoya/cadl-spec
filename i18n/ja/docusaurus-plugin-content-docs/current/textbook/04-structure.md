@@ -18,7 +18,7 @@ title: "第 4 章 — 構造を書く"
 
 **演習で：**
 
-- SoS のアクターを洗い出し、自分で宣言できる（知らないドメインを含む）。
+- SoS のアクターを列挙し、自分で宣言できる（知らないドメインを含む）。
 - `cadl check` を実行し、その診断メッセージを説明できる。
 
 ## 4.2 背景
@@ -39,9 +39,9 @@ flowchart LR
   SLA -.- D
 ```
 
-### 構造を組み立てる部品
+### 構造を書くキー
 
-CADL ファイルには、いつ、どれくらいの頻度でどのような事象が起こるかよりも先に、誰が参加し、お互いに何を期待しているかを書きます。構造を組み立てる部品は次のとおりです。
+CADL ファイルには、いつ、どれくらいの頻度でどのような事象が起こるかよりも先に、誰が参加し、お互いに何を期待しているかを書きます。構造を書くキーは次のとおりです。
 
 ```mermaid
 flowchart LR
@@ -58,7 +58,7 @@ flowchart LR
 
 ## 4.3 手順
 
-`cadl_repo` の直下に `my_delivery.cadl` を新規作成し（`~/program/cadl_repo/my_delivery.cadl`。手本になる同梱の例は `examples/sos_dsl_robot_delivery.cadl` です）、下の骨組みを貼り付けます。第 4〜6 章のコマンドは `~/program/cadl_repo` で実行します。コメントを読みながら、各ブロックが何をしているかを確かめてください。
+`cadl_repo` の直下に `my_delivery.cadl` を新規作成し（`~/program/cadl_repo/my_delivery.cadl`。手本になる同梱の例は `examples/sos_dsl_robot_delivery.cadl` です）、下の内容を貼り付けます。第 4〜6 章のコマンドは `~/program/cadl_repo` で実行します。コメントを読みながら、各ブロックが何をしているかを確かめてください。
 
 ```yaml
 # my_delivery.cadl ─── 私の最初の SoS 仕様
@@ -207,7 +207,7 @@ SoS の構造を記述する CADL ファイルが完成しました。コンパ�
 
 ### 演習 4.1 (★) — 構造モデルのベースラインを作る
 
-**目的**: 4.3 節のアクター、契約、プロトコルを、ゼロから書き起こした新ファイル `my_delivery_v1.cadl` に再現する。
+**目的**: 4.3 節のアクター、契約、プロトコルを、最初から書いた新ファイル `my_delivery_v1.cadl` に再現する。
 
 **手順**:
 
@@ -230,7 +230,7 @@ SoS の構造を記述する CADL ファイルが完成しました。コンパ�
 3. `assume` に `ROBOT[i].battery > 0` を含めるか、もっと強い条件にするか判断する。
 4. `cadl check` を再実行。
 
-**振り返り**: 同じアクターが 2 つの契約の当事者であるとき、それぞれの `assume` はどう働きますか？（ヒント：両方が同時に成り立つ必要があります。Dahmann (2014) [[9]](appendix-d-references.md) が SoS の課題（pain point）の 5 番目に挙げた相互依存の問題に当たります。）
+**振り返り**: 同じアクターが 2 つの契約の当事者であるとき、それぞれの `assume` はどう適用されますか？（ヒント：両方が同時に成り立つ必要があります。Dahmann (2014) [[9]](appendix-d-references.md) が SoS の課題（pain point）の 5 番目に挙げた相互依存の問題に当たります。）
 
 ### 演習 4.3 (★★) — プロトコルに条件を加える
 
@@ -240,7 +240,7 @@ SoS の構造を記述する CADL ファイルが完成しました。コンパ�
 
 1. `protocols:` の下の `DeliveryOrder` を見つける。プロトコルに参加者の一覧を書くキーはない。誰が参加するかは `steps` に書いた送信者と受信者で決まる。
 2. `steps:` の上に `precondition: "ROBOT[i].battery > 20"` を、下に `postcondition: "ROBOT[i].status == Delivered"` を加える（ほかに任意のキーとして `safety_invariant` と `timing` がある）。
-3. `cadl check my_delivery_v1.cadl` を実行し、続けて 2 つの条件が IR に入ったことを確認：`cadl sim-ir my_delivery_v1.cadl --format json | grep -n -E '"(precondition|postcondition)"'` が 2 行を表示する。ここでは `cadl check` だけに頼らないこと。`cadl check` は知らないキーを黙って無視するので、キー名を間違えても（`pre:`、`post_condition:` など）検査は通ってしまう。
+3. `cadl check my_delivery_v1.cadl` を実行し、続けて 2 つの条件が IR に入ったことを確認：`cadl sim-ir my_delivery_v1.cadl --format json | grep -n -E '"(precondition|postcondition)"'` が 2 行を表示する。ここでは `cadl check` だけに頼らないこと。`cadl check` は定義されていないキーを警告なしに無視するので、キー名を間違えても（`pre:`、`post_condition:` など）検査は通ってしまう。
 
 ```yaml
   protocols:
@@ -260,11 +260,11 @@ SoS の構造を記述する CADL ファイルが完成しました。コンパ�
 
 ### 演習 4.4 (★★★) — 知らないドメインを書いてみる
 
-**目的**: 既存のファイルをコピーせずに、配送ドローンの群（地上ロボットの代わりにドローンが運ぶ）の CADL ファイルの骨組みを最初から書く。全体の構成は同じだが、アクターと capabilities は異なる。
+**目的**: 既存のファイルをコピーせずに、配送ドローンの群（地上ロボットの代わりにドローンが運ぶ）の CADL ファイルの基本の構成を最初から書く。全体の構成は同じだが、アクターと capabilities は異なる。
 
 **手順**:
 
-1. `my_drone_delivery.cadl` を白紙から作成。
+1. `my_drone_delivery.cadl` を新規に作成。
 2. アクターを決める。ヒント：DRONE には ROBOT と違う `capabilities` が要る（高度、飛行禁止区域、天候を考慮する）。
 3. `cadl check` を実行。
 
