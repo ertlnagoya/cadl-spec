@@ -287,8 +287,8 @@ undefined. A quantified predicate or aggregate over an open domain
 decide is undefined in this sense: the members not yet named are the
 missing data. While its domain is open, a prohibition whose `trigger:`
 is `exists x in A: p` therefore always applies: as missing data until
-a known member makes `p` true, and from then on because it is in
-force. A permission whose `until:` is `for all x in A: p` applies only
+a known member makes `p` true, and from then on as long as it is in
+force, which ends by its `until:` or otherwise as G.5 describes above. A permission whose `until:` is `for all x in A: p` applies only
 while a known member makes `p` false.
 Where such a predicate governs the boundary, the contract instance
 SHOULD give the bound of the set a value (F.5).
