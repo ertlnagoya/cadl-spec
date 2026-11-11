@@ -331,6 +331,15 @@ name that stands alone is a symbolic value. A symbolic value can only be
 compared with a text value, by `==`, `!=`, or `IN`; a predicate that
 uses it in another way is undefined.
 
+A number, in a predicate and in an observation, is the exact decimal
+number it is written as: `0.1` is one tenth, and the time stamp
+`1700000000.123` is that number of seconds. Arithmetic (`+`, `-`, `*`,
+`/`, and `avg`) is exact, on rational numbers, so `0.1 + 0.2 == 0.3`
+holds. Time stamps, the bounds of the intervals of F.4, and deadlines
+are compared exactly, without a tolerance: content at exactly the
+deadline is in time (item 2 below), and content one microsecond after
+it is not.
+
 ### Quantifiers and aggregates
 
 A quantified predicate `exists x in D: p` or `for all x in D: p`, and
@@ -1147,8 +1156,7 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   tells the host the earliest time stamp at which an observation is
   certain to decide something that only waits for time (a little after
   the deadline or the end of the interval, since content at the
-  deadline itself is in time; times are compared with a tolerance of
-  10<sup>-9</sup> s). The host names the quantities that are written
+  deadline itself is in time). The host names the quantities that are written
   without an actor; a name it does not name is read as a symbolic value
   until its first value, which is the difference F.5 permits
   (`cadl norms-eval` takes the names from the observations of the
@@ -1182,14 +1190,21 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   an observation that would make a bare name read inside a temporal
   operator known after the first observation; the gas of a norm whose
   content has a temporal operator grows with the observations inside its
-  open window. Their
-  arithmetic is decimal (Rego) or fixed-point with six decimals
-  (Solidity), and they compute times exactly, where `cadl norms-eval`
-  computes with binary floating point and a tolerance; D.5 lists these
-  and the other differences. The reference implementation
+  open window. The Rego monitor refuses `/`, whose result is not always
+  a decimal number. Both compute numbers and times exactly, as F.5 says,
+  and agree with `cadl norms-eval` on every input they accept; D.5
+  lists what they refuse. The reference implementation
   compares both with `cadl norms-eval` after every observation, the
   Solidity monitor on an EVM.
 - The Unity C# target does not monitor norms.
+- From `cadl` 0.3.26, numbers and times are exact as F.5 states.
+  Up to `cadl` 0.3.25, `cadl norms-eval`, the Python monitor, and
+  `cadl agents-run` computed with binary floating point and compared
+  times with a tolerance of 10<sup>-9</sup> s, so that `0.1 + 0.2 == 0.3`
+  did not hold and a deadline within the spacing of the floats of an
+  observation (about 2.4 × 10<sup>-7</sup> s near epoch seconds) could
+  be judged on the wrong side. The example traces and the traces of the
+  test suite of `cadl` give the same verdicts with both.
 - From `cadl` 0.3.25, `cadl norms-check` implements F.12: it builds the
   model of one contract instance (`--bindings`, `--members`, `--step`,
   `--horizon`), runs the questions with PRISM 4.11 (`prism` on PATH;

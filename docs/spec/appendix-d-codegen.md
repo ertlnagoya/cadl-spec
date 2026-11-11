@@ -140,7 +140,9 @@ index that is an expression (`A[i+1]`), or amendments (F.6). A contract
 that uses one of these in a norm, a counts-as rule, or an `assume:` item
 gets no monitor, and the processor reports which construct prevents it;
 such a `guarantee:` item, on which no other verdict depends, is left
-out of the monitor with a warning. The Solidity monitor uses
+out of the monitor with a warning. Both compute exactly (F.5): the Rego
+monitor with decimal numbers, so it refuses `/`, whose result is not
+always one. The Solidity monitor uses
 fixed-point numbers with six decimals and therefore also refuses `*`,
 `/`, and literals with more than six decimals; it scans the window of a
 temporal operator once, as the observations arrive, and therefore also
@@ -253,16 +255,16 @@ with `quantities` (or `addQuantities`) and those observed so far. Where
 they differ from `cadl norms-eval` (which this appendix does not
 change):
 
-- Arithmetic is decimal in Rego and fixed-point with six decimals in
-  Solidity; `cadl norms-eval` computes with binary floating point. Sums
-  such as `0.1 + 0.2 == 0.3` hold in the monitors and not in
-  `cadl norms-eval`; on integers they agree.
-- Times are computed exactly: in Rego as decimals, with the tolerance of
-  10<sup>-9</sup> s, and in Solidity in microseconds. `cadl norms-eval`
-  compares floating-point times with that tolerance, which is below the
-  spacing of the floating-point numbers at large times, such as epoch
-  seconds with fractions: there a deadline or a window that ends within
-  that spacing of an observation can be judged differently.
+- Numbers and times are exact in both monitors, as in `cadl norms-eval`
+  (F.5). The Rego monitor reads a number as the decimal it is written as
+  and keeps numbers and times in its state as `{"$q": [n, k]}`, the
+  number n / 10<sup>k</sup>; it refuses `/` (a quotient is not always a
+  decimal number) and a number with more than 600 digits. The Solidity
+  monitor holds six decimals and refuses `*`, `/`, and literals with
+  more decimals; its host passes numbers with at most six decimals.
+  Within these limits the verdicts agree with `cadl norms-eval` on
+  every input. The results of the Rego monitor write times as JSON
+  numbers for the reader.
 - The monitors refuse inputs that `cadl norms-eval` accepts: a binding
   that is not an integer written as one (`1.0` and `1e2` are refused) or
   a string, a value of `values` that is a list or an object (in Rego a
