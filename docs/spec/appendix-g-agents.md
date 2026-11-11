@@ -704,12 +704,18 @@ log, as event records with `message` set to the message concerned or
 approval or a rejection that it refuses before it becomes a message
 (`unauthorised_approval`, `unauthorised_rejection`, with the reasons
 above), another message that it refuses (`unauthorised_message`), the
-digest of an approval that it accepts (`approval_evidence`, with
-`reason` `sha256:` and the digest, written before the decision of the
-approver's message), a request that it does not pass on
-(`method_refused`, with the method as `reason`), and a response for
-which no request is in flight (`unsolicited_response`). These records
-change no decision.
+evidence of an approval that it accepts (`approval_evidence` when the
+approval was authenticated, `approval_unauthenticated` when it was not;
+`reason` names the digest of the approval, the digest of the arguments
+of the held call, and for an authenticated approval the key id of the
+approver and the nonce; written before the decision of the approver's
+message), a request that it does not pass on (`method_refused`, with
+the method as `reason`), a response for which no request is in flight
+(`unsolicited_response`), and a call that was allowed or released but
+could not be sent (`forward_failed`). These records change no decision,
+and they are only as trustworthy as the host that writes them: a log
+replayed from a trace that anyone could write proves nothing about
+them.
 
 **Integrity of the log.** An enforcement point MAY protect its log
 against later changes with a hash chain. When it does, the log has the
@@ -724,7 +730,7 @@ a complete log ends with an **end record**:
 
 | Line | Fields before the integrity fields |
 | --- | --- |
-| Header | `audit_format`: `"cadl-audit/1"`. `hash`: `"sha256"`, or `"hmac-sha256"` for a keyed log. `key_id`: in a keyed log, the first 16 hexadecimal digits of HMAC-SHA256(*key*, `cadl-audit key id`), otherwise `null`. `run_id`: a random identifier of 128 bits of this run of the enforcement point, as 32 lowercase hexadecimal digits. `source_sha256`: the SHA-256 of the bytes of the CADL file, in hexadecimal. `epoch`: the time of `t = 0` as an ISO 8601 time stamp in UTC, or `null` when the times are those of the trace. |
+| Header | `audit_format`: `"cadl-audit/1"`. `hash`: `"sha256"`, or `"hmac-sha256"` for a keyed log. `key_id`: in a keyed log, the first 16 hexadecimal digits of HMAC-SHA256(*key*, `cadl-audit key id`), otherwise `null`. `run_id`: a random identifier of 128 bits of this run of the enforcement point, as 32 lowercase hexadecimal digits. `approvals`: how the host read approvals, `authenticated`, `insecure`, or `none`, or `null` when it does not say. `source_sha256`: the SHA-256 of the bytes of the CADL file, in hexadecimal. `epoch`: the time of `t = 0` as an ISO 8601 time stamp in UTC, or `null` when the times are those of the trace. |
 | Record | The fields of the audit record or event record, in the order of the tables above. |
 | End record | `audit_end`: `true`. `records`: the number of records between the header and the end record. |
 
@@ -781,7 +787,8 @@ What the chain shows has limits, and a verifier MUST know them.
   does not detect a log that is rewritten from a changed line on,
   digests and end record included. A line taken from another log does
   not fit, because the `run_id` of the header differs and with it every
-  digest; two logs of the same run do not exist.
+  digest; two different logs of the same run cannot both verify against
+  the same key and anchor.
 - With a key, only a holder of the key can write a chain that verifies.
   A holder of the key can still replace the whole log.
 - A log without end record was cut, or its writer did not finish (an
@@ -1161,8 +1168,17 @@ G.5 anyway. The approver's message (G.6) and the messages between
 agents, such as grants (G.7), do not pass through an MCP gateway; they
 reach it through a channel of the deployment, which has to
 authenticate who speaks: an approval is authenticated with a key of
-the approver and bound to the run, to the hold, and to the held
-message, and is used once. Under MCP 2026-07-28, a server can answer
+the approver and bound to the run, to the hold, to the held message,
+and to its arguments, and is used once. The decision does not depend on
+the arguments (G.4), but the approver has to see them to know what is
+approved. Keys separate approvers only when each approver's key is out
+of reach of everyone else: approvers, or an agent, that share the
+account of the gateway can read every key it holds, so each approver
+needs an account of their own, or a channel that authenticates the
+approver in another way. A channel of files protects only against
+parties that cannot read the key files. A cancellation of a call that
+has already been forwarded is passed on, and the call stays in flight,
+because the server may still answer it. Under MCP 2026-07-28, a server can answer
 `tools/call` with a result that asks for more input, and the client
 then sends the call again as a new request; the gateway decides it
 again, as G.6 says of a message sent again.
@@ -1423,7 +1439,11 @@ the key in FILE (at least 16 bytes); only the Python standard library
 is used. The `run_id` of the header is the key `run_id` of the first
 line of the trace when it has one, and random otherwise, so that two
 runs of the same trace differ in the header and the digests unless the
-trace names its run. `cadl audit-verify AUDIT.jsonl [--key FILE]
+trace names its run: a replay is reproducible byte for byte only with
+`run_id` on the first line. The key `approvals` of the first line is
+copied into the header. `agents-run` accepts `withdraw` and
+`host_events` from any trace, so in a log replayed from a trace the
+host's event records are what the trace says, and prove nothing more. `cadl audit-verify AUDIT.jsonl [--key FILE]
 [--source FILE.cadl] [--run-id HEX] [--anchor DIGEST] [--open]` reports
 the first line that does not verify, with the expected and the found
 value; `--source` also requires the hash of the CADL file, `--run-id`
@@ -1446,10 +1466,18 @@ own standard input and output. Its readings of G.11 are these.
 
 - Every line, in both directions, is parsed strictly: a carriage
   return other than one trailing CRLF, invalid UTF-8, a duplicate key
-  at any depth, NaN or an infinity, or a lone surrogate makes it
-  invalid (JSON-RPC errors -32700 or -32600), and it is not passed on.
-  What is passed on is the compact JSON of the parsed object with every
-  non-ASCII character escaped.
+  at any depth, NaN, an infinity or a number that overflows to one
+  (`1e999`), nesting deeper than 100 arrays or objects, or a lone
+  surrogate makes it invalid (JSON-RPC errors -32700 or -32600), and it
+  is not passed on. What is passed on is the compact JSON of the parsed
+  object with every non-ASCII character escaped.
+- Everything that can fail is done before a call is decided: the line
+  to send and the SHA-256 of the canonical JSON of its `params`
+  (arguments without a canonical form, such as an integer beyond
+  2<sup>53</sup>, are refused with -32602). If sending fails after an
+  allow or a release all the same, the client gets -32603 and the log
+  the event `forward_failed`; held calls that a failure denies are
+  withdrawn in the runtime first, while it can still record.
 - Allowed without `--allow-method`: `initialize`,
   `notifications/initialized`, `ping`, `server/discover`,
   `notifications/cancelled`, `notifications/progress`, `tools/list`, and
@@ -1476,12 +1504,14 @@ own standard input and output. Its readings of G.11 are these.
   `--approver-keys KEYS.json` every file is authenticated with
   HMAC-SHA256 under the key of the actor that speaks, over the canonical
   JSON of G.8. `cadl mcp-approve DIR HOLD_ID approve|reject --as ACTOR
-  --key FILE` writes an approval that names the run, the hold, the held
-  message, and the time of the hold, which the gateway publishes in the
-  directory, and a fresh nonce. The gateway turns it into the approver's
+  --key FILE` shows the held call with its arguments and writes an
+  approval that names the run, the hold, the held message, the time of
+  the hold, and the SHA-256 of the arguments, which the gateway
+  publishes in the directory, and a fresh nonce. The gateway turns it into the approver's
   message of the `counts_as:` rule that creates `approval`
   (`rejection`), with the hold id as its first argument, after the event
-  record `approval_evidence` with the SHA-256 of the file. A file whose
+  record `approval_evidence`, whose reason names the SHA-256 of the
+  file and of the arguments, the key id of the approver, and the nonce. A file whose
   MAC does not verify, which names another run or another held message,
   or whose nonce was used before, changes nothing and is recorded as
   `unauthorised_approval` with the reason `unauthenticated`,
@@ -1489,7 +1519,9 @@ own standard input and output. Its readings of G.11 are these.
   'X -> Y : n' --key FILE` writes any other message, such as a grant,
   authenticated with the key of its sender. Without keys the gateway
   refuses the directory unless `--insecure-approvals` is given, which is
-  for tests.
+  for tests; an approval accepted that way is recorded as
+  `approval_unauthenticated`. The first line of the trace and the header
+  of the log say which mode the run used (`approvals`).
 - The time is that of a monotonic clock since the start, in seconds
   rounded to milliseconds, and the first line of the trace gives a
   random `run_id` and the wall-clock time of `t = 0` as `epoch`. The
@@ -1540,10 +1572,18 @@ checked against `cadl` 0.3.23: `agents-run` on 309 pairs of a file and
 a trace (the bundled traces, every pair of the review files of the
 tests, and four malformed traces), in text and JSON, gave the same exit
 status, output, and error messages, and the same values in the audit
-log; and of the 1 905 replays that the test suite runs, the 1 883 on
+log; and of the 1 917 replays that the test suite runs, the 1 885 on
 traces without the new keys gave the same result, or the same error, as
-the runtime of 0.3.23. The other 22 are traces of the gateway with
-`withdraw` or `host_events`, which 0.3.23 does not read.
+the runtime of 0.3.23. The other 32 are traces of the gateway with
+`withdraw` or `host_events`, which 0.3.23 does not read. A second
+review found that a number that overflows to infinity (`1e999`) passed
+the parser and made the forwarding fail after the decision, so that the
+log showed an allowed or released call that was never sent, and that
+the approver could not see the arguments of what was approved; both are
+corrected, with tests that failed before (an injected failure of the
+sending, and two held calls of the same tool at the same time with
+different arguments, of which an approval of one does not release the
+other).
 
 The trace is that of `cadl norms-eval` (JSON Lines with `t`,
 `bindings`, `request`, `values`, `messages`, `state`, `amend`, `end`),
@@ -1619,7 +1659,11 @@ gateway observes messages and time, not `values`: a norm that reads a
 quantity sees missing data (G.5). It does not create or end
 host-created contract instances after its first line. The approver's
 tool signs the held message that the gateway publishes, so it trusts
-the gateway for what it shows. The log has no record for a change of
+the gateway for what it shows. The keys of the approvers separate them
+only when each approver uses an account of their own: whoever shares
+the account of the gateway can read every key in its keyring, and the
+directory protects only against parties that cannot read the key
+files. The log has no record for a change of
 the in-force flag of a norm (G.8). A holder whose derived instance is
 `active` but no longer valid after an amendment of `to:` cannot be
 granted the permission again: the grant is the no-op of condition 5
