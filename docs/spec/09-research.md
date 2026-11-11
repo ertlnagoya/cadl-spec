@@ -13,7 +13,7 @@ tool already solves part of a problem, we say which part CADL would hand
 to that tool and which question the tool cannot answer.
 
 The starting point is this specification (Version 0.3) and the reference
-implementation `cadl` 0.3.22. It checks the satisfiability of contracts
+implementation `cadl` 0.3.23. It checks the satisfiability of contracts
 with Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), detects
 protocol deadlocks by structural analysis, supports the SoS-DSL extension
 ([Appendix E](./appendix-e-sos-dsl.md): `lifecycle:`, `monitors:`,
@@ -349,8 +349,8 @@ compute the equilibria of a game. With the grounding extension
 ([Appendix J](./appendix-j-grounding.md)) the sanction term of a
 payoff is, by definition, the magnitude of a norm multiplied by λ,
 and under the conditions of J.7 the set of λ at which compliance is
-an equilibrium is empty or an upper interval. The extension is specified and not implemented in
-`cadl` 0.3.22. Concurrent moves, mixed strategies, properties that
+an equilibrium is empty or an upper interval. The extension is implemented from `cadl` 0.3.23
+([I.14](./appendix-i-games.md#i14-reference-implementation-status)). Concurrent moves, mixed strategies, properties that
 must hold on every equilibrium, the mediator and the value of
 centralisation of RD-7.2, the motivation parameters ρ and κ, and
 partial observation (RD-7.3) remain open.
@@ -417,7 +417,7 @@ such as voting and dissent (RD-8.4) and plan-level verification
 ## 9.9 Research Roadmap
 We organize the above research directions along a time axis and present
 a short-, medium-, and long-term research roadmap. The order follows the
-current implementation: items that extend what `cadl` 0.3.22 already
+current implementation: items that extend what `cadl` 0.3.23 already
 provides come first.
 
 | **Period** | **Key Challenges** | **Content** |

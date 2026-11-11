@@ -7,7 +7,7 @@ description: "Phased roadmap for implementing and deploying CADL, with the statu
 Below is a roadmap for CADL implementation and practical deployment,
 considering the research directions in [Chapter 9](./09-research.md). The periods are the
 originally planned ones; the status column records what the public
-reference implementation (`cadl` 0.3.22, as of November 2026) provides.
+reference implementation (`cadl` 0.3.23, as of November 2026) provides.
 For the up-to-date status, see the status table in the README of the
 [`cadl` repository](https://github.com/ertlnagoya/cadl). The README
 lists features, not phases, so the two tables do not correspond row by
@@ -33,7 +33,7 @@ Five further extensions follow the research directions of
 phase plan. Each is specified in an appendix that states what the
 reference implementation provides:
 
-| **Extension** | **Research challenges** | **Reference implementation (`cadl` 0.3.22)** |
+| **Extension** | **Research challenges** | **Reference implementation (`cadl` 0.3.23)** |
 | --- | --- | --- |
 | Norms ([Appendix F](./appendix-f-norms.md)) | RD-6.1, RD-6.2, RD-6.3, RD-6.5 | Static rules; verdicts and amendments computed from a recorded trace (`cadl norms-eval`, `cadl norms-diff`); an online monitor in the generated Python code (`norms_monitor.py`). Not provided: monitoring in the other generated runtimes, translation to a model checker. |
 | Agent governance ([Appendix G](./appendix-g-agents.md)) | RD-8.1, RD-8.2, RD-8.3 | Static rules; the decision function for one message (`cadl agents-decide`); Rego and Cedar boundary policies; a reference runtime that replays a recorded trace with holds, delegation and audit records (`cadl agents-run`). Not provided: an adapter to an agent protocol, integrity protection of the audit log. |
