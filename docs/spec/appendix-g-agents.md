@@ -711,8 +711,11 @@ of the held call, and for an authenticated approval the key id of the
 approver and the nonce; written before the decision of the approver's
 message), a request that it does not pass on (`method_refused`, with
 the method as `reason`), a response for which no request is in flight
-(`unsolicited_response`), and a call that was allowed or released but
-could not be sent (`forward_failed`). These records change no decision,
+(`unsolicited_response`), a call that was allowed or released but
+could not be sent (`forward_failed`), and, at an A2A gateway, a request
+without an authenticated sender (`unauthenticated_request`), a request
+that names a task or a context of another client (`task_refused`), and a
+request that was sent but got no valid response (`invalid_response`). These records change no decision,
 and they are only as trustworthy as the host that writes them: a log
 replayed from a trace that anyone could write proves nothing about
 them.
@@ -1104,8 +1107,9 @@ Context Protocol, revision 2026-07-28
 [[MCP Specification 2026-07-28]](./appendix-b-references.md), and the
 Agent2Agent protocol, version 1.0.0
 [[A2A Specification 1.0.0]](./appendix-b-references.md). The reference
-implementation has a gateway for MCP (G.13); the mapping to A2A is not
-implemented. Nothing normative depends on this section.
+implementation has a gateway for MCP and, from `cadl` 0.3.25, one for the
+JSON-RPC binding of A2A (G.13). Nothing normative depends on this
+section.
 
 | CADL (agents 0.1) | MCP 2026-07-28 | A2A 1.0.0 |
 | --- | --- | --- |
@@ -1187,9 +1191,9 @@ again, as G.6 says of a message sent again.
 of agent *X* to agent *Y* carries a `Message` with `role`, `parts`,
 `messageId`, and optionally `contextId`, `taskId`, `metadata`, and
 `extensions`. A gateway in front of *Y*, for any of the bindings of
-A2A (JSON-RPC, gRPC, HTTP and JSON), would map such a request to the
-message `X -> Y : e` as follows; this is a proposal and is not
-implemented.
+A2A (JSON-RPC, gRPC, HTTP and JSON), maps such a request to the message
+`X -> Y : e` as follows. From `cadl` 0.3.25 the reference implementation
+does so for the JSON-RPC binding; G.13 gives its readings.
 
 - *X* is the authenticated client of the request: A2A authenticates
   the client by the security schemes of the agent card of *Y*, and the
@@ -1213,7 +1217,10 @@ implemented.
   input, whereas a hold waits for the approver.
 - The approver's approval can itself be an A2A message of the approver
   with the name `approve` and the hold id as its first argument, as in
-  G.12; it is decided like any other message (G.6).
+  G.12; it is decided like any other message (G.6). Such a message names
+  only the hold, so it has to be bound to the held message and its
+  arguments as an approval through another channel is (above); the
+  reference gateway does not accept approvals as A2A messages (G.13).
 
 ## G.12 Example
 
@@ -1585,6 +1592,101 @@ sending, and two held calls of the same tool at the same time with
 different arguments, of which an approval of one does not release the
 other).
 
+**A2A gateway.** From `cadl` 0.3.25, `cadl a2a-gateway FILE
+--agent-actor Y --upstream URL --client-keys KEYS.json --audit
+OUT.jsonl` is the A2A gateway of G.11 for the JSON-RPC binding of A2A
+1.0.0: an HTTP server in front of the agent `Y` of the file
+(`kind: llm_agent`, `protocol: a2a`), which passes requests on to the
+agent at URL. It shares the enforcement point, the trace, the log, the
+holds, and the inbox with the MCP gateway, and its trace replays through
+`cadl agents-run` to the same audit log, byte for byte. Where G.11
+leaves a choice, the gateway takes the one that lets less through. Its
+readings are these.
+
+- The sender is authenticated for every request, before the body is
+  read as JSON. A2A leaves the scheme to the agent card; the gateway
+  uses keys of the actors as the approvals do: the header
+  `Authorization: CADL-HMAC` carries the actor, a nonce, and an
+  HMAC-SHA256 under the actor's key over the canonical JSON of G.8 of
+  the actor, the run id of the gateway, the nonce, the HTTP method, the
+  path, and the SHA-256 of the body. A nonce is accepted once in a run.
+  A bearer token, which whoever sees it can send again, is not accepted.
+  Every actor of the keys is an actor of the file. A request without a
+  valid header gets HTTP 401 with the run id, is recorded as
+  `unauthenticated_request` (at most 20 records a second, the next one
+  counting the requests not recorded), and is not decided.
+- The extension of G.11 has the URI
+  `https://www.ertl.jp/cadl-spec/a2a/agents-message/v0.1`; its value is
+  `{"name": e, "args": [...]}` with an identifier and at most 16 strings.
+  A message without it is answered with a rejected task and recorded as
+  `unauthorised_message` with the reason `no_name`, without a decision;
+  a value of another form is a JSON-RPC error -32602.
+- Approvals do not come as A2A messages. A message whose name is that of
+  a `counts_as:` rule that creates `approval` or `rejection`, whatever
+  the receiver of the rule, is rejected and recorded as
+  `unauthorised_message` with the reason `approval_as_message`.
+  Approvals come through the inbox, as for the MCP gateway, bound to the
+  arguments of the held message, which are the whole `params` of its
+  `SendMessage`. An A2A approval would name the hold only.
+- Only `SendMessage` is decided. `GetTask` and `CancelTask` carry no
+  message between actors; they pass, without a decision and without a
+  record, for tasks that the agent or the gateway gave to the same actor
+  in this run. A `SendMessage` likewise names only such tasks
+  (`taskId`, `referenceTaskIds`) and contexts (`contextId`). Anything
+  else is `TaskNotFoundError` (-32001) and is recorded as
+  `task_refused`; a context id that the gateway has not seen is refused
+  too, because it may be a context of another client or of an earlier
+  run. `tenant` is refused (-32602), because tasks are kept by their id.
+  `SendStreamingMessage`, `SubscribeToTask`, `ListTasks`, and
+  `GetExtendedAgentCard` are refused with `UnsupportedOperationError`
+  (-32004), the methods of push notifications and a `SendMessage` with a
+  push notification configuration with
+  `PushNotificationNotSupportedError` (-32003), and any other method
+  with -32601; all are recorded as `method_refused`. A request without
+  the header `A2A-Version: 1.0` is refused with `VersionNotSupportedError`
+  (-32009); under A2A 1.0.0 a missing header means version 0.3.
+- A denial is a task of the gateway in `TASK_STATE_REJECTED` whose
+  status message names the reason, the norms, the hold, the fallback,
+  and `notify`. A held blocking request waits; with `returnImmediately`
+  the client gets a task of the gateway in `TASK_STATE_SUBMITTED`, which
+  keeps its id after a release and shows the agent's task under it. A
+  client that cancels that task, or closes the connection of a blocking
+  held request (also over TLS), withdraws the request (G.6).
+- A request is read with one `Content-Length` of at most 1 MiB and
+  without `Transfer-Encoding`, one request per connection; the body is
+  parsed as strictly as a line of the MCP gateway and passed on
+  re-serialised, with a JSON-RPC id and headers of the gateway; the
+  client's `Authorization` is not passed on. A task or context that the
+  agent gives to a second actor is not shown to it (-32006,
+  `invalid_response`). A request that cannot be sent after an allow or a
+  release gives -32603 and `forward_failed`; one that was sent and got
+  no valid response gives -32006 and `invalid_response`. An address
+  other than loopback needs TLS.
+
+The A2A gateway is tested with a fake A2A agent in a thread of the test
+and a fake client, standard library only, in 58 tests: allow, denial by
+the default, a message without name, escalation that is approved,
+rejected, or expires, with and without `returnImmediately`, a held task
+that is cancelled before a signed approval arrives, a client that closes
+the connection of a held request over TCP and over TLS, a grant through
+the inbox, an approval re-addressed to another held message with other
+arguments, eight kinds of failed authentication, 27 kinds of malformed
+input, an agent that is down or answers wrongly, and the isolation of
+tasks and contexts. In every scenario the agent receives no request that
+was not allowed or released, and `cadl agents-run` on the trace writes
+the same audit log as the gateway. An independent review of the first
+version found that a context id that the gateway had not seen was
+claimed by whoever named it first, also in a later run, so that a client
+could continue the context of another; that `tenant` let a client read
+the task of another tenant with the same id; that an approval rule with
+a set as receiver was not recognised, so that an approval came as an A2A
+message, not bound to the held arguments, and was passed on to the
+agent; and that a TLS client that closed with close_notify did not
+withdraw its held request. Each is corrected and has a test. The review
+found no request that reached the agent without a decision, in its
+proofs of concept and in a run of 12 threads whose log of 280 records
+`cadl agents-run` reproduced.
+
 The trace is that of `cadl norms-eval` (JSON Lines with `t`,
 `bindings`, `request`, `values`, `messages`, `state`, `amend`, `end`),
 read for the whole enforcement point, with more keys: `epoch`, the
@@ -1652,10 +1754,13 @@ Known limits. Without a key, the chain of the log does not detect a
 log that is rewritten from a changed line on; keeping the last digest
 elsewhere (`--anchor`), or a key, does; the `hash` field of the header
 is not authenticated, so the verifier has to know whether a log is
-keyed. Only the MCP gateway over stdio is implemented, and it has been
-tested with a fake server and a fake client, not with an MCP client or
-server of another implementation; A2A is mapped in G.11 only. The
-gateway observes messages and time, not `values`: a norm that reads a
+keyed. The MCP gateway over stdio and the A2A gateway over JSON-RPC
+have been tested with fake servers, agents, and clients, not with
+implementations of others. The A2A gateway needs a client that computes
+the header `CADL-HMAC`, keeps the owners of tasks only for one run, and
+does not support streaming, push notifications, `ListTasks`, tenants,
+or the gRPC and the HTTP and JSON bindings. A gateway
+observes messages and time, not `values`: a norm that reads a
 quantity sees missing data (G.5). It does not create or end
 host-created contract instances after its first line. The approver's
 tool signs the held message that the gateway publishes, so it trusts
