@@ -1,7 +1,7 @@
 ---
 sidebar_position: 19
 title: "Appendix I: Strategic Model Extension"
-description: "Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, Nash equilibrium checks with deviation gains, and equilibrium maps over institutional parameters with certified cells."
+description: "Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations, with deviation gains, and equilibrium maps over institutional parameters with certified cells."
 ---
 
 # Appendix I — Strategic Model Extension (games 0.1)
@@ -14,8 +14,9 @@ block the keys `players:`, `profiles:`, `compliance:`, `payoffs:`, and
 property and to a regime map, and the value `smg` of `kind:`. With
 them, a file says which party chooses which command of the model and
 what each party gains, names the behaviour that the contract asks for,
-and asks whether that behaviour is an equilibrium: at the declared
-values of the parameters, or as a map over a region of parameters.
+and asks whether that behaviour is an equilibrium against unilateral
+deviations: at the fixed values of the parameters, or as a map over a
+region of parameters.
 
 The core language does **not** mandate these keys; a conforming CADL
 processor that does not implement the extension MUST NOT reject a file
@@ -77,8 +78,9 @@ found none. Games 0.1 is a small first step on RD-7.1 and RD-7.2:
 - **Compliance is a named profile.** `profiles:` names profiles of
   memoryless deterministic strategies, and `compliance:` names the one
   that stands for the behaviour the contract asks for (I.4).
-- **The question is defined exactly.** I.7 defines when a profile is a
-  Nash equilibrium of a design at a valuation, and the **deviation
+- **The question is defined exactly.** I.7 defines when a named
+  profile is a Nash equilibrium of a design at a valuation, that is,
+  when no player gains by deviating from it alone, and the **deviation
   gain** of each player. I.9 defines the **equilibrium map**: cells of
   a region of parameters, each certified in the sense of H.9 as
   `equilibrium` or `not_equilibrium`, or left `undecided`. The
@@ -95,14 +97,19 @@ found none. Games 0.1 is a small first step on RD-7.1 and RD-7.2:
   an equilibrium in mixed strategies cannot be named or found.
 - Every player observes the whole state. Equilibria under partial
   observation, which is what α controls (RD-7.3), remain open.
+- A player is one representative of the actors it stands for, and an
+  actor set has at most one player (I-3). Two members of one actor
+  set, for example two robots that compete, cannot be two players.
 - A payoff is a weighted sum of expected rewards accumulated until a
-  target, in a game that reaches the target with probability 1
-  whatever the players do (I.6). Discounted, mean-payoff, and
+  target, for a profile from which no single player can keep the game
+  away from its target (I.6). Discounted, mean-payoff, and
   step-bounded payoffs are not defined; a bounded horizon is written
   with a counter variable, as `attempts` in I.12.
-- The equilibrium notion is the Nash equilibrium and its ε-relaxation.
-  Subgame-perfect equilibria, dominant strategies, the set of all
-  equilibria of a game, and whether a property holds on every
+- The equilibrium notion is the Nash equilibrium of a named profile
+  and its ε-relaxation. I.7 also defines when a profile is an
+  equilibrium from every reachable state, which a result may state.
+  Subgame-perfect equilibria as a query, dominant strategies, the set
+  of all equilibria of a game, and whether a property holds on every
   equilibrium (the question of RD-7.1 in full) are not defined.
 - A centralised mediator, modelled as a correlated equilibrium, and
   the value of centralisation of RD-7.2 are out of scope.
@@ -301,63 +308,105 @@ carries λ in its weight (`weight: "-2 * lambda"`).
 
 For a path, the **accumulated reward** of r until φ is the sum of the
 rewards of the steps before the first position at which φ holds
-(H.8). Under one general strategy per player, the payoff of p is
+(H.8); what happens after that position does not count. Write φ_p for
+the target of the payoff of p. Under one general strategy per player,
+the payoff of p is
 
 ```text
-u_p  =  Σ_k  w_k[θ] · E[ accumulated reward of r_k until φ ]
+u_p  =  Σ_k  w_k[θ] · E[ accumulated reward of r_k until φ_p ]
 ```
 
 over the terms k of p's payoff, where E is the expectation under the
 induced measure. For a profile σ, the expectation of the k-th term is
-the value of the query `R{"r_k"}=? [ F φ ]` in M(D, θ, σ); write
+the value of the query `R{"r_k"}=? [ F φ_p ]` in M(D, θ, σ); write
 u_p(D, θ, σ) for the payoff.
 
-**Stopping.** The definition needs every expectation to be finite, and
-a player must not be able to make a payoff infinite or undefined by
-keeping the game away from the target. G(D, θ) is **stopping for φ**
-when, for every profile σ, the probability of `F φ` in M(D, θ, σ) is 1.
-This is a property of the graph of the game at θ: it depends only on
-which probabilities P(s, c, s′) are positive, and it holds exactly
-when no choice of commands by all players together keeps φ from being
-reached with probability 1. When G(D, θ) is stopping for φ, φ is
-reached with probability 1 under all general strategies as well, from
-every state that is reachable from s₀ under some choice of commands,
-and the expected number of steps until φ is bounded over all of them,
-because minimal reachability probabilities and maximal expected total
-rewards of a finite Markov decision process are attained by memoryless
-deterministic policies
-[[Puterman, 1994]](./appendix-b-references.md). Every payoff with
-target φ is then a real number under all general strategies.
+**The game of one player against a profile.** The question of I.7
+lets one player deviate while the others follow a profile σ. For a
+player p, a command is **allowed** in a state s when s is a state of
+p and the command is in En(s), when s is a state of another player
+and σ selects the command, or when s is a chance state and the
+command is its enabled command. Reach_p(D, θ, σ), written Reach_p, is
+the set of states s for which there is a sequence s₀, …, s_n = s such
+that φ_p holds in none of s₀, …, s_(n−1) and each s_(i+1) has a
+positive probability P(s_i, c, s_(i+1)) for a command c allowed in
+s_i. These are the states that p can reach while its payoff is still
+accumulating; a state in which φ_p holds belongs to Reach_p when it is
+reached in this way, and nothing beyond it does.
 
-A design is **stopping at θ** when G(D, θ) is stopping for the target
-of every payoff. I.7 to I.9 are defined only where the design is
-well-defined (H.5) and stopping. I-8 requires this at the fixed
-values; for an equilibrium map, I-9 and I.9 say what is required on
-the region.
+**Admissible profiles.** The definition needs every expectation to be
+finite, and a player must not be able to make its payoff infinite or
+undefined by keeping the game away from its target. A profile σ is
+**admissible for p** at θ when, for every strategy τ of p, the
+probability of `F φ_p` in M(D, θ, σ[p↦τ]) is 1. It is **admissible**
+at θ when it is admissible for every player. Admissibility depends
+only on which probabilities P(s, c, s′) are positive, and it has a
+graph characterisation: σ is admissible for p exactly when there is no
+non-empty set E of states of Reach_p in which φ_p does not hold such
+that every state of E either is a deadlock state or has an allowed
+command all of whose successors of positive probability lie in E.
+(Such a set is a deadlock in which the target does not hold, or an end
+component that avoids the target.) A processor decides it on the graph
+of Reach_p: starting from the states of Reach_p in which φ_p does not
+hold, it removes, as long as there is one, a state that is not a
+deadlock state and has no allowed command all of whose successors of
+positive probability remain; σ is admissible for p exactly when no
+state remains.
+
+When σ is admissible for p, φ_p is reached with probability 1 also
+under every general strategy of p against σ, from every state of
+Reach_p, and the expected number of steps until then is finite,
+because the minimal probability of reaching a set of states in a
+finite Markov decision process is attained by a memoryless
+deterministic policy
+[[Baier & Katoen, 2008]](./appendix-b-references.md) (Chapter 10).
+The payoff of p is then a real number whatever p does. The statement
+concerns Reach_p only: a state that is reachable only after φ_p has
+held may be a deadlock state or lie on a cycle, and this does no harm.
+
+I.7 to I.9 are defined for a profile at the valuations at which the
+design is well-defined (H.5) and the profile is admissible. A profile
+that is not admissible at θ has no equilibrium status there. I-8
+requires admissibility at the fixed values; I-9 and I.9 say what is
+required on the region of an equilibrium map. Admissibility is weaker
+than requiring that the game end under all profiles: it concerns the
+deviations of one player at a time from the profile that is asked
+about.
 
 ## I.7 Equilibrium
 
-Fix a design D that is well-defined and stopping at θ, and a profile
-σ.
+Fix a design D that is well-defined at θ and a profile σ that is
+admissible at θ.
 
 **Nash equilibrium.** σ is a **Nash equilibrium** of D at θ when no
 player gains by deviating alone: for every player p and every
 **general** strategy τ of p, the payoff of p when p plays τ and every
-other player plays as in σ is at most u_p(D, θ, σ).
+other player plays as in σ is at most u_p(D, θ, σ). The notion
+concerns unilateral deviations only, from a profile that is named in
+the file.
 
 **Memoryless deterministic deviations suffice.** When the other
 players play as in σ, what remains is a finite Markov decision process
-in which p alone chooses, with the reward
+on Reach_p in which p alone chooses, with the reward
 ρ_p(s, c) = Σ_k w_k[θ] · (reward of r_k for taking c in s) per step,
-of either sign, accumulated until the target φ of the payoff of p. Because the design is stopping,
-every policy of this process reaches φ with probability 1 (every
-policy is *proper*). For such a process, with rewards of either sign,
-the optimal value is attained by a memoryless deterministic policy and
-is the unique solution of Bellman's optimality equation
-[[Bertsekas & Tsitsiklis, 1991]](./appendix-b-references.md), and a
-policy that depends on the history or randomises attains no more
-[[Puterman, 1994]](./appendix-b-references.md). Hence the
-**best-response value**
+of either sign, accumulated until φ_p. The stochastic shortest path
+problem of [[Bertsekas & Tsitsiklis, 1991]](./appendix-b-references.md)
+is this problem with costs −ρ_p and the states of φ_p as the
+destination. Its two assumptions are that a proper stationary policy
+exists (one that reaches the destination with probability 1 from every
+state) and that every improper stationary policy has an infinite cost
+from some state; costs may have either sign. Under them, the optimal
+cost is the unique solution of Bellman's equation and is attained by a
+stationary deterministic policy. Here every stationary policy is
+proper, because σ is admissible for p, so the first assumption holds
+and the second holds vacuously. A policy that depends on the history
+or randomises attains no more: for every such policy and initial state
+there is a randomised policy that depends on the step and the current
+state only and has the same probability of every pair of a state and a
+command at every step ([[Puterman, 1994]](./appendix-b-references.md),
+Section 5.5), hence the same expected total reward, and a randomised
+choice in a state attains at most the maximum over the commands in
+Bellman's equation. Hence the **best-response value**
 
 ```text
 BR_p(D, θ, σ)  =  max over the strategies τ of p of  u_p(D, θ, σ[p↦τ])
@@ -389,30 +438,53 @@ different players.
 
 **Deciding it at a valuation.** Checking σ at θ consists of one
 best-response problem per player: evaluate u_p in the Markov chain
-M(D, θ, σ), and solve the Markov decision process of p for BR_p. Both
-are solved exactly by linear equations and policy iteration over the
-rational numbers when the parameters are rational.
+M(D, θ, σ), and solve the Markov decision process of p on Reach_p for
+BR_p. Both are solved exactly by linear equations and policy iteration
+over the rational numbers when the parameters are rational.
 
-**The one-step test.** Let φ be the target of the payoff of p, and
-let Reach be the set of states that are reachable from s₀ in G(D, θ)
-under some choice of commands; the game started in a state of Reach is
-stopping as well (I.6). For a state s of Reach, write V_p(s) for the
-payoff of p under σ in the game started in s instead of s₀
-(V_p(s) = 0 when φ holds in s). For a state s of p in Reach in which φ
-does not hold and a command c of En(s), write
+**Values from a state.** For a state s of Reach_p, write V_p(s) for
+the payoff of p under σ, and V\*_p(s) for the best-response value of
+p, in the game started in s instead of s₀; both are 0 when φ_p holds
+in s. For a state s of Reach_p in which φ_p does not hold and a
+command c allowed in s, write
 
 ```text
-Q_p(s, c)  =  ρ_p(s, c) + Σ_s′ P(s, c, s′) · V_p(s′)
+Q_p(s, c)   =  ρ_p(s, c) + Σ_s′ P(s, c, s′) · V_p(s′)
+Q*_p(s, c)  =  ρ_p(s, c) + Σ_s′ P(s, c, s′) · V*_p(s′)
 ```
 
-for the payoff of p when p takes c once in s and σ is followed
-afterwards. If Q_p(s, c) ≤ V_p(s) for
-every state s of p in Reach in which φ does not hold and every command
-c of En(s), then gain_p(D, θ, σ) = 0: V_p then solves Bellman's
-optimality equation on Reach, whose solution is unique. The converse
-does not hold: σ can be a Nash equilibrium although p could gain in a
-state that is reached only when p itself deviates. The test is used in
-I.9.
+Q_p(s, c) is the payoff of p when c is taken once in s and σ is
+followed afterwards. V\*_p is the unique solution of
+V\*_p(s) = max over the allowed commands c of Q\*_p(s, c), and
+BR_p = V\*_p(s₀).
+
+**Equilibrium from every reachable state.** σ is an **equilibrium
+from every reachable state** at θ when V\*_p(s) = V_p(s) for every
+player p and every state s of Reach_p: no player gains by deviating
+alone, wherever in Reach_p it starts to deviate. This implies that σ
+is a Nash equilibrium. The converse does not hold: σ can be a Nash
+equilibrium although p could gain in a state that is reached only
+when p itself deviates. Version 0.1 does not offer this stronger
+notion, or subgame perfection, as a query (`concept:` is reserved);
+it is defined because the following test establishes exactly it, and
+a result says so when it was obtained that way (I.8, I.9).
+
+**The one-step test.** V\*_p(s) = V_p(s) for every state s of Reach_p
+exactly when Q_p(s, c) ≤ V_p(s) for every state s of p in Reach_p in
+which φ_p does not hold and every command c of En(s). If the
+inequalities hold, V_p solves Bellman's equation, whose solution is
+unique; if one fails in s, taking c once in s gains from s. The test
+is therefore necessary and sufficient for "no gain of p from any
+state of Reach_p", and sufficient, not necessary, for gain_p = 0.
+
+**The reported best response.** Among the best responses of p, the
+**canonical best response** is the strategy that selects, in a state
+s of p in Reach_p in which φ_p does not hold, the command that σ
+selects when Q\*_p(s, c) = V\*_p(s) for it, and otherwise the first
+command c of En(s), in the order of `model.commands:`, with
+Q\*_p(s, c) = V\*_p(s); in every other state it selects what σ
+selects. It is a best response, it is determined by the file, and it
+differs from σ only where the command of σ is not optimal.
 
 ## I.8 Equilibrium checks at the fixed values
 
@@ -421,7 +493,8 @@ I.9.
 in `regimes:` (default: all designs), whether the profile named by
 `profile:` (default: the compliance profile) is an ε-equilibrium of
 the design at the fixed values of all parameters (H.3), with ε given
-by `epsilon:` (default 0).
+by `epsilon:` (default 0). In a file without `transitions:` the only
+design is `base` (H.6); `regimes:` is then omitted or is `[base]`.
 
 The result, per design, consists of:
 
@@ -429,15 +502,25 @@ The result, per design, consists of:
   and the deviation gain;
 - the `status`: `equilibrium` when every gain is at most ε, and
   `not_equilibrium` otherwise;
-- for `not_equilibrium`: the players whose gain exceeds ε, the
-  **deviators**. For each deviator a processor SHOULD report one best
-  response, as the list of the states that are reachable under it and
-  in which it selects another command than the profile, each with the
-  action label selected.
+- for `not_equilibrium`: the non-empty set `deviators` of the players
+  whose gain exceeds ε, and for each of them the canonical best
+  response (I.7), as the list of the states that are reachable under
+  it and in which it selects another command than the profile, each
+  with the action label selected;
+- `from_every_state`: `true` when the processor has established that
+  the profile is an equilibrium from every reachable state (I.7),
+  `false` when it has established that it is not, and absent or
+  `null` when it has not examined the question. It is reported only
+  with the status `equilibrium` and ε = 0.
+
+By I-8 the profile is admissible at the fixed values. A processor that
+evaluates a check at other values (I.13) first establishes that the
+design is well-defined and the profile admissible there, and reports
+an error otherwise.
 
 A processor that reports results MUST compute them with exact
 arithmetic or with numerics that have a sound error bound, or mark the
-result as approximate; a status that the error bound does not decide
+result as approximate; a `status` that the error bound does not decide
 is `inconclusive` (as in H.8).
 
 ## I.9 Equilibrium maps
@@ -461,17 +544,18 @@ For a design D and a valuation v ∈ B, θ(v) agrees with v on the open
 parameters and has the fixed values of D elsewhere (H.7). Write
 U_p(v), BR_p(v), and gain_p(v) for the payoff, the best-response
 value, and the deviation gain of p in D at θ(v) for the profile of the
-query; they are defined where D is well-defined and stopping at θ(v).
+query; they are defined where D is well-defined and the profile
+admissible at θ(v).
 
 **What is asked.** For each listed design: at which valuations of B is
 the profile an ε-equilibrium? A **cell** is a closed box contained in
 B (H.9).
 
 - The profile is an **equilibrium on a cell** C when, at every v ∈ C,
-  D is well-defined and stopping at θ(v) and gain_p(v) ≤ ε for every
-  player p.
+  D is well-defined and the profile admissible at θ(v), and
+  gain_p(v) ≤ ε for every player p.
 - A player p is a **deviator on a cell** C when, at every v ∈ C, D is
-  well-defined and stopping at θ(v) and gain_p(v) > ε.
+  well-defined and the profile admissible at θ(v), and gain_p(v) > ε.
 
 **The result.** The answer consists of one **equilibrium map** per
 listed design. An equilibrium map is a finite set of cells that cover
@@ -482,17 +566,30 @@ cells divided by the volume of B) and whether it is at most
 
 | `status` | Claim | Reported with it |
 | --- | --- | --- |
-| `equilibrium` | the profile is an equilibrium on the cell | — |
-| `not_equilibrium` | the player `deviator` is a deviator on the cell | `deviator`, one player |
-| `undecided` | none: the status changes inside the cell, different players are deviators in different parts of it, the game is not stopping somewhere in it, or the processor could not decide | — |
+| `equilibrium` | the profile is an equilibrium on the cell | `from_every_state` (see below) |
+| `not_equilibrium` | every player in `deviators` is a deviator on the cell | `deviators`, a non-empty set of players |
+| `undecided` | none | `reason` |
 
-`not_equilibrium` names one player who gains at every valuation of the
-cell. A cell at every valuation of which some player gains, but not
-the same one, stays `undecided` until a refinement separates the
-players. For a `not_equilibrium` cell a processor SHOULD also report a
-strategy of the deviator that gains more than ε at every valuation of
-the cell, when its method provides one (as condition N below does),
-and for every decided cell the bounds of the gains it established.
+`deviators` contains only players who gain at every valuation of the
+cell; a processor SHOULD list every player for whom it has established
+this. A cell that lies across the surface on which the deviator
+changes, so that at every valuation some player gains but no single
+player does everywhere, stays `undecided` until a refinement separates
+the parts. For a `not_equilibrium` cell a processor SHOULD also
+report, for each deviator, a strategy that gains more than ε at every
+valuation of the cell, when its method provides one (as condition N
+below does), and for every decided cell the bounds of the gains it
+established. `from_every_state` is `true` for an `equilibrium` cell
+when the processor has established that the profile is an equilibrium
+from every reachable state (I.7) at every valuation of the cell, and
+absent or `null` otherwise.
+
+An `undecided` cell SHOULD carry a `reason`: `not_well_defined` (the
+processor has not established that the design is well-defined on the
+cell), `not_admissible` (it has not established that the profile is
+admissible on the cell, or has found a valuation at which it is not),
+or `bounds` (its bounds do not decide the cell, or the budget is
+exhausted).
 
 A cell that contains both a valuation at which the profile is an
 ε-equilibrium and one at which it is not can have neither status.
@@ -516,42 +613,81 @@ requested resolution still reports the map and says so, and it SHOULD
 name its method. Estimates at sample points MAY be reported
 separately, as in H.9; they never change the status of a cell.
 
-The claims presuppose that I.7 is defined on the cell. A processor
-MUST NOT claim `equilibrium` or `not_equilibrium` for a cell unless it
-has established that the design is well-defined (H.5) and stopping
-(I.6) at every valuation of the cell. Stopping at the corners of a
-cell does not imply stopping inside it. A sufficient check is the one
-of the relaxation described below: every policy of the relaxed process
-reaches the target with probability 1.
+**Well-definedness and admissibility on the region.** The claims
+presuppose that I.7 is defined on the cell. A processor MUST NOT claim
+`equilibrium` or `not_equilibrium` for a cell unless it has
+established that the design is well-defined (H.5) and the profile
+admissible (I.6) at every valuation of the cell.
 
-**Deciding a cell from bounds.** Suppose a method gives, for a cell C
-and each player p, numbers that hold at every valuation v of C:
+Checking the corners of a box is not enough for admissibility. A
+probability can be positive inside a box and zero at a corner, so the
+corners have the smallest graphs and the interior the largest. For a
+design whose probabilities are all **multi-affine** in the open
+parameters (no open parameter occurs with a power above one in a
+probability, the value of `rest` included) the following holds. Call
+a *face* of the box B a set obtained by fixing some of the open
+parameters, possibly none, at an end of their intervals and letting
+each of the others range over the open interval between its ends; B
+has 3ⁿ faces for n open parameters, and every valuation of B lies in
+exactly one of them. If the design is well-defined at the corners of
+B, a probability is a positive combination of its values at the
+corners of a face at every valuation of that face, so it is zero at
+one valuation of a face only if it is zero on the whole face. The
+graph of the game is therefore the same at all valuations of one
+face, and since admissibility depends on the graph only:
+
+> For a design whose probabilities are multi-affine in the open
+> parameters and that is well-defined at the corners of B, a profile
+> is admissible at every valuation of B exactly when it is admissible
+> at the centre of each of the 3ⁿ faces of B (the valuations in which
+> every open parameter is at the lower end, the middle, or the upper
+> end of its interval).
+
+I-9 requires this check. When it succeeds for such a design, the
+profile is admissible on every cell, and nothing remains to be
+established per cell. For a design with a probability that is not
+multi-affine, the processor establishes admissibility for each cell,
+for example by the relaxation below, or leaves the cell `undecided`
+with the reason `not_admissible`.
+
+**Deciding a cell from bounds.** For a player p and a cell C, let
+R_C(p) be a set of states that contains s₀ and, with a state s in
+which φ_p does not hold, every state s′ such that P(s, c, s′) is
+positive at some valuation of C for some command c allowed in s for p
+(I.6); it contains Reach_p at every valuation of C. Suppose a method
+gives, for each player p, numbers that hold at every valuation v of
+C:
 
 - l_p ≤ U_p(v) ≤ u_p, bounds of the payoff under the profile;
 - b_p ≥ BR_p(v), an upper bound of the best-response value;
 - for one or more strategies τ of p, d_p(τ) ≤ U_p(τ, v), a lower bound
   of the payoff of p under the profile in which p plays τ;
-- for every state s of a set R_C, a lower bound l_p(s) ≤ V_p(s, v)
-  of the payoff from s under the profile, and for every command c
-  enabled in a state s of p in R_C in which the target of p does not
-  hold, a number q_p(s, c) ≥ Q_p(s, c, v). Here V_p and Q_p are those
-  of I.7 at θ(v), and R_C is a set of states that contains s₀ and,
-  with a state s, every state s′ such that P(s, c, s′) is positive at
-  some valuation of C for some command c enabled in s; the method
-  must also have established that the game started in any state of
-  R_C is stopping at every valuation of C.
+- for every state s of R_C(p), bounds l_p(s) ≤ V_p(s, v) ≤ u_p(s) of
+  the payoff of p from s under the profile (both 0 when φ_p holds in
+  s), and, for every state s of p in R_C(p) in which φ_p does not
+  hold and every command c of En(s), a number
+  q_p(s, c) ≥ Q_p(s, c, v). Such a number is obtained from an upper
+  bound of the step payoff ρ_p(s, c) on C and the **upper** bounds
+  u_p(s′) of the successors: q_p(s, c) is at least
+  ρ_p(s, c) + Σ_s′ μ(s′) · u_p(s′) for every distribution μ that the
+  command can have on C.
 
 Then:
 
 - **N.** p is a deviator on C when d_p(τ) − u_p > ε for some strategy
   τ of p.
 - **E1.** gain_p(v) ≤ ε on C when b_p − l_p ≤ ε.
-- **E2.** gain_p(v) = 0 on C when q_p(s, c) ≤ l_p(s) for every state s
-  of p in R_C in which the target of p does not hold and every command
-  c enabled in s other than the one the profile selects (the one-step
-  test of I.7).
+- **E2.** V\*_p(s, v) = V_p(s, v) for every state s of Reach_p at
+  every valuation of C, and in particular gain_p(v) = 0 on C, when
+  q_p(s, c) ≤ l_p(s) for every state s of p in R_C(p) in which φ_p
+  does not hold and every command c of En(s) other than the one the
+  profile selects (the one-step test of I.7, with the upper bound of
+  the deviating command against the **lower** bound of the profile in
+  the same state).
 - The profile is an equilibrium on C when every player satisfies E1 or
-  E2.
+  E2. It is an equilibrium from every reachable state at every
+  valuation of C (`from_every_state: true`) when every player
+  satisfies E2.
 
 These conditions are sufficient, not necessary. E1 compares a bound of
 one function with a bound of another, as the conditions of H.9 do, and
@@ -564,29 +700,36 @@ soon as an open parameter changes the payoff under the profile. E2
 does not have this defect: it compares the payoff of a one-step
 deviation with the payoff of the profile in the same state, and these
 differ at the valuations where the deviation strictly loses. E2
-establishes more than is asked (no gain from any reachable state), so
-it fails on a cell of equilibria that rest on a choice in a state the
-profile never reaches. A cell next to the boundary stays `undecided`
-under all three conditions.
+establishes more than is asked, so it fails on a cell of Nash
+equilibria in which p could gain in a state that only its own
+deviation reaches. A cell next to the boundary stays `undecided` under
+all three conditions.
 
 **Bounds by parameter lifting (informative).** The relaxation of H.14
-extends to a design of a strategic model. On a cell, every state
-chooses a corner of the cell for the open parameters that occur in the
-probabilities of its commands; a state of the player under study
+extends to the game of one player against the profile. On a cell,
+every state chooses, independently of the other states, a distribution
+for each of its allowed commands; a state of the player under study
 chooses a command as well, and every other state of a player takes the
-command the profile selects. The step payoff ρ_p(s, c) is enclosed by
-its extreme values on the cell (at the corners when the weights are
-multi-affine in the open parameters). When every policy of the relaxed
-process reaches the target with probability 1, the design is stopping
-on the cell, the maximal value of the process with the upper step
-payoffs is a number b_p, and the minimal value with the lower step
-payoffs, when the player's commands are fixed by τ or by the profile,
-is a number d_p(τ) or l_p. The states reachable in the relaxed process
-form a set R_C, and the bounds of E2 are obtained in the same way with
-each of them as the initial state. Other sound methods
+command the profile selects. When the probabilities of a command are
+multi-affine in the open parameters, the distributions to choose from
+are those at the corners of the cell, and the distribution at any
+valuation of the cell is a mixture of them. When they are not, corners
+do not suffice: each probability is enclosed by an interval on the
+cell, as H.14 describes, and the state chooses a vertex of the set of
+distributions within these intervals. The step payoff ρ_p(s, c) is
+enclosed by its extreme values on the cell (at the corners when the
+weights are multi-affine in the open parameters, by interval
+arithmetic otherwise). The states reachable in the relaxed process
+form a set R_C(p). When every policy of the relaxed process reaches
+φ_p with probability 1, the profile is admissible for p on the cell;
+the maximal value of the process with the upper step payoffs is a
+number b_p, and the minimal and maximal values with the player's
+commands fixed by τ or by the profile, with the lower and the upper
+step payoffs, are numbers d_p(τ), l_p, and u_p, and with each state of
+R_C(p) as the initial state, l_p(s) and u_p(s). Other sound methods
 are admissible, for example exact reasoning on the rational functions
-U_p and BR_p, or a proof that a gain is monotone in a parameter
-([J.7](./appendix-j-grounding.md)).
+U_p and BR_p, or a proof that a gain is convex or monotone in a
+parameter ([J.7](./appendix-j-grounding.md)).
 
 ## I.10 Static semantics {/* #i10-static-semantics */}
 
@@ -633,12 +776,20 @@ here, and in addition:
   (S-6). `terms:` MUST have at least one term; `reward:` MUST name a
   declared reward structure, at most once per payoff; `weight:` MUST
   be a number or a `param_expr` whose identifiers are declared
-  parameters. The keys `sanction_of:` and `reward_of:` of a term are
-  defined by [Appendix J](./appendix-j-grounding.md); in a file that
+  parameters. A processor SHOULD warn when the target of a payoff
+  holds in the initial state: the payoff is then 0 under every
+  profile. The keys `sanction_of:` and `reward_of:` of a term are
+  defined by [Appendix J](./appendix-j-grounding.md). In a file that
   does not declare `grounding: 0.1`, a term that has one of them is an
-  error.
-- **I-8.** Every design MUST be well-defined (S-11) and stopping (I.6)
-  at its fixed values.
+  error. In a file that declares it, a processor that does not
+  implement Appendix J MUST NOT evaluate a payoff that has such a
+  term, nor a query that needs that payoff: it reports the query as
+  not evaluated, with a diagnostic that names the term. Such a term is
+  never read as a term with the default weight.
+- **I-8.** Every design MUST be well-defined at its fixed values
+  (S-11), and every profile of the file MUST be admissible (I.6) in
+  every design at the fixed values. This is weaker than requiring that
+  every play of the game end.
 - **I-9.** The `id` of an entry of `equilibria:` MUST be an identifier
   that S-2 admits and MUST be unique in the namespace of properties
   and regime maps. `profile:` MUST name a profile. `regimes:` MUST
@@ -647,13 +798,21 @@ here, and in addition:
   MUST satisfy the conditions that S-14 states for a regime map
   (`over:` has one to four declared parameters, each with `lo < hi`
   within the declared range and none assigned by any regime;
-  `0 < r < 1`); `resolution:` MUST NOT appear without `over:`. A
+  `0 < r < 1`); `resolution:` MUST NOT appear without `over:`. Unlike
+  a regime map (S-10), an entry with `over:` is allowed in a file
+  without `transitions:`, where it concerns the design `base`. A
   parameter in the `over:` of an entry of `equilibria:` MUST NOT occur
-  in the `value:` of a reward item. Every listed design MUST be
-  well-defined and stopping at every valuation of the region; a
-  processor MUST check this at least at the corner points of the
-  region and MUST NOT certify a cell on which it has not established
-  it (I.9).
+  in the `value:` of a reward item. For every listed design, a
+  processor MUST check that the design is well-defined at the corner
+  points of the region (as S-14) and that the profile is admissible at
+  the centre of every face of the region (I.9: every open parameter at
+  the lower end, the middle, or the upper end of its interval, 3ⁿ
+  valuations); a failure at one of these valuations is an error of the
+  file. For a design whose probabilities are multi-affine in the open
+  parameters these checks decide both properties on the whole region
+  (S-14, I.9). For any other design they do not; the processor then
+  establishes both for each cell or leaves the cell `undecided`, and
+  it MUST NOT certify a cell on which it has not established them.
 - **I-10.** The `profile:` of a property or of a regime map MUST name
   a profile. S-12 to S-14 apply to a strategic model unchanged, with
   M(D, θ, σ) in the place of the regime model.
@@ -662,6 +821,7 @@ here, and in addition:
   replaces the list of S-15 for a file that declares `games: 0.1`). A
   reserved value (`kind: mdp`, a `motivation.` source) gets this
   diagnostic in addition to the error of I-2 or S-3.
+
 The rules S-2 to S-8 and S-10 to S-14 apply to a strategic model as
 written. A weight is not a probability and not a reward value: no rule
 restricts its sign or its range.
@@ -677,7 +837,10 @@ one player is controlled by that player; actions and modules need not
 be allocated to a player as long as no state has several such
 transitions; a state whose transitions are owned by several players is
 an error [[Kwiatkowska+, CAV 2020]](./appendix-b-references.md). These
-are the conditions of I-4 and I-5.
+are the conditions of I-4 and I-5. PRISM-games computes expected total
+rewards only for a stopping game, one in which terminal states with
+zero reward are reached with probability 1 under all strategies, which
+is more than the admissibility of I.6.
 
 H.11 does not apply to a strategic model as written: a design of a
 strategic model is not a Markov chain, and a processor MUST NOT export
@@ -704,6 +867,10 @@ A player that owns no command of the design is not written. All
 commands of the design are written, whatever a profile selects;
 unowned commands and the deadlock command are allocated to no player.
 A player name is renamed by the rule of H.11 when it equals a keyword.
+This appendix does not determine whether PRISM-games accepts a player
+whose name equals another identifier of the model; an exporter SHOULD
+report such a name. A parameter that is open only in an equilibrium
+map is written with its fixed value (I.13).
 
 Version 0.1 defines **no properties file** for a strategic model. A
 payoff is a sum of expected rewards with weights of either sign, and
@@ -719,8 +886,9 @@ this form have not been run through PRISM-games (I.14).
 
 ## I.12 Example
 
-The example extends that of
-[H.12](./appendix-h-stochastic.md) by one choice. Before each attempt
+The first example extends that of
+[H.12](./appendix-h-stochastic.md) by one choice; the second, at the
+end of the section, adds a choice of the dispatcher. Before each attempt
 the robot decides whether to follow the handling procedure. A
 `careful` attempt costs the robot an effort of 1 and succeeds with the
 probability s of H.12. A `careless` attempt costs no effort and
@@ -837,10 +1005,10 @@ are enabled: these are the states of R (I-5). In the states with
 `task == Delivered OR attempts == 3` that are not yet settled, the
 unowned command `settle` is enabled: these are chance states. The
 settled states are deadlock states. The player D owns no command and
-has no choice; it is declared so that the fee has a receiver. Every path reaches `settled` within four steps
-whatever R does, so both designs are stopping at every valuation, and
-all probabilities lie in `[0, 1]` on the regions of the two maps. The
-profile `comply` selects `careful` in every state of R. The profile
+has no choice; it is declared so that the fee has a receiver. Every
+path reaches `settled` within four steps whatever R does, so every
+profile is admissible at every valuation, and all probabilities lie in
+`[0, 1]` on the regions of the two maps. The profile `comply` selects `careful` in every state of R. The profile
 `shortcut_first` selects `careless` before the first attempt, by its
 first rule, and `careful` afterwards.
 
@@ -872,30 +1040,47 @@ attempts remaining, followed by `comply`, gives
 ```
 
 Being careless saves the effort c and loses, with probability s/2, the
-difference between delivering now and continuing. When s·g ≥ c, which
-holds for s ≥ 0.1, V_0 ≤ V_1 ≤ V_2 and therefore T_1 ≤ T_2 ≤ T_3: the
-temptation is greatest before the first attempt, when a failure can
-still be repaired. With g − V_2 = g·(1 − s)² + c·(2 − s),
+difference between delivering now and continuing. Let
 
 ```text
-λ* = max(0, T_3),    T_3 = ( c − (s/2)·( g·(1 − s)² + c·(2 − s) ) ) / m
+λ* = max(0, T_1, T_2, T_3)
+T_1 = ( c − (s/2)·g ) / m
+T_2 = ( c − (s/2)·(g − (s·g − c)) ) / m
+T_3 = ( c − (s/2)·( g·(1 − s)² + c·(2 − s) ) ) / m
 ```
 
-**`comply` is a Nash equilibrium of a design at θ exactly when
-λ ≥ λ\*.** If λ ≥ λ\*, then λ ≥ T_k for k = 1, 2, 3, the one-step test
-of I.7 holds in every state of R, and R has no gain; D has no choice
-and no gain. If λ < λ\*, then λ\* = T_3 > 0, and `shortcut_first`
-gives R the payoff V_3 + m·(T_3 − λ), which is more than V_3. In both
-designs T_2 is negative at the fixed values (−0.153684 and −0.245044),
-so for every λ ≥ 0 a careless attempt later than the first one loses,
-`shortcut_first` is the best response for λ < λ\*, and
+(for T_3, g − V_2 = g·(1 − s)² + c·(2 − s)).
+
+**For 0 ≤ s < 1, `comply` is a Nash equilibrium of a design at θ
+exactly when λ ≥ λ\*.** Under `comply` each of the three states of R
+is reached with positive probability, since an attempt fails with
+probability 1 − s > 0. So R has no gain exactly when the one-step test
+of I.7 holds in the three states, that is, when λ ≥ T_k for
+k = 1, 2, 3; D has no choice and no gain. The condition s < 1 is
+needed for "exactly": at s = 1 the later states are reached only when
+R deviates.
+
+When s·g ≥ c, that is for s ≥ 0.1, V_0 ≤ V_1 ≤ V_2 and therefore
+T_1 ≤ T_2 ≤ T_3, so λ\* = max(0, T_3): the temptation is greatest
+before the first attempt, when a failure can still be repaired. This
+is the case at the fixed values and on the regions of the two maps
+below, where s ≥ 0.4245. It is not the case for small s: at
+s = 0.07695 (DISTRIBUTED with q_local = 0), T_1 = 0.307625 is the
+largest of the three.
+
+By the same computation, **for 0 ≤ s < 1, `shortcut_first` is a Nash
+equilibrium exactly when max(0, T_1, T_2) ≤ λ ≤ T_3**: R must prefer
+the shortcut before the first attempt and care afterwards.
+
+In both designs T_1 and T_2 are negative at the fixed values (T_2 is
+−0.153684 and −0.245044) and T_3 is positive. There, for every λ ≥ 0,
+a careless attempt later than the first one loses, `shortcut_first` is
+the best response for λ < λ\*, it is a Nash equilibrium exactly when
+λ ≤ λ\*, both profiles are equilibria at λ = λ\*, and
 
 ```text
 gain_R = max(0, m·(λ* − λ)) = max(0, 2·(λ* − λ))
 ```
-
-By the same computation `shortcut_first` is a Nash equilibrium exactly
-when λ ≤ λ\*; at λ = λ\* both profiles are equilibria.
 
 **The checks.** At the fixed values, with λ = 0.1:
 
@@ -909,8 +1094,8 @@ when λ ≤ λ\*; at λ = λ\* both profiles are equilibria.
 | u_R under `shortcut_first` | 8.840018 − 2·λ = 8.640018 | 8.028930 − 2·λ = 7.828930 |
 | u_D under `comply` / `shortcut_first` | 4.924241 / 4.809042 | 4.718981 / 4.492672 |
 | `comply_nash`: BR_R, gain_R | 8.640018, 160347064349/1600000000000 = 0.100217 | 7.908184, 0 |
-| `comply_nash`: status | `not_equilibrium`, deviator R, best response: `careless` in the state with `attempts == 0` | `equilibrium` |
-| `shortcut_nash`: gain_R, status | 0, `equilibrium` | 126805432219/1600000000000 = 0.079253, `not_equilibrium`, deviator R |
+| `comply_nash`: `status` | `not_equilibrium`, `deviators`: R, canonical best response: `careless` in the state with `attempts == 0` | `equilibrium`, `from_every_state: true` |
+| `shortcut_nash`: gain_R, `status` | 0, `equilibrium`, `from_every_state: true` | 126805432219/1600000000000 = 0.079253, `not_equilibrium`, `deviators`: R |
 
 With the declared λ = 0.1, compliance is an equilibrium in the
 distributed regime and not in the centralised one. The gain of D is 0
@@ -927,7 +1112,7 @@ best-response value on the cell is the one at λ = a, and the payoff of
 largest undecided cell until the resolution of 0.05 is reached
 reports:
 
-| Design | `not_equilibrium` (deviator R) | `undecided` | `equilibrium` | Undecided fraction |
+| Design | `not_equilibrium` (`deviators`: R) | `undecided` (`reason: bounds`) | `equilibrium` | Undecided fraction |
 | --- | --- | --- | --- | --- |
 | CENTRALIZED | `[0, 1/8]` | `[1/8, 5/32]` | `[5/32, 1]` | 1/32 |
 | DISTRIBUTED | `[0, 1/32]` | `[1/32, 1/16]` | `[1/16, 1]` | 1/32 |
@@ -962,14 +1147,178 @@ incentive; at p_fail = 0.3 the distributed one does. On this map U_R
 varies with p_fail, so E1 decides no `equilibrium` cell (I.9); the
 cells away from the curve are decided by E2 and N.
 
-## I.13 Intermediate Representation (IR) addition
+### A second example: two deciding players
+
+In the first example only the robot chooses, so the check of each
+player is an optimisation of one player. In the second, the
+dispatcher chooses too: before the first attempt it decides whether
+to `monitor` the robot, at a cost κ, or to `trust` it. A careless
+attempt is sanctioned only when the dispatcher monitors. The file is
+that of the first example with the following changes (the commands
+`careful` and `careless` keep their updates):
+
+```yaml
+  model:
+    kind: smg
+    parameters:
+      # ... as above, and:
+      - { id: kappa,   range: [0, 1],   value: 0.05 }   # cost of monitoring
+    variables:
+      - { id: watch,    type: "{Open, On, Off}",      init: Open }
+      # ... task, attempts, settled as above
+    commands:
+      - action: monitor
+        owner: D
+        guard: "watch == Open AND task == Pending AND attempts == 0"
+        updates:
+          - set: { watch: "On" }
+      - action: trust
+        owner: D
+        guard: "watch == Open AND task == Pending AND attempts == 0"
+        updates:
+          - set: { watch: "Off" }
+      - action: careful
+        owner: R
+        guard: "watch != Open AND task == Pending AND attempts < 3"
+        # updates as above
+      - action: careless
+        owner: R
+        guard: "watch != Open AND task == Pending AND attempts < 3"
+        # updates as above
+      - action: settle
+        guard: "watch != Open AND (task == Delivered OR attempts == 3) AND NOT settled"
+        updates:
+          - set: { settled: true }
+    rewards:
+      - { id: fee,        items: [ { action: settle, guard: "task == Delivered", value: 1 } ] }
+      - { id: effort,     items: [ { action: careful,  value: 1 } ] }
+      - { id: shortcuts,  items: [ { action: careless, guard: "watch == On", value: 1 } ] }
+      - { id: monitoring, items: [ { action: monitor,  value: 1 } ] }
+    profiles:
+      comply:
+        - { choose: monitor }
+        - { choose: careful }
+      comply_if_watched:
+        - { choose: monitor }
+        - { guard: "watch == Off AND attempts == 0", choose: careless }
+        - { choose: careful }
+    compliance: comply
+    payoffs:
+      - player: R
+        until: "settled"
+        terms:
+          - { reward: fee,       weight: 10 }
+          - { reward: effort,    weight: -1 }
+          - { reward: shortcuts, weight: "-2 * lambda" }
+      - player: D
+        until: "settled"
+        terms:
+          - { reward: fee,        weight: 5 }
+          - { reward: monitoring, weight: "-kappa" }
+    equilibria:
+      - { id: comply_nash }
+      - { id: watched_nash, profile: comply_if_watched }
+      - id: watched_map
+        profile: comply_if_watched
+        regimes: [CENTRALIZED]
+        over: { lambda: [0, 0.4], kappa: [0, 0.4] }
+        resolution: 0.25
+```
+
+The model has 48 states. The initial state is a state of D; the
+states with `watch != Open AND task == Pending AND attempts < 3` are
+states of R; the guards are written so that I-5 holds in the
+unreachable states too. Every path reaches `settled` within five
+steps, so every profile is admissible at every valuation. Both
+profiles let D monitor and R be careful along the path that is
+played, so they give the same payoffs: u_R is V_3 as before, and
+u_D = 5·(1 − (1 − s)³) − κ. They differ in what R would do if D did
+not monitor: under `comply`, R is careful all the same; under
+`comply_if_watched`, R takes the shortcut before the first attempt.
+
+**R.** While D monitors, the game of R against either profile is the
+first example, so gain_R = max(0, 2·(λ\* − λ)) at the fixed values,
+with the λ\* of the first example. The states with `watch == Off` are
+not in Reach_R, and what the profile selects there does not matter
+for R.
+
+**D.** Against `comply`, trusting saves κ and changes nothing else,
+so gain_D = κ: for every κ > 0, D is a deviator and `comply` is not a
+Nash equilibrium, whatever λ is. Against `comply_if_watched`,
+trusting saves κ and lets R take the shortcut, which lowers the
+probability of delivery from 1 − (1 − s)³ to 1 − (1 − s/2)(1 − s)².
+With
+
+```text
+κ* = 5 · (s/2) · (1 − s)²
+```
+
+D loses 5·(s/2)(1 − s)² − κ by trusting, and gain_D = max(0, κ − κ\*).
+
+**`comply_if_watched` is a Nash equilibrium of a design, at the fixed
+values of the other parameters, exactly when λ ≥ λ\* and κ ≤ κ\*.**
+The behaviour that is played is the one of `comply`; it is an
+equilibrium only together with what the robot would do when it is not
+watched, which is what makes monitoring worth its cost.
+
+| | CENTRALIZED | DISTRIBUTED |
+| --- | --- | --- |
+| λ\* | 0.150108 | 0.060373 |
+| κ\* | 368638137651/3200000000000 = 0.115199 | 724187274219/3200000000000 = 0.226309 |
+| u_R, u_D under both profiles (λ = 0.1, κ = 0.05) | 8.539801, 7798786117651/1600000000000 = 4.874241 | 7.908184, 7470368854219/1600000000000 = 4.668981 |
+| u_D when D trusts, against `comply` / `comply_if_watched` | 4.924241 / 4.809042 | 4.718981 / 4.492672 |
+| `comply_nash`: gain_R, gain_D | 0.100217, 1/20 | 0, 1/20 |
+| `comply_nash`: status | `not_equilibrium`, deviators R and D | `not_equilibrium`, deviator D |
+| `watched_nash`: gain_R, gain_D | 0.100217, 0 | 0, 0 |
+| `watched_nash`: status | `not_equilibrium`, deviator R | `equilibrium` |
+
+In `comply_nash` the canonical best response of D is `trust` in the
+initial state. In `watched_nash` for DISTRIBUTED the one-step test
+holds for both players, so the result carries
+`from_every_state: true`.
+
+**The map.** `watched_map` opens λ and κ in CENTRALIZED. R is a
+deviator where λ < 0.150108 and D where κ > 0.115199. On the
+partition of the region into 16 equal cells, the conditions of I.9
+give the following; the columns are the intervals of λ, the rows
+those of κ:
+
+| κ \ λ | `[0, 0.1]` | `[0.1, 0.2]` | `[0.2, 0.3]` | `[0.3, 0.4]` |
+| --- | --- | --- | --- | --- |
+| `[0.3, 0.4]` | `not_equilibrium`, R and D | `not_equilibrium`, D | `not_equilibrium`, D | `not_equilibrium`, D |
+| `[0.2, 0.3]` | `not_equilibrium`, R and D | `not_equilibrium`, D | `not_equilibrium`, D | `not_equilibrium`, D |
+| `[0.1, 0.2]` | `not_equilibrium`, R | `undecided` | `undecided` | `undecided` |
+| `[0, 0.1]` | `not_equilibrium`, R | `undecided` | `equilibrium` | `equilibrium` |
+
+Four of the 16 cells are `undecided`, with the reason `bounds`: the
+undecided fraction is 1/4, which is the `resolution:` of the query.
+N decides the deviators: for R with the strategy that is careless
+before the first attempt while watched, whose payoff is least at the
+upper end of λ; for D with `trust`, against the payoff of the profile
+at the lower end of κ. In the cells of the second column and the two
+upper rows, D is a deviator and R is not established as one, because
+λ\* lies inside the column; `deviators` lists what is established. In
+the two `equilibrium` cells, E2 holds for both players (for D: the
+payoff of `trust`, 4.809042, is at most the lower bound 4.824241 of
+the payoff of the profile at κ = 0.1), so they carry
+`from_every_state: true`. E1 holds for R, whose payoff under the
+profile is constant, and fails for D, whose payoff under the profile
+falls with κ.
+
+## I.13 Intermediate Representation (IR) addition and results
 
 The field `stochastic_model` of
 [H.13](./appendix-h-stochastic.md) is extended for a strategic model.
 `kind` is `"smg"`. Every command has a field `owner` (a player `id`,
-or `null`), after `action`. Every property and regime map has a field
-`profile`, with the default filled in. Five fields are added after
-`regime_maps`, in this order:
+or `null`), after `action`. Every property has a field `profile`
+after `regimes`, and every regime map a field `profile` after
+`regimes`, with the default filled in. Every parameter has a field
+`open_in_equilibria` after `open`: true when some entry of
+`equilibria:` lists the parameter in `over:`. The `open` field keeps
+its meaning of H.13 (open in some regime map), and only `open`
+decides how a parameter is written by H.11: a parameter that is open
+in an equilibrium map only is exported with its fixed value. Five
+fields are added after `regime_maps`, in this order:
 
 ```jsonc
 {
@@ -1003,10 +1352,78 @@ or `null`), after `action`. Every property and regime map has a field
 Guards, targets, and weights are kept as text, like the expressions of
 H.13; the defaults of I.2 are filled in. `profiles` is a list in the
 order of the file. For a model of Appendix H the five fields are
-absent and `owner` and `profile` are not written, so the IR of a file
-that does not use the extension is unchanged. The `open` field of a
-parameter keeps its meaning of H.13 (open in some regime map). Results
-of analyses are not in the IR.
+absent and `owner`, `profile`, and `open_in_equilibria` are not
+written, so the IR of a file that does not use the extension is
+unchanged. Results of analyses are not in the IR.
+
+**Results (informative, but a processor that emits JSON SHOULD use
+this shape).** Exact numbers are strings: an integer, or a fraction
+`"n/d"` in lowest terms. The result of an equilibrium check
+(abridged):
+
+```jsonc
+{ "id": "comply_nash", "profile": "comply", "epsilon": "0",
+  "designs": [
+    { "design": "CENTRALIZED",
+      "parameters": { "p_fail": "1/20", "lambda": "1/10" /* ... every parameter */ },
+      "status": "not_equilibrium",            // equilibrium | not_equilibrium | inconclusive
+      "deviators": ["R"],                     // [] unless not_equilibrium
+      "from_every_state": null,               // true | false | null
+      "players": [
+        { "player": "R",
+          "payoff": "6831840915651/800000000000",
+          "best_response_value": "13824028895651/1600000000000",
+          "gain": "160347064349/1600000000000",
+          "best_response": [ { "state": { "task": "Pending", "attempts": 0, "settled": false },
+                               "action": "careless" } ] },
+        { "player": "D", "payoff": "7878786117651/1600000000000",
+          "best_response_value": "7878786117651/1600000000000", "gain": "0", "best_response": [] }
+      ] }
+    // ... DISTRIBUTED
+  ] }
+```
+
+The result of an equilibrium map query:
+
+```jsonc
+{ "id": "comply_by_lambda", "profile": "comply", "epsilon": "0",
+  "over": { "lambda": ["0", "1"] }, "resolution": "1/20",
+  "designs": [
+    { "design": "CENTRALIZED", "method": "...",
+      "cells": [
+        { "box": { "lambda": ["0", "1/8"] }, "status": "not_equilibrium", "deviators": ["R"] },
+        { "box": { "lambda": ["1/8", "5/32"] }, "status": "undecided", "reason": "bounds" },
+        { "box": { "lambda": ["5/32", "1"] }, "status": "equilibrium", "from_every_state": true }
+      ],
+      "undecided_fraction": "1/32", "resolution_reached": true }
+    // ... DISTRIBUTED
+  ] }
+```
+
+`players` is in the order of declaration, and `cells` in the
+lexicographic order of their lower corners, with the parameters in the
+order of `over:`; `best_response` is the
+canonical best response of I.7, with the values of all variables in
+declaration order, and is empty for a player without a gain above ε. A
+cell may also carry `deviations` (for each deviator, a strategy in the
+form of `best_response`) and `gain_bounds` (for each player, a pair of
+a lower and an upper bound).
+
+**Processor behaviour.** A processor that offers the checks and maps
+as a command MUST distinguish three outcomes by its exit status:
+
+| Exit status | Meaning |
+| --- | --- |
+| 0 | every requested result was computed, whatever the answers (`equilibrium` or `not_equilibrium`, any number of `undecided` cells within the resolution) |
+| 1 | some result is `inconclusive`, or some map did not reach its `resolution:` |
+| 2 | nothing can be claimed: a static error of the file, or a design that is not well-defined or a profile that is not admissible at the values at which the command was asked to evaluate |
+
+When the command lets the user give a parameter another value than its
+fixed value (as `--set` of `cadl model-check` does), the value MUST
+lie in the declared range, a parameter that the evaluated query lists
+in `over:` cannot be set, and the processor MUST check the conditions
+of I-8 again at the values it uses (and those of I-9 for a map) before
+it evaluates.
 
 ## I.14 Reference implementation status {/* #i14-reference-implementation-status */}
 
@@ -1014,41 +1431,59 @@ Games 0.1 is **not implemented** in `cadl` 0.3.22.
 
 - `cadl check` reports the extension name `games` as unknown, with an
   informational diagnostic, and reads the `model:` block by the rules
-  of Appendix H. For a strategic model it therefore reports
-  `kind: smg` as an error (S-1) and two commands of one player that
-  are enabled in the same state as an error (S-9), and it reports
-  `players:`, `payoffs:`, `equilibria:`, and `owner:` as reserved
-  (S-15). The example of I.12 does not pass `cadl check` 0.3.22, and
-  `stochastic_model` is `null` for it. This is the behaviour that I.15
-  asks of a processor without the extension, except for the two
-  errors.
+  of Appendix H as they stood before this appendix. For a strategic
+  model it therefore reports `kind: smg` as an error (S-1) and two
+  commands of one player that are enabled in the same state as an
+  error (S-9), and it reports `players:`, `payoffs:`, `equilibria:`,
+  and `owner:` as reserved (S-15). The examples of I.12 do not pass
+  `cadl check` 0.3.22, and `stochastic_model` is `null` for them. The
+  two errors are a deviation from S-1 and H.15 as amended, which ask
+  such a processor to skip the model with one informational
+  diagnostic.
 - Planned: the rules I-1 to I-11 in `cadl check`; a command
   `cadl game-check` that evaluates the equilibrium checks of I.8 with
   exact rational arithmetic and, with `--certify`, computes the
   equilibrium maps of I.9 by the relaxation of I.9 on top of the
   solvers of the certified regime maps
-  ([H.14](./appendix-h-stochastic.md#h14-reference-implementation-status));
-  the IR of I.13; and the export of I.11 in `cadl model-export`.
+  ([H.14](./appendix-h-stochastic.md#h14-reference-implementation-status)),
+  with the results and exit statuses of I.13; the IR of I.13; and the
+  export of I.11 in `cadl model-export`.
 - The numbers of I.12 were computed without an implementation of the
-  extension. For each of the eight strategies of R (careful or
-  careless before each of the three attempts) a Markov-chain variant
-  of the model was written by hand as a file of Appendix H, and the
-  expected values of `fee`, `effort`, and `shortcuts` were evaluated
-  in both designs with `cadl model-check` 0.3.22, which uses exact
-  rational arithmetic. The 48 values agree, as rational numbers, with
-  the closed forms of I.12, and the payoffs, best responses, and gains
-  of the tables follow from them.
-- The conditions N, E1, and E2 of I.9 were tried on the two maps of
-  I.12 with a script written for this model only, in which the
-  relaxation is worked out by hand. On the map over λ, N and E1
-  decide every cell except the one that contains λ\*. On the map over
-  λ and p_fail, N and E2 reach the resolution of 0.05 in both designs
-  (CENTRALIZED: 0.8088 of the region certified `equilibrium`, 0.1412
+  extension. First example: for each of the eight strategies of R
+  (careful or careless before each of the three attempts) a
+  Markov-chain variant of the model was written by hand as a file of
+  Appendix H, and the expected values of `fee`, `effort`, and
+  `shortcuts` were evaluated in both designs with `cadl model-check`
+  0.3.22, which uses exact rational arithmetic. The 48 values agree,
+  as rational numbers, with the closed forms of I.12, and the payoffs,
+  best responses, and gains of the tables follow from them. The two
+  statements "exactly when" about `comply` and `shortcut_first` were
+  compared with a search over the eight strategies at 7 935 pairs of
+  s and λ, among them values of s below c/g. Second example: the same
+  was done for all 128 profiles (two choices of D, 64 strategies of
+  R), 1 024 expected values in the two designs, and the gains of both
+  players were computed by a search over all deviations at 400 random
+  valuations of λ and κ per design.
+- The conditions N, E1, and E2 of I.9 were tried with scripts written
+  for these two models only, in which the relaxation is worked out by
+  hand. First example, map over λ: N and E1 decide every cell except
+  the one that contains λ\*. First example, map over λ and p_fail: N
+  and E2 reach the resolution of 0.05 in both designs (CENTRALIZED:
+  0.8088 of the region certified `equilibrium`, 0.1412
   `not_equilibrium`, 0.0499 undecided), and without E2 no
-  `equilibrium` cell is decided. Every decided cell was evaluated
+  `equilibrium` cell is decided; every decided cell was evaluated
   exactly at its corners, its centre, and six random rational points
-  (13 728 point evaluations), and the claim held at each of them. The
-  script is not part of `cadl` and proves nothing about other models.
+  (13 728 point evaluations), and the claim held at each of them.
+  Second example: the 16 cells of the table, with the 12 decided
+  cells evaluated at 300 points.
+- What this does not exercise: the first example has one deciding
+  player. The second has two, but its open parameters occur in
+  weights only, so its transition probabilities are constant on a
+  cell, D has a single state, and no cell needs the relaxation of
+  probabilities together with a second deciding player; the
+  admissibility check on faces, designs that are not multi-affine,
+  and ε greater than zero were not exercised at all. The scripts are
+  not part of `cadl` and prove nothing about other models.
 - The export of I.11 has not been run through PRISM-games.
 
 ## I.15 Backward compatibility
@@ -1056,7 +1491,7 @@ Games 0.1 is **not implemented** in `cadl` 0.3.22.
 Files written against CADL v0.3 without this extension remain valid
 and are read the same way. A file that declares `stochastic: 0.1` and
 not `games: 0.1` is read by Appendix H unchanged: the names that H.1
-reserves stay reserved for it, and S-9 and S-15 apply.
+reserves stay reserved for it, and S-1, S-9, and S-15 apply.
 
 A file that uses `kind: smg` or the keys of this appendix without
 declaring `games: 0.1` does not conform to this appendix. A processor
@@ -1066,10 +1501,11 @@ A file that declares `games: 0.1` without `stochastic: 0.1` gets the
 error of I-1.
 
 A processor that implements Appendix H and not this appendix cannot
-read a strategic model as a Markov chain. For a file that declares
-`games: 0.1` it MUST NOT apply the semantics of H.7 to a `model:`
-block with `kind: smg`: the block is not lowered to the IR, not
-exported, and not evaluated. It SHOULD say so in a single
-informational diagnostic. Processors that implement neither extension
-MUST NOT reject a file because of `model:`; they SHOULD emit a single
-informational diagnostic per file.
+read a strategic model as a Markov chain.
+[H.10 (S-1) and H.15](./appendix-h-stochastic.md) say what it does
+with a file that declares `games: 0.1` and has a model whose `kind:`
+is not `dtmc`: it skips the model with one informational diagnostic
+and MUST NOT evaluate it as a Markov chain; the block is not checked
+by S-2 to S-15, not lowered to the IR, and not exported. Processors
+that implement neither extension MUST NOT reject a file because of
+`model:`; they SHOULD emit a single informational diagnostic per file.

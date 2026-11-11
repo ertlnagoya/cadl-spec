@@ -264,24 +264,27 @@ Terms of the strategic model extension; see
   contracts ask for.
 - **Payoff** — What a player gains: a weighted sum of expected rewards
   accumulated until a target.
-- **Nash equilibrium / Deviation gain** — A profile is a Nash
-  equilibrium when no player gains by changing its own strategy alone;
-  the deviation gain of a player is its best-response value minus its
-  payoff under the profile.
+- **Nash equilibrium / Deviation gain** — A named profile is a Nash
+  equilibrium when no player gains by changing its own strategy alone
+  (a unilateral deviation); the deviation gain of a player is its
+  best-response value minus its payoff under the profile.
 - **Equilibrium map** — The answer to the question of where in a
   parameter region a profile is an equilibrium: cells that are
-  `equilibrium`, `not_equilibrium` (with a deviator), or `undecided`.
+  `equilibrium`, `not_equilibrium` (with its deviators), or
+  `undecided`.
 
 ## Grounding extension
 
 Terms of the grounding extension; see
 [Appendix J](./appendix-j-grounding.md).
 
-- **Derived index** — One of α̂, β̂, λ̂: a ratio of counts computed
-  from the norms of one contract. α̂ is the fraction of (item, party)
-  pairs that a norm or a sharing entry gives, β̂ the fraction of powers
-  held by the decision holder, and λ̂ the fraction of obligations and
-  prohibitions that carry a consequence.
+- **Derived index** — α̂ or β̂: a ratio of counts computed from the
+  norms of one contract. α̂ is the fraction of (declared item, party)
+  pairs that a sharing entry or a sharing norm gives; β̂ is the
+  largest share of the powers borne by one single actor.
+- **Incentive coverage** — χ: the fraction of the obligations and
+  prohibitions of a contract that carry a sanction or a reward. It is
+  not an index of λ, which is a scale.
 - **Information item** — A named piece of information of a contract,
   declared with the party it stems from.
 - **Magnitude** — The size of the sanction or of the reward of a norm

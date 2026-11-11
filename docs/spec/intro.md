@@ -106,8 +106,8 @@ the order below, but each chapter is also self-contained.
 - **[Appendix F — Norms Extension](./appendix-f-norms.md)** — Obligations, permissions, prohibitions and powers, counts-as rules, bounded temporal operators, and amendments.
 - **[Appendix G — Agent Governance Extension](./appendix-g-agents.md)** — Agents and tool servers as actors, allow / deny / escalate decisions from norms at the message boundary, delegation with provenance, and boundary-policy generation.
 - **[Appendix H — Stochastic Model Extension](./appendix-h-stochastic.md)** — A parametric Markov model in which α, β and λ appear, properties, regime map queries, and export to the PRISM language.
-- **[Appendix I — Strategic Model Extension](./appendix-i-games.md)** — Players, profiles and payoffs on the model of Appendix H, Nash equilibrium checks, and equilibrium maps over institutional parameters.
-- **[Appendix J — Grounding of the Institutional Parameters](./appendix-j-grounding.md)** — Indices of α, β and λ derived from the norms of a contract, their relation to the declared values, and the link from a sanction to a payoff term.
+- **[Appendix I — Strategic Model Extension](./appendix-i-games.md)** — Players, profiles and payoffs on the model of Appendix H, checks that a named memoryless deterministic profile is an equilibrium against unilateral deviations, and equilibrium maps over institutional parameters.
+- **[Appendix J — Grounding of the Institutional Parameters](./appendix-j-grounding.md)** — Indices for α and β and a coverage measure for incentives, derived from the norms of a contract; their comparison with the declared values; and the payoff term of a sanction.
 - **[Glossary](./glossary.md)** — Terms used throughout the specification.
 
 ## Suggested Reading Paths
@@ -184,14 +184,16 @@ Version 0.2 is valid under Version 0.3 and is read the same way.
   and defines the regime map as a query on it.
 - **Strategic model extension**: `games: 0.1`
   ([Appendix I](./appendix-i-games.md)) reads that model as a
-  turn-based game among players and defines whether a profile, in
-  particular compliance, is a Nash equilibrium, also as a map over
+  turn-based game among players and defines whether a named
+  memoryless deterministic profile, in particular compliance, is an
+  equilibrium against unilateral deviations, also as a map over
   parameters. It is specified and not yet implemented in the reference
   implementation.
 - **Grounding extension**: `grounding: 0.1`
-  ([Appendix J](./appendix-j-grounding.md)) derives indices of α, β,
-  and λ from the norms of a contract, checks the declared values
-  against them, and links the sanction of a norm to a payoff term. It
+  ([Appendix J](./appendix-j-grounding.md)) derives indices for α
+  and β and a coverage measure for incentives from the norms of a
+  contract, compares the declared values with the indices, and
+  defines the payoff term of the sanction of a norm. It
   is specified and not yet implemented in the reference
   implementation.
 

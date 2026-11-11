@@ -646,11 +646,13 @@ the other parties can observe; and λ, the incentive intensity, scales
 the sanctions of violated norms.
 
 The grounding extension
-([Appendix J](./appendix-j-grounding.md), `grounding` 0.1) makes part
-of this reading precise without changing this appendix: it derives
-three indices from the norms of a contract, relates them to the
-declared parameters, and gives a sanction a numeric magnitude that a
-strategic model multiplies by λ.
+([Appendix J](./appendix-j-grounding.md), `grounding` 0.1) defines
+indices related to this reading without changing this appendix: for
+β, the concentration of the powers of a contract; for α, the sharing
+of declared information items (not the observability of triggers and
+contents); and, for λ, a numeric magnitude of a sanction that a
+strategic model multiplies by λ, together with a count of the norms
+that carry a sanction or a reward.
 
 ## F.8 Example
 

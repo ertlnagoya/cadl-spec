@@ -229,3 +229,5 @@ description: "References cited in the CADL specification."
 [112] T. Chen, V. Forejt, M. Kwiatkowska, D. Parker, and A. Simaitis, "Automatic verification of competitive stochastic systems," Formal Methods in System Design, vol. 43, no. 1, pp. 61-92, 2013, doi:10.1007/s10703-013-0183-7.
 
 [113] C. Mu, "Automated Game-Theoretic Verification of Security Systems," in Proc. QEST, LNCS 11785, Springer, pp. 239-256, 2019, doi:10.1007/978-3-030-30281-8_14.
+
+[114] C. Baier and J.-P. Katoen, Principles of Model Checking, MIT Press, Cambridge, MA, 2008, ISBN 978-0-262-02649-9.

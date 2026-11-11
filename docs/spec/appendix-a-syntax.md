@@ -552,7 +552,10 @@ deviates from this appendix as follows (checked against `cadl` 0.3.22).
   and `grounding` 0.1
   ([Appendix J, J.11](./appendix-j-grounding.md#j11-reference-implementation-status))
   are specified and not implemented in `cadl` 0.3.22: their names get
-  the informational diagnostic for an unknown extension.
+  the informational diagnostic for an unknown extension. For a model
+  with `kind: smg`, `cadl check` 0.3.22 reports errors of S-1 and S-9
+  where H.10 and H.15 ask for one informational diagnostic, and it
+  ignores the keys of Appendix J without a diagnostic.
 
 Releases of `cadl` before 0.3.7 differed in several of these points; the history
 is in the

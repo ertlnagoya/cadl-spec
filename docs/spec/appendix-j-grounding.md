@@ -1,7 +1,7 @@
 ---
 sidebar_position: 20
 title: "Appendix J: Grounding of the Institutional Parameters"
-description: "Grounding extension (grounding 0.1): indices of information sharing, decision centralisation, and incentive coverage derived from the norms of a contract, rules that relate them to the declared alpha, beta, and lambda, numeric magnitudes of sanctions and rewards, and the link from a sanction to a payoff term of a strategic model."
+description: "Grounding extension (grounding 0.1): an index of information sharing, an index of the concentration of powers, and a coverage measure for incentives, derived from the norms of a contract; rules that compare the declared alpha and beta with the indices; numeric magnitudes of sanctions and rewards; and the definition of the payoff term of a sanction in a strategic model as the magnitude times lambda."
 ---
 
 # Appendix J — Grounding of the Institutional Parameters in Norms (grounding 0.1)
@@ -15,11 +15,12 @@ keys `shares:` and `on_fulfilment:` to `norm_def` and the key
 the strategic model extension
 ([Appendix I](./appendix-i-games.md)), the keys `sanction_of:` and
 `reward_of:` to a payoff term (I.2). With them, a processor computes
-from the norms of a contract three **derived indices** α̂, β̂, and λ̂ in
-`[0, 1]`, compares them with the declared `alpha`, `beta`, and
-`lambda`, and checks that the payoff term which stands for the
-sanction of a norm in a strategic model has the size the norm
-declares, multiplied by λ.
+from the norms of a contract two **derived indices**, α̂ and β̂, and
+the **incentive coverage** χ, all in `[0, 1]`, and compares the
+declared `alpha` and `beta` with the indices. The extension also
+defines the weight of a payoff term that is declared to stand for the
+sanction of a norm in a strategic model: the size the norm declares,
+multiplied by λ.
 
 The core language does **not** mandate these keys; a conforming CADL
 processor that does not implement the extension MUST NOT reject a file
@@ -57,25 +58,35 @@ parameter of the contracts. The classification of institutional rules
 by what they affect, among them information rules, aggregation rules,
 and payoff rules [[Ostrom, 2005]](./appendix-b-references.md), suggests
 that the three parameters summarise three kinds of norms. Grounding
-0.1 is a first step:
+0.1 is a first step. It does not give α, β, and λ a formal meaning in
+terms of norms; that remains open beyond what follows.
 
-- **Indices are computed from the file.** J.4 defines α̂, β̂, and λ̂ as
-  ratios of counts over finite sets that are read from one contract.
-  They are reproducible, and they move in the expected direction when
-  a norm is added (the lemmas of J.4).
+- **Two indices and a coverage are computed from the file.** J.4
+  defines α̂, β̂, and χ as ratios of counts over finite sets that are
+  read from one contract. They are reproducible in the sense that two
+  processors compute the same numbers from the same file. For α̂ both
+  counts rest on annotations of the author (the items and the
+  `shares:` lists), so the index is as good as the annotation.
 - **Indices are evidence, not meaning.** The indices do not replace
   the declared parameters and do not change Section 5.4.2. They are
   structural facts about the norms of a contract with which a declared
   value can agree or disagree. J.4 says what they cannot capture.
-- **Declared values are checked against them.** A declared end point
-  that a norm of the same contract contradicts is an error; other
-  disagreements are warnings (J.5).
+- **Declared values are compared with them.** A disagreement between a
+  declared α or β and its index is a warning that names the construct
+  concerned (J.5). No rule of this appendix makes a file invalid that
+  is valid under Appendix F and uses none of the new keys (J.12).
+- **λ is a scale.** In this appendix λ multiplies the sizes of
+  sanctions and rewards; it is not compared with a derived index. χ
+  measures something else: how many norms carry a sanction or a reward
+  that λ could scale.
 - **Sanctions get a size, and the model uses it.** `magnitude:` gives
   the sanction or the reward of a norm a number. In a strategic model,
-  a payoff term declared with `sanction_of:` has the weight
-  −magnitude·λ, where λ is the parameter bound to the `lambda` of the
-  contract (J.7). This is where λ enters the equilibrium question of
-  Appendix I.
+  a payoff term declared with `sanction_of:` has, by definition, the
+  weight −magnitude·λ, where λ is the parameter bound to the `lambda`
+  of the contract (J.7). That the term represents the sanction, that
+  is, that its reward structure counts the violations of the norm,
+  remains the author's assumption, and every result computed with such
+  a term is reported with it.
 
 **Scope of version 0.1.**
 
@@ -85,8 +96,9 @@ that the three parameters summarise three kinds of norms. Grounding
   they are not derived from actor interfaces, predicates, or messages.
 - The indices are counts. They are not weighted by magnitudes, by
   severities, or by the number of norms a power affects.
-- `magnitude:` has no effect on the dynamic semantics of Appendix F:
-  verdicts, violations, and reparations are unchanged.
+- `magnitude:` and `on_fulfilment:` have no effect on the dynamic
+  semantics of Appendix F: verdicts, violations, and reparations are
+  unchanged.
 - The extension does not derive a model from norms and does not check
   that a reward structure of a model counts the violations of a norm
   (H.8 defines no translation between a norm and a model).
@@ -99,12 +111,13 @@ that the three parameters summarise three kinds of norms. Grounding
 | Concept | Meaning in grounding 0.1 |
 | --- | --- |
 | **Actor name** | The identifier of an actor reference, without its index: `ROBOT` for `ROBOT[i]`, `"ROBOT[*]"`, and `ROBOT[2]`. |
-| **Party name** | The actor name of an entry of `parties:` of the contract. |
-| **Information item** | A named piece of information declared in `grounding.items`, with its **origin**, the party from which it stems. |
+| **Party name** | The actor name of an entry of `parties:` of the contract. Entries with one actor name are one party. |
+| **Single actor** | An actor reference with an integer index, or without an index when the actor is declared without a range. |
+| **Information item** | A named piece of information declared in `grounding.items`, with its **origin**, the party from which it stems. An item has one origin; information that stems from two parties is declared as two items. |
 | **Sharing norm** | An obligation or a permission whose content is a message and which has `shares:`; its message gives the listed items to the receiver. |
-| **Backed norm** | An obligation or a prohibition that carries a consequence: a sanction, a reparation, or a reward (J.4). |
 | **Magnitude** | A number that is not negative: the size of a sanction or of a reward at full incentive intensity (λ = 1), in the unit of account of the contract. |
-| **Derived index** | One of α̂, β̂, λ̂: a rational number in `[0, 1]` computed from one contract, or undefined. |
+| **Derived index** | α̂ or β̂: a rational number in `[0, 1]` computed from one contract, or undefined. |
+| **Incentive coverage** | χ: the fraction of the obligations and prohibitions of a contract that carry a sanction or a reward, or undefined. |
 
 Norm, obligation, permission, prohibition, power, and bearer have the
 meaning of [Appendix F](./appendix-f-norms.md).
@@ -140,179 +153,247 @@ norm_ref        = identifier , "." , identifier ;               (* string *)
 - `shares:` lists the information items that the message of a sharing
   norm conveys.
 - `on_violation.magnitude` is the size of the sanction of the norm.
-  `on_fulfilment:` records a reward for fulfilling the norm:
+- `on_fulfilment:` records a reward for fulfilling the norm:
   `reward:` describes it in text, as `sanction:` describes a sanction,
-  and `magnitude:` is its size. `on_fulfilment:` has no effect on the
+  and `magnitude:` is its size. The reward is deemed paid when the
+  norm instance reaches the state `fulfilled` of F.5: for an
+  obligation, when its content is brought about in time; for a
+  prohibition, when its window closes or the contract instance ends
+  without a violation. It is not paid when the instance is
+  `discharged`, although the verdict of a discharged instance is
+  `fulfilled`. The block is an annotation and has no effect on the
   semantics of Appendix F.
 - A `norm_ref` is a quoted string `"C.n"`: the `id` of a contract, a
   dot, and the `id` of a norm of that contract.
 
-An unquoted item name that a YAML 1.1 loader reads as a boolean or
-null MUST be quoted
+An empty text (`sanction: ""`, `reward: ""`) and a YAML null count as
+absent. An unquoted item name that a YAML 1.1 loader reads as a
+boolean or null MUST be quoted
 ([A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)).
 
-## J.4 The derived indices
+## J.4 The derived indices and the coverage
 
-The indices are defined for one contract C of a file that declares the
-extension. Each is a ratio of two counts, or **undefined** when its
-denominator is zero or a precondition stated below fails. An undefined
-index takes part in no rule of J.5.
+The three quantities are defined for every contract C of a file that
+declares the extension. Each is a ratio of two counts, or
+**undefined** when its denominator is zero. An undefined quantity
+takes part in no comparison of J.5.
 
 ### Information sharing: α̂
 
 Let Π be the set of party names of C, X the set of items of
 `grounding.items`, and o(x) the origin of an item x (a party name,
 J-2). The **pairs** of C are the pairs (x, q) of an item x and a party
-name q other than o(x): the places where an item can be shared. A pair
-(x, q) is **given** when at least one of the following is in C:
+name q other than o(x): the places where an item can be shared with a
+party.
 
-- an entry `"S -> T : x"` of `information.sharing` whose item is x and
-  whose target T has the actor name q;
-- a sharing norm whose `shares:` lists x and whose content is a
-  message `S -> T : m` in which T has the actor name q.
+An actor reference T **denotes the whole party** q when its actor
+name is q and it has no index, the index `*`, an identifier as index
+(an index variable such as `i`, which stands for every member in
+turn), or the range with which the actor is declared; it also does
+when it has an integer index and is the only entry of `parties:` with
+that actor name. Otherwise (an integer index, or another range) it is
+**member-specific**. Indices and ranges are compared as written,
+ignoring white space.
+
+A pair (x, q) is given
+
+- **by a sharing entry**, when an entry `"S -> T : x"` of
+  `information.sharing` has the item x and a target T that denotes the
+  whole party q;
+- **by an obligation**, or **by a permission**, when a sharing norm of
+  that kind lists x in `shares:` and has as content a message
+  `S -> T : m` whose receiver T denotes the whole party q.
+
+A pair is **given** when it is given in at least one of the three
+ways.
 
 ```text
 α̂  =  (number of given pairs) / (number of pairs)
 ```
 
-α̂ is undefined when there is no pair (no item, or a single party).
-α̂ = 0 exactly when nothing is given to a party other than its origin,
-which is the end point "no sharing" of 5.4.2; α̂ = 1 exactly when every
-party is given every item of the others, the end point "complete
-sharing". An obligation and a permission count alike: the index
-records that a norm makes or lets a party have an item, not that the
-party has it. A processor reports the given pairs with the entry or
-norm that gives each.
+α̂ is undefined when there is no pair (no item, or a single party
+name). α̂ = 0 exactly when no pair is given, which corresponds, for
+the declared items only, to the end point "no sharing" of 5.4.2;
+α̂ = 1 exactly when every pair is given, which corresponds, for the
+declared items only, to "complete sharing". A processor reports, with
+α̂, the number of pairs given in each of the three ways, the pairs
+that are not given, and the **member-specific** entries and norms: an
+entry or norm that would give a pair but whose target is
+member-specific (as in `"DISPATCHER -> ROBOT[3] : route"`) gives no
+pair and is listed separately.
 
-### Decision centralisation: β̂
+What the definition does not look at:
+
+- The source S is not examined: an entry gives the item to T whoever
+  sends it.
+- A target that is not a party of the contract gives no pair; a
+  processor SHOULD warn (J-3).
+- The state of a norm is ignored: a sharing norm counts whether or not
+  it has a `trigger:`, an `until:`, or a `deadline:`, and whether it
+  is active from the start or only as a reparation or by a power.
+- A prohibition of the same message does not remove a pair; N-12 of
+  Appendix F warns about such a conflict.
+- An obligation and a permission both give a pair. The index records
+  that a norm makes or lets a party have an item, not that the party
+  has it; the three counts keep the difference visible.
+- A contract whose parties are one actor set has a single party name
+  and no pair, so α̂ is undefined for it. Sharing among peers, which is
+  what matters in a collaborative SoS of equal constituents, is
+  therefore not measured in version 0.1.
+
+### Concentration of powers: β̂
 
 The **decision points** of C are its powers (F.2). A power is the only
 construct of a contract whose exercise changes the state of other
 norms with a defined effect (F.5); `authority.decision_scope` is text
-and is not counted. Let h be `authority.decision_holder`. A power is
-**held centrally** when its `bearer:` is the same actor reference as
-h: the same actor name and the same index (no index, or the same
-integer). h **names one actor** when it has an integer index, or has
-no index and the actor is declared without a range.
+and is not counted. For a single actor a (J.2), let k(a) be the number
+of powers of C whose `bearer:` is the reference a (the same actor
+name and the same index). A power whose bearer is not a single actor,
+as `ROBOT[i]`, is held by each member for itself and counts for no
+single actor.
 
 ```text
-β̂  =  (number of powers held centrally) / (number of powers)
+β̂  =  (largest k(a) over the single actors a) / (number of powers)
 ```
 
-β̂ is undefined when C has no power, when C has no `decision_holder`,
-or when h does not name one actor (as `"ROBOT[*]"`). β̂ = 1 exactly when the decision holder
-holds every power, the end point "single actor decides all" of
-5.4.2; β̂ = 0 exactly when it holds none, so that every decision point
-lies with other parties. A power whose bearer is `ROBOT[i]` is held by
-each robot for itself and is not held centrally, whoever h is.
+β̂ is 0 when no power is borne by a single actor, and undefined only
+when C has no power. It is the largest share of the decision points of
+the contract that lie with one actor: a **concentration** index. β̂ = 1
+exactly when one single actor bears every power, which corresponds,
+for the powers only, to the end point "single actor decides all" of
+5.4.2; β̂ = 0 exactly when no single actor bears a power.
 
-### Incentive coverage: λ̂
+β̂ does not depend on `authority.decision_holder`. A processor reports
+with β̂: the number of powers per bearer; for each power, the number of
+norms named in its `effects:`; and, when the decision holder names a
+single actor h, the **share of the decision holder** k(h) divided by
+the number of powers. The counts are not weighted by the effects: a
+power that discharges one norm and a power that discharges another
+party's power count alike.
 
-Let N be the set of obligations and prohibitions of C. A norm of N is
-**backed** when at least one of the following holds:
+### Incentive coverage: χ
 
-- it has `on_violation.reparation`;
-- it has `on_violation.magnitude` greater than zero, or it has
-  `on_violation.sanction` and no `on_violation.magnitude`;
-- it has `on_fulfilment.magnitude` greater than zero, or it has
-  `on_fulfilment.reward` and no `on_fulfilment.magnitude`.
+Let N be the set of obligations and prohibitions of C. A norm of N
+**carries an incentive** when at least one of the following holds:
+
+- it has an `on_violation.sanction` that is not empty;
+- it has an `on_violation.magnitude` greater than zero;
+- it has an `on_fulfilment.reward` that is not empty, or an
+  `on_fulfilment.magnitude` greater than zero.
 
 ```text
-λ̂  =  (number of backed norms) / (number of norms in N)
+χ  =  (number of norms of N that carry an incentive) / (number of norms in N)
 ```
 
-λ̂ is undefined when N is empty. λ̂ = 0 exactly when no obligation or
-prohibition carries a consequence, the end point "directive-based" of
-5.4.2; λ̂ = 1 exactly when each of them does. A `magnitude:` of zero
-says that the consequence has no size, so the norm is not backed by
-it. `severity:` and `on_violation.transition` do not make a norm
-backed: they classify the violation and move the contract instance,
-and neither falls on the bearer.
+χ is undefined when N is empty. χ = 0 exactly when no obligation or
+prohibition carries a sanction or a reward, and χ = 1 exactly when
+each of them does. χ is not an index of λ. It counts the norms that
+have something for λ to scale; λ says by how much (J.7).
 
-### Monotonicity
+Two further counts are reported separately and are not part of χ: the
+norms of N that carry no incentive and have an
+`on_violation.reparation` (their violation creates a further duty,
+not a sanction), and the norms of N that have an
+`on_violation.transition` (their violation moves or ends the contract
+instance). `severity:` is not counted anywhere: it classifies a
+violation.
 
-The indices are invariant under renaming and reordering, and they
-move as follows. In each lemma everything not mentioned stays the
-same, and the index is defined before and after.
+### How the quantities move
+
+The three quantities are invariant under renaming and under
+reordering of norms, items, and parties. They are **not** invariant
+under splitting or merging: one power written as two, or two
+obligations merged into one, changes β̂ or χ although the contract
+asks the same of the parties. In each lemma everything not mentioned
+stays the same, and the quantity is defined before and after.
 
 - **Lemma 1 (α̂).** Adding an entry to `information.sharing`, adding
   an item to the `shares:` of a sharing norm, or adding a sharing norm
   never lowers α̂. *Proof.* The set of pairs is unchanged, and every
-  pair that was given is still given.
-- **Lemma 2 (β̂).** Adding a power whose bearer is the decision holder
-  never lowers β̂, and adding a power with another bearer never raises
-  it. *Proof.* With k of n powers held centrally, k ≤ n, so
-  k/n ≤ (k + 1)/(n + 1) and k/(n + 1) ≤ k/n.
-- **Lemma 3 (λ̂).** Giving a consequence to an obligation or a
-  prohibition that had none raises λ̂ by 1/|N|; adding a backed norm
-  never lowers λ̂, and adding a norm that is not backed never raises
-  it. *Proof.* As for Lemma 2, with the backed norms among the norms
-  of N.
+  pair that was given is still given. Adding an item or a party, in
+  contrast, adds pairs and can lower α̂.
+- **Lemma 2 (β̂).** Adding a power whose bearer is a single actor with
+  the largest k(a) never lowers β̂, and adding a power whose bearer is
+  not a single actor never raises it. *Proof.* With the largest count
+  k among n powers, k ≤ n, so k/n ≤ (k + 1)/(n + 1) and
+  k/(n + 1) ≤ k/n.
+- **Lemma 3 (χ).** Making an obligation or a prohibition carry an
+  incentive that carried none (by a sanction text that is not empty,
+  or a magnitude greater than zero) raises χ by 1/|N|; a magnitude of
+  zero does not. Adding a norm to N that carries an incentive never
+  lowers χ, and adding one that carries none never raises it.
+  *Proof.* As for Lemma 2.
 
-### What the indices do not capture
+### What the quantities do not capture
 
 - α̂ counts entitlements and duties to share, not what a party
   observes in operation, and not the quality or the delay of the
-  information. Sharing among the members of one actor set (robot to
-  robot) is not a pair. The items are those the author lists.
+  information. The items are those the author lists.
 - β̂ counts powers. Decisions that are not institutional acts, such as
   who plans a route, are not norms and are not counted; all powers
   weigh the same, whatever their effects.
-- λ̂ says how many norms carry a consequence, not how large the
-  consequences are or how likely they are to be applied. It is a
-  measure of coverage. The size of the incentive is what `magnitude:`
-  and λ express together (J.7). Section 5.4.2 describes λ by the kind
-  of governance at its end points, and Appendix F reads it as a scale
-  of sanctions; λ̂ grounds the first reading, and J.7 uses the second.
-- No index says anything about behaviour. Whether more sharing or a
+- χ says how many norms carry a sanction or a reward, not how large
+  these are or how likely they are to be applied.
+- Only the product of a magnitude and λ enters any result of J.7.
+  Within one contract, λ and the magnitudes are not identified
+  separately: doubling every magnitude and halving λ changes nothing.
+- The core keys `incentives.type`, `incentives.rules`, and
+  `violation.action` are text and are ignored; a contract can have
+  incentives there that χ does not see.
+- Under the enforcement of [Appendix G](./appendix-g-agents.md), a
+  prohibited message is denied at the boundary and cannot be sent, so
+  the prohibition needs no sanction to be effective. A coverage of 0
+  in an enforced contract is therefore not "no incentive".
+- No quantity says anything about behaviour. Whether more sharing or a
   stronger incentive improves a property is a question for the models
   of Appendices H and I.
 
 ## J.5 Relation to the declared parameters
 
-For a contract that declares `alpha`, `beta`, or `lambda`, a processor
-computes the corresponding index and reports both and their
-difference (J-5). The rules distinguish three kinds of disagreement.
+A processor computes the three quantities for every contract and
+reports them (J-5). For `alpha` and `beta` it reports the declared
+value, the index, and their difference, and compares them. Every
+disagreement is a **warning**: the indices are evidence about the
+norms, and declaring this extension never makes a valid file invalid.
 
-**A declared end point contradicted by a norm: error.** The end points
-of 5.4.2 are universal statements ("no sharing", "single actor
-decides all"). When a construct of the same contract is a
-counterexample to the statement, the contract contradicts itself, and
-the processor can name the construct. These cases are errors (J-6):
+**A declared end point with a counterexample in the contract.** The
+end points of 5.4.2 are universal statements. When a construct of the
+same contract is a counterexample, a processor SHOULD warn and name
+the construct (J-6):
 
-| Declared | Contradicted by |
+| Declared | Counterexample named in the warning |
 | --- | --- |
-| `alpha: 0` | a given pair: an entry or a sharing norm gives an item to a party other than its origin |
-| `beta: 1` | a power whose bearer is not the decision holder |
-| `beta: 0` | a power whose bearer is the decision holder |
+| `alpha: 0` | a given pair, with the entry or sharing norm that gives it; when α̂ is undefined, a non-empty `information.sharing` |
+| `alpha: 1` | the pairs that are not given (absence of a norm does not show that a party lacks an item, so this is the weakest of the four) |
+| `beta: 1` | a power whose bearer is not the single actor with the largest share |
+| `beta: 0` | a single actor that bears a power |
 
-**A declared end point without support: warning.** `alpha: 1` while a
-pair is not given is not a contradiction: that no norm gives an item
-to a party does not show that the party lacks it. A processor SHOULD
-warn and list the pairs that are not given (J-7).
+**An intermediate value far from the index.** For α and β, a processor
+SHOULD warn when the declared value and the index differ by more than
+the tolerance of the contract and J-6 gives no warning for that
+parameter (J-7). The default tolerance is 0.25: the indices are
+coarse, and a contract with few norms has few possible index values
+(with two powers, β̂ is 0, 1/2, or 1). An author who accepts a larger
+difference states it with `grounding.tolerance`. A processor SHOULD
+also warn when the decision holder names a single actor whose share is
+smaller than β̂: the powers are then concentrated in another actor.
 
-**An intermediate value far from the index: warning.** For α and β, a
-processor SHOULD warn when the declared value and the index differ by
-more than the tolerance of the contract (J-7). The default tolerance
-is 0.25: the indices are coarse, and a contract with few norms has
-few possible index values (with two powers, β̂ is 0, 1/2, or 1). An
-author who accepts a larger difference states it with
-`grounding.tolerance`.
-
-**λ is not compared by tolerance.** λ̂ measures coverage, and the
-declared λ is used in J.7 as the scale of the sanctions. A contract
-in which every norm is sanctioned mildly has λ̂ = 1 and a small λ, and
-is consistent. A processor reports λ, λ̂, and their difference, and
-SHOULD warn in two cases only (J-8): `lambda` is greater than zero
-while λ̂ = 0, so that λ has nothing to scale in the norms of the
-contract; and `lambda: 0` while a norm of the contract has a
-magnitude greater than zero, so that the declared sizes have no
-effect.
+**λ is not compared with a number.** λ is a scale, and χ is a
+coverage; a contract in which every norm is sanctioned mildly has
+χ = 1 and a small λ and is consistent. A processor reports χ next to
+the declared `lambda` and SHOULD warn in two cases only (J-8):
+`lambda` is greater than zero while no obligation or prohibition of
+the contract carries an incentive (χ = 0, or N is empty), so that λ
+has nothing to scale in the norms; and `lambda: 0` while some norm
+carries an incentive, so that what the norm declares has no effect in
+a model.
 
 **Versions of a contract.** A processor that compares two versions of
-a contract (F.6) SHOULD warn when a declared value and its index move
-in opposite directions (J-13): for example, `beta` is raised while an
-amendment gives a power to a robot.
+a contract (F.6) reports what changed in the keys of this appendix
+(magnitudes, `on_fulfilment:`, `shares:`, items) and SHOULD warn when
+a declared value and its index move in opposite directions (J-13):
+for example, `beta` is raised while an amendment gives a power to a
+robot.
 
 ## J.6 The parameters in the models of Appendices H and I
 
@@ -331,9 +412,7 @@ value. A regime that assigns another value describes an operating mode
 therefore compares the fixed value of a parameter bound to `C.alpha`
 or `C.beta` with the index of C in every design, and SHOULD emit an
 informational diagnostic, not a warning, for a design in which they
-differ by more than the tolerance (J-9). In H.12 this would tell the
-reader that the norms of the contract, if they gave every power to the
-dispatcher, describe the regime CENTRALIZED and not DISTRIBUTED.
+differ by more than the tolerance (J-9).
 
 **What stays open.** A regime has no norms of its own, so the values
 that regimes assign to α and β cannot be checked against indices, and
@@ -345,8 +424,8 @@ are not defined.
 ## J.7 λ: from the sanction of a norm to a payoff term
 
 In a strategic model ([Appendix I](./appendix-i-games.md)), a payoff
-term may name the norm whose sanction or reward it represents instead
-of giving a weight:
+term may name the norm whose sanction or reward it is declared to
+represent, instead of giving a weight:
 
 ```yaml
 - { reward: shortcuts, sanction_of: "DELIVERY.no_shortcut" }
@@ -363,60 +442,102 @@ defined as
 | `reward_of: "C.n"` | m′ · ℓ, with m′ the `on_fulfilment.magnitude` of n |
 
 The term is otherwise a term of I.6, and Appendix I applies to it
-unchanged. The reward structure of the term is the author's statement
-of how often the sanction is applied, or the reward paid, in the
-model: its accumulated reward counts the violations, or the
-fulfilments, of the norm.
+unchanged.
 
-**What a processor checks (J-10 to J-12).** The norm exists, is an
+**The assumption that is not checked.** The reward structure of the
+term is the author's statement of how often the sanction is applied,
+or the reward paid, in the model. The convention is: the accumulated
+reward of a `sanction_of:` term counts the violations of the norm,
+and that of a `reward_of:` term its fulfilments, over all contract
+instances within one run of the model; a run may span several contract
+instances. No processor can check this. Appendix F judges a norm on a
+timed trace and Appendix H evaluates a model in steps, and no
+translation between the two is defined. Every result computed with a
+payoff that has such a term MUST therefore be reported together with
+the assumption, for each term: "the reward structure r is taken to
+count the violations (fulfilments) of C.n" (J-12).
+
+**Who bears it.** A sanction is a loss of the bearer of the norm: a
+`sanction_of:` term stands in the payoff of the player that stands
+for the bearer, and nowhere else. This appendix does not say where the
+amount goes. When it is a transfer to the counterparty, the author
+writes a second, ordinary term in the payoff of the counterparty's
+player, with the same reward structure and an explicit weight
+(`weight: "2 * lambda"`); the size of that term is not checked against
+the norm (J-11).
+
+**What a processor checks (J-10, J-11).** The norm exists, is an
 obligation or a prohibition, and declares the magnitude; the player
-of the payoff stands for the bearer of the norm; a norm is represented
-at most once; every norm of C with a magnitude whose bearer is a
-player of the model is represented, once the model represents any; and
-the compliance profile incurs no sanction. The size and the factor λ
-are then correct by construction, since the file states the magnitude
-once. **What it cannot check:** that the reward structure counts the
-violations of the norm. Appendix F judges a norm on a timed trace and
-Appendix H evaluates a model in steps, and no translation between the
-two is defined.
+of the payoff stands for the bearer of the norm; a norm is named at
+most once by each key; and every norm of C with a magnitude whose
+bearer is a player of the model is named, once the model names any.
+The size and the factor λ hold by definition, since the file states
+the magnitude once.
 
-**The shape of the answer.** Let σ be a profile, D a design, and
-suppose that (i) ℓ occurs in no probability, in no reward value, and
-in no weight of the model other than those of `sanction_of:` terms,
-and (ii) under σ the reward structure of every `sanction_of:` term of
-a player p has the expected accumulated value 0. Then, with all other
-parameters fixed:
+**The shape of the answer.** Let σ be a profile, D a design, and ℓ a
+parameter, with all other parameters fixed. Consider two conditions:
 
-> **Proposition.** gain_p is a non-increasing, convex, piecewise
-> linear function of ℓ. If (i) and (ii) hold for every player, then on
-> every interval of values of ℓ on which D is well-defined, the set of
-> values at which σ is an ε-equilibrium of D is empty or consists of
-> the values ℓ ≥ λ\* of the interval, for a threshold λ\*.
+- **(i)** ℓ occurs in no probability and in no reward value of the
+  model, and every weight in which ℓ occurs is affine in ℓ (ℓ does
+  not occur in it with a power above one).
+- **(ii) for a player p:** every term of p in whose weight ℓ occurs
+  has a weight −m·ℓ with m ≥ 0, as `sanction_of:` terms have, and
+  under σ the expected accumulated value of its reward structure is 0.
 
-*Proof.* By (i), the probabilities and therefore every expected
-accumulated reward do not depend on ℓ. For a strategy τ of p, the
-payoff of p under σ[p↦τ] is A(τ) − ℓ·B(τ), where B(τ) is the sum,
-over the `sanction_of:` terms of p, of the magnitude times the
-expected accumulated reward, which is not negative, and A(τ) collects
-the other terms. By (ii), the payoff under σ is the constant A(σ). So
-gain_p = max over τ of (A(τ) − ℓ·B(τ)) − A(σ), a maximum of finitely
-many non-increasing affine functions (I.7), which is continuous. The
-set where every gain is at most ε is therefore closed and contains,
-with a value, every greater one. Whether D is stopping does not depend
-on ℓ. ∎
+> **Proposition.** Assume (i). Whether D is well-defined and whether σ
+> is admissible do not depend on ℓ. Where they hold:
+>
+> 1. Every gain_p is a convex, piecewise linear function of ℓ. On an
+>    interval of values of ℓ, the set of values at which σ is an
+>    ε-equilibrium of D is a closed interval, possibly empty. In
+>    particular, σ is an ε-equilibrium at every value between a and b
+>    if it is one at a and at b.
+> 2. If (ii) holds for p, gain_p is non-increasing in ℓ: if
+>    gain_p > ε at b, then gain_p > ε at every value below b.
+> 3. If (ii) holds for every player, the set of 1 is empty or consists
+>    of the values ℓ ≥ λ\* of the interval, for a threshold λ\*.
 
-The proposition gives a sound method for a cell of an equilibrium map
-(I.9) whose only open parameter is ℓ, when (i) and (ii) have been
-established: the profile is an equilibrium on the cell `[a, b]` when
-it is one at a, and a player is a deviator on the cell when its gain
-exceeds ε at b. An exact evaluation at one end then certifies the
-whole cell, because the monotonicity is proved and not sampled (H.9).
-The proposition does not hold in general for `reward_of:` terms, whose
-value under σ grows with ℓ.
+*Proof.* By (i), the probabilities, and with them the graph of the
+game and every expected accumulated reward, do not depend on ℓ, so
+neither do well-definedness and admissibility (H.5, I.6). For a
+strategy τ of p, the payoff of p under σ[p↦τ] is A(τ) + ℓ·B(τ) with
+numbers A(τ) and B(τ) that do not depend on ℓ, because every weight
+is affine in ℓ. BR_p is the maximum of finitely many such functions
+(I.7), hence convex and piecewise linear, and the payoff under σ is
+affine, so gain_p is convex and piecewise linear, and continuous. The
+set where a convex continuous function is at most ε is a closed
+interval, and so is the intersection over the players. Under (ii),
+B(τ) ≤ 0 for every τ, since it is minus a sum of magnitudes times
+expected accumulated rewards, and B is 0 for σ's own strategy; gain_p
+is then a maximum of non-increasing functions minus a constant. A
+closed interval that contains, with a value, every greater one is
+empty or of the form of 3. ∎
 
-**The example.** The model of [I.12](./appendix-i-games.md) is linked
-to a norm by declaring the two extensions, adding the norm to the
-contract, and replacing the weight of the third term of R:
+**Where it stops.**
+
+- Without (ii) the set is a closed interval and need not be a
+  threshold set. In I.12, `shortcut_first` incurs the sanction, and it
+  is an equilibrium exactly for max(0, T_1, T_2) ≤ λ ≤ T_3. A
+  `reward_of:` term violates (ii) as well, since its value under σ
+  grows with ℓ.
+- With two contracts there are two parameters bound to two `lambda`
+  values. The proposition holds for each of them with the other
+  fixed; it says nothing about a region of both.
+- When ℓ occurs in a probability (the incentive changes how the
+  environment behaves), (i) fails, the payoffs are rational functions
+  of ℓ, and nothing of the above holds.
+
+**Certification by the end points of a cell.** J-14 turns the
+proposition into a method for an equilibrium map (I.9) whose only
+open parameter is ℓ: one exact evaluation at each end of a cell
+`[a, b]` certifies `equilibrium`, and one at b certifies a deviator
+for whom (ii) holds. This is not evaluation at sample points in the
+sense of H.9, because convexity and monotonicity are proved, but it
+is sound only under all the conditions that J-14 lists.
+
+**The example.** The first model of [I.12](./appendix-i-games.md) is
+linked to a norm by declaring the two extensions, adding the norm to
+the contract, and replacing the weight of the third term of R:
 
 ```yaml
 sos:
@@ -461,36 +582,47 @@ sos:
 ```
 
 The weight of the third term is −2·`lambda`, the weight written by
-hand in I.12, so every number of I.12 is unchanged. The bearer
-`ROBOT[i]` has the actor name of `"ROBOT[*]"`, for which R stands. In
-this model each attempt is made under a contract instance of its own,
-so the prohibition can be violated once per attempt (F.5 judges a norm
-once per contract instance), and `shortcuts` counts the careless
-attempts. Conditions (i) and (ii) hold: `lambda` occurs only in the
-weight of the term, and `comply` takes no careless attempt. With g the
-fee, c the cost of effort, s the probability that a careful attempt
-succeeds, and m the magnitude of `no_shortcut`, I.12 derives, for
-s·g ≥ c:
+hand in I.12, so every number of I.12 is unchanged, and every result
+is reported with the assumption "the reward structure `shortcuts` is
+taken to count the violations of `DELIVERY.no_shortcut`". The bearer
+`ROBOT[i]` is covered by `"ROBOT[*]"`, for which R stands (J-10).
+`shortcuts` counts the careless attempts of one run, up to three.
+Appendix F judges a norm once per contract instance, so the count
+agrees with the violations of the norm only if the host starts a
+contract instance for each attempt. That is an assumption about the
+host which nothing in the file expresses; it is the kind of
+assumption the report carries.
 
-> In each design, the compliance profile is a Nash equilibrium exactly
-> when λ ≥ λ\*, where
+Conditions (i) and (ii) hold for `comply`: `lambda` occurs only in
+the weight of the term, which is −2·`lambda`, and `comply` takes no
+careless attempt, so the expected value of `shortcuts` under it is 0
+(reported by J-12). With g the fee, c the cost of effort, s the
+probability that a careful attempt succeeds, and m the magnitude of
+`no_shortcut`, I.12 derives:
+
+> In each design with s·g ≥ c and s < 1, the compliance profile is a
+> Nash equilibrium exactly when λ ≥ λ\*, where
 > λ\* = max(0, (c − (s/2)·(g·(1 − s)² + c·(2 − s))) / m).
 
 With g = 10, c = 1, and m = 2, λ\* is 0.150108 in CENTRALIZED and
 0.060373 in DISTRIBUTED at the fixed values. The declared λ = 0.1
 makes compliance an equilibrium in DISTRIBUTED only. The threshold is
-inversely proportional to the magnitude: at λ = 0.1, the magnitude
-would have to be at least 3.002169 for compliance to be an equilibrium
-in CENTRALIZED as well, and 1.207466 suffices in DISTRIBUTED. For this
-contract λ̂ = 1/1 = 1 (its one prohibition is backed), and α̂ and β̂ are
-undefined (no items, no power): the coverage is complete, and the
-question that remains is the one the model answers, whether the size
-m·λ is enough.
+inversely proportional to the magnitude. At λ = 0.1, compliance is an
+equilibrium in CENTRALIZED exactly when the magnitude is at least
+480347064349/160000000000 (about 3.0022; 3.002 is not enough), and in
+DISTRIBUTED exactly when it is at least 193194567781/160000000000
+(about 1.2075). For this contract χ = 1/1 = 1 (its one prohibition
+carries a sanction), α̂ is undefined (no items), and β̂ is undefined
+(no power): the coverage is complete, and the question that remains is
+the one the model answers, whether the size m·λ is enough.
 
 ## J.8 Static semantics {/* #j8-static-semantics */}
 
 A processor that implements the extension MUST, in a file that
-declares `grounding: 0.1`, in addition to existing checks:
+declares `grounding: 0.1`, in addition to existing checks, apply the
+rules below. J-1 to J-4 and J-10 are errors; they concern only the
+keys of this appendix. Where two clauses would report the same fact
+about the same construct, a processor gives one diagnostic.
 
 - **J-1.** A file that declares `grounding: 0.1` MUST also declare
   `norms: 0.1`; otherwise the processor reports an error and does not
@@ -504,34 +636,45 @@ declares `grounding: 0.1`, in addition to existing checks:
   whose `content:` is a `message_event`. It MUST list at least one
   item, each declared in `grounding.items` of the same contract and
   each once. A processor SHOULD warn when the receiver of the message
-  has the actor name of the origin of a listed item, and when an entry
-  of `information.sharing` names an item that `grounding.items` does
-  not declare while the contract declares items.
+  has the actor name of the origin of a listed item; when the target
+  of a sharing entry or the receiver of a sharing norm is not a party
+  of the contract; and when an entry of `information.sharing` names an
+  item that `grounding.items` does not declare while the contract
+  declares items.
 - **J-4.** `on_violation.magnitude` and `on_fulfilment.magnitude` MUST
   be finite numbers that are not negative. `on_fulfilment:` is allowed
   only for an obligation or a prohibition (as `on_violation:`, N-4)
-  and MUST have at least one of `reward:` and `magnitude:`.
-- **J-5.** For every contract that has `norms:`, a processor that
-  reports MUST compute α̂, β̂, and λ̂ by the definitions of J.4, exactly,
-  and report each index with its two counts, or as undefined with the
-  reason. For each of `alpha`, `beta`, and `lambda` that the contract
-  declares and whose index is defined, it MUST report the declared
-  value, the index, and their difference. The comparisons of J-6 to
-  J-9 and J-13 are exact; a declared value is the decimal that is
-  written (H.2).
-- **J-6.** It is an error when a contract declares `alpha: 0` and has
-  a given pair; `beta: 1` and β̂ is defined and less than 1; or
-  `beta: 0` and β̂ is defined and greater than 0. The diagnostic MUST
-  name an entry or a norm that contradicts the declared value.
-- **J-7.** A processor SHOULD warn when a contract declares `alpha: 1`
-  and α̂ is defined and less than 1, and when the declared `alpha` or
-  `beta` and the defined index differ by more than the tolerance of
-  the contract and J-6 reports no error for that parameter.
+  and MUST have at least one of `reward:` and `magnitude:`. A
+  processor SHOULD warn about a `magnitude:` of zero next to a
+  `sanction:` or `reward:` text that is not empty.
+- **J-5.** For every contract of the file, a processor that implements
+  the extension and reports MUST compute α̂, β̂, and χ by the
+  definitions of J.4, exactly, and report each with its two counts, or
+  as undefined with the reason, together with the further counts that
+  J.4 names (the three ways of giving a pair, the member-specific
+  entries and norms, the powers per bearer and the effects per power,
+  the share of the decision holder, the norms with a reparation only
+  and with a transition). For `alpha` and for `beta`, when declared
+  and the index is defined, it MUST report the declared value, the
+  index, and their difference. For `lambda` it reports the declared
+  value next to χ and no difference. The comparisons of J-6 to J-9 and
+  J-13 are exact; a declared value is the decimal that is written
+  (H.2).
+- **J-6.** A processor SHOULD warn, and name a construct that is the
+  counterexample, when a contract declares `alpha: 0` and has a given
+  pair, or has a non-empty `information.sharing` while α̂ is
+  undefined; `alpha: 1` and α̂ is defined and less than 1; `beta: 1`
+  and β̂ is defined and less than 1; or `beta: 0` and β̂ is defined and
+  greater than 0.
+- **J-7.** A processor SHOULD warn when the declared `alpha` or `beta`
+  and the defined index differ by more than the tolerance of the
+  contract and J-6 gives no warning for that parameter, and when the
+  decision holder names a single actor whose share of the powers is
+  smaller than β̂.
 - **J-8.** A processor SHOULD warn when a contract declares a `lambda`
-  greater than zero and λ̂ is defined and equal to 0, and when it
-  declares `lambda: 0` and a norm of the contract has an
-  `on_violation.magnitude` or an `on_fulfilment.magnitude` greater
-  than zero.
+  greater than zero and none of its obligations and prohibitions
+  carries an incentive (J.4), and when it declares `lambda: 0` and one
+  of them does.
 - **J-9.** In a file that also declares `stochastic: 0.1`, for every
   design and every parameter bound to `C.alpha` or `C.beta` whose
   index is defined, a processor SHOULD emit an informational
@@ -545,28 +688,57 @@ declares `grounding: 0.1`, in addition to existing checks:
   `on_violation.magnitude` (for `sanction_of:`) or an
   `on_fulfilment.magnitude` (for `reward_of:`) greater than zero. The
   model MUST have exactly one parameter bound by `from: "C.lambda"`.
-  The player of the payoff MUST list, in `actors:`, a reference with
-  the actor name of the bearer of `n`. In one model, a norm MUST NOT
-  be named by more than one `sanction_of:` and by more than one
-  `reward_of:`.
+  The player of the payoff MUST list, in `actors:`, a reference that
+  **covers** the bearer of `n`: the two have the same actor name and
+  do not have two different integer indices (`"ROBOT[*]"` and
+  `ROBOT[1]` cover the bearer `ROBOT[i]`; `ROBOT[1]` does not cover
+  the bearer `ROBOT[2]`). In one model, a norm MUST NOT be named by
+  more than one `sanction_of:` term, nor by more than one `reward_of:`
+  term.
 - **J-11.** When a model has a term that names a norm of a contract
   `C`, a processor SHOULD warn about every obligation or prohibition
-  of `C` that has a magnitude greater than zero, whose bearer has the
-  actor name of an actor of some player, and that no term names with
-  the corresponding key. It SHOULD also warn about a term with a
+  of `C` that has a magnitude greater than zero, whose bearer is
+  covered by an actor reference of some player, and that no term names
+  with the corresponding key. It SHOULD also warn about a term with a
   `weight:` in which a parameter bound to `C.lambda` occurs: the size
   of such a term is not checked against a norm.
-- **J-12.** For every `sanction_of:` term and every design, a
-  processor that evaluates models SHOULD report the expected
+- **J-12.** A processor that evaluates a payoff with a `sanction_of:`
+  or `reward_of:` term MUST report, with every result that depends on
+  the payoff, the assumption of J.7 for each such term. For every
+  `sanction_of:` term and every design it SHOULD report the expected
   accumulated value, until the target of the payoff, of the reward
   structure of the term under the compliance profile at the fixed
-  values, and SHOULD warn when it is greater than zero: the profile
-  declared as compliance then incurs the sanction.
+  values. A value greater than zero is information, not a warning: an
+  obligation can be violated by chance although the bearer complies.
+  A value of zero is condition (ii) of J.7 for the compliance profile.
 - **J-13.** A processor that compares two versions of a contract
+  SHOULD report every change of an `on_violation.magnitude`, an
+  `on_fulfilment:` block, a `shares:` list, and `grounding.items`, and
   SHOULD warn when, for α or for β, the declared value and the index
   are defined in both versions and (x′ − x)·(x̂′ − x̂) is less than
   zero, where x and x̂ are the declared value and the index of the old
   version and x′ and x̂′ those of the new one.
+- **J-14.** A processor MAY certify a cell `[a, b]` of an equilibrium
+  map (I.9) from evaluations at its end points, and MUST NOT do so
+  unless all of the following hold:
+  1. the query has exactly one open parameter ℓ (which no regime
+     assigns, I-9);
+  2. condition (i) of J.7 holds for ℓ, checked on the text of the
+     model: ℓ occurs in no `prob:` and in no reward `value:`, and in
+     every `weight:` of every player, and in every weight defined by
+     J.7, ℓ occurs with a power of at most one;
+  3. the design is well-defined and the profile admissible at one
+     value of ℓ in the cell (by the proposition, then at every value);
+  4. the evaluations at a and at b are exact (I.8);
+  5. for a claim that p is a deviator, condition (ii) of J.7 holds for
+     p in that design: the form of the weights is checked on the text,
+     and the expected value 0 under the profile is computed exactly.
+
+  Then the cell is `equilibrium` when the profile is an ε-equilibrium
+  at a and at b, and p is a deviator on the cell when condition 5
+  holds and gain_p > ε at b. No other claim follows: a gain above ε at
+  both ends does not make a player a deviator on the cell without
+  condition 5.
 
 Rule A.4 that `alpha`, `beta`, and `lambda` lie in `[0, 1]` is
 unchanged, and so are the rules N-1 to N-12 and I-1 to I-11.
@@ -633,36 +805,45 @@ sos:
 
 **α̂.** The party names are DISPATCHER, ROBOT, and CUSTOMER, and there
 are four items, each with two parties other than its origin: eight
-pairs.
+pairs. Every target denotes a whole party.
 
 | Item (origin) | DISPATCHER | ROBOT | CUSTOMER |
 | --- | --- | --- | --- |
-| `route` (DISPATCHER) | origin | given: `sharing` | not given |
-| `status` (ROBOT) | given: `sharing` | origin | given: `sharing` |
-| `battery` (ROBOT) | given: `may_return_to_charge` | origin | not given |
-| `failure` (ROBOT) | given: `report_failure` | origin | not given |
+| `route` (DISPATCHER) | origin | given by a sharing entry | not given |
+| `status` (ROBOT) | given by a sharing entry | origin | given by a sharing entry |
+| `battery` (ROBOT) | given by a permission (`may_return_to_charge`) | origin | not given |
+| `failure` (ROBOT) | given by an obligation (`report_failure`) | origin | not given |
 
-Five pairs are given: α̂ = 5/8 = 0.625. The declared `alpha: 0.6`
-differs by 0.025, within the tolerance.
+Three pairs are given by sharing entries, one by an obligation, and
+one by a permission; no entry is member-specific. Five pairs are
+given: α̂ = 5/8 = 0.625. The declared `alpha: 0.6` differs by 0.025,
+within the tolerance. Had the first entry been
+`"DISPATCHER -> ROBOT[3] : route"`, it would be member-specific, the
+pair (`route`, ROBOT) would not be given, and α̂ would be 4/8.
 
-**β̂.** The contract has two powers. `reassign` is held by DISPATCHER,
-the decision holder; `decline` is held by `ROBOT[i]`. β̂ = 1/2 = 0.5.
-The declared `beta: 0.9` differs by 0.4, more than the tolerance of
-0.25, and the processor warns (J-7): the contract declares a nearly
+**β̂.** The contract has two powers. `reassign` is borne by
+DISPATCHER, a single actor; `decline` is borne by `ROBOT[i]`, which is
+not a single actor. The largest count of a single actor is 1:
+β̂ = 1/2 = 0.5, and the share of the decision holder is also 1/2.
+`reassign` names two norms in its effects and `decline` one. The
+declared `beta: 0.9` differs by 0.4, more than the tolerance of 0.25,
+and the processor warns (J-7): the contract declares a nearly
 centralised authority while half of its decision points lie with the
-robots. With `beta: 1` the file would be in error (J-6), and the
-diagnostic would name `decline`.
+robots. With `beta: 1` the warning would be that of J-6 and would name
+`decline`.
 
-**λ̂.** The contract has three obligations and prohibitions.
-`acknowledge` is backed by its reparation, and
-`no_low_battery_driving` by a sanction of magnitude 4. `report_failure`
-has only a severity and a lifecycle transition and is not backed.
-λ̂ = 2/3 = 0.666667. The declared `lambda: 0.5` is greater than zero
-and λ̂ is not zero, so J-8 gives no warning; the difference, 0.166667,
-is reported.
+**χ.** The contract has three obligations and prohibitions.
+`no_low_battery_driving` carries a sanction of magnitude 4.
+`acknowledge` has a reparation and no sanction, and `report_failure`
+has a lifecycle transition and no sanction; neither carries an
+incentive. χ = 1/3 = 0.333333, with one norm that has a reparation
+only and one that has a transition. The declared `lambda: 0.5` is
+greater than zero and a norm carries an incentive, so J-8 gives no
+warning.
 
-By Lemma 2, an amendment that removes `decline` raises β̂ to 1, and by
-Lemma 3 one that gives `report_failure` a sanction raises λ̂ to 1.
+By Lemma 2, an amendment that makes DISPATCHER the bearer of
+`decline` raises β̂ to 1, and by Lemma 3 one that gives
+`report_failure` a sanction raises χ to 2/3.
 
 ## J.10 Intermediate Representation (IR) addition
 
@@ -675,9 +856,11 @@ Each contract under `institution.contracts` gains the field
     "items": { "route": "DISPATCHER", "status": "ROBOT[*]", "battery": "ROBOT[*]", "failure": "ROBOT[*]" },
     "tolerance": 0.25,
     "indices": {
-      "alpha":  { "given": 5,  "pairs": 8 },
-      "beta":   { "central": 1, "powers": 2 },
-      "lambda": { "backed": 2, "norms": 3 }
+      "alpha":    { "given": 5, "pairs": 8,
+                    "by_sharing": 3, "by_obligation": 1, "by_permission": 1, "member_specific": 0 },
+      "beta":     { "largest": 1, "powers": 2, "holder": 1,
+                    "bearers": { "DISPATCHER": 1, "ROBOT[i]": 1 } },
+      "coverage": { "incentive": 1, "norms": 3, "reparation_only": 1, "transition": 1 }
     }
   },
   "norms": [
@@ -693,10 +876,16 @@ Each contract under `institution.contracts` gains the field
 
 `grounding` is `null` when the extension is not declared. `items` is
 an empty mapping and `tolerance` the default when the contract has no
-`grounding:` block. An index is `null` when it is undefined; otherwise
-it is given by its two counts, numerator first, so that the exact
-ratio can be formed. The four norm fields are written only when the
-extension is declared; magnitudes are `null` when absent.
+`grounding:` block. `alpha`, `beta`, or `coverage` is `null` when the
+quantity is undefined; otherwise the first two fields are its
+numerator and denominator, so that the exact ratio can be formed.
+`by_sharing`, `by_obligation`, and `by_permission` count pairs and
+may overlap; `member_specific` counts entries and norms. `holder` is
+the count k(h) of the decision holder, or `null` when it does not
+name a single actor; `bearers` maps each bearer reference, as written,
+to its number of powers. The four norm fields are written only when
+the extension is declared; magnitudes are `null` when absent, and an
+empty text is `null`.
 
 A payoff term of the IR of
 [I.13](./appendix-i-games.md) gains the fields `sanction_of` and
@@ -704,8 +893,8 @@ A payoff term of the IR of
 extension is declared. For a term with one of them, `weight` is the
 defined weight as text: `-m * p` or `m * p`, with m the magnitude as
 the shortest decimal that round-trips and p the `id` of the parameter
-bound to `C.lambda` (`"-2 * lambda"` in J.7). Results of J-5 other
-than the counts, and the diagnostics, are not in the IR.
+bound to `C.lambda` (`"-2 * lambda"` in J.7). Diagnostics are not in
+the IR.
 
 ## J.11 Reference implementation status {/* #j11-reference-implementation-status */}
 
@@ -717,13 +906,17 @@ Grounding 0.1 is **not implemented** in `cadl` 0.3.22.
   The file of J.9 passes `cadl check` 0.3.22 with that one diagnostic.
   The file of J.7 fails for the reasons given in
   [I.14](./appendix-i-games.md#i14-reference-implementation-status).
-- Planned: the rules J-1 to J-8 in `cadl check`, with the indices
+- `cadl` 0.3.22 also ignores these keys, without any diagnostic, in a
+  file that does not declare `grounding`, as it does every unknown
+  key, and it accepts any value for them. A processor that implements
+  the extension reports them as undeclared extension keys (J.12).
+- Planned: the rules J-1 to J-8 in `cadl check`, with the quantities
   shown by a command `cadl norms-indices` (text and JSON) and written
-  to the IR of J.10; J-9 to J-12 together with the implementation of
-  Appendix I; J-13 in `cadl norms-diff`.
-- The indices of J.9 were computed by hand and checked with a script
-  that reads the YAML of the example and applies the definitions of
-  J.4; the numbers of J.7 are those of I.12.
+  to the IR of J.10; J-9 to J-12 and J-14 together with the
+  implementation of Appendix I; J-13 in `cadl norms-diff`.
+- The quantities of J.9 were computed by hand and checked with a
+  script that reads the YAML of the example and applies the
+  definitions of J.4; the numbers of J.7 are those of I.12.
 
 ## J.12 Backward compatibility
 
@@ -732,14 +925,26 @@ and are read the same way. The extension changes no verdict of
 Appendix F and no result of Appendices H and I: a term with
 `sanction_of:` is a term of I.6 with a defined weight.
 
+**Declaring the extension never invalidates a file.** A file that is
+valid under Appendix F and uses none of the keys of this appendix
+remains valid when `grounding: 0.1` is added to its `extensions:`.
+The rules that are errors (J-2, J-3, J-4, J-10) apply only to the
+keys of this appendix; every comparison of a declared parameter with
+an index (J-6 to J-9) is a warning or an informational diagnostic.
+
 A file that uses `grounding:`, `shares:`, `on_fulfilment:`,
 `on_violation.magnitude`, `sanction_of:`, or `reward_of:` without
 declaring `grounding: 0.1` does not conform to this appendix. A
 processor that implements the extension does not interpret these keys
 in such a file and SHOULD report them as undeclared extension keys:
-no index is computed, and a payoff term with `sanction_of:` or
-`reward_of:` is an error by I-7, so that it is never read as a term
-with the default weight. A file that declares `grounding: 0.1` without
-`norms: 0.1` gets the error of J-1. Processors that do not implement
-the extension MUST NOT reject files that use it; they SHOULD emit a
-single informational diagnostic per file.
+no quantity is computed, and a payoff term with `sanction_of:` or
+`reward_of:` is an error by I-7. A file that declares `grounding: 0.1`
+without `norms: 0.1` gets the error of J-1.
+
+A processor that implements Appendix I and not this appendix MUST NOT
+evaluate, in a file that declares both, a payoff that has a
+`sanction_of:` or `reward_of:` term, nor a query that needs it; it
+reports the query as not evaluated (I-7). In no case is such a term
+read as a term with the default weight. Processors that do not
+implement the extension MUST NOT reject files that use it; they
+SHOULD emit a single informational diagnostic per file.

@@ -473,6 +473,8 @@ AND    OR    NOT    true    false    for all    exists    in
   （[付録IのI.14節](./appendix-i-games.md#i14-reference-implementation-status)）と `grounding` 0.1
   （[付録JのJ.11節](./appendix-j-grounding.md#j11-reference-implementation-status)）は，仕様を定めたが，
   `cadl` 0.3.22では実装していない。これらの名前には，未知の拡張に対する情報レベルの診断が出る。
+  `kind: smg` を持つモデルについて，`cadl check` 0.3.22は，H.10とH.15が1つの情報レベルの診断を
+  求めるところで，S-1とS-9の誤りを報告する。また，付録Jのキーを，診断なしに無視する。
 
 `cadl` の0.3.7より前のリリースは，これらの点のいくつかで異なっていた。その経緯は，cadlリポジトリの
 [CHANGELOG](https://github.com/ertlnagoya/cadl/blob/master/CHANGELOG.md)にある。
