@@ -1,4 +1,4 @@
-<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-i-games" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix I: Strategic Model Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix I: Strategic Model Extension | CADL"/><meta data-rh=true name=description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations, with deviation gains, and equilibrium maps over institutional parameters with certified cells."/><meta data-rh=true property=og:description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations, with deviation gains, and equilibrium maps over institutional parameters with certified cells."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games","name":"Appendix I: Strategic Model Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.a32b2f0d.js defer></script><script src=/cadl-spec/assets/js/main.60e54b48.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-i-games" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix I: Strategic Model Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix I: Strategic Model Extension | CADL"/><meta data-rh=true name=description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations or from every reachable state, with deviation gains, and equilibrium maps over institutional parameters with certified cells, also from the end points of a cell."/><meta data-rh=true property=og:description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations or from every reachable state, with deviation gains, and equilibrium maps over institutional parameters with certified cells, also from the end points of a cell."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games","name":"Appendix I: Strategic Model Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.db8fabac.js defer></script><script src=/cadl-spec/assets/js/main.60e54b48.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-689")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label="Skip to main content"><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/docs/quickstart/>Quick Start</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/docs/spec/intro/>Specification</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/textbook/>Textbook</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/handson/>Hands-on</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>English</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-i-games/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-i-games/ target=_self rel="noopener noreferrer" class=dropdown__link lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=Search aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/intro/><span title="CADL Specification v0.3" class=linkLabel_E58b>CADL Specification v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/introduction/><span title="1. Introduction" class=linkLabel_E58b>1. Introduction</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/objectives/><span title="2. Language Objectives" class=linkLabel_E58b>2. Language Objectives</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/comparison/><span title="3. Comparison with Existing Languages" class=linkLabel_E58b>3. Comparison with Existing Languages</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/requirements/><span title="4. Requirements Specification" class=linkLabel_E58b>4. Requirements Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/language-spec/><span title="5. Language Specification" class=linkLabel_E58b>5. Language Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/design/><span title="6. Design" class=linkLabel_E58b>6. Design</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/examples/><span title="7. Domain-Specific Description Examples" class=linkLabel_E58b>7. Domain-Specific Description Examples</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/use-cases/><span title="8. Use Cases and Novelty Analysis" class=linkLabel_E58b>8. Use Cases and Novelty Analysis</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/research/><span title="9. Research Directions and Open Challenges" class=linkLabel_E58b>9. Research Directions and Open Challenges</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/roadmap/><span title="10. Implementation Roadmap" class=linkLabel_E58b>10. Implementation Roadmap</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-a-syntax/><span title="Appendix A: Syntax Reference (EBNF)" class=linkLabel_E58b>Appendix A: Syntax Reference (EBNF)</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-b-references/><span title="Appendix B: References" class=linkLabel_E58b>Appendix B: References</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-c-motivation/><span title="Appendix C: Motivation Extension" class=linkLabel_E58b>Appendix C: Motivation Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-d-codegen/><span title="Appendix D: Codegen Target Catalog" class=linkLabel_E58b>Appendix D: Codegen Target Catalog</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><span title="Appendix E: SoS-DSL Extension" class=linkLabel_E58b>Appendix E: SoS-DSL Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-f-norms/><span title="Appendix F: Norms Extension" class=linkLabel_E58b>Appendix F: Norms Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-g-agents/><span title="Appendix G: Agent Governance Extension" class=linkLabel_E58b>Appendix G: Agent Governance Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-h-stochastic/><span title="Appendix H: Stochastic Model Extension" class=linkLabel_E58b>Appendix H: Stochastic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/docs/spec/appendix-i-games/><span title="Appendix I: Strategic Model Extension" class=linkLabel_E58b>Appendix I: Strategic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-j-grounding/><span title="Appendix J: Grounding of the Institutional Parameters" class=linkLabel_E58b>Appendix J: Grounding of the Institutional Parameters</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/glossary/><span title=Glossary class=linkLabel_E58b>Glossary</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/cadl-spec/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Appendix I: Strategic Model Extension</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Appendix I — Strategic Model Extension (games 0.1)</h1></header>
@@ -65,7 +65,8 @@ that stands for the behaviour the contract asks for (I.4).</li>
 <li class=""><strong>The question is defined exactly.</strong> I.7 defines when a named
 profile is a Nash equilibrium of a design at a valuation, that is,
 when no player gains by deviating from it alone, and the <strong>deviation
-gain</strong> of each player. I.9 defines the <strong>equilibrium map</strong>: cells of
+gain</strong> of each player; <code>concept: every_reachable_state</code> asks the same
+from every state that a player can reach by its own deviations. I.9 defines the <strong>equilibrium map</strong>: cells of
 a region of parameters, each certified in the sense of H.9 as
 <code>equilibrium</code> or <code>not_equilibrium</code>, or left <code>undecided</code>. The
 appendix defines what a correct answer is and gives sufficient
@@ -75,12 +76,47 @@ conditions that a processor can compute; it prescribes no algorithm.</li>
 <ul>
 <li class="">The game is <strong>turn-based</strong>: in every state at most one player
 chooses (I-5). There are no concurrent moves and no synchronisation
-of commands.</li>
+of commands. When players choose at the same time, an equilibrium
+needs randomisation already in a game with one state, and exact
+values are no longer rational: the values of two-player zero-sum
+concurrent stochastic games (the games of Shapley and Everett, of
+which concurrent reachability games are a special case) may be
+irrational algebraic numbers
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Hansen+, STOC 2011]</a>. PRISM-games
+computes subgame-perfect Nash and correlated equilibria of
+concurrent stochastic games that are optimal for social welfare or
+social fairness, for nonzero-sum probabilistic and reward
+objectives; for objectives with an infinite horizon it approximates
+the values by value iteration
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Kwiatkowska+, TACAS 2022]</a>. The payoffs
+of I.6 have an infinite horizon, and the claims of I.9 must be
+established exactly or with a sound error bound, so concurrent games
+wait for a method that gives such bounds.</li>
 <li class="">Strategies named in a file are <strong>memoryless and deterministic</strong>: a
 choice of one command per state. There are no mixed strategies, so
-an equilibrium in mixed strategies cannot be named or found.</li>
+an equilibrium in mixed strategies cannot be named or found. Checking
+a named stationary randomised profile with rational probabilities
+against unilateral deviations would remain the best-response problem
+of I.7 and could be decided exactly; finding such a profile cannot.
+In turn-based stochastic games with several players and reachability
+objectives, whether there is a stationary Nash equilibrium with a
+constraint on the payoffs is NP-hard, the square-root-sum problem
+reduces to it, and the payoff of a stationary equilibrium can be
+irrational; whether there is any Nash equilibrium with such a
+constraint is undecidable, also for pure strategies, already with 10
+players <a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Ummels & Wojtczak, LMCS 2011]</a>.
+Version 0.1 therefore asks about named profiles only and has no
+syntax for randomised ones.</li>
 <li class="">Every player observes the whole state. Equilibria under partial
-observation, which is what α controls (RD-7.3), remain open.</li>
+observation, which is what α controls (RD-7.3), remain open. The
+best response of one player who does not observe the whole state is
+a partially observable Markov decision process, and whether such a
+process has a policy whose expected total reward over an infinite
+horizon, discounted or not, exceeds a threshold is undecidable
+<a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Madani+, AI 2003]</a>. Even the check of
+one named profile against unilateral deviations is then not
+decidable in general: the reduction of I.7 to finitely many
+memoryless strategies does not hold.</li>
 <li class="">A player is one representative of the actors it stands for, and an
 actor set has at most one player (I-3). Two members of one actor
 set, for example two robots that compete, cannot be two players.</li>
@@ -89,30 +125,36 @@ target, for a profile from which no single player can keep the game
 away from its target (I.6). Discounted, mean-payoff, and
 step-bounded payoffs are not defined; a bounded horizon is written
 with a counter variable, as <code>attempts</code> in I.12.</li>
-<li class="">The equilibrium notion is the Nash equilibrium of a named profile
-and its ε-relaxation. I.7 also defines when a profile is an
-equilibrium from every reachable state, which a result may state.
-Subgame-perfect equilibria as a query, dominant strategies, the set
-of all equilibria of a game, and whether a property holds on every
-equilibrium (the question of RD-7.1 in full) are not defined.</li>
+<li class="">The equilibrium notions are the Nash equilibrium of a named profile
+and the equilibrium from every reachable state (I.7, <code>concept:</code>),
+each with its ε-relaxation. Subgame-perfect equilibria, dominant
+strategies, the set of all equilibria of a game, and whether a
+property holds on every equilibrium (the question of RD-7.1 in full)
+are not defined. I.7 explains why the equilibrium from every
+reachable state is weaker than subgame perfection.</li>
 <li class="">A centralised mediator, modelled as a correlated equilibrium, and
-the value of centralisation of RD-7.2 are out of scope.</li>
+the value of centralisation of RD-7.2 are out of scope. A correlated
+equilibrium needs a device that recommends a joint choice to the
+players, which the model of Appendix H does not have; the method of
+PRISM-games cited above computes it for concurrent games and
+approximates its values for infinite-horizon objectives.</li>
 <li class="">An equilibrium is asked for per design; a switch between regimes is
 not part of the game (H.1).</li>
 <li class=""><strong>Reserved</strong>, and not to be used with another meaning: the key
 <code>sync:</code> of a command and <code>owner:</code> of a variable; the keys
-<code>mediator:</code> and <code>observations:</code> of <code>model:</code>; the key <code>concept:</code> of
-an entry of <code>equilibria:</code>; the value <code>mdp</code> of <code>kind:</code>; and the
-parameter sources <code>motivation.rho</code> and <code>motivation.kappa</code>. Of the
-names that H.1 reserves, this appendix defines <code>players:</code>,
-<code>payoffs:</code>, <code>equilibria:</code>, and <code>owner:</code> of a command.</li>
+<code>mediator:</code> and <code>observations:</code> of <code>model:</code>; the values
+<code>subgame_perfect</code> and <code>correlated</code> of the key <code>concept:</code> of an entry
+of <code>equilibria:</code>; the value <code>mdp</code> of <code>kind:</code>; and the parameter
+sources <code>motivation.rho</code> and <code>motivation.kappa</code>. Of the names that
+H.1 reserves, this appendix defines <code>players:</code>, <code>payoffs:</code>,
+<code>equilibria:</code>, and <code>owner:</code> of a command.</li>
 </ul>
 <h2 class="anchor anchorTargetStickyNavbar_MWp5" id=i2-syntax-ebnf-additions-to-h2>I.2 Syntax (EBNF additions to H.2)<a href=#i2-syntax-ebnf-additions-to-h2 class=hash-link aria-label="Direct link to I.2 Syntax (EBNF additions to H.2)" title="Direct link to I.2 Syntax (EBNF additions to H.2)" translate=no>​</a></h2>
 <p>The grammar uses the notation of
 <a class="" href=/cadl-spec/docs/spec/appendix-a-syntax/>Appendix A</a>. <code>identifier</code>, <code>actor_ref</code>, and
 <code>number</code> are defined there; <code>state_pred</code>, <code>param_expr</code>, and <code>interval</code>
 in <a class="" href=/cadl-spec/docs/spec/appendix-h-stochastic/>H.2</a>.</p>
-<div class="language-ebnf codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-ebnf codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token definition rule keyword" style=color:#00009f>model_block</span><span class="token plain">     </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"kind:"</span><span class="token plain">       </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"dtmc"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"smg"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"players:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">player_def</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"profiles:"</span><span class="token plain">   </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>":"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">profile_rule</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"compliance:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"payoffs:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">payoff_def</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"equilibria:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">equilibrium_def</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>player_def</span><span class="token plain">      </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"id:"</span><span class="token plain">     </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token string" style=color:#e3116c>"actors:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">actor_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>command_def</span><span class="token plain">     </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"owner:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>profile_rule</span><span class="token plain">    </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"guard:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">state_pred</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">                   </span><span class="token comment" style=color:#999988;font-style:italic>(* string *)</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token string" style=color:#e3116c>"choose:"</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>payoff_def</span><span class="token plain">      </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"player:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token string" style=color:#e3116c>"until:"</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">state_pred</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">                      </span><span class="token comment" style=color:#999988;font-style:italic>(* string *)</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token string" style=color:#e3116c>"terms:"</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">payoff_term</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>payoff_term</span><span class="token plain">     </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"reward:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"weight:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">param_expr</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain">                  </span><span class="token comment" style=color:#999988;font-style:italic>(* string or number *)</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>property_def</span><span class="token plain">    </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"profile:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>regime_map_def</span><span class="token plain">  </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"profile:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>equilibrium_def</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"id:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"profile:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"regimes:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"epsilon:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">number</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"over:"</span><span class="token plain">       </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>":"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">interval</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"resolution:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">number</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><br/></div></code></pre></div></div>
+<div class="language-ebnf codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-ebnf codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token definition rule keyword" style=color:#00009f>model_block</span><span class="token plain">     </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"kind:"</span><span class="token plain">       </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"dtmc"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"smg"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"players:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">player_def</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"profiles:"</span><span class="token plain">   </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>":"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">profile_rule</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"compliance:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"payoffs:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">payoff_def</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"equilibria:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">equilibrium_def</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>player_def</span><span class="token plain">      </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"id:"</span><span class="token plain">     </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token string" style=color:#e3116c>"actors:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">actor_ref</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>command_def</span><span class="token plain">     </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"owner:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>profile_rule</span><span class="token plain">    </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"guard:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">state_pred</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">                   </span><span class="token comment" style=color:#999988;font-style:italic>(* string *)</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token string" style=color:#e3116c>"choose:"</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>payoff_def</span><span class="token plain">      </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"player:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token string" style=color:#e3116c>"until:"</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">state_pred</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain">                      </span><span class="token comment" style=color:#999988;font-style:italic>(* string *)</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token string" style=color:#e3116c>"terms:"</span><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">payoff_term</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>payoff_term</span><span class="token plain">     </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"reward:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"weight:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">param_expr</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain">                  </span><span class="token comment" style=color:#999988;font-style:italic>(* string or number *)</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>property_def</span><span class="token plain">    </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"profile:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>regime_map_def</span><span class="token plain">  </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token punctuation" style=color:#393A34>.</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"profile:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain"></span><span class="token definition rule keyword" style=color:#00009f>equilibrium_def</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"id:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"profile:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"regimes:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"-"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"epsilon:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">number</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"over:"</span><span class="token plain">       </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token rule">identifier</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>":"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">interval</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"resolution:"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token rule">number</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                  </span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"concept:"</span><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"nash"</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>|</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"every_reachable_state"</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>]</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>;</span><br/></div></code></pre></div></div>
 <p><strong>Writing the values in YAML.</strong> The rules of H.2 apply: <code>until:</code> and a
 <code>guard:</code> are quoted strings (a <code>guard:</code> may be the YAML boolean <code>true</code>
 or <code>false</code>), and a <code>weight:</code> may be a YAML number or a quoted string
@@ -124,7 +166,7 @@ reads as booleans or null (H.2) MUST be quoted where they are a key of
 <code>1</code>. The <code>profile:</code> of a property, of a regime map, and of an entry of
 <code>equilibria:</code> is the compliance profile. The <code>regimes:</code> of an entry of
 <code>equilibria:</code> is all designs. <code>epsilon:</code> is <code>0</code>. <code>resolution:</code> is
-<code>0.05</code>.</p>
+<code>0.05</code>. <code>concept:</code> is <code>nash</code>.</p>
 <h2 class="anchor anchorTargetStickyNavbar_MWp5" id=i3-players-and-ownership>I.3 Players and ownership<a href=#i3-players-and-ownership class=hash-link aria-label="Direct link to I.3 Players and ownership" title="Direct link to I.3 Players and ownership" translate=no>​</a></h2>
 <p>A model with <code>kind: smg</code> is a <strong>strategic model</strong>. A model with
 <code>kind: dtmc</code>, or without <code>kind:</code>, is a model of Appendix H and MUST NOT
@@ -362,13 +404,43 @@ BR_p = V*_p(s₀).</p>
 <p><strong>Equilibrium from every reachable state.</strong> σ is an <strong>equilibrium
 from every reachable state</strong> at θ when V*_p(s) = V_p(s) for every
 player p and every state s of Reach_p: no player gains by deviating
-alone, wherever in Reach_p it starts to deviate. This implies that σ
-is a Nash equilibrium. The converse does not hold: σ can be a Nash
-equilibrium although p could gain in a state that is reached only
-when p itself deviates. Version 0.1 does not offer this stronger
-notion, or subgame perfection, as a query (<code>concept:</code> is reserved);
-it is defined because the following test establishes exactly it, and
-a result says so when it was obtained that way (I.8, I.9).</p>
+alone, wherever in Reach_p it starts to deviate. For a number ε ≥ 0,
+σ is an <strong>ε-equilibrium from every reachable state</strong> when
+V*_p(s) − V_p(s) ≤ ε for every player p and every state s of
+Reach_p. The <strong>state gain</strong> of p,</p>
+<div class="language-text codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-text codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">sgain_p(D, θ, σ)  =  max over the states s of Reach_p of  V*_p(s) − V_p(s)</span><br/></div></code></pre></div></div>
+<p>is the largest of these differences; it is at least gain_p, since s₀
+belongs to Reach_p. An equilibrium from every reachable state is
+therefore a Nash equilibrium. The converse does not hold: σ can be a
+Nash equilibrium although p could gain in a state that is reached only
+when p itself deviates. An entry of <code>equilibria:</code> with
+<code>concept: every_reachable_state</code> asks for this notion (I.8, I.9); a
+result of the default concept <code>nash</code> reports it as <code>from_every_state</code>
+when it was established on the way.</p>
+<p><strong>Weaker than subgame perfection.</strong> A profile is subgame perfect when
+it is an equilibrium in the game started in every state, whoever
+deviated before. The equilibrium from every reachable state asks less
+in two ways. Reach_p contains only the states that p reaches by its
+own deviations while the others follow σ; a state that is reached
+only when another player q deviates is in Reach_q, where only the
+gains of q are examined, and not in Reach_p. And in a state of Reach_p
+that belongs to another player q, the command that σ selects for q is
+fixed: it is not examined against the interest of q unless the state
+is also in Reach_q. A threat that a player would not carry out is
+therefore not detected. Example (the file is the data of a test of
+the reference implementation): A chooses <code>out</code>, with payoffs 1 for A
+and 3 for B, or <code>enter</code>; after <code>enter</code>, B chooses <code>fight</code> (−1 for
+both) or <code>share</code> (2 for both). The profile (out; fight) is an
+equilibrium from every reachable state: the state after <code>enter</code> is in
+Reach_A, where A gains nothing by entering, and not in Reach_B, since
+A does not enter under the profile. It is not subgame perfect: in the
+state after <code>enter</code>, B gains 3 by sharing. Subgame perfection is not
+offered as a query because the payoffs of a player are not defined in
+general from a state that only another player's deviation reaches:
+admissibility (I.6) concerns the deviations of the player itself, and
+from such a state another player may keep the game away from the
+target. A definition would first have to say which profiles are to be
+admissible from which states.</p>
 <p><strong>The one-step test.</strong> V*_p(s) = V_p(s) for every state s of Reach_p
 exactly when Q_p(s, c) ≤ V_p(s) for every state s of p in Reach_p in
 which φ_p does not hold and every command c of En(s). If the
@@ -411,6 +483,19 @@ the profile is an equilibrium from every reachable state (I.7),
 <code>null</code> when it has not examined the question. It is reported only
 with the status <code>equilibrium</code> and ε = 0.</li>
 </ul>
+<p><strong>The concept <code>every_reachable_state</code>.</strong> With
+<code>concept: every_reachable_state</code> the check asks whether the profile is
+an ε-equilibrium from every reachable state (I.7). The result is the
+one above, with these changes: the <code>status</code> is <code>equilibrium</code> when
+every state gain is at most ε; <code>deviators</code> are the players whose state
+gain exceeds ε; every player also has its state gain and, when it is
+a deviator, the <strong>state</strong> s: the first state of Reach_p, in the order
+of S, at which V*_p(s) − V_p(s) equals the state gain; and the
+canonical best response of a deviator is listed on the states that
+are reachable from s, instead of s₀, under σ[p↦τ] before φ_p. The
+canonical best response is optimal from every state of Reach_p, since
+it selects an optimal command in each of them, so its payoff from s
+exceeds V_p(s) by the state gain. <code>from_every_state</code> keeps its meaning.</p>
 <p>By I-8 the profile is admissible at the fixed values. A processor that
 evaluates a check at other values (I.13) first establishes that the
 design is well-defined and the profile admissible there, and reports
@@ -431,7 +516,8 @@ in <code>model.regimes:</code> and MUST NOT occur in a reward <code>value:</code
 occur in probabilities and in weights. Institutional parameters may
 be opened like any other: a map over λ is asked for by opening the
 parameter bound to <code>lambda</code>.</li>
-<li class=""><strong><code>profile:</code></strong>, <strong><code>regimes:</code></strong>, <strong><code>epsilon:</code></strong> as in I.8.</li>
+<li class=""><strong><code>profile:</code></strong>, <strong><code>regimes:</code></strong>, <strong><code>epsilon:</code></strong>, <strong><code>concept:</code></strong> as in
+I.8.</li>
 <li class=""><strong><code>resolution:</code></strong> is a number r with 0 &lt; r &lt; 1: the fraction of the
 volume of B that may remain undecided, per design.</li>
 </ul>
@@ -439,8 +525,9 @@ volume of B that may remain undecided, per design.</li>
 parameters and has the fixed values of D elsewhere (H.7). Write
 U_p(v), BR_p(v), and gain_p(v) for the payoff, the best-response
 value, and the deviation gain of p in D at θ(v) for the profile of the
-query; they are defined where D is well-defined and the profile
-admissible at θ(v).</p>
+query, and sgain_p(v), V_p(s, v), and V*_p(s, v) for the state gain
+and the values from a state s of Reach_p (I.7); they are defined where
+D is well-defined and the profile admissible at θ(v).</p>
 <p><strong>What is asked.</strong> For each listed design: at which valuations of B is
 the profile an ε-equilibrium? A <strong>cell</strong> is a closed box contained in
 B (H.9).</p>
@@ -451,6 +538,13 @@ gain_p(v) ≤ ε for every player p.</li>
 <li class="">A player p is a <strong>deviator on a cell</strong> C when, at every v ∈ C, D is
 well-defined and the profile admissible at θ(v), and gain_p(v) > ε.</li>
 </ul>
+<p>For <code>concept: every_reachable_state</code>, gain_p is replaced by sgain_p in
+both definitions: the profile is an equilibrium on C when
+sgain_p(v) ≤ ε for every player at every v ∈ C, and p is a deviator on
+C when sgain_p(v) > ε at every v ∈ C. A deviator may then gain from
+different states at different valuations, and Reach_p itself may
+change inside the cell, since a probability may be zero at some
+valuations and positive at others.</p>
 <p><strong>The result.</strong> The answer consists of one <strong>equilibrium map</strong> per
 listed design. An equilibrium map is a finite set of cells that cover
 B and whose interiors are pairwise disjoint, each with a <code>status</code>,
@@ -467,7 +561,10 @@ the parts. For a <code>not_equilibrium</code> cell a processor SHOULD also
 report, for each deviator, a strategy that gains more than ε at every
 valuation of the cell, when its method provides one (as condition N
 below does), and for every decided cell the bounds of the gains it
-established. <code>from_every_state</code> is <code>true</code> for an <code>equilibrium</code> cell
+established. For <code>concept: every_reachable_state</code> the strategy is
+reported with the state s from which it gains, which then belongs to
+Reach_p at every valuation of the cell (condition N_s below), and with
+a lower bound of that gain (<code>deviation_states</code>). <code>from_every_state</code> is <code>true</code> for an <code>equilibrium</code> cell
 when the processor has established that the profile is an equilibrium
 from every reachable state (I.7) at every valuation of the cell, and
 absent or <code>null</code> otherwise. For a cell the field does not depend on ε:
@@ -557,9 +654,14 @@ gives, for each player p, numbers that hold at every valuation v of
 C:</p>
 <ul>
 <li class="">l_p ≤ U_p(v) ≤ u_p, bounds of the payoff under the profile;</li>
-<li class="">b_p ≥ BR_p(v), an upper bound of the best-response value;</li>
+<li class="">b_p ≥ BR_p(v), an upper bound of the best-response value, and, for
+every state s of R_C(p), b_p(s) ≥ V*_p(s, v) for every v in C at
+which s is a state of Reach_p;</li>
 <li class="">for one or more strategies τ of p, d_p(τ) ≤ U_p(τ, v), a lower bound
-of the payoff of p under the profile in which p plays τ;</li>
+of the payoff of p under the profile in which p plays τ, and
+d_p(τ, s), a lower bound of that payoff in the game started in a
+state s of R_C(p), for every v in C at which s is a state of
+Reach_p;</li>
 <li class="">for every state s of R_C(p), numbers l_p(s) and u_p(s) with
 l_p(s) ≤ V_p(s, v) ≤ u_p(s) for every v in C and every state s of
 Reach_p at θ(v) (both 0 when φ_p holds in s), and, for every state
@@ -590,6 +692,39 @@ E2. It is an equilibrium from every reachable state at every
 valuation of C (<code>from_every_state: true</code>) when every player
 satisfies E2.</li>
 </ul>
+<p>For <code>concept: every_reachable_state</code>, E2 serves as it is, E1 is
+required at every state, and N is complemented by a condition that
+names a state. Let R⁺_C(p) be the set of states that contains s₀ and,
+with a state s in which φ_p does not hold, every state s′ such that
+P(s, c, s′) is positive at <strong>every</strong> valuation of C for some command c
+allowed in s for p. Every state of R⁺_C(p) is in Reach_p at every
+valuation of C, by induction along the path that put it there, since
+the allowed commands do not depend on the valuation. A probability
+that is multi-affine in the open parameters is positive on C when it
+is positive at every corner of C, because its value at a valuation of
+C is a convex combination of its values at the corners; any other
+probability is positive on C when an exact interval enclosure of it
+on C has a positive lower end. A probability that is zero at a corner
+does not count, even if it is positive elsewhere in C.</p>
+<ul>
+<li class=""><strong>E1*.</strong> sgain_p(v) ≤ ε on C when b_p(s) − l_p(s) ≤ ε for every
+state s of R_C(p) in which φ_p does not hold. At every v, every
+state s of Reach_p is in R_C(p), and V*_p(s, v) − V_p(s, v) is at
+most b_p(s) − l_p(s).</li>
+<li class=""><strong>N_s.</strong> p is a deviator on C when there are a state s of R⁺_C(p) in
+which φ_p does not hold and a strategy τ of p with
+d_p(τ, s) − u_p(s) > ε. At every v, s is in Reach_p, and the payoff
+of τ from s exceeds V_p(s, v) by more than ε, so sgain_p(v) > ε. N is
+the case s = s₀.</li>
+<li class="">The profile is an equilibrium on C when every player satisfies E1*
+or E2; p is a deviator on C when it satisfies N or N_s. With ε = 0,
+an equilibrium cell of this concept is an equilibrium from every
+reachable state at every valuation (<code>from_every_state: true</code>).</li>
+</ul>
+<p>Without R⁺_C(p), N_s would be unsound: a state that is reachable at
+the centre of a cell may be unreachable at a corner, where the
+probability that leads to it is zero, and the profile may be an
+equilibrium from every reachable state there.</p>
 <p>These conditions are sufficient, not necessary. E1 compares a bound of
 one function with a bound of another, as the conditions of H.9 do, and
 here the two functions touch: BR_p(v) ≥ U_p(v) everywhere, with
@@ -630,10 +765,123 @@ R_C(p) as the initial state, l_p(s) and u_p(s). For condition N, a
 strategy τ can be chosen, for example, as the canonical best response
 of p (I.7) at the centre of the cell, restricted to the states that
 are reachable under it there; it decides how much of a region gets
-<code>not_equilibrium</code>. Other sound methods
-are admissible, for example exact reasoning on the rational functions
-U_p and BR_p, or a proof that a gain is convex or monotone in a
-parameter (<a class="" href=/cadl-spec/docs/spec/appendix-j-grounding/>J.7</a>).</p>
+<code>not_equilibrium</code>. For N_s, the same strategy on all of Reach_p at the
+centre can be used, with d_p(τ, s) the minimal value of the relaxed
+process from s, and the strategy reported as its restriction to the
+states that the relaxed process reaches from s under it. Other sound
+methods are admissible, for example exact reasoning on the rational
+functions U_p and BR_p, or the certification by the end points of a
+cell below, which proves that a gain is convex or monotone in a
+parameter. An open item, not normative: by the performance-difference
+identity, U_p(τ, v) − U_p(v) is the expected sum, along the play of τ
+from s₀ until φ_p, of the one-step advantages Q_p(s, c, v) − V_p(s, v)
+of the commands that τ takes; bounding these advantages on a cell and
+maximising their sum in the relaxed process would bound the gain
+directly instead of comparing bounds of two functions as N and E1 do.
+Such a method is one of the sound methods that this paragraph admits;
+the reference implementation does not use it (I.14).</p>
+<p><strong>Certification by the end points of a cell.</strong> When the only open
+parameter enters the game through weights only, a cell can be decided
+from two exact evaluations. A processor MAY decide a cell [a, b] of an
+equilibrium map from its end points, and MUST NOT do so unless
+condition A holds:</p>
+<ul>
+<li class=""><strong>A.</strong> The query has exactly one open parameter ℓ; ℓ occurs in no
+<code>prob:</code> of a command of the design and in no reward <code>value:</code>; and in
+every <code>weight:</code> of every player, and in every weight that
+<a class="" href=/cadl-spec/docs/spec/appendix-j-grounding/>Appendix J</a> defines, ℓ occurs with a
+power of at most one, counted on the text (the powers of the factors
+of a product add up, and nothing cancels:
+<code>lambda * lambda - lambda * lambda</code> has the power two).</li>
+</ul>
+<p>Under A, the weight of the k-th term of p is, at the fixed values of
+the other parameters, a_k + c_k·ℓ with numbers a_k and c_k. For a
+player p and a state s of Reach_p:</p>
+<ul>
+<li class=""><strong>B−</strong> holds for p from s when c_k ≤ 0 for every term k of p and,
+for every term with c_k ≠ 0, the expected accumulated reward of r_k
+until φ_p in the game started in s under the profile is 0;</li>
+<li class=""><strong>B+</strong> holds for p from s when the same holds with c_k ≥ 0.</li>
+</ul>
+<p>A term whose ℓ has the coefficient 0 at these values, or in whose
+weight ℓ does not occur, imposes nothing; a player with no other
+terms satisfies both. In Appendix J, a <code>sanction_of:</code> term has
+c_k = −m ≤ 0 and satisfies B− from s₀ when the profile incurs no
+sanction of the norm, which condition (ii) of J.7 states.</p>
+<blockquote>
+<p><strong>Proposition.</strong> Assume A, and fix the values of the other
+parameters.</p>
+<ol start=0>
+<li class="">Whether D is well-defined, whether the profile is admissible,
+Reach_p, and every expected accumulated reward do not depend
+on ℓ.</li>
+<li class="">Where they hold, for every player p and every state s of
+Reach_p, V*_p(s) − V_p(s) is a convex, piecewise linear function
+of ℓ, and so are gain_p and sgain_p.</li>
+<li class="">If B− holds for p from s, V*_p(s) − V_p(s) is non-increasing in
+ℓ, and so is the gain from s of every fixed strategy of p. If B+
+holds, both are non-decreasing.</li>
+</ol>
+</blockquote>
+<p><em>Proof.</em> By A the probabilities, and with them the graph of the game,
+do not depend on ℓ; well-definedness and admissibility depend only on
+the probabilities (H.5, I.6), Reach_p only on the graph, and an
+expected accumulated reward only on the probabilities and the reward
+values. For a strategy τ of p, the payoff of p in the game started in
+s under σ[p↦τ] is Σ_k (a_k + c_k·ℓ) · E_τ,s[r_k] = A_s(τ) + ℓ·B_s(τ),
+where E_τ,s[r_k] is the expected accumulated reward of r_k until φ_p,
+and A_s(τ) and B_s(τ) do not depend on ℓ. V*_p(s) is the maximum of
+finitely many such affine functions (I.7, for the game started in s),
+hence convex and piecewise linear, and V_p(s) = A_s(σ) + ℓ·B_s(σ) is
+affine, so their difference is convex and piecewise linear; gain_p is
+the case s = s₀, and sgain_p, a maximum over the finitely many states
+of Reach_p, which does not depend on ℓ, is convex and piecewise linear
+as well. Under B−, every E_τ,s[r_k] is at least 0, since reward values
+are not negative (H.5), so B_s(τ) ≤ 0 for every τ; and B_s(σ) = 0,
+since every term with c_k ≠ 0 has the expected value 0 under the
+profile. The gain from s of every τ, (A_s(τ) − A_s(σ)) + ℓ·B_s(τ), is
+then non-increasing, and so is its maximum over τ. Under B+, B_s(τ) ≥ 0
+and the same argument gives non-decreasing functions. ∎</p>
+<p>The method, for a cell [a, b] and a profile σ:</p>
+<ul>
+<li class="">The cell is <code>equilibrium</code> when σ is an ε-equilibrium (of the concept
+of the query) at a and at b, established exactly (I.8). By part 0
+the design is well-defined and σ admissible on the whole cell, and
+by part 1 a convex function that is at most ε at both ends is at
+most ε in between. The gain bounds <code>[0, max(g(a), g(b))]</code> hold for
+each player, where g is gain_p.</li>
+<li class="">For <code>concept: nash</code>, p is a deviator on the cell when B− holds for p
+from s₀ and gain_p(b) > ε, or B+ holds from s₀ and gain_p(a) > ε. By
+part 2 the gain at the deciding end is a lower bound on the cell; the
+canonical best response at that end is a deviation that gains more
+than ε on the whole cell, and the gain bounds are <code>[g(b), g(a)]</code>
+under B− and <code>[g(a), g(b)]</code> under B+.</li>
+<li class="">For <code>concept: every_reachable_state</code>, p is a deviator on the cell
+when, for some state s of Reach_p, B− holds from s and
+V*_p(s) − V_p(s) > ε at b, or B+ holds from s and the difference
+exceeds ε at a. By part 0, s is in Reach_p on the whole cell. The
+canonical best response at the deciding end, restricted to the
+states reachable from s under it, gains more than ε from s on the
+whole cell, by part 2.</li>
+<li class="">No other status follows. A gain above ε at both ends does not make
+p a deviator on the cell without B: a gain |1 − 2ℓ| is convex, above
+1/4 at ℓ = 0 and at ℓ = 1, and 0 at ℓ = 1/2. The method claims
+<code>from_every_state: true</code> only for an equilibrium cell of
+<code>concept: every_reachable_state</code> with ε = 0.</li>
+</ul>
+<p>This is not evaluation at sample points in the sense of H.9: the
+proposition proves convexity and monotonicity, and the method is
+sound only under A and, for a deviator, B. A processor that uses it
+together with the conditions above applies it to the cells that
+those conditions leave <code>undecided</code>, and MAY add to a <code>not_equilibrium</code>
+cell the deviators that the end points establish; a cell decided by
+the conditions above keeps its claim. Without A, nothing of the above
+holds: when ℓ occurs in a probability the payoffs are rational
+functions of ℓ, and a gain can rise and fall again inside a cell
+whose end points are equilibria. With two or more open parameters the
+proposition holds along each parameter with the others fixed and
+says nothing about a box. <a class="" href=/cadl-spec/docs/spec/appendix-j-grounding/#j8-static-semantics>J-14</a>
+refers to this method for the weights that Appendix J defines.</p>
 <h2 class="anchor anchorTargetStickyNavbar_MWp5" id=i10-static-semantics>I.10 Static semantics<a href=#i10-static-semantics class=hash-link aria-label="Direct link to I.10 Static semantics" title="Direct link to I.10 Static semantics" translate=no>​</a></h2>
 <p>A processor that implements the extension MUST, in a file that
 declares <code>games: 0.1</code>, apply the rules of H.10 with the changes stated
@@ -704,7 +952,8 @@ every play of the game end.</li>
 that S-2 admits and MUST be unique in the namespace of properties
 and regime maps. <code>profile:</code> MUST name a profile. <code>regimes:</code> MUST
 name designs of the file, at least one, each once. <code>epsilon:</code> MUST
-be a finite number that is not negative. <code>over:</code> and <code>resolution:</code>
+be a finite number that is not negative. <code>concept:</code> MUST be <code>nash</code> or
+<code>every_reachable_state</code>. <code>over:</code> and <code>resolution:</code>
 MUST satisfy the conditions that S-14 states for a regime map
 (<code>over:</code> has one to four declared parameters, each with <code>lo &lt; hi</code>
 within the declared range and none assigned by any regime;
@@ -731,8 +980,9 @@ M(D, θ, σ) in the place of the regime model.</li>
 <li class=""><strong>I-11.</strong> A processor SHOULD emit an informational diagnostic for a
 key or value reserved in I.1 and MUST NOT give it a meaning (this
 replaces the list of S-15 for a file that declares <code>games: 0.1</code>). A
-reserved value (<code>kind: mdp</code>, a <code>motivation.</code> source) gets this
-diagnostic in addition to the error of I-2 or S-3.</li>
+reserved value (<code>kind: mdp</code>, a <code>motivation.</code> source, the <code>concept:</code>
+<code>subgame_perfect</code> or <code>correlated</code>) gets this diagnostic in addition
+to the error of I-2, S-3, or I-9.</li>
 </ul>
 <p>The rules S-2 to S-8 and S-10 to S-14 apply to a strategic model as
 written. A weight is not a probability and not a reward value: no rule
@@ -973,7 +1223,7 @@ its meaning of H.13 (open in some regime map), and only <code>open</code>
 decides how a parameter is written by H.11: a parameter that is open
 in an equilibrium map only is exported with its fixed value. Five
 fields are added after <code>regime_maps</code>, in this order:</p>
-<div class="language-jsonc codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-jsonc codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">{</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "stochastic_model": {</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "kind": "smg",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    // ... the fields of H.13</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "players": [ { "id": "R", "actors": ["ROBOT[*]"] }, { "id": "D", "actors": ["DISPATCHER"] } ],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "profiles": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      { "id": "comply", "rules": [ { "guard": "true", "choose": "careful" } ] },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      { "id": "shortcut_first", "rules": [ { "guard": "attempts == 0", "choose": "careless" },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                                           { "guard": "true", "choose": "careful" } ] }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "compliance": "comply",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "payoffs": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      { "player": "R", "until": "settled",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        "terms": [ { "reward": "fee", "weight": "10" }, { "reward": "effort", "weight": "-1" },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                   { "reward": "shortcuts", "weight": "-2 * lambda" } ] }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      // ... D</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "equilibria": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      { "id": "comply_nash", "profile": "comply", "regimes": ["CENTRALIZED", "DISTRIBUTED"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        "epsilon": 0, "over": null, "resolution": null },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      { "id": "comply_by_lambda", "profile": "comply", "regimes": ["CENTRALIZED", "DISTRIBUTED"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        "epsilon": 0, "over": { "lambda": [0, 1] }, "resolution": 0.05 }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      // ... shortcut_nash, comply_by_lambda_and_failure</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ]</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">}</span><br/></div></code></pre></div></div>
+<div class="language-jsonc codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-jsonc codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">{</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  "stochastic_model": {</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "kind": "smg",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    // ... the fields of H.13</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "players": [ { "id": "R", "actors": ["ROBOT[*]"] }, { "id": "D", "actors": ["DISPATCHER"] } ],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "profiles": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      { "id": "comply", "rules": [ { "guard": "true", "choose": "careful" } ] },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      { "id": "shortcut_first", "rules": [ { "guard": "attempts == 0", "choose": "careless" },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                                           { "guard": "true", "choose": "careful" } ] }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "compliance": "comply",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "payoffs": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      { "player": "R", "until": "settled",</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        "terms": [ { "reward": "fee", "weight": "10" }, { "reward": "effort", "weight": "-1" },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                   { "reward": "shortcuts", "weight": "-2 * lambda" } ] }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      // ... D</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    "equilibria": [</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      { "id": "comply_nash", "profile": "comply", "regimes": ["CENTRALIZED", "DISTRIBUTED"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        "epsilon": 0, "over": null, "resolution": null, "concept": "nash" },</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      { "id": "comply_by_lambda", "profile": "comply", "regimes": ["CENTRALIZED", "DISTRIBUTED"],</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        "epsilon": 0, "over": { "lambda": [0, 1] }, "resolution": 0.05,</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">        "concept": "nash" }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">      // ... shortcut_nash, comply_by_lambda_and_failure</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ]</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  }</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">}</span><br/></div></code></pre></div></div>
 <p>Guards, targets, and weights are kept as text, like the expressions of
 H.13; the defaults of I.2 are filled in. <code>profiles</code> is a list in the
 order of the file. For a model of Appendix H the five fields are
@@ -999,9 +1249,20 @@ lexicographic order of their lower corners, with the parameters in the
 order of <code>over:</code>; <code>best_response</code> is the
 canonical best response of I.7, with the values of all variables in
 declaration order, and is empty for a player without a gain above ε. A
-cell may also carry <code>deviations</code> (for each deviator, a strategy in the
-form of <code>best_response</code>) and <code>gain_bounds</code> (for each player, a pair of
-a lower and an upper bound).</p>
+cell may also carry <code>method</code> (the method that decided it, for example
+<code>"end points (I.9)"</code>), <code>deviations</code> (for each deviator, a strategy in
+the form of <code>best_response</code>), <code>deviation_states</code> (for
+<code>concept: every_reachable_state</code>: for each deviator, the state s of
+condition N_s or of the end points, as <code>{ "state": …, "gain_lower": … }</code>,
+the strategy of <code>deviations</code> being the one that gains from s) and
+<code>gain_bounds</code> (for each player, a pair of
+a lower and an upper bound of gain_p).</p>
+<p>A result of a query with <code>concept: every_reachable_state</code> carries
+<code>"concept": "every_reachable_state"</code> after <code>epsilon</code>; a result of the
+default concept may omit the field. In a check of this concept, every
+player has <code>state_gain</code> (an exact number) and <code>state</code> (the state s of
+I.8 for a deviator, otherwise <code>null</code>) after <code>gain</code>, and its
+<code>best_response</code> is the one from s.</p>
 <p><strong>Processor behaviour.</strong> A processor that offers the checks and maps
 as a command MUST distinguish three outcomes by its exit status:</p>
 <table><thead><tr><th>Exit status<th>Meaning<tbody><tr><td>0<td>every requested result was computed, whatever the answers (<code>equilibrium</code> or <code>not_equilibrium</code>, any number of <code>undecided</code> cells within the resolution)<tr><td>1<td>some result is <code>inconclusive</code> or <code>not_evaluated</code>, or some map did not reach its <code>resolution:</code><tr><td>2<td>nothing can be claimed: a static error of the file, a usage error of the command, or a design that is not well-defined or a profile that is not admissible at the values at which the command was asked to evaluate</table>
@@ -1047,13 +1308,22 @@ those of I.13; <code>inconclusive</code> does not occur, since the arithmetic is
 exact. For condition N it uses the canonical best response at the
 centre of the cell (I.9) and tries N only for a player for whom E1
 and E2 fail. Cells with the same claim are joined (I.9) unless
-<code>--no-merge</code> is given.</li>
+<code>--no-merge</code> is given. Since the version after 0.3.23, the cells that
+N, E1 and E2 leave undecided are decided from their end points (I.9)
+when condition A holds, in any strategic model; the map reports
+whether A holds, for which players the gain is non-increasing (B−)
+or non-decreasing (B+) from s₀, or why the end points are not used,
+and such cells carry <code>method: "end points (I.9)"</code>. The concept
+<code>every_reachable_state</code> is implemented for checks and maps (E2, E1*,
+N, N_s, and the end points); for N_s, R⁺_C(p) is computed per cell,
+τ is the canonical best response on Reach_p at the centre of the
+cell, and s is the first state of S that satisfies the condition.</li>
 <li class=""><code>cadl model-export</code> writes the file of I.11 (<code>smg</code> and the <code>player</code>
 constructs, with the renaming of H.11 and of the keywords that I.11
 adds for a strategic model, and a check that two players do not
 collide).</li>
 <li class="">A payoff with a <code>sanction_of:</code> or <code>reward_of:</code> term gets the weight
-of J.7, and J-14 is used in <code>--certify</code>
+of J.7, and J-14 (the end points of I.9) is used in <code>--certify</code>
 (<a class="" href=/cadl-spec/docs/spec/appendix-j-grounding/#j11-reference-implementation-status>J.11</a>);
 the status <code>not_evaluated</code> of I.13 remains for a processor without
 Appendix J.</li>
@@ -1088,9 +1358,69 @@ line (<code>cadl check</code>, <code>cadl game-check --certify</code>): 76 921 e
 evaluations of decided cells, no wrong claim. It compared 244
 best-response values with Storm, all equal, and found no regression
 against <code>cadl</code> 0.3.22.</li>
-<li class="">Not exercised: the export of I.11 was not run through PRISM-games.
-Games with three or more players occur only in the implementer's
-fuzzing. Maps with more than two open parameters were not measured.</li>
+<li class="">Verification of the end points without grounding, of the concept
+<code>every_reachable_state</code>, and of games with three and four players,
+by the implementer, with the oracle above (extended by the gains
+from every state of Reach_p and the check of a reported state and
+its deviation): 2 350 random games, among them 1 109 with 2, 1 009
+with 3, and 232 with 4 players, and 472 maps with three open
+parameters; 750 asked for every_reachable_state only and 850 chose
+one of the two concepts at random; 461 <code>not_equilibrium</code> cells were
+established from a state other than s₀ (N_s); the end points were
+applicable in 590 maps and were also tried directly on whole
+regions, halves, quarters, and random sub-intervals (2 629
+<code>equilibrium</code> and 1 222 <code>not_equilibrium</code> claims). 74 531 exact
+point evaluations of decided cells: no wrong claim, and the checks
+at the fixed values agreed with the oracle on every model. Each of
+five injected errors (condition A without its probability part, A
+without the affinity of the weights, B assumed for every player,
+N_s without the reachability certificate R⁺_C(p), and the conditions
+of <code>nash</code> used for <code>every_reachable_state</code>) is detected by fuzzing
+and, deterministically, by a fixed file of the test suite on which
+it makes a wrong claim: the files of the hump of J.11 without
+grounding, a gain |1 − 2ℓ|, and a state that only the player's own
+deviation reaches with probability p. Two files of the independent
+review of this version are part of the suite as well: on one, a
+sixth injected error (condition B checked from s₀ and taken for
+every state) claims a deviator where the profile is an equilibrium
+from every reachable state; on the other, N_s without R⁺_C(p) decides
+the cell that contains p = 0, which must stay undecided. The
+generators of the
+independent reviews of 0.3.23 were run again against the new code
+(through the command line: the ten generator presets of the review of
+Appendix J (600 models) and the driver of the review of the maps (160
+models), 15 467 exact point evaluations of decided cells, no wrong
+claim). The claims of <code>cadl game-check</code> on the bundled
+examples and on the files of the reviews are those of 0.3.23.</li>
+<li class="">Three open parameters, measured on the bundled examples with one
+more parameter opened (λ ∈ [0, 0.4], p_fail ∈ [0, 0.5], and
+p_loss ∈ [0, 0.5] in the first; λ, κ ∈ [0, 0.4] and
+p_fail ∈ [0, 0.5] in the second, CENTRALIZED), with the default
+budget (<code>--max-cells 20000</code>), processor time on a laptop. In the
+first example, DISTRIBUTED reaches the resolution 0.1 with 3 891
+cells analysed (139 after joining; 0.838 of the region
+<code>equilibrium</code>, 0.062 <code>not_equilibrium</code>) and 0.05 with 15 853 (526);
+CENTRALIZED exhausts the budget with 39 999 cells analysed and 0.269
+undecided (1 059 after joining; 0.700 <code>equilibrium</code>, 0.030
+<code>not_equilibrium</code>). Both designs take 59 s (resolution 0.1) and
+76 s (0.05), about 1.4 ms per analysed cell, as with two parameters;
+<code>concept: every_reachable_state</code> gives the same cells in 63 s. The
+second example exhausts the budget as well, with 0.260 undecided
+after 39 999 cells (71 s). What grows is the number of cells, not
+the time per cell: the cells next to the boundary must be small in
+all three directions, and N and E1 compare bounds of two different
+functions, which drift apart on a cell that is wide in a parameter
+on which the payoff depends strongly. In CENTRALIZED, cells near
+λ = 0 stay undecided at a width of 1/32 in p_fail and p_loss
+although R gains about 0.23 at their centres. No error was found,
+and no change was made; a sharper sufficient condition that bounds
+U_p(τ) − U_p(σ) directly through the one-step advantages
+Q_p(s, c) − V_p(s) along τ (the performance-difference identity) is
+an open item; I.9 already admits it as another sound method. In the fuzzing above,
+the games with three or four players, most of them with three open
+parameters, took about 0.9 s each (wall-clock, check, map with a
+budget of 24 cells, and oracle).</li>
+<li class="">Not exercised: the export of I.11 was not run through PRISM-games.</li>
 </ul>
 <h2 class="anchor anchorTargetStickyNavbar_MWp5" id=i15-backward-compatibility>I.15 Backward compatibility<a href=#i15-backward-compatibility class=hash-link aria-label="Direct link to I.15 Backward compatibility" title="Direct link to I.15 Backward compatibility" translate=no>​</a></h2>
 <p>Files written against CADL v0.3 without this extension remain valid
