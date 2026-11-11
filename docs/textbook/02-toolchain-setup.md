@@ -157,13 +157,12 @@ cd ~/program
 ```
 $ cadl --help
 usage: cadl [-h] [--version]
-            {parse,check,verify,codegen,regime-map,iec62853,sim-validate,sim-ir,sim-gen,ai}
-            ...
+            {parse,check,verify,codegen,agents-decide,agents-run,audit-verify,mcp-gateway,a2a-gateway,mcp-approve,mcp-message,regime-map,iec62853,sim-validate,sim-ir,sim-gen,norms-eval,norms-check,norms-diff,norms-indices,model-export,model-check,game-check,ai} ...
 
 CADL: Contract Architecture Description Language toolchain
 
 positional arguments:
-  {parse,check,verify,codegen,regime-map,iec62853,sim-validate,sim-ir,sim-gen,ai}
+  {parse,check,verify,codegen,agents-decide,agents-run,audit-verify,mcp-gateway,a2a-gateway,mcp-approve,mcp-message,regime-map,iec62853,sim-validate,sim-ir,sim-gen,norms-eval,norms-check,norms-diff,norms-indices,model-export,model-check,game-check,ai}
                         Available commands
     parse               Parse a CADL file and report errors
     check               Parse and type-check a CADL file
@@ -174,7 +173,7 @@ positional arguments:
 
 ### Check
 
-If `cadl codegen --help` lists `unity-csharp` among the `--target` choices (`{python,solidity,opa,unity-csharp}`), your install is correct.
+If `cadl codegen --help` lists `unity-csharp` among the `--target` choices (`{python,solidity,opa,unity-csharp,agent-rego,agent-cedar}`), your install is correct.
 
 ### Recap
 

@@ -157,13 +157,12 @@ cd ~/program
 ```
 $ cadl --help
 usage: cadl [-h] [--version]
-            {parse,check,verify,codegen,regime-map,iec62853,sim-validate,sim-ir,sim-gen,ai}
-            ...
+            {parse,check,verify,codegen,agents-decide,agents-run,audit-verify,mcp-gateway,a2a-gateway,mcp-approve,mcp-message,regime-map,iec62853,sim-validate,sim-ir,sim-gen,norms-eval,norms-check,norms-diff,norms-indices,model-export,model-check,game-check,ai} ...
 
 CADL: Contract Architecture Description Language toolchain
 
 positional arguments:
-  {parse,check,verify,codegen,regime-map,iec62853,sim-validate,sim-ir,sim-gen,ai}
+  {parse,check,verify,codegen,agents-decide,agents-run,audit-verify,mcp-gateway,a2a-gateway,mcp-approve,mcp-message,regime-map,iec62853,sim-validate,sim-ir,sim-gen,norms-eval,norms-check,norms-diff,norms-indices,model-export,model-check,game-check,ai}
                         Available commands
     parse               Parse a CADL file and report errors
     check               Parse and type-check a CADL file
@@ -174,7 +173,7 @@ positional arguments:
 
 ### チェック
 
-`cadl codegen --help` の `--target` の選択肢に `unity-csharp` が含まれていれば（`{python,solidity,opa,unity-csharp}`）、install は正しく完了しています。
+`cadl codegen --help` の `--target` の選択肢に `unity-csharp` が含まれていれば（`{python,solidity,opa,unity-csharp,agent-rego,agent-cedar}`）、install は正しく完了しています。
 
 ### おさらい
 

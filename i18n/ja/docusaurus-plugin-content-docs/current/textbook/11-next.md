@@ -11,7 +11,7 @@ title: "第 11 章 — 次に進む"
 | 層 | 書いたもの | 書かずに済んだもの |
 | --- | --- | --- |
 | 仕様 | 約 110 行の CADL ファイル（第 4 章と第 5 章） | なし（仕様が唯一の出典である） |
-| IR | なし | 生成された JSON（同梱の例で 297 行） |
+| IR | なし | 生成された JSON（同梱の例で 300 行） |
 | 可視化 | なし | Lifecycle View ページ |
 | 実装 | なし | 生成された Unity C#（同梱の例で 783 行） |
 | ランタイム意味論 | なし | 動く状態機械 + monitors + deadline timers |
@@ -29,3 +29,11 @@ title: "第 11 章 — 次に進む"
 - **[コース B — 都市モビリティ](../handson/mobility-sos-tutorial.md)**：同じ CADL の構文で、ドメインとランタイム（SUMO）を替えます。
 - **[コース D — ロボットの街](../handson/robot-town-tutorial.md)**：システムが動いている間に、KPI に向けて規則・規制・契約を改正します。KPI を決め、LLM が自分で決めるべきでないことを判断するのは人間です。
 - **[コース C — 自分の SoS](../handson/own-sos.md)**：概要だけを示した、自分で進める自由度の高い課題です。本書とは別のドメイン（フードデリバリー、スマート交通、組織間のデータ共有など）を選び、CADL を一から書き、自分で選んだ小さなシミュレーションハーネス（SimPy のような Python の離散事象ハーネスを勧めます）で動かし、パラメータスイープで結果を比較します。
+
+仕様書には、本書で使わない拡張もあります。拡張ごとに仕様書の付録があり、`cadl` 0.3.25 はそれぞれのコマンドを提供しています（`cadl --help` で一覧を表示できます）。
+
+- **規範拡張**（[付録 F](../spec/appendix-f-norms.md)）：義務、許可、禁止、権能を扱います。`cadl norms-eval` は記録したトレースについて規範を判定し、`cadl norms-check` はシステムを動かす前にモデル検査器 PRISM で規範を検査します。`cadl codegen` の `opa` と `solidity` は規範モニターを生成します。
+- **エージェント統治拡張**（[付録 G](../spec/appendix-g-agents.md)）：LLM のエージェントが送るメッセージについての決定と、監査ログを扱います（`cadl agents-run`、`cadl mcp-gateway`、`cadl a2a-gateway`、`cadl audit-verify`。10.2 節も参照）。
+- **確率モデル拡張**（[付録 H](../spec/appendix-h-stochastic.md)）：SoS の確率モデルを書き、PRISM の形式に出力するか（`cadl model-export`）、`cadl model-check` で評価します。
+- **戦略モデル拡張**（[付録 I](../spec/appendix-i-games.md)）：遵守プロファイルなど、名前を付けたプレイヤーの戦略の組が均衡かどうかを調べます（`cadl game-check`）。
+- **根拠付け拡張**（[付録 J](../spec/appendix-j-grounding.md)）：規範から情報共有の指標、権能の集中の指標、インセンティブの被覆率を計算します（`cadl norms-indices`）。

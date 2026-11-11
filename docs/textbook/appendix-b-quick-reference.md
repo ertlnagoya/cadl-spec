@@ -6,7 +6,7 @@ title: "Appendix B — Notation quick reference"
 
 # Appendix B — Notation quick reference
 
-The CADL notation, the commands and the file locations used in this textbook, on one page. Chapter 3 explains what each construct means. The CADL listings of this appendix fit together into one file, which passes `cadl check` and `cadl verify` of `cadl` 0.3.22.
+The CADL notation, the commands and the file locations used in this textbook, on one page. Chapter 3 explains what each construct means. The CADL listings of this appendix fit together into one file, which passes `cadl check` and `cadl verify` of `cadl` 0.3.25.
 
 ## B.1 The skeleton of a file
 
@@ -130,12 +130,13 @@ Conditions (`assume`, `guarantee`, `on:`, `when:`, `rule:` and others) are writt
 | `cadl check <file>` | Checks syntax, types and the static rules of the SoS-DSL extension | 3.9, 4.3 |
 | `cadl verify <file>` | Does what `cadl check` does and also looks for contradictions between assumptions and guarantees and for deadlocks in protocols | 3.9 |
 | `cadl sim-ir <file> --format json` | Writes the IR as JSON | 4.3, 5.3 |
-| `cadl codegen --target unity-csharp -o <dir> <file>` | Generates Unity C# from the IR (`--target` is `python`, `solidity`, `opa` or `unity-csharp`; `agent-rego` and `agent-cedar` generate the boundary policies of the agent governance extension) | 7.6 |
+| `cadl codegen --target unity-csharp -o <dir> <file>` | Generates Unity C# from the IR (`--target` is `python`, `solidity`, `opa` or `unity-csharp`; `agent-rego` and `agent-cedar` generate the boundary policies of the agent governance extension). For a file that declares the norms extension, `opa` and `solidity` also generate a norms monitor for each contract ([Appendix D](../spec/appendix-d-codegen.md), Section D.5, of the specification) | 7.6 |
 | `./scripts/sos_dsl_handson_e2e.sh <file> --unity <dir>` | Checks the file, writes the IR, generates the C# and copies it into the Unity project in one go; `--unity ""` skips the copy | 7.3 |
 | `python3 -m cadl.runtime.multi_robot_demo [--summary] [--log <file>] [--ir <file>]` | Runs the five-robot demo on the reference runtime: `--summary` prints a table of final states, `--log` writes an NDJSON trace, `--ir` uses your own IR | 7.5, 7.9 |
 | `streamlit run app.py` (in `cadl-explorer`) | Starts cadl-explorer | 6.3 |
 | `nats-server -p 4222` | Starts NATS | 8.2 |
 | `go run .` (in `arbitrator/C-SoS/main`) | Starts the arbitrator | 8.2 |
+| `cadl --help` | Lists all commands, including those of the extensions that this textbook does not use: `norms-eval` and `norms-check` of the norms extension ([Appendix F](../spec/appendix-f-norms.md)), `agents-run`, `audit-verify`, `mcp-gateway` and `a2a-gateway` of the agent governance extension ([Appendix G](../spec/appendix-g-agents.md)), `model-check` of the stochastic model extension ([Appendix H](../spec/appendix-h-stochastic.md)), `game-check` of the strategic model extension ([Appendix I](../spec/appendix-i-games.md)) and `norms-indices` of the grounding extension ([Appendix J](../spec/appendix-j-grounding.md)) | 2.4, 11.2 |
 
 ## B.6 Where the source files are
 
