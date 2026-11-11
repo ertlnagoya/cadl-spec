@@ -273,6 +273,24 @@ or the enforcement point does not have the flag. Unknown is resolved
 **fail-closed**: an unknown prohibition applies, an unknown permission
 does not.
 
+**Missing data.** The enforcement point also does not have the flag
+when it cannot determine it because a quantity has no value yet. There
+are two cases. While the `trigger:` of a prohibition that is `inactive`
+is a predicate that is undefined (F.5), the flag of the prohibition is
+unknown, and so the prohibition applies. While the `until:` of a
+permission that is `active` is a predicate that is undefined, the flag
+of the permission is unknown, and so the permission does not apply.
+Nothing is latched: the state of the norm instance and its verdict are
+those of F.5, where an undefined predicate does not occur; as soon as
+the predicate has a value, the flag is the one of the state again. The
+two other cases need no rule, because F.5 already blocks: an undefined
+`trigger:` does not activate a permission, and an undefined `until:`
+does not end a prohibition; likewise an undefined `if:` creates no
+institutional event. A processor SHOULD warn when it decides a message
+on a flag that is unknown for this reason. The consequence at the start
+is intended: a message that arrives before the quantities of such a
+predicate have their first values is denied or escalated.
+
 **Unknown occurrences.** G-18 requires every index variable of an
 enforced contract to be the index of a party, and a contract instance
 binds the indices of its parties (F.2). A processor that creates the
@@ -1185,7 +1203,17 @@ value. This can differ from the verdicts of `cadl norms-eval` on the
 same lines for a name before its first value, and the runtime warns
 when a name that a predicate uses gets its first value after a message
 was decided. Nothing after the end of an instance has an effect on
-it. One line is processed in
+it. Which contracts have host-created instances is likewise fixed on
+the first line: a contract that the first line names in `instances`,
+or lists under the key `host_instances` when its first instance is
+created later, has the instances that the trace creates, and none
+before; every other enforced contract has its single instance from the
+start, and a later line that creates an instance of it is a trace
+error. When a message is decided while a flag is unknown for missing
+data (G.5), the runtime warns once per norm and names the quantity
+without a value. Messages sent before the first values of such
+quantities are therefore denied or escalated; a trace gives the initial
+values on its first line to avoid that. One line is processed in
 this order: holds whose deadline lies before its time expire; instances
 are created; the time and the values of the line are observed without
 message (G.5), together with an amendment; each message is decided, and
@@ -1307,10 +1335,12 @@ end of an instance could change its verdict from violated to
 fulfilled, and that it accepted a binding outside the declared set, so
 a prohibition of `W[i]` applied to nobody; both are corrected.
 
-A fifth review found that the correction of the names had made
-decisions depend on later lines of the trace: a value that a later
-line gave to a name changed how an earlier predicate read that name,
-and with it an earlier decision from deny to allow. The runtime now
+A fifth review found that decisions depended on later lines of the
+trace. The runtime had taken the quantity names from the whole trace
+since its first version, and the correction after the fourth review
+had only narrowed that to the lines of the instance: a value that a
+later line gave to a name changed how an earlier predicate read that
+name, and with it an earlier decision from deny to allow. The runtime now
 decides causally (G.5): the names are given with the trace, or a name
 becomes a quantity with its first value. The tests check, for every
 prefix of generated traces, that the decisions on the prefix are the
@@ -1318,6 +1348,15 @@ first decisions on the whole trace; that invariant was missing. G-18
 also missed an index variable inside an index expression and inside
 the arguments of a message event; it is now stated by its binders, and
 the checker walks every expression of the contract.
+
+A sixth review found one more look-ahead of the same kind: whether a
+contract has host-created instances was read from the whole trace, so
+an `instances` entry on a later line removed the single instance from
+the start and changed an earlier denial into an allowance. It is now
+fixed on the first line. The review also led to the rule for missing
+data in G.5: a prohibition whose `trigger:` could not be evaluated for
+want of a value was not in force, and a message was allowed on data
+that the enforcement point did not have.
 
 Writing and reviewing the runtime showed these gaps in the text of
 agents 0.1, which this revision of the appendix closes: the state on
@@ -1362,7 +1401,9 @@ other change: the instance of a contract without host exists from the
 start of the enforcement point; a denied or held message is not an
 observation; an instance of an enforced contract observes only the
 messages that its contract governs, and an occurrence that depends on
-an unbound index is unknown; the time of a decision is observed
+an unbound index is unknown; the in-force flag is unknown while a
+quantity that it depends on has no value, without a change to the
+states of F.5; the time of a decision is observed
 before the message is decided; permissions and prohibitions have an in-force flag; an
 obligation whose content the contract itself denied or held is
 `excused` (all G.5); `approval` and `rejection` carry a hold id, the
