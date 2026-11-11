@@ -146,8 +146,10 @@ always one. The Solidity monitor uses
 fixed-point numbers with six decimals and therefore also refuses `*`,
 `/`, and literals with more than six decimals; it scans the window of a
 temporal operator once, as the observations arrive, and therefore also
-refuses a temporal operator inside another one; and it refuses a
-contract whose creation code would exceed the 49152 bytes of EIP-3860
+refuses a temporal operator inside another one, and, in the content
+of a norm, a temporal operator that is not the whole content (the
+candidates of such a content are decided together, see below); and it
+refuses a contract whose creation code would exceed the 49152 bytes of EIP-3860
 (`cadl codegen` estimates the size from the generated constructor). In
 a `guarantee:` item these lead to the item being left out, as above. An
 observation with `amend` is refused at run time.
@@ -216,31 +218,41 @@ a string; numbers, including the time, are fixed-point numbers times
 be replayed and tested; a deployment MAY pass `block.timestamp` times
 10<sup>6</sup>. A malformed observation reverts, which leaves the state
 as it was. The contract stores the model of the CADL contract as data,
-filled in by its constructor, and interprets it; two libraries hold the
-evaluation of predicates and the functions without state, so that each
+filled in by its constructor, and interprets it; three libraries hold
+the evaluation of predicates, the functions without state, and the
+judgement of temporal contents, so that each
 runtime code stays within the size limit of EIP-170. The cost of an
 observation does not grow with the number of earlier observations: the
 window of a temporal operator is scanned once (each observation adds
 its own value to the scans that are open), a value is found by binary
 search, and the values that no later step can read are deleted, a few
-per new value. It grows with the number of open scans, that is, with
-the observations inside an open window of a norm's content. In the
+per new value. A norm whose content is one temporal operator keeps its
+candidates (the observations at which the content is still to be
+decided) in a queue, oldest first, with what the observations since
+its last judgement say about the operands: for `within`, the first
+time the operand is true; for `throughout`, the first time it is false
+and the first time it is undefined; for `until`, the first observation
+at which `q` is true and the first at which `p` is not. Together with
+the last candidate whose window has seen an undefined operand, these
+decide every candidate by comparing times (for `throughout`, the
+newest candidate whose window ended before the first false or
+undefined value holds), with two binary searches over the queue and
+without scanning a window per candidate; this holds also while the
+norm is suspended. Decided candidates are deleted a few per
+observation. So the cost of an observation is bounded and does not grow
+with the number of observations inside a window. In the
 tests, an observation of the example of F.8 costs about
 6.4 × 10<sup>5</sup> gas over 320 observations at one per second while
 the 300-second window of its assumption is open and after it (at most
 1.1 × 10<sup>6</sup>, at the first observation), and one of a contract
 with two items over a window of 10<sup>5</sup> seconds about
-3.6 × 10<sup>5</sup> gas at the 320th observation. A norm whose content
-has a temporal operator is different: each observation inside an open
-window of its content adds a candidate that every later observation
-reads until the window closes, about 4 × 10<sup>4</sup> gas per
-observation inside the window (a `throughout(1000s, …)` content at one
-observation per second costs 1.3 × 10<sup>7</sup> gas per observation
-after 320 observations). The host SHOULD keep the observations inside
-such a window well below the block gas limit divided by that amount: a
-monitor whose observations reach the block gas limit cannot record any
-further observation and does not recover. `cadl codegen` names each
-such norm in a warning. The generated file is to be compiled with solc
+3.6 × 10<sup>5</sup> gas at the 320th observation; a prohibition with
+the content `throughout(1000s, …)` at one observation per second costs
+3.8 × 10<sup>5</sup> gas at the 320th observation and 3.9 × 10<sup>5</sup>
+at the 1000th (from `cadl` 0.3.26; 0.3.25 read every candidate at every
+observation, 1.3 × 10<sup>7</sup> gas at the 320th). A monitor whose
+observation would exceed the block gas limit cannot record it and does
+not recover, so the bound matters. The generated file is to be compiled with solc
 0.8.24 or later and `--optimize --optimize-runs 1`, as its header says:
 without the optimizer the runtime code exceeds the limit of EIP-170, and
 the estimate of the creation code holds for the optimizer with 1 or 200

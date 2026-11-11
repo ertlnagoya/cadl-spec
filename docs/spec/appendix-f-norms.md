@@ -1188,9 +1188,11 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   six decimals, a temporal operator inside another one, and a monitor
   whose creation code would exceed the limit of EIP-3860, and it refuses
   an observation that would make a bare name read inside a temporal
-  operator known after the first observation; the gas of a norm whose
-  content has a temporal operator grows with the observations inside its
-  open window. The Rego monitor refuses `/`, whose result is not always
+  operator known after the first observation. From `cadl` 0.3.26 it
+  also refuses, in the content of a norm, a temporal operator that is
+  not the whole content, and it decides the candidates of a temporal
+  content together, so that the gas of an observation does not grow
+  with the observations inside a window. The Rego monitor refuses `/`, whose result is not always
   a decimal number. Both compute numbers and times exactly, as F.5 says,
   and agree with `cadl norms-eval` on every input they accept; D.5
   lists what they refuse. The reference implementation
