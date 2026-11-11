@@ -28,7 +28,7 @@ reference implementation also provides the SoS-DSL extension
 ([Appendix E](./appendix-e-sos-dsl.md): `lifecycle:` / `monitors:`) with
 Unity C# generation, which the original phase plan did not list.
 
-Three further extensions follow the research directions of
+Five further extensions follow the research directions of
 [Chapter 9](./09-research.md) and are likewise outside the original
 phase plan. Each is specified in an appendix that states what the
 reference implementation provides:
@@ -37,4 +37,6 @@ reference implementation provides:
 | --- | --- | --- |
 | Norms ([Appendix F](./appendix-f-norms.md)) | RD-6.1, RD-6.2, RD-6.3, RD-6.5 | Static rules; verdicts and amendments computed from a recorded trace (`cadl norms-eval`, `cadl norms-diff`); an online monitor in the generated Python code (`norms_monitor.py`). Not provided: monitoring in the other generated runtimes, translation to a model checker. |
 | Agent governance ([Appendix G](./appendix-g-agents.md)) | RD-8.1, RD-8.2, RD-8.3 | Static rules; the decision function for one message (`cadl agents-decide`); Rego and Cedar boundary policies; a reference runtime that replays a recorded trace with holds, delegation and audit records (`cadl agents-run`). Not provided: an adapter to an agent protocol, integrity protection of the audit log. |
-| Stochastic model ([Appendix H](./appendix-h-stochastic.md)) | RD-1.3 | Static rules; export to the PRISM language (`cadl model-export`); a reference evaluator at fixed parameter values (`cadl model-check`); certified regime maps by parameter lifting (`--certify`). Not provided: derivation of the model from contracts, game semantics. |
+| Stochastic model ([Appendix H](./appendix-h-stochastic.md)) | RD-1.3 | Static rules; export to the PRISM language (`cadl model-export`); a reference evaluator at fixed parameter values (`cadl model-check`); certified regime maps by parameter lifting (`--certify`). Not provided: derivation of the model from contracts, the game semantics of Appendix I. |
+| Strategic model ([Appendix I](./appendix-i-games.md)) | RD-7.1, RD-7.2 | Specified; not implemented in `cadl` 0.3.22. Planned: static rules, equilibrium checks and certified equilibrium maps (`cadl game-check`). |
+| Grounding of the institutional parameters ([Appendix J](./appendix-j-grounding.md)) | RD-6.1, RD-1.5 | Specified; not implemented in `cadl` 0.3.22. Planned: static rules and the derived indices (`cadl norms-indices`), the link from sanctions to payoff terms. |

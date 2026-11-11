@@ -69,8 +69,10 @@ four gaps. Version 0.1 of this extension is a first step on each:
 Norms 0.1 deliberately stays small: it fixes the vocabulary and the
 static and dynamic semantics, so that design-time checking (by
 translation to a model checker) and runtime monitoring can be added by
-processors without changing the language. It does not yet give the
-institutional parameters α, β, and λ a formal meaning for norms (F.7).
+processors without changing the language. It does not give the
+institutional parameters α, β, and λ a formal meaning for norms (F.7);
+the grounding extension ([Appendix J](./appendix-j-grounding.md))
+takes a first step from the norms of a contract to the parameters.
 
 ## F.2 Concepts
 
@@ -642,6 +644,13 @@ decision-making, describes who holds the powers of a contract; α, the
 degree of information sharing, describes which triggers and contents
 the other parties can observe; and λ, the incentive intensity, scales
 the sanctions of violated norms.
+
+The grounding extension
+([Appendix J](./appendix-j-grounding.md), `grounding` 0.1) makes part
+of this reading precise without changing this appendix: it derives
+three indices from the norms of a contract, relates them to the
+declared parameters, and gives a sanction a numeric magnitude that a
+strategic model multiplies by λ.
 
 ## F.8 Example
 

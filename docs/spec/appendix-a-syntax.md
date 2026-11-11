@@ -121,7 +121,7 @@ semantic version string such as `"1.0.0"`.
 
 **Extension points.** `extensions:` declares the language extensions a
 file relies on, each as a name and a version (for example
-`- sos-dsl: 0.1`). Five extensions are defined; all but the last have a
+`- sos-dsl: 0.1`). Seven extensions are defined; all but the last have a
 name that can be declared:
 
 - the SoS-DSL extension ([Appendix E](./appendix-e-sos-dsl.md)),
@@ -139,6 +139,17 @@ name that can be declared:
 - the stochastic model extension
   ([Appendix H](./appendix-h-stochastic.md)), declared as `stochastic`
   with version `0.1`, which adds the key `model:` to `sos_body`;
+- the strategic model extension
+  ([Appendix I](./appendix-i-games.md)), declared as `games` with
+  version `0.1`, which requires `stochastic` and adds players,
+  profiles, payoffs, and equilibrium queries to `model:`;
+- the grounding extension
+  ([Appendix J](./appendix-j-grounding.md)), declared as `grounding`
+  with version `0.1`, which requires `norms` and adds the key
+  `grounding:` to `contract_def` (A.4), the keys `shares:` and
+  `on_fulfilment:` to a norm and `magnitude:` to its `on_violation:`,
+  and, with `games`, the keys `sanction_of:` and `reward_of:` to a
+  payoff term;
 - the motivation extension ([Appendix C](./appendix-c-motivation.md)),
   which defines `motivation_block`. It has no `extensions:` name in
   v0.3 and is used simply by writing a `motivation:` block.
@@ -194,7 +205,8 @@ contract_def      = "id:"      , identifier ,
                     [ "norms:"            , { "-" , norm_def } ] ,    (* Appendix F *)
                     [ "counts_as:"        , { "-" , counts_as_def } ] , (* Appendix F *)
                     [ "enforcement:"      , enforcement_block ] ,     (* Appendix G *)
-                    [ "delegations:"      , { "-" , delegation_def } ] ; (* Appendix G *)
+                    [ "delegations:"      , { "-" , delegation_def } ] , (* Appendix G *)
+                    [ "grounding:"        , grounding_block ] ;       (* Appendix J *)
 
 authority_block   = [ "decision_scope:"  , text ] ,
                     [ "decision_holder:" , actor_ref ] ,
@@ -395,11 +407,13 @@ Keys of the structure, by the block in which they are recognised.
 | `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `metrics` `verification` `codegen` `motivation` `model` |
 | `context` | `environment` `assumptions` |
 | actor | `id` `role` `autonomy` `capabilities` `interface` (`input` `output`) |
-| contract | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` `norms` `counts_as` `enforcement` `delegations` |
+| contract | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` `norms` `counts_as` `enforcement` `delegations` `grounding` |
 | norm (Appendix F) | `id` `kind` `bearer` `counterparty` `trigger` `until` `content` `deadline` `on_violation` (`severity` `sanction` `reparation` `transition`) `effects` (`activate` `suspend` `resume` `discharge`) `on_amendment` (`transform`) |
 | counts-as rule (Appendix F) | `when` `creates` `if` |
 | agent governance (Appendix G) | actor `agent` (`kind` `protocol` `tools`); contract `enforcement` (`default` `point`), `delegations` (`norm` `to` `grant` `revoke` `max_depth` `until`); prohibition `on_denied` (`escalate_to` `timeout` `fallback` `notify`) |
 | stochastic model (Appendix H) | `model` (`kind` `parameters` `variables` `commands` `labels` `regimes` `rewards` `properties` `regime_maps`); the keys of each entry are listed in H.2 |
+| strategic model (Appendix I) | `model` (`players` `profiles` `compliance` `payoffs` `equilibria`); command `owner`; property and regime map `profile`; the keys of each entry are listed in I.2 |
+| grounding (Appendix J) | contract `grounding` (`items` `tolerance`); norm `shares`, `on_fulfilment` (`reward` `magnitude`), `on_violation` (`magnitude`); payoff term `sanction_of` `reward_of` |
 | `authority` | `decision_scope` `decision_holder` `beta` `mode` |
 | `information` | `alpha` `views` `sharing` |
 | `incentives` | `type` `lambda` `rules` |
@@ -419,8 +433,10 @@ Enumerated values: `Directed` `Acknowledged` `Collaborative` `Virtual`
 [Appendix C](./appendix-c-motivation.md),
 [Appendix E](./appendix-e-sos-dsl.md),
 [Appendix F](./appendix-f-norms.md),
-[Appendix G](./appendix-g-agents.md), and
-[Appendix H](./appendix-h-stochastic.md).
+[Appendix G](./appendix-g-agents.md),
+[Appendix H](./appendix-h-stochastic.md),
+[Appendix I](./appendix-i-games.md), and
+[Appendix J](./appendix-j-grounding.md).
 
 ## A.12 Reference implementation status (`cadl` 0.3) {/* #a12-reference-implementation-status-v03 */}
 
@@ -531,7 +547,12 @@ deviates from this appendix as follows (checked against `cadl` 0.3.22).
   that extension. `cadl` 0.3.22 adds the certified regime maps of H.9,
   the runtime of G.5 to G.8 with the rules G-17 to G-19, and the online
   monitor of norms in the generated Python code; the three sections
-  named above state what each covers.
+  named above state what each covers. The extensions `games` 0.1
+  ([Appendix I, I.14](./appendix-i-games.md#i14-reference-implementation-status))
+  and `grounding` 0.1
+  ([Appendix J, J.11](./appendix-j-grounding.md#j11-reference-implementation-status))
+  are specified and not implemented in `cadl` 0.3.22: their names get
+  the informational diagnostic for an unknown extension.
 
 Releases of `cadl` before 0.3.7 differed in several of these points; the history
 is in the

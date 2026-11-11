@@ -1,5 +1,5 @@
 ---
-sidebar_position: 20
+sidebar_position: 21
 title: "Glossary"
 description: "Definitions of the terms used in the CADL specification, grouped by topic, with links to the chapters and sections that define them."
 ---
@@ -247,6 +247,45 @@ Terms of the stochastic model extension; see
   objective in which part of a parameter region (`model.regime_maps`).
   Its result divides the region into cells that are `decided` (with the
   best designs), `infeasible`, or `undecided`.
+
+## Strategic model extension
+
+Terms of the strategic model extension; see
+[Appendix I](./appendix-i-games.md).
+
+- **Strategic model** — A `model:` block with `kind: smg`: the model
+  of Appendix H in which some commands are owned by players, read as a
+  turn-based stochastic game.
+- **Player** — A decision maker of a strategic model, standing for
+  declared actors; it chooses among the commands it owns.
+- **Profile** — One memoryless deterministic strategy per player,
+  named in `model.profiles` by a list of rules. The **compliance
+  profile** is the one the author declares as the behaviour the
+  contracts ask for.
+- **Payoff** — What a player gains: a weighted sum of expected rewards
+  accumulated until a target.
+- **Nash equilibrium / Deviation gain** — A profile is a Nash
+  equilibrium when no player gains by changing its own strategy alone;
+  the deviation gain of a player is its best-response value minus its
+  payoff under the profile.
+- **Equilibrium map** — The answer to the question of where in a
+  parameter region a profile is an equilibrium: cells that are
+  `equilibrium`, `not_equilibrium` (with a deviator), or `undecided`.
+
+## Grounding extension
+
+Terms of the grounding extension; see
+[Appendix J](./appendix-j-grounding.md).
+
+- **Derived index** — One of α̂, β̂, λ̂: a ratio of counts computed
+  from the norms of one contract. α̂ is the fraction of (item, party)
+  pairs that a norm or a sharing entry gives, β̂ the fraction of powers
+  held by the decision holder, and λ̂ the fraction of obligations and
+  prohibitions that carry a consequence.
+- **Information item** — A named piece of information of a contract,
+  declared with the party it stems from.
+- **Magnitude** — The size of the sanction or of the reward of a norm
+  at full incentive intensity; a strategic model multiplies it by λ.
 
 ## Verification
 

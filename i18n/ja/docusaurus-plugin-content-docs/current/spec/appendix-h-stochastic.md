@@ -53,14 +53,19 @@ PRISMモデリング言語を読む
 - 単調性の主張（「αを上げても成功確率は下がらない」）は見送る。パラメトリックなマルコフ連鎖には
   単調性検査が存在するが
   [[Spel+, ATVA 2019]](./appendix-b-references.md)，その研究が扱うのは到達確率である。
-- ゲーム意味論はない。モデルをアクター間のゲームとして読み，その均衡の上で遵守が成り立つかを問うこと
+- 本付録にはゲーム意味論はない。モデルをアクター間のゲームとして読み，遵守が均衡であるかを問うこと
   （[9.7節](./09-research.md)のRD-7.1とRD-7.2。合理的検証
   [[Gutierrez+, AI 2020]](./appendix-b-references.md)，並行確率ゲームの相関均衡
-  [[Kwiatkowska+, TACAS 2022]](./appendix-b-references.md)）は，後の版に委ねる。そのために
+  [[Kwiatkowska+, TACAS 2022]](./appendix-b-references.md)）は，戦略モデル拡張
+  （[付録I](./appendix-i-games.md)，`games` 0.1）が扱う。そのために
   次のものを**予約**し，別の意味では用いない。キー `owner:`（変数またはコマンドの）と `sync:`
   （コマンドの），
   `model:` の `players:`，`payoffs:`，`equilibria:`，`kind:` の値 `mdp`，およびパラメータの出所
-  `motivation.rho` と `motivation.kappa` である。
+  `motivation.rho` と `motivation.kappa` である。`games: 0.1` を宣言するファイルでは，付録Iが，
+  `players:`，`payoffs:`，`equilibria:`，およびコマンドの `owner:` を定義し，`kind:` の値 `smg` を
+  追加し，その種類のモデルについてS-9を置き換える。`sync:`，変数の `owner:`，`mdp`，および
+  2つのパラメータの出所は，そこでも予約されたままである。`games: 0.1` を宣言しないファイルでは，
+  これらはすべて予約されたままである。
 
 ## H.2 構文（A.2へのEBNFの追加）
 

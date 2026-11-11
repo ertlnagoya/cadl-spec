@@ -68,18 +68,24 @@ give to such a tool. Stochastic 0.1 is a small first step:
   parametric Markov chains
   [[Spel+, ATVA 2019]](./appendix-b-references.md), but that work
   concerns reachability probabilities.
-- There is no game semantics. Reading the model as a game among the
-  actors, to ask whether compliance holds on its equilibria (RD-7.1,
-  RD-7.2 of [Section 9.7](./09-research.md); rational verification
-  [[Gutierrez+, AI 2020]](./appendix-b-references.md), correlated
-  equilibria of concurrent stochastic games
-  [[Kwiatkowska+, TACAS 2022]](./appendix-b-references.md)), is left to
-  a later version. **Reserved** for it, and not to be used with another
-  meaning: the keys `owner:` (of a variable or a command) and `sync:` (of a
-  command);
-  `players:`, `payoffs:`, and `equilibria:` of `model:`; the value
-  `mdp` of `kind:`; and the parameter sources `motivation.rho` and
-  `motivation.kappa`.
+- There is no game semantics in this appendix. Reading the model as a
+  game among the actors, to ask whether compliance is an equilibrium
+  (RD-7.1, RD-7.2 of [Section 9.7](./09-research.md); rational
+  verification [[Gutierrez+, AI 2020]](./appendix-b-references.md),
+  correlated equilibria of concurrent stochastic games
+  [[Kwiatkowska+, TACAS 2022]](./appendix-b-references.md)), is the
+  subject of the strategic model extension
+  ([Appendix I](./appendix-i-games.md), `games` 0.1). **Reserved** for
+  it, and not to be used with another meaning: the keys `owner:` (of a
+  variable or a command) and `sync:` (of a command); `players:`,
+  `payoffs:`, and `equilibria:` of `model:`; the value `mdp` of
+  `kind:`; and the parameter sources `motivation.rho` and
+  `motivation.kappa`. In a file that declares `games: 0.1`,
+  Appendix I defines `players:`, `payoffs:`, `equilibria:`, and
+  `owner:` of a command, adds the value `smg` of `kind:`, and replaces
+  S-9 for a model of that kind; `sync:`, `owner:` of a variable,
+  `mdp`, and the two parameter sources remain reserved there too. In a
+  file that does not declare it, all of them remain reserved.
 
 ## H.2 Syntax (EBNF addition to A.2)
 
