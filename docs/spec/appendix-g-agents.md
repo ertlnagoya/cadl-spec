@@ -1722,7 +1722,12 @@ are these.
   id of the gateway's task, or the final task. So every event of the
   agent that reaches a client belongs to an allowed or released request
   of that client. A stream keeps its place among the requests handled at
-  the same time until it ends. Errors found before the stream begins are
+  the same time until it ends or its client goes: while the agent is
+  silent, the gateway reads from the client's connection, as for a held
+  request, and sends a comment once a second; a client that has gone ends
+  the stream and the request to the agent. A plain JSON answer of the
+  agent to a streamed request is read as any other answer: at most
+  16 MiB, strict UTF-8. Errors found before the stream begins are
   answered as plain JSON-RPC errors, as A2A allows.
 - Push notifications and the gRPC binding stay refused. A push
   notification configuration names a URL of the client to which the
@@ -1778,7 +1783,7 @@ are these.
   one thread. What remains: hosts in at least four different /24 (or
   /48) networks together can keep the 64 readers busy, 16 per network,
   and make the gateway refuse every new connection for as long as they
-  go on; one network alone cannot. A process cannot tell such hosts from
+  go on; one /24 or /48 alone cannot. A process cannot tell such hosts from
   clients before they authenticate, so where this matters the gateway
   belongs behind a proxy or a firewall that limits connections. Behind a proxy every client has the address
   of the proxy, so `--max-readers-per-address` has to be raised there,
@@ -1796,13 +1801,22 @@ run, the held message, the times, the arguments, and their SHA-256, and
 `run.json` says `"holds_signed": true`. `cadl mcp-approve --hold-key
 FILE` verifies the MAC before it shows or signs the hold, and refuses a
 hold without it or with a wrong one; without `--hold-key` it refuses a
-signed hold and warns for an unsigned one. In every case it refuses a
-hold whose shown arguments do not have the SHA-256 that it names. The
-hold key is a key of the gateway: it differs from the key of the log and
-from every approver key, and the approvers hold it to verify, so it
-protects the holds against whoever can write the inbox but cannot read
-that key, as the approver keys protect the approvals. The approver keys
-still authenticate the approvals; the hold key adds nothing to them, and
+signed hold, and it warns for an unsigned one unless `run.json` of the
+inbox says `holds_signed` or it is given `--require-signed-hold`: then
+it refuses an unsigned hold. `--require-signed-hold` does not depend on
+the inbox, whose `run.json` whoever can write the inbox can change. In
+every case it refuses a hold whose shown arguments do not have the
+SHA-256 that it names, and it shows the arguments with every character
+that is not shown as itself escaped as `\uXXXX`: controls, format
+characters such as bidirectional overrides and zero-width characters,
+private use, surrogates, unassigned code points, and line and paragraph
+separators. The hold key is a key of the gateway: it differs from the
+key of the log, from every approver key, and, at the A2A gateway, from
+every client key, and the approvers hold it to verify, so an approver
+detects a hold that was changed by someone who can write the inbox but
+cannot read that key, as the gateway detects such a change of an
+approval with the approver keys. The authentication of the approvals
+does not depend on the hold key, and
 without it the gateway still refuses an approval of other arguments
 than those held (`wrong_message`), but the approver could be shown
 arguments that are not the held ones. A hold is authenticated for the
@@ -1831,7 +1845,7 @@ a job of the continuous integration installs them on Python 3.12; they
 are not dependencies of `cadl`.
 
 The A2A gateway is tested with a fake A2A agent in a thread of the test
-and a fake client, standard library only, in 95 tests: allow,
+and a fake client, standard library only, in 101 tests: allow,
 denial by the default, a message without name, escalation that is
 approved, rejected, or expires, with and without `returnImmediately`, a
 held task that is cancelled before a signed approval arrives or after
@@ -1848,7 +1862,7 @@ address that reconnect at once, more requests and more holds of one actor
 than allowed, the nonces of one actor, the isolation of
 tasks and contexts, streams that are allowed, denied, held and approved
 or rejected, withdrawn when the client goes, or ended by a bad event of
-the agent, subscriptions, signed holds and forged hold files, receivers
+the agent, clients that leave while the agent is silent, subscriptions, signed holds and forged hold files, receivers
 bound by the hold's instance, malformed header lines, and the caps per
 address and per prefix. In every scenario the agent receives no request that was not
 allowed or released, and `cadl agents-run` on the trace writes the same
