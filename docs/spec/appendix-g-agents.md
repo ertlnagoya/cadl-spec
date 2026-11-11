@@ -274,22 +274,35 @@ or the enforcement point does not have the flag. Unknown is resolved
 does not.
 
 **Missing data.** The enforcement point also does not have the flag
-when it cannot determine it because a quantity has no value yet. There
-are two cases. While the `trigger:` of a prohibition that is `inactive`
-is a predicate that is undefined (F.5), the flag of the prohibition is
-unknown, and so the prohibition applies. While the `until:` of a
-permission that is `active` is a predicate that is undefined, the flag
-of the permission is unknown, and so the permission does not apply.
-Nothing is latched: the state of the norm instance and its verdict are
-those of F.5, where an undefined predicate does not occur; as soon as
-the predicate has a value, the flag is the one of the state again. The
-two other cases need no rule, because F.5 already blocks: an undefined
-`trigger:` does not activate a permission, and an undefined `until:`
-does not end a prohibition; likewise an undefined `if:` creates no
-institutional event. A processor SHOULD warn when it decides a message
-on a flag that is unknown for this reason. The consequence at the start
-is intended: a message that arrives before the quantities of such a
-predicate have their first values is denied or escalated.
+when it cannot determine it because a quantity has no value yet. This
+concerns the `trigger:` of a prohibition that is `inactive` and the
+`until:` of a permission that is `active`, in two forms. Directly:
+while that `trigger:` or `until:` is a predicate that is undefined
+(F.5), the flag is unknown. Through an institutional event: while it
+is an event that a `counts_as:` rule creates from a predicate `when:`,
+and the `when:` or the `if:` of such a rule is undefined, the flag is
+unknown; with several rules for the event, as long as one of them is
+undefined. An unknown prohibition applies and an unknown permission
+does not. Nothing is latched: the state of the norm instance and its
+verdict are those of F.5, where an undefined predicate does not occur;
+as soon as the predicates have values, the flag is the one of the
+state again. Two cases need no rule, because F.5 already blocks: an
+undefined `trigger:` does not activate a permission, and an undefined
+`until:` does not end a prohibition. A processor SHOULD warn when it
+decides a message on a flag that is unknown for this reason. The
+consequence at the start is intended: a message that arrives before
+the quantities of such a predicate have their first values is denied
+or escalated.
+
+One case is **not** covered. A rule with a message `when:` and an
+`if:` creates its event at the moment of that message or never. When
+the message arrives while the `if:` is undefined, no event is created
+(F.5); that blocks where the event would let a message through, but
+where the event would bring a prohibition into force or end a
+permission, the boundary does not block, and there is no later moment
+at which the flag could be corrected without inventing a state that
+F.5 does not have. G-19 warns about such a contract, and a processor
+SHOULD warn when it observes such a message.
 
 **Unknown occurrences.** G-18 requires every index variable of an
 enforced contract to be the index of a party, and a contract instance
@@ -634,6 +647,13 @@ the hold, except for `expired`, where it is the deadline; such a record
 is written when the expiry is found, before the next decision or
 observation, so the times of a log never decrease.
 
+A denial or an escalation that rests on a flag that is unknown (G.5)
+has the reason `prohibition` and lists the norm in `norms`, like any
+other. What distinguishes it is in the policy input of the decision,
+where the flag is absent from `in_force`, and in the warning of the
+processor. The remedy of the sender differs: for missing data it is to
+wait for the data, not to ask the approver.
+
 Grants, revocations, and acts recorded as unauthorised SHOULD be
 written to the same log, as **event records**, and so SHOULD every
 other change of the state on which later decisions rest: the end of a
@@ -805,6 +825,13 @@ An agents-aware processor MUST, in addition to the checks of
   the set, and a predicate with it would read a quantity that no actor
   has. That a quantifier binds its variable makes the predicate valid;
   whether a processor can evaluate it is a separate matter (G.13).
+
+- **G-19.** A processor SHOULD warn, in an enforced contract, about an
+  institutional event that a `counts_as:` rule creates under an `if:`
+  and that is the `trigger:` of a prohibition or the `until:` of a
+  permission. When the `when:` of the rule is a message that arrives
+  while the `if:` is undefined, the event is not created and the
+  boundary does not block (G.5, "Missing data").
 
 The MUST rules are errors; the SHOULD rules are warnings and leave the
 file valid. N-1 to N-12 of Appendix F apply unchanged.
@@ -1152,7 +1179,7 @@ only when the file declares `agents: 0.1`; a file that declares only
 
 **Reference implementation.** `cadl` 0.3.20 implements agents 0.1 as
 follows. It parses the four new keys, applies G-1 to G-16 in
-`cadl check` (the SHOULDs as warnings; G-17 and G-18 from the release
+`cadl check` (the SHOULDs as warnings; G-17 to G-19 from the release
 that follows 0.3.21), and lowers the blocks to the IR
 above; a `timeout:` given as a bare number is read as seconds, the
 lenient form that
@@ -1213,7 +1240,17 @@ error. When a message is decided while a flag is unknown for missing
 data (G.5), the runtime warns once per norm and names the quantity
 without a value. Messages sent before the first values of such
 quantities are therefore denied or escalated; a trace gives the initial
-values on its first line to avoid that. One line is processed in
+values on its first line to avoid that. A grant that is sent while the
+`until:` of the delegable permission is undefined is recorded as
+`unauthorised_grant` with the reason `no_authority`, because the
+permission is not known to be in force, and has to be sent again. Two
+limits remain for missing data. A message that would create a blocking
+event under an `if:` that is undefined creates nothing (G.5, G-19);
+the runtime warns and names the rule, the event, and the quantity. And
+the rule does not reach through an obligation: while the predicate
+`trigger:` of an obligation is undefined, the obligation is not
+activated, so it is not violated, and a prohibition that is its
+`reparation:` does not arise. One line is processed in
 this order: holds whose deadline lies before its time expire; instances
 are created; the time and the values of the line are observed without
 message (G.5), together with an amendment; each message is decided, and
@@ -1357,6 +1394,13 @@ fixed on the first line. The review also led to the rule for missing
 data in G.5: a prohibition whose `trigger:` could not be evaluated for
 want of a value was not in force, and a message was allowed on data
 that the enforcement point did not have.
+
+A seventh review found that this rule looked only at the predicate of
+the norm itself: a prohibition whose `trigger:` is an institutional
+event that a rule creates from a predicate was not in force while that
+predicate had no value. The rule of G.5 now reaches through such an
+event, and G-19 and the two limits above state what it does not
+reach.
 
 Writing and reviewing the runtime showed these gaps in the text of
 agents 0.1, which this revision of the appendix closes: the state on
