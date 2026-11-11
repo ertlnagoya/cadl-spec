@@ -428,8 +428,45 @@ and `count` of an empty domain are 0. An aggregate is undefined over an
 open domain, when `e` (for `count`, `p`) is undefined for a member,
 when a value of `e` is not a number, and for `min`, `max`, and `avg`
 over an empty domain. A predicate that compares such a value is
-undefined. Another function, and a temporal operator inside a
-comprehension, are not evaluated (F.10).
+undefined, except in the comparisons below. Another function, and a
+temporal operator inside a comprehension, are not evaluated (F.10).
+
+**Monotone aggregates in a comparison.** `count` cannot decrease when
+members are added to the domain, `max` cannot decrease, and `min` cannot
+increase. A comparison `a op b` or `b op a` with `op` one of `<`, `<=`,
+`>`, `>=`, `==`, `!=`, where `a` is a call of `count`, `max`, or `min`
+of a comprehension and `b` contains no quantifier and no comprehension
+(so its value does not depend on a domain), is therefore decided from
+the members known at the observation when that is possible. Every
+element that is undefined, and on an open domain every member not yet
+known, may take any value; the aggregate then lies in an interval:
+
+| Aggregate | Interval |
+| --- | --- |
+| `count` | from the number t of members for which `p` is true to t + u, with u the number of members for which `p` is undefined; no upper end on an open domain |
+| `max` | from the largest defined value of `e` upwards, without upper end |
+| `min` | from the smallest defined value of `e` downwards, without lower end |
+
+The comparison is true when it holds for every value of the interval
+(for `count`, every integer), false when it holds for none, and
+undefined otherwise; `max` and `min` without a defined value of `e`
+are undefined as before. For example, over the open domain of
+`ROBOT[1..N]`, `count(ROBOT[j].delivery == 7 for j in ROBOT) >= 2` is
+true as soon as two known robots have the delivery 7, and
+`max(ROBOT[j].load for j in ROBOT) <= 10` is false as soon as a known
+robot has a load above 10; `count(...) == 2` is never true over an open
+domain, because a further member may add one. On a closed domain whose
+elements are all defined the interval is the exact value, so nothing
+changes there. The rule is sound by the argument for quantifiers above:
+a completion of the domain keeps every known element, and so has its
+value in the interval of the open domain. Other comparisons with an
+aggregate keep the rule above: one whose other operand has a
+quantifier or an aggregate, one inside arithmetic
+(`count(...) + 1 >= 2`), and every comparison of `sum` and `avg`. `sum`
+and `avg` are not monotone: a further member, or a value of an
+undefined element, can move them either way, unless every value is
+known to be non-negative or bounded, which the language does not
+declare.
 
 The domain and its known members at an observation depend only on the
 observations up to it. The values of quantified predicates and
@@ -1056,7 +1093,11 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   defines ("Wildcard and range references") when it reads the contract,
   and evaluates the result with the code for quantifiers and aggregates;
   the variables it introduces have names that no predicate can write. A
-  file without such references gives the same results as before. A norm or
+  file without such references gives the same results as before. From
+  the same release it decides the comparisons of `count`, `max`, and
+  `min` of F.5 ("Monotone aggregates in a comparison") from the known
+  members; up to 0.3.23 they were undefined over an open domain and when
+  an element was undefined. A norm or
   item that contains a function call other than a temporal operator or
   `sum`, `count`, `min`, `max`, or `avg` of a comprehension, an
   aggregate argument with references of two or more groups, a wildcard
