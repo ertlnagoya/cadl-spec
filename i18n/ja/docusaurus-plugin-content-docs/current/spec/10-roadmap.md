@@ -24,7 +24,7 @@ CADLの実装と実用化に向けたロードマップを以下に示す。[第
 
 | **拡張** | **研究課題** | **リファレンス実装（`cadl` 0.3.24）** |
 | --- | --- | --- |
-| 規範（[付録F](./appendix-f-norms.md)） | RD-6.1，RD-6.2，RD-6.3，RD-6.5 | 静的な規則。記録したトレースからの判定と改正の計算（`cadl norms-eval`，`cadl norms-diff`）。生成したPythonコードでのオンライン監視（`norms_monitor.py`）。述語の中の限量子，集約，`[*]` 参照の評価。ほかの生成ランタイムでの監視と，モデル検査器への変換は提供しない。 |
+| 規範（[付録F](./appendix-f-norms.md)） | RD-6.1，RD-6.2，RD-6.3，RD-6.5 | 静的な規則。記録したトレースからの判定と改正の計算（`cadl norms-eval`，`cadl norms-diff`）。生成したPythonコードでのオンライン監視（`norms_monitor.py`）。述語の中の限量子，集約，`[*]` 参照の評価。`cadl` 0.3.25から，PRISMによる1つの契約インスタンスの設計時の検査（`cadl norms-check`，F.12）。ほかの生成ランタイムでの監視と，限量子を含む述語，複数のインスタンス，改正の設計時の検査は提供しない。 |
 | エージェント統治（[付録G](./appendix-g-agents.md)） | RD-8.1，RD-8.2，RD-8.3 | 静的な規則。1つのメッセージに対する決定関数（`cadl agents-decide`）。RegoとCedarの境界方針。記録したトレースを再生し，保留，委任，監査記録を扱うリファレンスランタイム（`cadl agents-run`）とそのオンラインでの利用。改ざんを検出できる監査記録（`cadl audit-verify`）。Model Context Protocolのゲートウェイ（`cadl mcp-gateway`）。A2Aのゲートウェイと，stdio以外のMCPのトランスポートは提供しない。 |
 | 確率モデル（[付録H](./appendix-h-stochastic.md)） | RD-1.3 | 静的な規則。PRISM言語への書き出し（`cadl model-export`）。パラメータの値を固定した参照評価器（`cadl model-check`）。パラメータリフティングによる認証付きのモードマップ（`--certify`）。契約からのモデルの導出は提供しない。 |
 | 戦略モデル（[付録I](./appendix-i-games.md)） | RD-7.1，RD-7.2 | `cadl` 0.3.23から。静的な規則。記憶なしで決定的な名前付きのプロファイルが単独の逸脱に対して均衡であるかの検査と逸脱利得，認証付きの均衡マップ（`cadl game-check`）。PRISM-gamesへの書き出し。0.3.24からは，任意の戦略モデルでの両端による認証と，概念 `every_reachable_state`。部分観測のもとでの均衡と同時手番は提供しない。 |

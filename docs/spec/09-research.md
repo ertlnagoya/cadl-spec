@@ -273,7 +273,16 @@ RD-6.1, RD-6.2, RD-6.3, and RD-6.5: it defines first-class norms,
 bounded temporal operators with four-valued verdicts, counts-as rules,
 and what happens to running norms on an amendment. The
 generated Python code monitors norms at run time
-([F.10](./appendix-f-norms.md#f10-reference-implementation-status)).
+([F.10](./appendix-f-norms.md#f10-reference-implementation-status)),
+and the norms of one contract instance can be checked at design time:
+[F.12](./appendix-f-norms.md#f12-design-time-checking) translates them,
+with discrete time and classes of values, into an MDP for PRISM
+[[Kwiatkowska+, CAV 2011]](./appendix-b-references.md) and asks whether
+each norm can be violated, whether every activation can be kept,
+whether two norms are in conflict
+[[Vasconcelos+, JAAMAS 2009]](./appendix-b-references.md), and whether
+a power is ever exercised, each "yes" with a trace that the runtime
+semantics of F.5 confirms.
 The grounding extension
 ([Appendix J](./appendix-j-grounding.md), `grounding` 0.1) is a first
 step towards the link to α, β, and λ: it derives from the norms of a
@@ -284,9 +293,11 @@ gives sanctions a numeric magnitude that λ scales; the same indices
 are also computed over all contracts of an SoS. The indices are
 counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
-design-time checking by a model checker, monitoring in the other
-generated runtimes, weighted indices, norms per regime, and the
-derivation of model probabilities from norms remain open. We found no work that handles first-class norm
+design-time checking that F.12 does not cover (quantifiers and arithmetic in
+predicates, several contract instances, sets of actors whose size is not fixed, continuous
+time, amendments, and which party can avoid a violation), monitoring in the other
+generated runtimes, weighted indices, norms per regime, and the derivation of model
+probabilities from norms remain open. We found no work that handles first-class norm
 objects together with the institutional parameters α, β, and λ, the
 composition of many contracts in an SoS, and amendment during operation.
 We also found no tool that connects deontic blame semantics with
