@@ -402,9 +402,9 @@ AND    OR    NOT    true    false    for all    exists    in
 みなされ，宣言されていなければならない。単独で現れる名前は状態変数とみなされ，
 検査されない。`condition:`，`safety_invariant:`，`formula:`，`expr:`，モニターの
 `rule:`，ライフサイクルの `when:`，およびメッセージイベントでない `on:` の述語については，未宣言のアクターの検査を行わない。それ以外の必須キーが
-欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.21で確認）。
+欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.22で確認）。
 
-- **式。** `cadl` 0.3.21では，式はA.10とA.11に従う。既知の相違はない。`cadl` 0.3.17までは，
+- **式。** `cadl` 0.3.22では，式はA.10とA.11に従う。既知の相違はない。`cadl` 0.3.17までは，
   `factor` の単項 `-` を受け付けなかった。それを使った項目は不透明な述語として保持し，
   ライフサイクルの `on:` と `when:`，モニターの `rule:` については `cadl check` が警告を出した。
 - **識別子。** `cadl` 0.3.9からは，`cadl check` は，アクター，契約，プロトコル，メトリクスのid，
@@ -458,6 +458,9 @@ AND    OR    NOT    true    false    for all    exists    in
   `cadl` 0.3.20からは，`agents` 0.1（[付録GのG.13節](./appendix-g-agents.md)）と `stochastic` 0.1
   （[付録HのH.14節](./appendix-h-stochastic.md)）についても同様である。また，`cadl sim-ir` は
   キー `stochastic_model` を出力する。この拡張を用いないファイルでは，その値は `null` である。
+  `cadl` 0.3.22は，H.9の認証付きのモードマップ，G.5からG.8のランタイムと規則G-17からG-19，
+  および生成したPythonコードでの規範のオンライン監視を追加する。それぞれの範囲は，上に挙げた
+  3つの節に示す。
 
 `cadl` の0.3.7より前のリリースは，これらの点のいくつかで異なっていた。その経緯は，cadlリポジトリの
 [CHANGELOG](https://github.com/ertlnagoya/cadl/blob/master/CHANGELOG.md)にある。

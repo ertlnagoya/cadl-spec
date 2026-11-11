@@ -38,7 +38,7 @@ Python のシミュレータ設定を `codegen:` の項目から要求するこ�
 実装が出力できないターゲットを指定した項目に警告が出る（D.4）。
 
 規範拡張（[付録F](./appendix-f-norms.md)）を宣言したファイルに対しては，`python` ターゲットは
-モジュール `norms_monitor.py` も出力する（`cadl` 0.3.21 の後の開発版）。このモジュールは，
+モジュール `norms_monitor.py` も出力する（`cadl` 0.3.22 から）。このモジュールは，
 各契約の `norms:` と `counts_as:` のブロック，および `assume:` と `guarantee:` の項目を，
 時相演算子を含む項目も含めて，システムの動作中に 1 つの契約インスタンスについて監視する。
 観測を 1 つずつ受け取り，状態または判定（`pending`，`fulfilled`，`violated`，`excused`）が

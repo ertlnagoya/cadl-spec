@@ -1179,8 +1179,7 @@ only when the file declares `agents: 0.1`; a file that declares only
 
 **Reference implementation.** `cadl` 0.3.20 implements agents 0.1 as
 follows. It parses the four new keys, applies G-1 to G-16 in
-`cadl check` (the SHOULDs as warnings; G-17 to G-19 from the release
-that follows 0.3.21), and lowers the blocks to the IR
+`cadl check` (the SHOULDs as warnings; G-17 to G-19 from `cadl` 0.3.22), and lowers the blocks to the IR
 above; a `timeout:` given as a bare number is read as seconds, the
 lenient form that
 [A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)
@@ -1191,7 +1190,7 @@ input. `cadl codegen -t agent-rego` emits a Rego policy that returns
 the full result, and `-t agent-cedar` emits Cedar policies for the
 static norms with a side table.
 
-**Runtime.** The release that follows `cadl` 0.3.21 adds
+**Runtime.** `cadl` 0.3.22 adds
 `cadl agents-run FILE --trace TRACE [--audit OUT.jsonl]`, a reference
 runtime for G.5 to G.8. It is deterministic and offline: it replays a
 recorded sequence of messages through one enforcement point over all

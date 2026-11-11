@@ -146,7 +146,7 @@ lifecycles, monitors), use the **Designer** page.
 ## Path B — Write and check with the CLI {/* #path-b */}
 
 The reference implementation is the `cadl` command-line tool, distributed
-on PyPI as `cadl-lang`. The output below is from cadl 0.3.21.
+on PyPI as `cadl-lang`. The output below is from cadl 0.3.22.
 
 ### B-1. Install
 

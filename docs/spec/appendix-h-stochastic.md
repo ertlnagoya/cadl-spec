@@ -1045,7 +1045,7 @@ The reference implementation implements stochastic 0.1 from `cadl`
   these are reported as estimates at sample points (H.9), never as
   decided cells.
 - `cadl model-check --regime-map ID --certify` computes the regime map
-  of H.9, in the version after `cadl` 0.3.21. It runs no external model
+  of H.9, from `cadl` 0.3.22. It runs no external model
   checker. The method is parameter lifting
   [[Quatmann+, ATVA 2016]](./appendix-b-references.md) with exact
   rational arithmetic. On a cell, a design is relaxed to a Markov
@@ -1092,6 +1092,14 @@ The reference implementation implements stochastic 0.1 from `cadl`
     number of open parameters, and with the number of states: every
     policy is evaluated by an exact linear system, of at most 2 000
     unknowns.
+  - S-14 is checked by `cadl check` at the corners of the region. A
+    probability that is not multi-affine can leave `[0, 1]` in the
+    interior only; the certified mode reports that as an error (exit
+    status 2) when the centre or a corner of a cell shows it, and
+    otherwise leaves the cell `undecided`.
+  - A YAML number with more than 15 significant digits, which H.2
+    forbids, is rounded when the file is loaded and is not reported;
+    the claims are then about the rounded model.
 - For the example of H.12 (`resolution: 0.05`) the certified map has 95
   cells, 60 `decided` and 35 `undecided`, after joining a partition of
   121 cells; 241 cells were analysed, with at most 10 bisections of a
@@ -1131,6 +1139,13 @@ The reference implementation implements stochastic 0.1 from `cadl`
     each step, where the value at p = 0 is 0. Cells that are not
     graph-preserving were therefore checked with the reference
     evaluator only.
+- An independent review tried to break the certified mode and found no
+  wrong claim: 3 290 random models, 56 782 `decided` or `infeasible`
+  cells tested at 1 731 349 exact points, among them cells that are not
+  graph-preserving and designs that are not multi-affine; the solvers
+  of the decision process agreed with a brute-force search over all
+  memoryless policies on 60 000 random processes; and four soundness
+  errors injected into the code were each detected by the harness.
 - `cadl regime-map` still reports the graph of regime names and
   transitions.
 - The exported files have been run through PRISM 4.11 and Storm
@@ -1148,7 +1163,7 @@ The reference implementation implements stochastic 0.1 from `cadl`
   structure named like a keyword unchanged, which neither tool loads;
   0.3.21 renames it as H.11 now says. `cadl` up to 0.3.21 wrote a
   transition reward for an action that no command of the design has,
-  which neither tool loads; the version after 0.3.21 omits it as H.11
+  which neither tool loads; 0.3.22 omits it as H.11
   now says.
 
 ## H.15 Backward compatibility

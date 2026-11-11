@@ -249,8 +249,13 @@ and false at an observation at which `p` fails before `q` has held.
 Otherwise the value is decided at the first observation whose time stamp
 is after `t + d`. The interval is then over: `within` and `until` are
 false and `throughout` is true, unless an operand was undefined (F.5) at
-an observation of the interval; in that case the value is undefined,
-since a value of that operand could have decided it otherwise. The end
+an observation of the interval and a value of that operand could have
+decided it otherwise; in that case the value is undefined. For
+`until(p, q, d)` this is so only for an undefined `q`, or for an
+undefined `p` at an observation before one at which `q` held: an
+undefined `p` does not matter when `q` never held, and the value is then
+false. Likewise `until` is not decided false by a failing `p` at an
+observation before which `q` was undefined; its value is then undefined. The end
 of an interval is therefore not known at the time `t + d` itself but at
 the first observation after it; that observation need not change any
 quantity (F.5).
@@ -808,8 +813,8 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   is reported, not applied. Up to `cadl` 0.3.21 it matched the actor
   references of message events too widely: a range such as `A[1..2]`
   matched every actor named `A[k]`, and `A[*]` and an unbound `A[i]`
-  also matched actors outside the declared set. The release that
-  follows 0.3.21 matches them by the table of F.3; verdicts computed
+  also matched actors outside the declared set. `cadl` 0.3.22
+  matches them by the table of F.3; verdicts computed
   for a file that uses such references in a `trigger:`, an `until:`, a
   `content:`, or a `counts_as:` rule SHOULD be computed again. It also
   tests the lower bound of a set with a symbolic upper bound. The time
@@ -829,7 +834,7 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   contract, including every carried-over norm whose `content` or
   `deadline:` changes and a `transform:` target that the new version
   lacks.
-- In the development version after `cadl` 0.3.21,
+- From `cadl` 0.3.22,
   `cadl codegen -t python` writes, for a file that declares
   `norms: 0.1`, a module `norms_monitor.py` into the generated package
   ([Appendix D, D.1](./appendix-d-codegen.md)). It monitors one

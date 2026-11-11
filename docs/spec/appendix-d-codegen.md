@@ -42,8 +42,7 @@ emit gets a warning (D.4).
 
 For a file that declares the norms extension
 ([Appendix F](./appendix-f-norms.md)), the `python` target also emits
-the module `norms_monitor.py` (in the development version after `cadl`
-0.3.21). It monitors the `norms:` and `counts_as:` blocks and the
+the module `norms_monitor.py` (from `cadl` 0.3.22). It monitors the `norms:` and `counts_as:` blocks and the
 `assume:` and `guarantee:` items of each contract, including the items
 with temporal operators, for one contract instance while the system
 runs: it is given one observation at a time and returns the norm
