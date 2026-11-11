@@ -14,7 +14,7 @@ CADLファイルは**YAML 1.2文書** [[Ben-Kiki+, 2021]](./appendix-b-reference
 [第5章](./05-language-spec.md)と本付録は同じ構文を記述する。具象構文については本付録が規範的であり，
 第5章は説明のための記述である。リファレンス実装
 （[`cadl`](https://github.com/ertlnagoya/cadl)）は，この構文をそのまま
-受理することが期待される。`cadl` 0.3における既知の相違は
+受理すべきものである。`cadl` 0.3における既知の相違は
 [A.12](#a12-reference-implementation-status-v03)に示す。
 
 この文法を試すには，リファレンス実装をインストールし（[クイックスタートの経路 B](../quickstart/index.md#path-b)を参照），
