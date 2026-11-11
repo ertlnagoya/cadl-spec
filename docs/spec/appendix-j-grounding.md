@@ -558,13 +558,22 @@ empty or of the form of 3. ∎
   environment behaves), (i) fails, the payoffs are rational functions
   of ℓ, and nothing of the above holds.
 
-**Certification by the end points of a cell.** J-14 turns the
-proposition into a method for an equilibrium map (I.9) whose only
-open parameter is ℓ: one exact evaluation at each end of a cell
-`[a, b]` certifies `equilibrium`, and one at b certifies a deviator
-for whom (ii) holds. This is not evaluation at sample points in the
-sense of H.9, because convexity and monotonicity are proved, but it
-is sound only under all the conditions that J-14 lists.
+**Certification by the end points of a cell.** The proposition is a
+special case of the proposition of the end-point certification of
+[I.9](./appendix-i-games.md), which is stated for any strategic model:
+condition (i) is condition A of I.9 for the weights that this appendix
+defines as well, and condition (ii) is condition B− from the initial
+state, since a `sanction_of:` term has the coefficient −m of ℓ. I.9
+turns it into a method for an equilibrium map whose only open
+parameter is ℓ: one exact evaluation at each end of a cell `[a, b]`
+certifies `equilibrium`, and one at b certifies a deviator for whom
+(ii) holds. I.9 also states the mirrored condition B+ (every
+coefficient of ℓ at least 0, with the expected value 0 under the
+profile), under which the gain is non-decreasing and the evaluation at
+a decides; a `reward_of:` term has a positive coefficient, but its
+expected value is positive under a profile that fulfils the norm with
+positive probability, and B+ then does not hold. J-14 says how the method applies to a
+file that declares this extension.
 
 **The example.** The first model of [I.12](./appendix-i-games.md) is
 linked to a norm by declaring the two extensions, adding the norm to
@@ -769,46 +778,19 @@ about the same construct, a processor gives one diagnostic.
   are not compared, and no direction warning is given. A norm that is
   new in the second version is listed with its magnitudes,
   `on_fulfilment:`, and `shares:`.
-- **J-14.** A processor MAY certify a cell `[a, b]` of an equilibrium
-  map (I.9) from evaluations at its end points, and MUST NOT do so
-  unless all of the following hold:
-  1. the query has exactly one open parameter ℓ (which no regime
-     assigns, I-9); ℓ is the open parameter of the query, whether or
-     not it is bound to a `C.lambda`;
-  2. condition (i) of J.7 holds for ℓ, checked on the text of the
-     model: ℓ occurs in no `prob:` and in no reward `value:`, and in
-     every `weight:` of every player, and in every weight defined by
-     J.7, ℓ occurs with a power of at most one, counted on the text
-     (the powers of the factors of a product add up, and nothing
-     cancels: `lambda * lambda - lambda * lambda` has the power two);
-  3. the design is well-defined and the profile admissible at one
-     value of ℓ in the cell (by the proposition, then at every value);
-     this is a reminder and no separate check, since the evaluations
-     of condition 4 establish it at a and at b;
-  4. the evaluations at a and at b are exact (I.8);
-  5. for a claim that p is a deviator, condition (ii) of J.7 holds for
-     p in that design: every weight of p in which ℓ occurs is, at the
-     values used for the other parameters, −m·ℓ with m ≥ 0, and the
-     expected value 0 under the profile is computed exactly.
-
-  Then the cell is `equilibrium` when the profile is an ε-equilibrium
-  at a and at b, and p is a deviator on the cell when condition 5
-  holds and gain_p > ε at b. No other status follows: a gain above ε
-  at both ends does not make a player a deviator on the cell without
-  condition 5. A processor may report, besides the status, the gain
-  bounds `[0, max(g(a), g(b))]` for each player of an `equilibrium`
-  cell (by convexity) and `[g(b), g(a)]` for a deviator (by
-  monotonicity), where g(a) and g(b) are the gains at the ends, and the
-  canonical best response at b as the deviation of a deviator; it does
-  not claim `from_every_state`.
-
-  A processor that uses this rule together with the conditions of I.9
-  applies it to cells that those conditions leave `undecided`; a cell
-  carries the deviators that either method establishes. The rule is a
-  rule of this appendix: a file that does not declare
-  `grounding: 0.1` cannot use it. Its argument does not use norms; an
-  end-point method for a file that declares only `games` is left to a
-  later version of Appendix I.
+- **J-14.** The certification by the end points of a cell of
+  [I.9](./appendix-i-games.md) applies to an equilibrium map of a file
+  that declares `grounding: 0.1` as to any strategic model, with these
+  precisions: a weight that J.7 defines (−m·ℓ or m′·ℓ) is a weight in
+  the sense of its condition A, and ℓ is the open parameter of the
+  query, whether or not it is bound to a `C.lambda`. Condition (ii) of
+  J.7 for p is condition B− of I.9 from the initial state; a processor
+  MUST NOT claim that p is a deviator on a cell from the end points
+  unless B− or B+ holds for p, computed exactly at the values used for
+  the other parameters. Up to `cadl` 0.3.23 this rule stated the method
+  itself and required the declaration of `grounding: 0.1`; the method
+  now belongs to I.9, and its claims in a file that declares this
+  extension are those of I.9.
 
 Rule A.4 that `alpha`, `beta`, and `lambda` lie in `[0, 1]` is
 unchanged, and so are the rules N-1 to N-12 and I-1 to I-11.
@@ -1010,9 +992,12 @@ its keys were ignored without a diagnostic.
   implemented: a `sanction_of:` or `reward_of:` term gets the weight
   of J.7, every
   check and map result carries the assumption of J.7, and J-14 is used
-  in `--certify` in a file that declares `grounding: 0.1` when its
-  conditions hold (the map reports whether it applies and why not;
-  cells it certifies carry `method: "endpoints (J-14)"`). With the link
+  in `--certify` when the conditions of I.9 hold (the map reports
+  whether condition A holds and why not, and the players for which the
+  gain is non-increasing or non-decreasing; cells certified from the
+  end points carry `method: "end points (I.9)"`, in 0.3.23
+  `"endpoints (J-14)"`). Since the method belongs to I.9, a file
+  without `grounding: 0.1` uses it as well (I.14). With the link
   implemented, the status `not_evaluated` of I.13 cannot arise for a
   valid file: an unusable reference is an error of J-1 or J-10.
 - Verification of the indices: an independent review compared the
