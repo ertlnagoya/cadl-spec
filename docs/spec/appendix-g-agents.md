@@ -1295,15 +1295,18 @@ unknown occurrences (G.5) reached. The decision function
 the match as unknown (G.4). Up to `cadl` 0.3.22 the runtime, like `cadl norms-eval`, did not
 evaluate a predicate with a quantifier or an aggregate. From `cadl`
 0.3.23 it evaluates them as F.5 defines; a quantified predicate that
-is undefined because its domain is open is missing data (G.5). The
-runtime still does not evaluate the predicates that F.10 lists as not
-evaluated, among them a wildcard or range reference outside the domain
-of a quantifier (`A[*].x > 0`); a norm whose `trigger:`, `until:`, or
-`content:` is such a predicate is not judged, and its in-force flag is
-unknown for the whole run. By G.5 a prohibition of that kind then
-always applies and a permission never does: fail-closed, but perhaps
-not what the author expects. Writing the reference as a quantifier
-(`for all j in A: A[j].x > 0`) avoids this.
+is undefined because its domain is open is missing data (G.5). Up to
+`cadl` 0.3.23 it did not evaluate a wildcard or range reference
+outside the domain of a quantifier (`A[*].x > 0`). From `cadl` 0.3.24
+it rewrites such a reference as F.5 defines ("Wildcard and range
+references"), with the same code as `cadl norms-eval`, so
+`A[*].x > 0` is judged as `for all j in A[*]: A[j].x > 0`. The runtime
+still does not evaluate the other predicates that F.10 lists as not
+evaluated, such as an aggregate argument with references to two sets;
+a norm whose `trigger:`, `until:`, or `content:` is such a predicate
+is not judged, and its in-force flag is unknown for the whole run. By
+G.5 a prohibition of that kind then always applies and a permission
+never does: fail-closed, but perhaps not what the author expects.
 
 The tests replay each step of the runtime through the decision function
 with the state the runtime computed, and through the generated Rego

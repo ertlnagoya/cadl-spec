@@ -90,8 +90,10 @@ terms of norms; that remains open beyond what follows.
 
 **Scope of version 0.1.**
 
-- An index concerns one contract. Indices are not aggregated over the
-  contracts of an SoS.
+- An index concerns one contract, and the same three quantities are
+  also defined over all contracts of a file (J.4, "The quantities of
+  the SoS"). No declared value is compared with these, and no weighted
+  index is defined.
 - Information items are declared by the author (`grounding.items`);
   they are not derived from actor interfaces, predicates, or messages.
 - The indices are counts. They are not weighted by magnitudes, by
@@ -371,6 +373,101 @@ stays the same, and the quantity is defined before and after.
 - No quantity says anything about behaviour. Whether more sharing or a
   stronger incentive improves a property is a question for the models
   of Appendices H and I.
+
+### The quantities of the SoS
+
+The three quantities are also defined over all contracts C₁, …, Cₘ of a
+file with m ≥ 2, that is, over one version of the SoS; an amended
+version (F.6) has its own. The definitions take the counts of the
+contracts together.
+
+- **α̂_SoS.** An item is qualified by its contract. The pairs of the SoS
+  are the triples (Cᵢ, x, q) of a contract and a pair (x, q) of Cᵢ, and
+  such a triple is given when (x, q) is given in Cᵢ. An item named in
+  two contracts gives pairs in each, whether its origins are the same
+  or not, and an entry or a sharing norm of one contract gives no pair
+  of another: the parties of the other contract have not agreed to it,
+  and v0.3 has no identity of items across contracts.
+
+  ```text
+  α̂_SoS  =  Σᵢ (given pairs of Cᵢ) / Σᵢ (pairs of Cᵢ)
+  ```
+
+- **β̂_SoS.** The decision points of the SoS are the powers of all
+  contracts. For a single actor a, K(a) = Σᵢ kᵢ(a) is the number of
+  powers that a bears in all contracts, with kᵢ the count k of J.4 in
+  Cᵢ (the same actor name and the same index).
+
+  ```text
+  β̂_SoS  =  (largest K(a) over the single actors a) / Σᵢ (powers of Cᵢ)
+  ```
+
+  It is the largest share of all powers of the SoS that one single
+  actor bears.
+- **χ_SoS.** N_SoS is the union of the sets N of the contracts.
+
+  ```text
+  χ_SoS  =  Σᵢ (norms of Nᵢ that carry an incentive) / Σᵢ |Nᵢ|
+  ```
+
+Each is undefined when its denominator is zero. A processor reports
+them with the sums of the counts of J-5 that apply (the three ways of
+giving a pair, the member-specific entries and norms, the powers per
+bearer, the norms with a reparation only and with a transition); there
+is no decision holder of the SoS. When several single actors have the
+largest K, all of them are named, sorted by name. The quantities and
+their report are invariant under reordering the contracts, and those
+of each contract are unchanged.
+
+**No weights.** A weighted index, which would count a contract or a
+norm more than another, is not defined, because every weight would be
+an arbitrary constant that the file does not contain.
+
+**No comparison.** v0.3 declares α, β, and λ per contract, and the
+SoS has no declared value of them. No rule of J.5 or J.8 compares
+α̂_SoS, β̂_SoS, or χ_SoS with anything; they are reported only.
+
+How these quantities relate to those of the contracts, with
+everything not mentioned unchanged:
+
+- **Lemma 4 (bounds).** When defined, α̂_SoS lies between the least and
+  the largest α̂ of the contracts where α̂ is defined, and χ_SoS
+  likewise. β̂_SoS is at most Σᵢ (largest kᵢ) / Σᵢ (powers of Cᵢ), the
+  mean of the β̂ of the contracts weighted by their numbers of powers,
+  and so at most the largest β̂; it equals that mean exactly when one
+  single actor has the largest count in every contract or no single
+  actor bears a power. *Proof.* A ratio of sums lies between the
+  ratios. K(a) = Σᵢ kᵢ(a) ≤ Σᵢ (largest kᵢ), with equality exactly when
+  kᵢ(a) is the largest in every Cᵢ.
+- β̂_SoS can be smaller than every β̂ of a contract, and is not a
+  function of them. *Counterexample.* Two contracts, in each of which
+  one single actor bears the only power: each has β̂ = 1. When the
+  actor is X in both, β̂_SoS = 2/2 = 1; when it is X in one and Y in
+  the other, β̂_SoS = 1/2.
+- **Lemmas 1 and 3 carry over.** Adding an entry, an item of
+  `shares:`, or a sharing norm to any contract never lowers α̂_SoS.
+  Making an obligation or a prohibition of any contract carry an
+  incentive that carried none raises χ_SoS by 1/|N_SoS|. The proofs
+  are those of J.4: the set of pairs, and N_SoS, are unchanged.
+- **Lemma 2 carries over with K in place of k.** Adding a power whose
+  bearer is a single actor with the largest K never lowers β̂_SoS, and
+  adding a power whose bearer is not a single actor never raises it.
+  The condition of Lemma 2 within the contract is not enough.
+  *Counterexample.* C₁ has two powers of X and C₂ one power of Y, so
+  β̂_SoS = 2/3. A second power of Y in C₂, where Y has the largest
+  count, leaves the β̂ of C₂ at 1 and lowers β̂_SoS to 2/4.
+- **Adding a contract.** When a contract C′ is added and α̂_SoS and
+  the α̂ of C′ are defined, the new α̂_SoS lies between the old one and
+  the α̂ of C′, and likewise for χ (a ratio of sums). Adding a contract
+  can therefore lower α̂_SoS and χ_SoS. *Counterexample.* A contract
+  with one item that it shares with the other party has α̂ = 1; adding
+  a contract that declares one item and shares nothing gives
+  α̂_SoS = 1/2. Adding a contract can also lower β̂_SoS, as in the
+  counterexample after Lemma 4. It never raises β̂_SoS above the larger
+  of its old value and the β̂ of C′, by the mediant inequality: for
+  every single actor a, (K(a) + k′(a)) / (n + n′) lies between K(a)/n,
+  which is at most the old β̂_SoS, and k′(a)/n′, which is at most the
+  β̂ of C′, where n and n′ are the numbers of powers.
 
 ## J.5 Relation to the declared parameters
 
@@ -703,7 +800,10 @@ about the same construct, a processor gives one diagnostic.
   value next to χ and no difference. The comparisons of J-6 to J-9 and
   J-13 are exact; a declared value is the decimal that is written
   (H.2). The quantities are defined for a file without errors: for a
-  file with an error of J-2 to J-4, no quantity is reported.
+  file with an error of J-2 to J-4, no quantity is reported. For a
+  file with two or more contracts, a processor that reports the
+  quantities of all of them SHOULD also report α̂_SoS, β̂_SoS, and χ_SoS
+  (J.4) with their counts; it compares them with nothing.
 - **J-6.** A processor SHOULD warn, and name a construct that is the
   counterexample, when a contract declares `alpha: 0` and has a given
   pair, or has a non-empty `information.sharing` while α̂ is
@@ -942,6 +1042,34 @@ name a single actor; `bearers` maps each bearer reference, as written,
 to its number of powers. Magnitudes are `null` when absent, and an
 empty text is `null`.
 
+For a file with two or more contracts, the institution layer gains the
+field `grounding` with the quantities of the SoS (J.4), in the form of
+the indices of a contract:
+
+```jsonc
+{
+  "institution": {
+    "actors": [ /* ... */ ],
+    "contracts": [ /* ... */ ],
+    "grounding": {
+      "contracts": ["C1", "C2"],
+      "indices": {
+        "alpha":    { "given": 1, "pairs": 3, "by_sharing": 1, "by_obligation": 0,
+                      "by_permission": 0, "member_specific": 0 },
+        "beta":     { "largest": 2, "powers": 3, "bearers": { "D": 2, "X": 1 } },
+        "coverage": { "incentive": 2, "norms": 3, "reparation_only": 1, "transition": 0 }
+      }
+    }
+  }
+}
+```
+
+`contracts` lists the ids of the contracts, sorted. `bearers` sums the
+powers of each bearer reference over all contracts, sorted by the
+reference; `beta` has
+no `holder`. The field is absent when the extension is not declared or
+the file has fewer than two contracts.
+
 A payoff term of the IR of
 [I.13](./appendix-i-games.md) gains the fields `sanction_of` and
 `reward_of` (a string `C.n`, or `null`), written for every term when
@@ -968,7 +1096,12 @@ its keys were ignored without a diagnostic.
   told from an unknown key of the core language and is silent.
 - `cadl norms-indices FILE [--contract ID] [--format text|json]`
   reports the quantities of J.4 with all their counts, the comparisons
-  of J.5, and the diagnostics of J-9 per design. It refuses a file
+  of J.5, and the diagnostics of J-9 per design. From `cadl` 0.3.24,
+  for a file with two or more contracts and without `--contract`, it
+  also reports the quantities of the SoS (J.4), in a last section of
+  the text and under the key `sos` of the JSON output, and `cadl
+  sim-ir` writes them into the IR (J.10). The output for each contract
+  is unchanged. It refuses a file
   with an error, in particular of J-2 to J-4 (exit status 2); warnings
   do not change the exit status 0.
 - `cadl norms-diff` reports the findings of J-13, including a version
@@ -1033,6 +1166,11 @@ its keys were ignored without a diagnostic.
   neighbours.
 - The quantities of J.9 are those printed by `cadl norms-indices` for
   the example, with one warning (J-7 for `beta`).
+- Verification of the quantities of the SoS: hand-computed files with
+  two and three contracts, the counterexamples of J.4, and, on seeded
+  random files of two to four contracts, Lemma 4, the lemmas that carry
+  over, the bounds when a contract is added, and invariance under
+  reordering the contracts.
 
 ## J.12 Backward compatibility
 
