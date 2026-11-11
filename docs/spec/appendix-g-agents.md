@@ -198,10 +198,8 @@ message, and the boundary does not consider arguments. Second, where
 the contract instance binds no value to `i`, F.3 lets `A[i]` match
 every member of the set, and at the boundary the match is unknown and
 is resolved fail-closed (G.5). The second difference also holds for the
-events of an enforced contract that the norms engine evaluates: the
-`trigger:` and `until:` of its permissions and prohibitions, the
-`when:` of its `counts_as:` rules, and the `until:` of its delegations
-(G.5, "Unknown occurrences").
+events of an enforced contract that the norms engine evaluates, and for
+the performer of a power (G.5, "Unknown occurrences").
 
 `A[k]` is a **member** of the set `A` when `A` is declared with a range
 and `k` lies within its integer bounds (a set declared as `A[1..3]`
@@ -270,18 +268,24 @@ or the enforcement point does not have the flag. Unknown is resolved
 **fail-closed**: an unknown prohibition applies, an unknown permission
 does not.
 
-**Unknown occurrences.** G-18 requires every index variable in the
-events of an enforced contract to be bound by a party, but a host can
-still create a contract instance without that binding. The occurrence
-of a message event that then depends on an unbound index is unknown,
-and it is resolved fail-closed in the same way, by what the event would
-do: it does **not** activate a permission (`trigger:`), end a
-prohibition (`until:`), or create an institutional event (`when:` of a
-`counts_as:` rule), so it creates no `approval`; it **does** activate a
-prohibition, end a permission, and end the derived instances of a
-delegation whose `until:` it is. A processor SHOULD warn. Grant and
-revoke messages name no index variable (G-11, G-12) and are never
-unknown. The events of obligations and powers keep the reading of F.3.
+**Unknown occurrences.** G-18 requires every index variable of an
+enforced contract to be the index of a party, and a contract instance
+binds the indices of its parties (F.2). A processor that creates the
+instances itself MUST refuse an instance of an enforced contract that
+does not bind every index variable of its `parties:`. So no index is
+unbound in a conforming run. The following rule is a second line of
+defence for a processor that is handed such an instance all the same.
+Where the occurrence of an event of an enforced contract, or the
+identity of the performer of an act, depends on an index that the
+contract instance does not bind, it is unknown, and unknown is resolved
+fail-closed by what the occurrence would do: an unknown occurrence
+never has an effect that lets a message through (it does not activate
+or resume a permission, end, suspend, or discharge a prohibition,
+create an institutional event, exercise a power, or fulfil an
+obligation), and it always has the effects that block (it activates a
+prohibition and ends a permission or a derived instance). A processor
+SHOULD warn. Grant and revoke messages name no index variable (G-11,
+G-12) and are never unknown.
 
 ### The decision function
 
@@ -448,7 +452,9 @@ permission and for the grounds, and for nothing else:
    approval stands in for the permission in that contract, and the
    message is released. The reason `no_instance` arises only when the
    approving observation itself ends that contract instance (step 6);
-   an instance that ended earlier has cancelled the hold.
+   an instance that ended earlier has cancelled the hold. The reference
+   runtime does not reach it, because there the end of an instance is
+   an observation of its own (G.13).
 3. Every other governing contract decides in full by step 3 of G.5 and
    has to allow, by a permission, original or derived and valid now, or
    by its default. A contract that would decide `escalate` denies, with
@@ -712,31 +718,41 @@ An agents-aware processor MUST, in addition to the checks of
 
 - **G-17.** In an enforced contract, the sender and the receiver of
   every `message_event` of the contract MUST be **covered by the
-  parties**: the `trigger:`, `until:`, and `content:` of its norms, the
-  `when:` of its `counts_as:` rules, and the `until:` of its
-  delegations. A reference is covered when every actor that it can
-  name matches a reference in `parties:` (G.5): `A` by a party `A`;
-  `A[3]` by a party `A[3]`, `A[i]`, `A[*]`, or a range that contains 3;
-  `A[1..3]` by a party `A[i]`, `A[*]`, or a range that contains it;
-  `A[*]` and `A[i]` by a party `A[i]` or `A[*]`, or by a party range
-  that contains the whole declared set. An instance of an enforced
-  contract observes only the messages that the contract governs (G.5),
-  so an event that is not covered could never occur for some or all of
-  the actors it names. The receiver of a tool call is included: G-4
-  requires the tool, and this rule that the tool server is a party. A
-  `fallback:` is not included: it is data for the sender and no event
-  of the contract, G-10 requires its receiver only to be declared, and
-  a fallback sent to an actor that is not a party is not governed by
-  this contract.
-- **G-18.** In an enforced contract, an index variable in the sender or
-  the receiver of an event that G-17 names, other than a `content:`,
-  MUST be bound by a party: it MUST be the index variable of a
-  reference in `parties:` (`i` for a party `ROBOT[i]`). The contract
-  instance binds the index variables of its parties (F.2); another
-  variable has no value that the file accounts for, and by F.3 the
-  event would occur for every member of the set. The `content:` of a
-  permission or a prohibition is matched at the boundary, where an
-  unbound index is unknown (G.4), and needs no rule.
+  parties** and MUST name declared members only: the `trigger:`,
+  `until:`, and `content:` of its norms, the `when:` of its
+  `counts_as:` rules, and the `until:` of its delegations. A reference
+  is covered when **one** reference in `parties:` matches every actor
+  that it can name (G.5): `A` by a party `A`; `A[3]` by a party `A[3]`,
+  `A[i]`, `A[*]`, or a range that contains 3; `A[1..3]` by a party
+  `A[i]`, `A[*]`, or a range that contains it; `A[*]` and `A[i]` by a
+  party `A[i]` or `A[*]`, or by a party range that contains the whole
+  declared set. Two party references are not combined: the parties
+  `A[1..2]` and `A[3]` do not cover `A[1..3]`. A literal index or a
+  range MUST lie within the declared set: for a set declared as
+  `A[1..3]`, `A[7]` and `A[2..5]` are errors. An instance of an
+  enforced contract observes only the messages that the contract
+  governs (G.5), so an event that is not covered, or that names no
+  declared member, could never occur for some or all of the actors it
+  names. The receiver of a tool call is included: G-4 requires the
+  tool, and this rule that the tool server is a party. So is its
+  sender: a contract cannot make the tool call of an actor that is not
+  a party the content or the event of a norm. Such a call to a tool
+  server that is a party is governed all the same (G.5); it is decided
+  by the default of the contract and by the norms written for parties,
+  and that is intended. A `fallback:` is not included: it is data for
+  the sender and no event of the contract, G-10 requires its receiver
+  only to be declared, and a fallback sent to an actor that is not a
+  party is not governed by this contract.
+- **G-18.** In an enforced contract, every index variable MUST be bound
+  by a party: it MUST be the index variable of a reference in
+  `parties:` (`i` for a party `ROBOT[i]`). This applies to the
+  `bearer:` and the `counterparty:` of every norm, to `escalate_to:`,
+  `notify:`, and the sender and receiver of a `fallback:`, and to the
+  sender and the receiver of every `message_event` that G-17 names,
+  including the `content:` of a norm of any kind. The contract instance
+  binds the index variables of its parties (F.2); another variable has
+  no value that the file accounts for, and by F.3 an event or a power
+  with such a variable would hold for every member of the set.
 
 The MUST rules are errors; the SHOULD rules are warnings and leave the
 file valid. N-1 to N-12 of Appendix F apply unchanged.
@@ -1115,7 +1131,11 @@ The trace is that of `cadl norms-eval` (JSON Lines with `t`,
 read for the whole enforcement point, with two more keys: `epoch`, the
 time of `t = 0` as an ISO 8601 time stamp, which makes the times of
 the records time stamps; and `instances`, the contract instances that a
-host creates and ends, with their bindings. One line is processed in
+host creates and ends, with their bindings. Every instance has to
+bind the index variables of the parties of its contract, the single
+instance of a contract without host through the `bindings` of the first
+line; otherwise the trace is rejected, with the contract, the instance,
+and the variable in the message. One line is processed in
 this order: holds whose deadline lies before its time expire; instances
 are created; the time and the values of the line are observed without
 message (G.5), together with an amendment; each message is decided, and
@@ -1141,9 +1161,12 @@ granted the permission again: the grant is the no-op of condition 5
 2<sup>53</sup> in absolute value; with an `epoch`, every time and every
 deadline of a hold has to be an instant that an ISO 8601 time stamp can
 express. The audit file is written only when the whole trace was
-replayed. For an unknown occurrence (G.5) the runtime resolves the
-events of permissions, prohibitions, `counts_as:` rules, and
-delegations; the events of obligations and powers keep F.3.
+replayed. The functions of the runtime refuse a file with errors of
+`cadl check` and an instance without the bindings of its parties; a
+switch for tests turns both off, and only then is the resolution of
+unknown occurrences (G.5) reached. The decision function
+`cadl agents-decide` still takes instances without bindings and treats
+the match as unknown (G.4).
 
 The tests replay each step of the runtime through the decision function
 with the state the runtime computed, and through the generated Rego
@@ -1160,10 +1183,15 @@ with 15 denied, and 13 more with 8 denied under random amendments, was
 checked from its recorded policy input against the rules of G.6. A
 second model of G.4 to G.7 and F.3, written by the reviewer from the
 text of the appendices without code of the reference implementation,
-gave the same 7 159 decision and closing records on 96 further traces
-over seven files, with host-created instances that have different or
-no bindings, actors outside the declared sets, and two files that
-`cadl check` rejects by G-17 and G-18. The expected records
+gave the same 8 102 decision and closing records on 108 further traces
+over seven files: 60 traces with every index bound, run as
+`cadl agents-run` runs them, and 48 with instances that bind nothing or
+with two files that `cadl check` rejects by G-17 and G-18, run with the
+switch for tests. That model has no powers and no obligations. For
+them, 60 generated traces of 200 messages over two files check that
+without a binding no power is exercised, no institutional event is
+created, and no obligation is fulfilled, and that with a binding only
+the bound member does these things. The expected records
 of the scenario tests were derived from the text of this appendix
 before the runtime was run, and the runtime produced them.
 
@@ -1195,6 +1223,20 @@ lift a prohibition; G-18 excludes it, and the runtime resolves the
 unknown occurrence fail-closed (G.5). A set with a symbolic upper bound
 took an index below its lower bound as a member, in the decision
 function, the Rego policy, and `cadl norms-eval`.
+
+A third review found that the unbound index was still a way through
+for powers and obligations, which the second model does not have: with
+a bearer `SUP[k]` and no binding for `k`, any member of `SUP` exercised
+a power that suspends a prohibition or activates a permission, and a
+message to any member fulfilled an obligation whose reparation is a
+prohibition. The cause was the same in every case, a contract instance
+that runs with an index unbound, and it is now removed at the root:
+G-18 covers every index variable of an enforced contract, the runtime
+refuses an instance that does not bind the indices of its parties, and
+its functions refuse a file with errors. The fail-closed resolution of
+G.5 is complete and remains as a second line. G-17 also rejects a
+literal index outside the declared set, and says that coverage is by
+one party reference.
 
 Writing and reviewing the runtime showed these gaps in the text of
 agents 0.1, which this revision of the appendix closes: the state on
