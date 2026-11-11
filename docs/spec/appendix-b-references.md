@@ -237,3 +237,7 @@ description: "References cited in the CADL specification."
 [116] M. Ummels and D. Wojtczak, "The Complexity of Nash Equilibria in Stochastic Multiplayer Games," Logical Methods in Computer Science, vol. 7, no. 3, paper 20, 2011, doi:10.2168/LMCS-7(3:20)2011.
 
 [117] O. Madani, S. Hanks, and A. Condon, "On the undecidability of probabilistic planning and related stochastic optimization problems," Artificial Intelligence, vol. 147, no. 1-2, pp. 5-34, 2003, doi:10.1016/S0004-3702(02)00378-8.
+
+[118] Model Context Protocol, "Specification," revision 2026-07-28, https://modelcontextprotocol.io/specification/2026-07-28 (accessed Nov. 2026); in particular "Transports: stdio" and "Server Features: Tools".
+
+[119] Agent2Agent (A2A) Project, "Agent2Agent (A2A) Protocol Specification," version 1.0.0, https://a2a-protocol.org/latest/specification/ (accessed Nov. 2026).
