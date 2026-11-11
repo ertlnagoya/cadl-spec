@@ -235,7 +235,12 @@ before any instance is considered, so no binding is applied to
 A norm still applies only to its bearer or to a valid holder (below).
 The enforcement point decides the messages one at a time, in
 the order in which they arrive, each on the state left by all earlier
-observations, and the decision MUST be deterministic.
+observations, and the decision MUST be deterministic. A decision never
+depends on a later observation. This holds also for the reading of a
+bare name in a predicate as a quantity or as a symbolic value (F.5): an
+enforcement point that is given the quantity names uses them from the
+start, and one that is not takes a name as a quantity from the first
+observation on that gives it a value, never earlier.
 
 Only a permission or a prohibition whose `content:` is a
 `message_event` takes part in a decision. One whose content is a
@@ -267,6 +272,24 @@ the holder as sender. The result is unknown when the match is unknown
 or the enforcement point does not have the flag. Unknown is resolved
 **fail-closed**: an unknown prohibition applies, an unknown permission
 does not.
+
+**Missing data.** The enforcement point also does not have the flag
+when it cannot determine it because a quantity has no value yet. There
+are two cases. While the `trigger:` of a prohibition that is `inactive`
+is a predicate that is undefined (F.5), the flag of the prohibition is
+unknown, and so the prohibition applies. While the `until:` of a
+permission that is `active` is a predicate that is undefined, the flag
+of the permission is unknown, and so the permission does not apply.
+Nothing is latched: the state of the norm instance and its verdict are
+those of F.5, where an undefined predicate does not occur; as soon as
+the predicate has a value, the flag is the one of the state again. The
+two other cases need no rule, because F.5 already blocks: an undefined
+`trigger:` does not activate a permission, and an undefined `until:`
+does not end a prohibition; likewise an undefined `if:` creates no
+institutional event. A processor SHOULD warn when it decides a message
+on a flag that is unknown for this reason. The consequence at the start
+is intended: a message that arrives before the quantities of such a
+predicate have their first values is denied or escalated.
 
 **Unknown occurrences.** G-18 requires every index variable of an
 enforced contract to be the index of a party, and a contract instance
@@ -758,24 +781,30 @@ An agents-aware processor MUST, in addition to the checks of
   the sender and no event of the contract, G-10 requires its receiver
   only to be declared, and a fallback sent to an actor that is not a
   party is not governed by this contract.
-- **G-18.** In an enforced contract, every index variable MUST be bound
-  by a party: it MUST be the index variable of a reference in
-  `parties:` (`i` for a party `ROBOT[i]`). This applies to every place
-  of the contract in which an actor reference can stand: the `bearer:`
-  and the `counterparty:` of every norm; `escalate_to:`, `notify:`, and
-  the sender and receiver of a `fallback:`; the sender and the receiver
-  of every `message_event` that G-17 names, including the `content:` of
-  a norm of any kind; and every predicate of the contract, which are
-  the `trigger:`, `until:`, and `content:` of its norms, the `when:`
-  and `if:` of its `counts_as:` rules, the `until:` of its delegations,
-  and its `assume:` and `guarantee:` items (`ROBOT[j].battery > 20`).
-  The one exception is a variable that a quantifier of the predicate
-  binds (`for all j in ROBOT: ROBOT[j].battery > 20`, A.10). The
-  contract instance binds the index variables of its parties (F.2);
-  another variable has no value that the file accounts for: by F.3 an
+- **G-18.** In an enforced contract, every index variable MUST be
+  bound. An index variable is a name that is used as an index or inside
+  an index expression (`j` in `ROBOT[j]`, in `ROBOT[j+1]`, and in
+  `ROBOT[SLOT[j].next]`). There are three binders: a reference in
+  `parties:` binds its index variable for the whole contract (`i` for a
+  party `ROBOT[i]`); a quantifier binds its variable within its
+  predicate (`exists j in ROBOT: ROBOT[j].battery < 20`, A.10); and a
+  comprehension binds its variable within its element
+  (`sum(ROBOT[j].load for j in ROBOT)`, A.10). Every other index
+  variable is an error, wherever an expression of the contract can
+  stand: in the `bearer:` and the `counterparty:` of a norm; in
+  `escalate_to:`, `notify:`, and the sender and receiver of a
+  `fallback:`; in the sender, the receiver, and the arguments of every
+  `message_event` that G-17 names, including the `content:` of a norm
+  of any kind; and in every predicate of the contract, which are the
+  `trigger:`, `until:`, and `content:` of its norms, the `when:` and
+  `if:` of its `counts_as:` rules, the `until:` of its delegations, and
+  its `assume:` and `guarantee:` items. The contract instance binds the
+  index variables of its parties (F.2) and no others; a variable
+  without a binder has no value that the file accounts for: by F.3 an
   event or a power with such a variable would hold for every member of
   the set, and a predicate with it would read a quantity that no actor
-  has.
+  has. That a quantifier binds its variable makes the predicate valid;
+  whether a processor can evaluate it is a separate matter (G.13).
 
 The MUST rules are errors; the SHOULD rules are warnings and leave the
 file valid. N-1 to N-12 of Appendix F apply unchanged.
@@ -1162,10 +1191,29 @@ instance of a contract without host through the `bindings` of the first
 line, and each value has to be the index of a member of the set that
 the party names; otherwise the trace is rejected, with the contract,
 the instance, the variable, and the value in the message. A binding of
-a variable that no party has is ignored, with a warning. The quantity
-names of an instance (F.5) are those that have a value in an
-observation of that instance: a line after its end has no effect on
-its verdicts. One line is processed in
+a variable that no party has is ignored, with a warning. A value has
+to be the index of a member of every declared set that the variable
+indexes in the contract, not only of the party's set. The key
+`quantities` of the first line gives the quantity names of the run
+(F.5); then exactly these names are quantities, from the start and for
+every instance. Without it the runtime takes a name as a quantity from
+the first line on that gives it a value, so that no decision depends on
+a later line (G.5); a bare name without a value so far is a symbolic
+value. This can differ from the verdicts of `cadl norms-eval` on the
+same lines for a name before its first value, and the runtime warns
+when a name that a predicate uses gets its first value after a message
+was decided. Nothing after the end of an instance has an effect on
+it. Which contracts have host-created instances is likewise fixed on
+the first line: a contract that the first line names in `instances`,
+or lists under the key `host_instances` when its first instance is
+created later, has the instances that the trace creates, and none
+before; every other enforced contract has its single instance from the
+start, and a later line that creates an instance of it is a trace
+error. When a message is decided while a flag is unknown for missing
+data (G.5), the runtime warns once per norm and names the quantity
+without a value. Messages sent before the first values of such
+quantities are therefore denied or escalated; a trace gives the initial
+values on its first line to avoid that. One line is processed in
 this order: holds whose deadline lies before its time expire; instances
 are created; the time and the values of the line are observed without
 message (G.5), together with an amendment; each message is decided, and
@@ -1198,7 +1246,12 @@ replayed. The functions of the runtime refuse a file with errors of
 switch for tests turns both off, and only then is the resolution of
 unknown occurrences (G.5) reached. The decision function
 `cadl agents-decide` still takes instances without bindings and treats
-the match as unknown (G.4).
+the match as unknown (G.4). The runtime, like `cadl norms-eval`, does not evaluate
+a predicate with a quantifier or a wildcard reference (`A[*]`); a norm
+whose `trigger:`, `until:`, or `content:` is such a predicate is not
+judged, and its in-force flag is unknown for the whole run. By G.5 a
+prohibition of that kind then always applies and a permission never
+does: fail-closed, but perhaps not what the author expects.
 
 The tests replay each step of the runtime through the decision function
 with the state the runtime computed, and through the generated Rego
@@ -1282,6 +1335,29 @@ end of an instance could change its verdict from violated to
 fulfilled, and that it accepted a binding outside the declared set, so
 a prohibition of `W[i]` applied to nobody; both are corrected.
 
+A fifth review found that decisions depended on later lines of the
+trace. The runtime had taken the quantity names from the whole trace
+since its first version, and the correction after the fourth review
+had only narrowed that to the lines of the instance: a value that a
+later line gave to a name changed how an earlier predicate read that
+name, and with it an earlier decision from deny to allow. The runtime now
+decides causally (G.5): the names are given with the trace, or a name
+becomes a quantity with its first value. The tests check, for every
+prefix of generated traces, that the decisions on the prefix are the
+first decisions on the whole trace; that invariant was missing. G-18
+also missed an index variable inside an index expression and inside
+the arguments of a message event; it is now stated by its binders, and
+the checker walks every expression of the contract.
+
+A sixth review found one more look-ahead of the same kind: whether a
+contract has host-created instances was read from the whole trace, so
+an `instances` entry on a later line removed the single instance from
+the start and changed an earlier denial into an allowance. It is now
+fixed on the first line. The review also led to the rule for missing
+data in G.5: a prohibition whose `trigger:` could not be evaluated for
+want of a value was not in force, and a message was allowed on data
+that the enforcement point did not have.
+
 Writing and reviewing the runtime showed these gaps in the text of
 agents 0.1, which this revision of the appendix closes: the state on
 which a message is decided did not include deadlines that had passed
@@ -1325,7 +1401,9 @@ other change: the instance of a contract without host exists from the
 start of the enforcement point; a denied or held message is not an
 observation; an instance of an enforced contract observes only the
 messages that its contract governs, and an occurrence that depends on
-an unbound index is unknown; the time of a decision is observed
+an unbound index is unknown; the in-force flag is unknown while a
+quantity that it depends on has no value, without a change to the
+states of F.5; the time of a decision is observed
 before the message is decided; permissions and prohibitions have an in-force flag; an
 obligation whose content the contract itself denied or held is
 `excused` (all G.5); `approval` and `rejection` carry a hold id, the
