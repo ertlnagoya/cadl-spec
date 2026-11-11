@@ -275,17 +275,32 @@ instances itself MUST refuse an instance of an enforced contract that
 does not bind every index variable of its `parties:`. So no index is
 unbound in a conforming run. The following rule is a second line of
 defence for a processor that is handed such an instance all the same.
-Where the occurrence of an event of an enforced contract, or the
-identity of the performer of an act, depends on an index that the
-contract instance does not bind, it is unknown, and unknown is resolved
+Where the occurrence of an event of an enforced contract, the value of
+one of its predicates, or the identity of the performer of an act
+depends on an index that the contract instance does not bind, it is
+unknown, and unknown is resolved
 fail-closed by what the occurrence would do: an unknown occurrence
 never has an effect that lets a message through (it does not activate
 or resume a permission, end, suspend, or discharge a prohibition,
 create an institutional event, exercise a power, or fulfil an
 obligation), and it always has the effects that block (it activates a
-prohibition and ends a permission or a derived instance). A processor
-SHOULD warn. Grant and revoke messages name no index variable (G-11,
-G-12) and are never unknown.
+prohibition and ends a permission or a derived instance). There is one
+exception to "always blocks": a power is the act of a determined
+party, so a performer who is unknown exercises no power, also when the
+effects of the power would block (activate a prohibition, suspend or
+discharge a permission). The exception cannot arise in a processor that
+refuses instances without bindings. A processor SHOULD warn. Grant and
+revoke messages name no index variable (G-11, G-12) and are never
+unknown.
+
+The requirement to refuse an instance is on a processor that creates
+contract instances. The policy input of G.10 is a description of
+instances that a caller supplies, and it may describe an instance that
+binds nothing, as it does when the field `instances` is absent; the
+decision function then takes every match that depends on the index as
+unknown (G.4) and resolves it fail-closed as above. The two do not
+conflict: the decision for such an input is defined, and a conforming
+runtime does not produce such an input.
 
 ### The decision function
 
@@ -745,14 +760,22 @@ An agents-aware processor MUST, in addition to the checks of
   party is not governed by this contract.
 - **G-18.** In an enforced contract, every index variable MUST be bound
   by a party: it MUST be the index variable of a reference in
-  `parties:` (`i` for a party `ROBOT[i]`). This applies to the
-  `bearer:` and the `counterparty:` of every norm, to `escalate_to:`,
-  `notify:`, and the sender and receiver of a `fallback:`, and to the
-  sender and the receiver of every `message_event` that G-17 names,
-  including the `content:` of a norm of any kind. The contract instance
-  binds the index variables of its parties (F.2); another variable has
-  no value that the file accounts for, and by F.3 an event or a power
-  with such a variable would hold for every member of the set.
+  `parties:` (`i` for a party `ROBOT[i]`). This applies to every place
+  of the contract in which an actor reference can stand: the `bearer:`
+  and the `counterparty:` of every norm; `escalate_to:`, `notify:`, and
+  the sender and receiver of a `fallback:`; the sender and the receiver
+  of every `message_event` that G-17 names, including the `content:` of
+  a norm of any kind; and every predicate of the contract, which are
+  the `trigger:`, `until:`, and `content:` of its norms, the `when:`
+  and `if:` of its `counts_as:` rules, the `until:` of its delegations,
+  and its `assume:` and `guarantee:` items (`ROBOT[j].battery > 20`).
+  The one exception is a variable that a quantifier of the predicate
+  binds (`for all j in ROBOT: ROBOT[j].battery > 20`, A.10). The
+  contract instance binds the index variables of its parties (F.2);
+  another variable has no value that the file accounts for: by F.3 an
+  event or a power with such a variable would hold for every member of
+  the set, and a predicate with it would read a quantity that no actor
+  has.
 
 The MUST rules are errors; the SHOULD rules are warnings and leave the
 file valid. N-1 to N-12 of Appendix F apply unchanged.
@@ -798,7 +821,9 @@ Input:
 - `instances` (optional): **every** running instance of every enforced
   contract; a contract without an entry has no running instance. When
   the field is absent, the policy assumes one running instance of each
-  enforced contract, with no index bound and no derived instance. Per
+  enforced contract, with no index bound and no derived instance; a
+  match that depends on an index is then unknown (G.4, and G.5 for the
+  relation to the instances a runtime creates). Per
   instance: `bindings` maps index names to integers; `in_force` maps
   the `id` of each norm that is not static (below) to `true` or
   `false`, and a missing entry is unknown; `derived` lists the derived
@@ -1134,8 +1159,13 @@ the records time stamps; and `instances`, the contract instances that a
 host creates and ends, with their bindings. Every instance has to
 bind the index variables of the parties of its contract, the single
 instance of a contract without host through the `bindings` of the first
-line; otherwise the trace is rejected, with the contract, the instance,
-and the variable in the message. One line is processed in
+line, and each value has to be the index of a member of the set that
+the party names; otherwise the trace is rejected, with the contract,
+the instance, the variable, and the value in the message. A binding of
+a variable that no party has is ignored, with a warning. The quantity
+names of an instance (F.5) are those that have a value in an
+observation of that instance: a line after its end has no effect on
+its verdicts. One line is processed in
 this order: holds whose deadline lies before its time expire; instances
 are created; the time and the values of the line are observed without
 message (G.5), together with an amendment; each message is decided, and
@@ -1160,7 +1190,9 @@ granted the permission again: the grant is the no-op of condition 5
 (`holder_exists`). A trace gives time as a finite number of at most
 2<sup>53</sup> in absolute value; with an `epoch`, every time and every
 deadline of a hold has to be an instant that an ISO 8601 time stamp can
-express. The audit file is written only when the whole trace was
+express. A trace error on a later line is raised before anything is
+printed or written, but after the earlier lines have been decided in
+memory; the audit file is written only when the whole trace was
 replayed. The functions of the runtime refuse a file with errors of
 `cadl check` and an instance without the bindings of its parties; a
 switch for tests turns both off, and only then is the resolution of
@@ -1237,6 +1269,18 @@ its functions refuse a file with errors. The fail-closed resolution of
 G.5 is complete and remains as a second line. G-17 also rejects a
 literal index outside the declared set, and says that coverage is by
 one party reference.
+
+A fourth review found the same cause once more, in a place the rule
+did not yet name: an index variable in a predicate. A prohibition with
+the `trigger:` `W[j].alarm == true` and no party `W[j]` passed the
+check and never came into force. G-18 now covers every predicate of an
+enforced contract, with the exception of a variable that a quantifier
+binds, and the runtime resolves such a predicate as an unknown
+occurrence. The review also found that the runtime took the quantity
+names of an instance from the whole trace, so a value given after the
+end of an instance could change its verdict from violated to
+fulfilled, and that it accepted a binding outside the declared set, so
+a prohibition of `W[i]` applied to nobody; both are corrected.
 
 Writing and reviewing the runtime showed these gaps in the text of
 agents 0.1, which this revision of the appendix closes: the state on
