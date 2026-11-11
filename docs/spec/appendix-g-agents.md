@@ -282,7 +282,17 @@ while that `trigger:` or `until:` is a predicate that is undefined
 is an event that a `counts_as:` rule creates from a predicate `when:`,
 and the `when:` or the `if:` of such a rule is undefined, the flag is
 unknown; with several rules for the event, as long as one of them is
-undefined. An unknown prohibition applies and an unknown permission
+undefined. A quantified predicate or aggregate over an open domain
+(F.5, "Quantifiers and aggregates") that the known members do not
+decide is undefined in this sense: the members not yet named are the
+missing data. While its domain is open, a prohibition whose `trigger:`
+is `exists x in A: p` therefore always applies: as missing data until
+a known member makes `p` true, and from then on because it is in
+force. A permission whose `until:` is `for all x in A: p` applies only
+while a known member makes `p` false.
+Where such a predicate governs the boundary, the contract instance
+SHOULD give the bound of the set a value (F.5).
+An unknown prohibition applies and an unknown permission
 does not. Nothing is latched: the state of the norm instance and its
 verdict are those of F.5, where an undefined predicate does not occur;
 as soon as the predicates have values, the flag is the one of the
@@ -1282,12 +1292,18 @@ replayed. The functions of the runtime refuse a file with errors of
 switch for tests turns both off, and only then is the resolution of
 unknown occurrences (G.5) reached. The decision function
 `cadl agents-decide` still takes instances without bindings and treats
-the match as unknown (G.4). The runtime, like `cadl norms-eval`, does not evaluate
-a predicate with a quantifier or a wildcard reference (`A[*]`); a norm
-whose `trigger:`, `until:`, or `content:` is such a predicate is not
-judged, and its in-force flag is unknown for the whole run. By G.5 a
-prohibition of that kind then always applies and a permission never
-does: fail-closed, but perhaps not what the author expects.
+the match as unknown (G.4). Up to `cadl` 0.3.22 the runtime, like `cadl norms-eval`, did not
+evaluate a predicate with a quantifier or an aggregate. From `cadl`
+0.3.23 it evaluates them as F.5 defines; a quantified predicate that
+is undefined because its domain is open is missing data (G.5). The
+runtime still does not evaluate the predicates that F.10 lists as not
+evaluated, among them a wildcard or range reference outside the domain
+of a quantifier (`A[*].x > 0`); a norm whose `trigger:`, `until:`, or
+`content:` is such a predicate is not judged, and its in-force flag is
+unknown for the whole run. By G.5 a prohibition of that kind then
+always applies and a permission never does: fail-closed, but perhaps
+not what the author expects. Writing the reference as a quantifier
+(`for all j in A: A[j].x > 0`) avoids this.
 
 The tests replay each step of the runtime through the decision function
 with the state the runtime computed, and through the generated Rego

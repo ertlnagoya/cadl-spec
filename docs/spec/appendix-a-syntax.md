@@ -367,6 +367,18 @@ evaluates its `predicate` once for each value of the bound identifier,
 for example `sum(ROBOT[i].goal_count for i in 1..N)` or
 `sum(r.load for r in ROBOT[*])`.
 
+This appendix fixes the form of quantifiers and comprehensions, not the
+set of aggregate functions or the values of these expressions on
+observations. The norms extension defines them for its dynamic
+semantics: the domain of a quantifier or comprehension (a set of
+actors, possibly with a symbolic bound, or a range), the meaning of the
+bound identifier, the aggregate functions `sum`, `count`, `min`, `max`,
+and `avg`, and three-valued values over domains whose members are not
+all known ([Appendix F, F.5](./appendix-f-norms.md), "Quantifiers and
+aggregates"). An `indexed_ref` with `*` or a range outside a domain,
+as in `ROBOT[*].battery > 10`, is accepted by the grammar but has no
+defined value in a predicate.
+
 An item of `assume:` or `guarantee:` that does not conform to this
 grammar is not a syntax error: it is retained as an *opaque predicate*,
 which a processor carries through unchanged and excludes from formal
