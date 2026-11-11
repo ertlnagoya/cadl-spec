@@ -68,18 +68,24 @@ give to such a tool. Stochastic 0.1 is a small first step:
   parametric Markov chains
   [[Spel+, ATVA 2019]](./appendix-b-references.md), but that work
   concerns reachability probabilities.
-- There is no game semantics. Reading the model as a game among the
-  actors, to ask whether compliance holds on its equilibria (RD-7.1,
-  RD-7.2 of [Section 9.7](./09-research.md); rational verification
-  [[Gutierrez+, AI 2020]](./appendix-b-references.md), correlated
-  equilibria of concurrent stochastic games
-  [[Kwiatkowska+, TACAS 2022]](./appendix-b-references.md)), is left to
-  a later version. **Reserved** for it, and not to be used with another
-  meaning: the keys `owner:` (of a variable or a command) and `sync:` (of a
-  command);
-  `players:`, `payoffs:`, and `equilibria:` of `model:`; the value
-  `mdp` of `kind:`; and the parameter sources `motivation.rho` and
-  `motivation.kappa`.
+- There is no game semantics in this appendix. Reading the model as a
+  game among the actors, to ask whether compliance is an equilibrium
+  (RD-7.1, RD-7.2 of [Section 9.7](./09-research.md); rational
+  verification [[Gutierrez+, AI 2020]](./appendix-b-references.md),
+  correlated equilibria of concurrent stochastic games
+  [[Kwiatkowska+, TACAS 2022]](./appendix-b-references.md)), is the
+  subject of the strategic model extension
+  ([Appendix I](./appendix-i-games.md), `games` 0.1). **Reserved** for
+  it, and not to be used with another meaning: the keys `owner:` (of a
+  variable or a command) and `sync:` (of a command); `players:`,
+  `payoffs:`, and `equilibria:` of `model:`; the value `mdp` of
+  `kind:`; and the parameter sources `motivation.rho` and
+  `motivation.kappa`. In a file that declares `games: 0.1`,
+  Appendix I defines `players:`, `payoffs:`, `equilibria:`, and
+  `owner:` of a command, adds the value `smg` of `kind:`, and replaces
+  S-9 for a model of that kind; `sync:`, `owner:` of a variable,
+  `mdp`, and the two parameter sources remain reserved there too. In a
+  file that does not declare it, all of them remain reserved.
 
 ## H.2 Syntax (EBNF addition to A.2)
 
@@ -568,7 +574,15 @@ declares `stochastic: 0.1`, in addition to existing checks:
 
 - **S-1.** `model:` MUST have `variables:` with at least one variable
   and `commands:`, which may be an empty list. `kind:`, if present,
-  MUST be `dtmc`.
+  MUST be `dtmc`. One case is not an error of this rule: in a file
+  that declares the extension `games`, in any version
+  ([Appendix I](./appendix-i-games.md)), a
+  processor that does not implement that extension does not interpret
+  a model whose `kind:` is present and is not `dtmc`. It emits one
+  informational diagnostic, applies none of S-2 to S-15 to the block,
+  and MUST NOT evaluate, lower, or export the block as a Markov chain
+  (H.15). In a file that does not declare `games`, such a `kind:`
+  is an error.
 - **S-2.** The `id` of a parameter, variable, reward structure,
   property, and regime map, every label name, every enumeration
   literal, and every action label MUST be an identifier and MUST NOT be
@@ -1148,6 +1162,13 @@ The reference implementation implements stochastic 0.1 from `cadl`
   errors injected into the code were each detected by the harness.
 - `cadl regime-map` still reports the graph of regime names and
   transitions.
+- Deviation: `cadl` 0.3.22 does not know the extension `games`
+  ([Appendix I](./appendix-i-games.md)). For a model with `kind: smg`
+  in a file that declares `games: 0.1` it reports an error of S-1
+  and, where two commands of one player are enabled in a state, an
+  error of S-9, where S-1 and H.15 ask for one informational
+  diagnostic and no further check. It does not evaluate or export the
+  model.
 - The exported files have been run through PRISM 4.11 and Storm
   (stormpy 2.0.0) for the example of H.12, for a second model that
   uses `when:`, updates with three branches, guarded state and
@@ -1179,3 +1200,13 @@ checked, not lowered to the IR, and not exported) and SHOULD report it
 as an undeclared extension key. Processors that do not implement the
 extension MUST NOT reject a file because of `model:`; they SHOULD emit
 a single informational diagnostic per file.
+
+A file may declare the extension `games`, in any version
+([Appendix I](./appendix-i-games.md)), and carry a model with `kind: smg`, which is a game and not a Markov
+chain. A processor that implements this appendix and not Appendix I
+skips such a model (S-1): it reports it with one informational
+diagnostic, `stochastic_model` is `null`, and it MUST NOT check,
+evaluate, or export the model by the rules of this appendix, since
+H.7 would give it a meaning it does not have. A model with
+`kind: dtmc`, or without `kind:`, in such a file is a model of this
+appendix and is read as before.

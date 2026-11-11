@@ -80,8 +80,14 @@ step on RD-1.3: it lets a file state a parametric Markov model in which
 set of certified cells, and fixes an export to the PRISM language.
 The reference implementation computes certified cells by parameter
 lifting ([H.14](./appendix-h-stochastic.md#h14-reference-implementation-status)).
-Deriving the model from contracts, scaling beyond small models, and the
-game reading of Section 9.7 remain open.
+The strategic model extension
+([Appendix I](./appendix-i-games.md)) adds the game reading of
+Section 9.7 to that model, and the grounding extension
+([Appendix J](./appendix-j-grounding.md)) lets a payoff term take the
+size of a sanction from a norm and multiply it by λ, a first step on
+RD-1.5 in which λ is a parameter of a model, not yet of a composition.
+Deriving the model from contracts and scaling beyond small models
+remain open.
 
 | **ID** | **Challenge** | **Content** |
 | --- | --- | --- |
@@ -268,8 +274,19 @@ bounded temporal operators with four-valued verdicts, counts-as rules,
 and what happens to running norms on an amendment. The
 generated Python code monitors norms at run time
 ([F.10](./appendix-f-norms.md#f10-reference-implementation-status)).
-Design-time checking by a model checker, monitoring in the other
-generated runtimes, and the formal link to α, β, and λ remain open. We found no work that handles first-class norm
+The grounding extension
+([Appendix J](./appendix-j-grounding.md), `grounding` 0.1) is a first
+step towards the link to α, β, and λ: it derives from the norms of a
+contract an index of information sharing over declared items and an
+index of the concentration of powers, compares the declared α and β
+with them, measures how many norms carry a sanction or a reward, and
+gives sanctions a numeric magnitude that λ scales. The indices are
+counts and are evidence about a contract, not the meaning of the
+parameters. The formal meaning of α, β, and λ in terms of norms,
+design-time checking by a model checker, monitoring in the other
+generated runtimes, indices that are weighted or aggregated over the
+contracts of an SoS, norms per regime, and the derivation of model
+probabilities from norms remain open. We found no work that handles first-class norm
 objects together with the institutional parameters α, β, and λ, the
 composition of many contracts in an SoS, and amendment during operation.
 We also found no tool that connects deontic blame semantics with
@@ -319,6 +336,24 @@ in which compliance is an equilibrium. We found no tool that combines
 parametric transition probabilities with equilibrium computation, and
 little work on equilibria when constituents observe only part of the
 state, which is what α controls.
+
+The strategic model extension
+([Appendix I](./appendix-i-games.md), `games` 0.1) is a first step on
+RD-7.1 and RD-7.2. It reads the model of Appendix H as a turn-based
+stochastic game and defines when a named memoryless deterministic
+profile, in particular the compliance profile, is an equilibrium
+against unilateral deviations, and the equilibrium map: the cells of
+a region of parameters, λ among them, on which the profile is
+certified to be such an equilibrium or not to be one. It does not
+compute the equilibria of a game. With the grounding extension
+([Appendix J](./appendix-j-grounding.md)) the sanction term of a
+payoff is, by definition, the magnitude of a norm multiplied by λ,
+and under the conditions of J.7 the set of λ at which compliance is
+an equilibrium is empty or an upper interval. The extension is specified and not implemented in
+`cadl` 0.3.22. Concurrent moves, mixed strategies, properties that
+must hold on every equilibrium, the mediator and the value of
+centralisation of RD-7.2, the motivation parameters ρ and κ, and
+partial observation (RD-7.3) remain open.
 
 | **ID** | **Challenge** | **Content** |
 | --- | --- | --- |
