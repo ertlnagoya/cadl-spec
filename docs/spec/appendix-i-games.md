@@ -504,9 +504,11 @@ The result, per design, consists of:
   `not_equilibrium` otherwise;
 - for `not_equilibrium`: the non-empty set `deviators` of the players
   whose gain exceeds ε, and for each of them the canonical best
-  response (I.7), as the list of the states that are reachable under
-  it and in which it selects another command than the profile, each
-  with the action label selected;
+  response (I.7), as the list of the states that are reachable from
+  the initial state under σ[p↦τ] before φ_p holds and in which it
+  selects another command than the profile, in the order of S
+  (variables in declaration order, values in the order of their
+  domains), each with the action label selected;
 - `from_every_state`: `true` when the processor has established that
   the profile is an equilibrium from every reachable state (I.7),
   `false` when it has established that it is not, and absent or
@@ -582,7 +584,9 @@ below does), and for every decided cell the bounds of the gains it
 established. `from_every_state` is `true` for an `equilibrium` cell
 when the processor has established that the profile is an equilibrium
 from every reachable state (I.7) at every valuation of the cell, and
-absent or `null` otherwise.
+absent or `null` otherwise. For a cell the field does not depend on ε:
+it is a statement about gains of zero and is stronger than the claim
+of an ε-equilibrium, so it may be `true` also when ε > 0.
 
 An `undecided` cell SHOULD carry a `reason`: `not_well_defined` (the
 processor has not established that the design is well-defined on the
@@ -596,6 +600,13 @@ A cell that contains both a valuation at which the profile is an
 Where the two kinds of valuations meet, as at λ\* in I.12, such cells
 remain however fine the partition, which is why `resolution:` is
 greater than zero.
+
+A processor MAY report the union of cells as one cell when the union
+is a box and the claim holds on each part: the same status; for
+`not_equilibrium`, `deviators` a non-empty subset of the deviators of
+every part, with a deviation only where the same strategy was
+reported for that deviator in every part; `from_every_state: true`
+only when every part carries it; `gain_bounds` the hull.
 
 Maps of several designs over the same region answer "in which regimes,
 and where, is the profile an equilibrium". The cells of two designs
@@ -738,7 +749,11 @@ the maximal value of the process with the upper step payoffs is a
 number b_p, and the minimal and maximal values with the player's
 commands fixed by τ or by the profile, with the lower and the upper
 step payoffs, are numbers d_p(τ), l_p, and u_p, and with each state of
-R_C(p) as the initial state, l_p(s) and u_p(s). Other sound methods
+R_C(p) as the initial state, l_p(s) and u_p(s). For condition N, a
+strategy τ can be chosen, for example, as the canonical best response
+of p (I.7) at the centre of the cell, restricted to the states that
+are reachable under it there; it decides how much of a region gets
+`not_equilibrium`. Other sound methods
 are admissible, for example exact reasoning on the rational functions
 U_p and BR_p, or a proof that a gain is convex or monotone in a
 parameter ([J.7](./appendix-j-grounding.md)).
@@ -760,9 +775,11 @@ here, and in addition:
   `equilibria:`, an `owner:` on a command, or a `profile:` on a
   property or regime map; it is a model of Appendix H, and S-9
   applies to it.
-- **I-3.** The `id` of a player MUST be an identifier, MUST NOT be one
-  of the keywords that S-2 excludes, and MUST be unique among the
-  players. `actors:` MUST list at least one actor reference, each
+- **I-3.** The `id` of a player MUST be an identifier, MUST NOT be a
+  keyword of A.11, `IN`, or `rest`, and MUST be unique among the
+  players. The keywords `F`, `U`, `P`, and `R` of the property
+  sub-language are admitted, since a player id occurs in no
+  expression. `actors:` MUST list at least one actor reference, each
   naming a declared actor. Two players MUST NOT list references with
   the same actor name, and neither may one player.
 - **I-4.** `owner:` MUST name a declared player. An owned command MUST
@@ -781,7 +798,10 @@ here, and in addition:
   every state of S in which two or more commands are enabled, some
   rule of every profile MUST apply (I.4). `compliance:` MUST name a
   profile. A processor SHOULD warn about a rule that is the first
-  applicable rule in no state of any design.
+  applicable rule in no state of any design. (`profiles:` is a YAML
+  mapping: a processor that reads the file through a YAML loader
+  cannot detect two profiles with the same name, since the loader
+  keeps one of them; the same holds for the labels of H.4.)
 - **I-7.** `model.payoffs:` MUST have exactly one entry for every
   player, and `player:` MUST name a declared player. `until:` MUST be
   a boolean `state_pred` in which labels may be used as in a property
@@ -796,8 +816,11 @@ here, and in addition:
   error. In a file that declares it, a processor that does not
   implement Appendix J MUST NOT evaluate a payoff that has such a
   term, nor a query that needs that payoff: it reports the query as
-  not evaluated, with a diagnostic that names the term. Such a term is
-  never read as a term with the default weight.
+  not evaluated, with a diagnostic that names the term. Every entry of
+  `equilibria:` needs the payoffs of all players and is then not
+  evaluated; properties and regime maps need no payoff and are
+  evaluated, and I-8 and I-9 need only the targets of the payoffs.
+  Such a term is never read as a term with the default weight.
 - **I-8.** Every design MUST be well-defined at its fixed values
   (S-11), and every profile of the file MUST be admissible (I.6) in
   every design at the fixed values. This is weaker than requiring that
@@ -816,8 +839,9 @@ here, and in addition:
   parameter in the `over:` of an entry of `equilibria:` MUST NOT occur
   in the `value:` of a reward item. For every listed design, a
   processor MUST check that the design is well-defined at the corner
-  points of the region (as S-14) and that the profile is admissible at
-  the centre of every face of the region (I.9: every open parameter at
+  points of the region (as S-14) and at the centre of every face, and
+  that the profile is admissible at the centre of every face of the
+  region (I.9: every open parameter at
   the lower end, the middle, or the upper end of its interval, 3ⁿ
   valuations); a failure at one of these valuations is an error of the
   file (for a multi-affine design the profile is then inadmissible on
@@ -853,7 +877,9 @@ an error [[Kwiatkowska+, CAV 2020]](./appendix-b-references.md). These
 are the conditions of I-4 and I-5. PRISM-games computes expected total
 rewards only for a stopping game, one in which terminal states with
 zero reward are reached with probability 1 under all strategies, which
-is more than the admissibility of I.6.
+is more than the admissibility of I.6. Storm (stormpy 2.0.0) parses an
+exported `smg` file but refuses to build it unless every command is
+owned by a player; the export targets PRISM-games.
 
 H.11 does not apply to a strategic model as written: a design of a
 strategic model is not a Markov chain, and a processor MUST NOT export
@@ -865,13 +891,13 @@ a strategic model as the model file of
 1. the first line is `smg` instead of `dtmc`;
 2. after it, for each player that owns a command of the design, in
    declaration order, one construct that lists the action labels of
-   the commands the player owns, in the order of their first
-   declaration:
+   the commands of the design that the player owns, in the order of
+   their first declaration:
 
 ```
 smg
 
-player R
+player R_
   [careful], [careless]
 endplayer
 ```
@@ -879,7 +905,12 @@ endplayer
 A player that owns no command of the design is not written. All
 commands of the design are written, whatever a profile selects;
 unowned commands and the deadlock command are allocated to no player.
-A player name is renamed by the rule of H.11 when it equals a keyword.
+A player name is renamed by the rule of H.11 when it equals a keyword
+(`R` is one, hence `player R_`). For a strategic model the list of
+keywords of H.11 is extended by `player`, `endplayer`, `smg`, `csg`,
+and `tptg`, the keywords that the PRISM-games manual adds to the PRISM
+language; every name of the exported model is renamed by this
+extended list.
 This appendix does not determine whether PRISM-games accepts a player
 whose name equals another identifier of the model; an exporter SHOULD
 report such a name. A parameter that is open only in an equilibrium
@@ -1122,8 +1153,8 @@ and R is a deviator on it exactly when b < λ\*; the cell that contains
 all other cells, with exact bounds: U_R is constant in λ, the largest
 best-response value on the cell is the one at λ = a, and the payoff of
 `shortcut_first` is least at λ = b. A processor that bisects the
-largest undecided cell until the resolution of 0.05 is reached
-reports:
+largest undecided cell until the resolution of 0.05 is reached, and
+joins cells with the same claim (I.9), reports:
 
 | Design | `not_equilibrium` (`deviators`: R) | `undecided` (`reason: bounds`) | `equilibrium` | Undecided fraction |
 | --- | --- | --- | --- | --- |
@@ -1291,10 +1322,10 @@ holds for both players, so the result carries
 `from_every_state: true`.
 
 **The map.** `watched_map` opens λ and κ in CENTRALIZED. R is a
-deviator where λ < 0.150108 and D where κ > 0.115199. On the
-partition of the region into 16 equal cells, the conditions of I.9
-give the following; the columns are the intervals of λ, the rows
-those of κ:
+deviator where λ < 0.150108 and D where κ > 0.115199. On the uniform
+partition of the region into 4 × 4 cells (not the cells of a
+bisection), the conditions of I.9 give the following; the columns are
+the intervals of λ, the rows those of κ:
 
 | κ \ λ | `[0, 0.1]` | `[0.1, 0.2]` | `[0.2, 0.3]` | `[0.3, 0.4]` |
 | --- | --- | --- | --- | --- |
@@ -1302,6 +1333,9 @@ those of κ:
 | `[0.2, 0.3]` | `not_equilibrium`, R and D | `not_equilibrium`, D | `not_equilibrium`, D | `not_equilibrium`, D |
 | `[0.1, 0.2]` | `not_equilibrium`, R | `undecided` | `undecided` | `undecided` |
 | `[0, 0.1]` | `not_equilibrium`, R | `undecided` | `equilibrium` | `equilibrium` |
+
+A bisection decides λ ∈ [0, 0.4] × κ ∈ [0.2, 0.4] as one cell with
+`deviators: [D]`; a coarser cell can list fewer deviators.
 
 Four of the 16 cells are `undecided`, with the reason `bounds`: the
 undecided fraction is 1/4, which is the `resolution:` of the query.
@@ -1444,70 +1478,91 @@ When the command lets the user give a parameter another value than its
 fixed value (as `--set` of `cadl model-check` does), the value MUST
 lie in the declared range, giving a value to a parameter that the
 evaluated query lists in `over:` is a usage error (exit status 2),
-and the processor MUST check the conditions
-of I-8 again at the values it uses (and those of I-9 for a map) before
+and the processor MUST check, for every design and profile of the
+evaluated queries, that the design is well-defined and the profile
+admissible at the values it uses (for a map, the checks of I-9) before
 it evaluates.
+
+When the command lets the user restrict the evaluation to one design
+(as `--regime`), a query whose `regimes:` does not list that design is
+reported with "the query does not concern this design", which is not
+an error (exit status 0). A command MAY offer to start a map from the
+uniform partition of the region into N intervals per open parameter
+and to report the cells as analysed, without joining them (I.9); in
+`cadl game-check` these are `--partition N` and `--no-merge`.
 
 ## I.14 Reference implementation status {/* #i14-reference-implementation-status */}
 
-Games 0.1 is **not implemented** in `cadl` 0.3.22.
+The reference implementation implements games 0.1 from `cadl` 0.3.23
+as follows. Up to 0.3.22, `cadl check` reported the extension name
+`games` as unknown and a strategic model as errors of S-1 and S-9
+(see H.14).
 
-- `cadl check` reports the extension name `games` as unknown, with an
-  informational diagnostic, and reads the `model:` block by the rules
-  of Appendix H as they stood before this appendix. For a strategic
-  model it therefore reports `kind: smg` as an error (S-1) and two
-  commands of one player that are enabled in the same state as an
-  error (S-9), and it reports `players:`, `payoffs:`, `equilibria:`,
-  and `owner:` as reserved (S-15). The examples of I.12 do not pass
-  `cadl check` 0.3.22, and `stochastic_model` is `null` for them. The
-  two errors are a deviation from S-1 and H.15 as amended, which ask
-  such a processor to skip the model with one informational
-  diagnostic.
-- Planned: the rules I-1 to I-11 in `cadl check`; a command
-  `cadl game-check` that evaluates the equilibrium checks of I.8 with
-  exact rational arithmetic and, with `--certify`, computes the
-  equilibrium maps of I.9 by the relaxation of I.9 on top of the
-  solvers of the certified regime maps
-  ([H.14](./appendix-h-stochastic.md#h14-reference-implementation-status)),
-  with the results and exit statuses of I.13; the IR of I.13; and the
-  export of I.11 in `cadl model-export`.
-- The numbers of I.12 were computed without an implementation of the
-  extension. First example: for each of the eight strategies of R
-  (careful or careless before each of the three attempts) a
-  Markov-chain variant of the model was written by hand as a file of
-  Appendix H, and the expected values of `fee`, `effort`, and
-  `shortcuts` were evaluated in both designs with `cadl model-check`
-  0.3.22, which uses exact rational arithmetic. The 48 values agree,
-  as rational numbers, with the closed forms of I.12, and the payoffs,
-  best responses, and gains of the tables follow from them. The two
-  statements "exactly when" about `comply` and `shortcut_first` were
-  compared with a search over the eight strategies at 7 935 pairs of
-  s and λ, among them values of s below c/g. Second example: the same
-  was done for all 128 profiles (two choices of D, 64 strategies of
-  R), 1 024 expected values in the two designs, and the gains of both
-  players were computed by a search over all deviations at 400 random
-  valuations of λ and κ per design.
-- The conditions N, E1, and E2 of I.9 were tried with scripts written
-  for these two models only, in which the relaxation is worked out by
-  hand. First example, map over λ: N and E1 decide every cell except
-  the one that contains λ\*. First example, map over λ and p_fail: N
-  and E2 reach the resolution of 0.05 in both designs (CENTRALIZED:
-  0.8088 of the region certified `equilibrium`, 0.1412
-  `not_equilibrium`, 0.0499 undecided), and without E2 no
-  `equilibrium` cell is decided; every decided cell was evaluated
-  exactly at its corners, its centre, and six random rational points
-  (13 728 point evaluations), and the claim held at each of them.
-  Second example: the 16 cells of the table, with the 12 decided
-  cells evaluated at 300 points.
-- What this does not exercise: the first example has one deciding
-  player. The second has two, but its open parameters occur in
-  weights only, so its transition probabilities are constant on a
-  cell, D has a single state, and no cell needs the relaxation of
-  probabilities together with a second deciding player; the
-  admissibility check on faces, designs that are not multi-affine,
-  and ε greater than zero were not exercised at all. The scripts are
-  not part of `cadl` and prove nothing about other models.
-- The export of I.11 has not been run through PRISM-games.
+- `cadl check` applies the rules I-1 to I-11 (the SHOULDs as
+  warnings), including the corner and face-centre checks of I-9, and
+  lowers the strategic model to the IR of I.13. A player id may be
+  `F`, `U`, `P`, or `R` (I-3). Two profiles with the same name cannot
+  be detected (I-6), because the file is read through a YAML loader.
+  An undeclared use of the keys of this appendix gets one
+  informational diagnostic (I.15).
+- `cadl game-check` evaluates the equilibrium checks of I.8 with exact
+  rational arithmetic (explicit enumeration, policy iteration), and,
+  with `--certify`, the equilibrium maps of I.9 by the relaxation of
+  I.9 on top of the solvers of the certified regime maps
+  ([H.14](./appendix-h-stochastic.md#h14-reference-implementation-status)).
+  Options: `--equilibrium ID` (repeatable), `--regime`, `--set`,
+  `--certify`, `--max-depth`, `--max-cells`, `--partition N`,
+  `--no-merge`, `--format text|json`. Without `--certify` the maps are
+  listed as not computed; naming a map with `--equilibrium` without
+  `--certify` is a usage error. The results and exit statuses are
+  those of I.13; `inconclusive` does not occur, since the arithmetic is
+  exact. For condition N it uses the canonical best response at the
+  centre of the cell (I.9) and tries N only for a player for whom E1
+  and E2 fail. Cells with the same claim are joined (I.9) unless
+  `--no-merge` is given.
+- `cadl model-export` writes the file of I.11 (`smg` and the `player`
+  constructs, with the renaming of H.11). Deviation: at commit
+  120e44c of the implementation, the keywords that I.11 adds for a
+  strategic model (`player`, `endplayer`, `smg`, `csg`, `tptg`) are
+  not yet in its list, so a name equal to one of them is exported
+  unchanged.
+- A payoff with a `sanction_of:` or `reward_of:` term is parsed and
+  its queries are reported as `not_evaluated` (I-7); Appendix J is not
+  implemented.
+- Every number of I.12 is reproduced by `cadl game-check`: payoffs,
+  best-response values, and gains as the fractions printed; λ\* and
+  κ\* through the gains, and the table of λ\* by `--set`; statuses,
+  deviators, and `from_every_state`. The maps of the first example
+  have 3 cells per design after joining for `comply_by_lambda` (11
+  cells analysed, about 0.4 s for both designs), and 257 and 17 cells
+  after joining (3 849 and 271 analysed, about 6.3 s) for
+  `comply_by_lambda_and_failure`, with the fractions given in I.12
+  (CENTRALIZED: 0.808838 `equilibrium`, 0.141235 `not_equilibrium`,
+  409/8192 undecided). For `watched_map` a bisection gives 5 cells
+  after joining (17 analysed); `--partition 4 --no-merge` gives the
+  table of I.12. Times are wall-clock on a laptop.
+- Verification by the implementer, with an oracle that shares no code
+  with `cadl` and enumerates every memoryless deterministic strategy:
+  2 500 random parametric games with 2 or 3 players, cycles, signed
+  weights with parameters, parameters in probabilities (also not
+  multi-affine), regions that touch probability 0 or 1, and
+  ε ∈ {0, 1/4, 1}. Every decided cell (1 933 `equilibrium`,
+  2 504 `not_equilibrium`) was evaluated at the corners, face centres,
+  and centre and at random rational points: 69 195 point evaluations,
+  no wrong claim. The checks at the fixed values agreed with the
+  oracle on all 2 500 models. Five soundness errors injected into the
+  code were each detected. The payoff under the profile and the
+  best-response value were compared with Storm (stormpy 2.0.0, exact)
+  on the game of one player against the profile, written as an MDP:
+  90 values, all equal as rational numbers.
+- An independent review ran 860 generated models through the command
+  line (`cadl check`, `cadl game-check --certify`): 76 921 exact point
+  evaluations of decided cells, no wrong claim. It compared 244
+  best-response values with Storm, all equal, and found no regression
+  against `cadl` 0.3.22.
+- Not exercised: the export of I.11 was not run through PRISM-games.
+  Games with three or more players occur only in the implementer's
+  fuzzing. Maps with more than two open parameters were not measured.
 
 ## I.15 Backward compatibility
 
@@ -1519,7 +1574,8 @@ reserves stay reserved for it, and S-1, S-9, and S-15 apply.
 A file that uses `kind: smg` or the keys of this appendix without
 declaring `games: 0.1` does not conform to this appendix. A processor
 that implements the extension reads the `model:` block of such a file
-by Appendix H and SHOULD report the keys as an undeclared extension.
+by Appendix H and SHOULD report the keys as an undeclared extension,
+with an informational diagnostic.
 A file that declares `games: 0.1` without `stochastic: 0.1` gets the
 error of I-1.
 
