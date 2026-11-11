@@ -32,8 +32,8 @@ title: "第 11 章 — 次に進む"
 
 仕様書には、本書で使わない拡張もあります。拡張ごとに仕様書の付録があり、`cadl` 0.3.25 はそれぞれのコマンドを提供しています（`cadl --help` で一覧を表示できます）。
 
-- **規範拡張**（[付録 F](../spec/appendix-f-norms.md)）：義務、許可、禁止、権能を扱います。`cadl norms-eval` は記録したトレースについて規範を判定し、`cadl norms-check` はシステムを動かす前にモデル検査器 PRISM で規範を検査します。`cadl codegen` の `opa` と `solidity` は規範モニターを生成します。
+- **規範拡張**（[付録 F](../spec/appendix-f-norms.md)）：義務、許可、禁止、権能を扱います。`cadl norms-eval` は記録したトレースについて規範を判定し、`cadl norms-check` はシステムを動かす前にモデル検査器 PRISM で規範を検査します。`cadl codegen` の `python`、`opa`、`solidity` は規範モニターを生成します。
 - **エージェント統治拡張**（[付録 G](../spec/appendix-g-agents.md)）：LLM のエージェントが送るメッセージについての決定と、監査ログを扱います（`cadl agents-run`、`cadl mcp-gateway`、`cadl a2a-gateway`、`cadl audit-verify`。10.2 節も参照）。
-- **確率モデル拡張**（[付録 H](../spec/appendix-h-stochastic.md)）：SoS の確率モデルを書き、PRISM の形式に出力するか（`cadl model-export`）、`cadl model-check` で評価します。
-- **戦略モデル拡張**（[付録 I](../spec/appendix-i-games.md)）：遵守プロファイルなど、名前を付けたプレイヤーの戦略の組が均衡かどうかを調べます（`cadl game-check`）。
+- **確率モデル拡張**（[付録 H](../spec/appendix-h-stochastic.md)）：SoS の確率モデルを書きます。書いたモデルは PRISM の形式に出力するか（`cadl model-export`）、`cadl model-check` で評価します。
+- **戦略モデル拡張**（[付録 I](../spec/appendix-i-games.md)）：名前を付けたプレイヤーの戦略の組（遵守プロファイルなど）が均衡かどうかを調べます（`cadl game-check`）。
 - **根拠付け拡張**（[付録 J](../spec/appendix-j-grounding.md)）：規範から情報共有の指標、権能の集中の指標、インセンティブの被覆率を計算します（`cadl norms-indices`）。

@@ -35,8 +35,8 @@ the specification, and `cadl` 0.3.25 provides commands for it (`cadl --help` lis
 
 - **Norms** ([Appendix F](../spec/appendix-f-norms.md)): obligations, permissions, prohibitions and
   powers. `cadl norms-eval` judges them on a recorded trace, `cadl norms-check` checks them with the
-  model checker PRISM before the system runs, and `cadl codegen` with `opa` or `solidity` generates
-  monitors of them.
+  model checker PRISM before the system runs, and `cadl codegen` with `python`, `opa` or `solidity`
+  generates monitors of them.
 - **Agent governance** ([Appendix G](../spec/appendix-g-agents.md)): decisions on the messages of
   LLM agents and an audit log (`cadl agents-run`, `cadl mcp-gateway`, `cadl a2a-gateway`,
   `cadl audit-verify`; see Section 10.2).
