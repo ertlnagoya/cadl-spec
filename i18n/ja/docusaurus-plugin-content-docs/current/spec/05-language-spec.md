@@ -434,7 +434,7 @@ CADLの契約は，Benvenisteらの契約ベース設計理論およびSaoudら�
 
 プロトコルの各ステップはラベル付き遷移システム（LTS）として解釈される。メッセージ送信 A -> B : m は，Aの送信アクションとBの受信アクションの同期合成として定義される。タイミング制約は時間オートマトンの不変条件として符号化し，UPPAAL [[Larsen+, 1997]](./appendix-b-references.md) 等のモデル検査器で検証することを設計上の意図としている。`cadl` 0.3ではモデル検査は統合されておらず，デッドロック検出は構造解析で行う（[6.3節](./06-design.md)）。
 
-## 5.5 この先の参照先
+## 5.5 関連する規定と資料
 
 - 完全な文法とキーの一覧: [付録A](./appendix-a-syntax.md)。
 - 5.2節で詳しく扱っていないブロック（`context`，`algorithms`，`transitions`，`metrics`，`verification`，`codegen`）: [付録A](./appendix-a-syntax.md)のA.3節とA.6〜A.9節で規定する。

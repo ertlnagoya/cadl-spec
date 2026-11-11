@@ -44,11 +44,11 @@ title: "第 2 章 — ツールチェインと準備"
                              └──────────────────────────┘
 ```
 
-全体は、仕様を書く側、仕様が動く側、その間でファイルを変換するコンパイラの 3 つに分かれます。
+全体は、仕様を書く部分、仕様を実行する部分、その間でファイルを変換するコンパイラの 3 つに分かれます。
 
 ```mermaid
 flowchart LR
-  subgraph A["書く側"]
+  subgraph A["仕様を書く"]
     CADL[".cadl ファイル<br/>（人が書く唯一のもの）"]
   end
   subgraph B["コンパイラ（cadl_repo）"]
@@ -56,7 +56,7 @@ flowchart LR
     IR["Sim-IR JSON<br/>中間表現"]
     GEN[cadl codegen<br/>C# 生成]
   end
-  subgraph C["動く側（cadl-raspimouse-simulator）"]
+  subgraph C["仕様を実行する（cadl-raspimouse-simulator）"]
     PY["Python 参照ランタイム<br/>engine.py"]
     UN["Unity C# ランタイム<br/>SoSDsl/"]
     SIM["ロボット群のシミュレーション<br/>Pilot_CSoS + arbitrator + NATS"]
