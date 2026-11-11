@@ -229,7 +229,7 @@ Verification FAILED: 7/9 checks passed
 
 ## 次のステップ
 
-- 手を動かして学ぶなら，[テキストブック](../textbook/index.md)（コース A）に進みます。そのあと，[ハンズオン入口](../handson/index.md)に示す順で他のコースに進みます。
+- 実際に書いて学ぶなら，[テキストブック](../textbook/index.md)（コース A）に進みます。そのあと，[ハンズオンの案内](../handson/index.md)に示す順で他のコースに進みます。
 - 言語全体については，[仕様書の概要](../spec/intro.md) を参照してください。
 - 三層の構文は，仕様書の [5. 言語仕様](../spec/05-language-spec.md) で確認できます。
 - より大きな例は，仕様書の [7. 例](../spec/07-examples.md) にあります。

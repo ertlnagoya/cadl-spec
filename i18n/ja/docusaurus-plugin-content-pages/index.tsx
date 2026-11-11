@@ -180,7 +180,7 @@ function WhatIsExplorer() {
           <div className="col col--6 col--offset-1">
             <Heading as="h2">CADL Explorer とは</Heading>
             <p style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-              <strong>CADL Explorer</strong> は，CADL仕様からガバナンスの評価までの流れを，
+              <strong>CADL Explorer</strong> は，CADL仕様からガバナンスの評価までの各段階を，
               ブラウザ上で操作しながら確かめられるWebアプリケーションです。CADL仕様をもとに，
               制度設計，シミュレータ設定，実験結果，ガバナンス評価が順にどうつながるかを表示します。
             </p>
@@ -218,7 +218,7 @@ function WhatIsHandson() {
               各章の終わりに全5回の授業向けの難易度別の演習を収めた教科書，別のドメインを扱うコース，学術的背景（Maier の5条件，ISO/IEC/IEEE 21839・21840・21841）を用意しています。
             </p>
             <Link className="button button--primary button--lg" to="/docs/handson/">
-              ハンズオン入口へ →
+              ハンズオンのページへ →
             </Link>
           </div>
           <div className="col col--5 col--offset-1">
@@ -256,7 +256,7 @@ function Features() {
     },
     {
       title: 'エンドツーエンドパイプライン',
-      description: 'CADL仕様からコードとシミュレータ設定を生成します。シミュレータや CADL Explorer と組み合わせて，制度設計から振る舞い評価までの連鎖をたどれます。',
+      description: 'CADL仕様からコードとシミュレータ設定を生成します。シミュレータや CADL Explorer と組み合わせて，制度設計から振る舞い評価までの各段階を順に確かめられます。',
     },
   ];
 

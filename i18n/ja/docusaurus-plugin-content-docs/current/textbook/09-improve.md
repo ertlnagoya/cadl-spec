@@ -85,8 +85,8 @@ title: "第 9 章 — 仕様を改善する"
 
    各ルールは元の文字列のままです。`reward(<actor_ref>, <amount>) when on_time_delivery` の形式を自分でパースし（正規表現で足りる）、それ以外は読み飛ばします（同梱の例には `penalty(...)` のルールもある）。
 
-   *発展版*: ソースを読む代わりに、`lower.py`（と `sim/ir.py` の `GovernanceParams`）を拡張して IR にルールを載せる（例：`governance.incentive_rules`）。編集したチェックアウトの `cadl` を使い（`pip install -e .`。PyPI で配布されている `cadl` にはこのキーがない）、`cadl sim-ir --format json` の出力に現れることを確認したうえで、ランタイムが IR から読むようにする。
-3. 誰に支払うかを決める。ランタイムが知っているのはインスタンス ID（`robot-0-1`）だけで、契約インスタンスにアクターのフィールドはない。インスタンスを開くときにアクターを渡し（例：`open_instance(..., actors={"ROBOT": "robot-0"})`）、ルールの `ROBOT[i]` をそれに対応付ける。
+   *発展版*: ソースを読む代わりに、`lower.py`（と `sim/ir.py` の `GovernanceParams`）を拡張して IR にルールを含める（例：`governance.incentive_rules`）。編集したチェックアウトの `cadl` を使い（`pip install -e .`。PyPI で配布されている `cadl` にはこのキーがない）、`cadl sim-ir --format json` の出力に現れることを確認したうえで、ランタイムが IR から読むようにする。
+3. 誰に支払うかを決める。ランタイムが持っている情報はインスタンス ID（`robot-0-1`）だけで、契約インスタンスにアクターのフィールドはない。インスタンスを開くときにアクターを渡し（例：`open_instance(..., actors={"ROBOT": "robot-0"})`）、ルールの `ROBOT[i]` をそれに対応付ける。
 4. 終端状態に入ったときに加算する。インスタンスが閉じる箇所は、`StateMachineEngine.fire_transition`（`complete` を含む通常の遷移）と `ContractRuntime._fire_state_jump`（期限とモニタによるジャンプ）の 2 つあるので、両方にフックする。`on_time_delivery` は「インスタンスが `Completed` に入り、`violation` レコードがない」と自分で定義する。ランタイムの述語評価器は単独の識別子を真として扱うため、これを判定できない。
 5. `cadl/runtime/tests/test_rewards.py` を追加し、次の 2 つのテストを書く。
    - 配送 `Completed` で 10 ポイント獲得するテスト
@@ -101,7 +101,7 @@ title: "第 9 章 — 仕様を改善する"
 
 | ページ | 内容 |
 | --- | --- |
-| 1 | 初期 CADL モデル（v1）、モデルが問うている質問、v1 で欠けていたもの |
+| 1 | 初期 CADL モデル（v1）、モデルで確かめようとした問い、v1 で欠けていたもの |
 | 2 | シミュレーション結果（ベースラインと修正後の比較）。表と、少なくとも 1 枚の cadl-explorer のスクリーンショット |
 | 3 | 振り返り：規範を追加したことで何が得られたか。シミュレーションを動かしたことで、仕様だけでは分からなかった何が分かったか。SoS-DSL は今後どう発展させるとよいか。 |
 
