@@ -114,7 +114,7 @@ Pilot Contract Bridge (Script)
     └── Assigned Dwell Ms                700
 ```
 
-> `Assigned Dwell Ms` は「`Assigned` 状態に最低どれだけ留まってから accept するか」です。`battery_guard` のような周期モニター（500ms 間隔）が `Assigned` 中に最低 1 回評価される猶予を作るためのもので、既定の 700ms のまま触らないでください（モニター周期より短くすると違反が検出されなくなります）。
+> `Assigned Dwell Ms` は「`Assigned` 状態に最低どれだけ留まってから accept するか」です。`battery_guard` のような周期モニター（500ms 間隔）が `Assigned` 中に最低 1 回評価される猶予を作るためのもので、既定の 700ms のまま変えないでください（モニター周期より短くすると違反が検出されなくなります）。
 
 5 体のうち 1 体の Battery スライダーを **15** まで下げ、`battery_guard` モニターを発火させます。
 
@@ -140,7 +140,7 @@ Console に以下のような行が次々に出ます。Console の検索欄に 
 
 ![Play 中の C-SoS の経路網と 5 台のロボット](/img/handson/unity-road-network.jpg)
 
-Play 中の Game ビューです。カメラがロボット `m1` を追いかけており、右下の小さな映像はそのロボットのカメラから見た景色です。
+Play 中の Game ビューです。カメラがロボット `m1` を追いかけており、右下の小さな映像はそのロボットのカメラの映像です。
 
 ![Play 中の Game ビュー。カメラが経路網上のロボットを追いかけ、右下にロボット自身のカメラの映像が出ている](/img/handson/unity-game-view.jpg)
 
@@ -155,9 +155,9 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 [lifecycle DELIVERY_SLA/robot-1-1 Delivering -> Completed (complete, event) @ 46361ms]
 ```
 
-各ロボットの契約は、そのロボット自身のイベントでだけ進みます。調停器は約 5 秒ごとに 1 件ずつ配達を割り当てるので、ロボットは順番に `Assigned` になります（この実行では約 5・11・16・22・27 秒）。`robot-1-1` の `assign` と `accept` の間が 700〜800 ms 空いているのは、8.2 節「各ロボットに PilotContractBridge を追加」で設定した `Assigned Dwell Ms` によるものです。バッテリ 15 の `robot-2-1` は、`assign` と同じフレームで `battery_guard` に検出されています。
+各ロボットの契約は、そのロボット自身のイベントでだけ状態を移します。調停器は約 5 秒ごとに 1 件ずつ配達を割り当てるので、ロボットは順番に `Assigned` になります（この実行では約 5・11・16・22・27 秒）。`robot-1-1` の `assign` と `accept` の間が 700〜800 ms 空いているのは、8.2 節「各ロボットに PilotContractBridge を追加」で設定した `Assigned Dwell Ms` によるものです。バッテリ 15 の `robot-2-1` は、`assign` と同じフレームで `battery_guard` に検出されています。
 
-## 8.4 シーンの中の部品
+## 8.4 シーンを構成するコード
 
 生成した C# は、Unity の中で次のように動きます。シーン上の `ContractRuntimeHost` が毎フレーム `Runtime.Tick(now)` を呼び、期限切れと監視ルールを評価します。各ロボットに付けた `PilotContractBridge` が、ロボットの状態変化（配送を落札した・配達を終えた）を契約イベント（`route_assignment` や `Delivered`）に変換し、そのロボット自身の契約インスタンスに送ります。違反や状態遷移は Console に 1 行ずつ出ます。
 
@@ -181,17 +181,17 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 | `arbitrator/C-SoS/main/main.go` | Go 製のアービトレータ（配送の割当係）。NATS で配送を配り、早い者勝ち（FCFS）で落札を決める |
 | `Assets/streamingAssets/cadl_config.json` | グラフ（11 ノード・17 エッジ）・ロボット台数・NATS 設定。アービトレータと Unity の両方が読み込む。アービトレータ起動時の `[Config]` 行（Terminal 2）と、Unity の Console に出る `[GraphDefinition] Loaded from CADL config` の行は、このファイルに由来する |
 
-### どこを触ると何が変わるか
+### どのファイルを変えると何が変わるか
 
-改造したくなったとき、目的ごとに触るべき場所は 1 か所です（他は生成物か、手で編集しない場所です）。
+改造したくなったとき、目的ごとに編集する場所は 1 か所です（他は生成物か、手で編集しない場所です）。
 
-| やりたいこと | 触る場所 |
+| やりたいこと | 編集する場所 |
 | --- | --- |
 | 期限を変える・監視を増やす・状態を足す | `.cadl` ファイル（変更後、e2e スクリプトで再生成） |
 | ロボットの動き方を変える | `Pilot_CSoS.cs`（ブリッジが観測するイベントが変わらない限り、契約側の変更は不要） |
 | 契約イベントへの変換を変える | `PilotContractBridge.cs` |
 | 生成される C# の形を変える | `contract_emitter.py`（上級者向け） |
-| ロボット台数・地図を変える | `cadl_config.json` |
+| ロボット台数・経路網を変える | `cadl_config.json` |
 
 `Generated/` と `Runtime/` の中身は、手で編集しないでください。次に e2e スクリプトを実行すると上書きされます（直したい場合は生成器を直します）。
 
@@ -209,7 +209,7 @@ Play 中の Game ビューです。カメラがロボット `m1` を追いかけ
 | Battery 15 のロボットには `monitor:battery_guard` の violation が出る | はい |
 | 各ロボットの最初の遷移は `Proposed -> Assigned` | はい |
 | ロボットは約 5 秒ごとに 1 台ずつ `Assigned` になる（調停器が 1 件ずつ配達を割り当てる）ので、最後の 1 台までは 25〜30 秒ほどかかる | はい |
-| ロボットの契約が `Completed` になるのは、そのロボットが配達を終えたときで、他のロボットの契約は一緒に動かない | はい |
+| ロボットの契約が `Completed` になるのは、そのロボットが配達を終えたときで、他のロボットの契約の状態は変わらない | はい |
 | 第 7 章の Python と同じ種類のイベント（lifecycle 遷移・violation）が同じ意味で出ている | はい |
 
 ## 8.6 よくある間違い

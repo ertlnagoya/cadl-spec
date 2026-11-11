@@ -31,9 +31,9 @@ title: "第 7 章 — コードを生成し、参照ランタイムで動かす"
 | --- | --- | --- |
 | robot-0-1 | `Completed` | 正常系が通ることの確認 |
 | robot-1-1 | `Violated` via `deadline:accept` | 期限切れが検出されること |
-| robot-2-1 | `Violated` via `monitor:battery_guard` | 周期的な monitor が働くこと |
-| robot-3-1 | `Violated` via `monitor:deadline_watch` | 宣言的な monitor が働くこと |
-| robot-4-1 | `Proposed` のまま | インスタンスが進まない場合も、トレースとして記録されること |
+| robot-2-1 | `Violated` via `monitor:battery_guard` | 周期的な monitor が違反を検出すること |
+| robot-3-1 | `Violated` via `monitor:deadline_watch` | 宣言的な monitor が違反を検出すること |
+| robot-4-1 | `Proposed` のまま | インスタンスの状態が変わらない場合も、トレースとして記録されること |
 
 仕様を変更したときは、この表を正解（ground truth）として、実行結果と比べます。
 
@@ -152,9 +152,9 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
   cause counts: {'open': 5, 'event': 9, 'monitor': 2, 'deadline': 1}
 ```
 
-5 台のロボットが、それぞれ異なる結末になります。これは、契約が取りうる結末（正常完了・期限違反・モニター違反・未割当のまま）を 1 回の実行でまとめて見られるように組んだ、Python 側のシナリオです。
+5 台のロボットが、それぞれ異なる最終状態になります。これは、契約が取りうる結果（正常完了・期限違反・モニター違反・未割当のまま）を 1 回の実行でまとめて見られるように組んだ、Python 側のシナリオです。
 
-第 8 章の Unity 実行では、割当のタイミングも各ロボットのバッテリ設定も違うので、この 5 行がそのまま再現されるわけではありません（Unity では通常、バッテリを下げた 1 台が `battery_guard` で違反し、残りは `Completed` まで進みます）。Python と Unity で比べるのは、同じ仕組み（lifecycle の遷移、`deadline`、`monitor`）が同じ意味で働いているかどうかです。個々の結末の並びまでは一致しません。
+第 8 章の Unity 実行では、割当のタイミングも各ロボットのバッテリ設定も違うので、この 5 行がそのまま再現されるわけではありません（Unity では通常、バッテリを下げた 1 台が `battery_guard` で違反し、残りは `Completed` まで進みます）。Python と Unity で比べるのは、同じ仕組み（lifecycle の遷移、`deadline`、`monitor`）が同じ意味で動作しているかどうかです。個々の結果の並びまでは一致しません。
 
 > #### 🛠 うまくいかないとき：`multi_robot_demo` が見つからない
 >
@@ -176,7 +176,7 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
 
 ## 7.6 生成されたコードと参照ランタイムの中身
 
-同梱の例題 `examples/sos_dsl_robot_delivery.cadl`（166 行）を例に、自分の書いた 1 行がどこへ流れていくかを追います。手順を進めるのには必要ありません。コマンドが何を作ったのかを知りたくなったときに読んでください。
+同梱の例題 `examples/sos_dsl_robot_delivery.cadl`（166 行）を例に、自分の書いた 1 行がどのファイルのどの部分に変換されるかを追います。手順を進めるのには必要ありません。コマンドが何を作ったのかを知りたくなったときに読んでください。
 
 **(1) 仕様 → IR**。`.cadl` の `deadline: 5s` は、`cadl_repo/src/cadl/parser.py` が構文解析し、`sim/lower.py` が IR に変換すると `"deadline_ms": 5000` という JSON になります（IR 全体で 297 行）。IR は、人が読み書きしやすくするための書き方を取り除き、機械が実行しやすい形にした中間表現です。
 
@@ -193,12 +193,12 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
 | `Generated/DeliverySlaContract.cs` | 遷移表。「このイベントが来て、この状態なら、この状態へ」という if 文が並ぶ | 約 220 |
 | `Generated/DeliverySlaMonitors.cs` | 監視ルール。周期（500ms 等）ごとに述語を評価し、真なら違反を発行 | 約 100 |
 
-### Python 参照ランタイム — `cadl/runtime/`（答え合わせ用）
+### Python 参照ランタイム — `cadl/runtime/`（照合用）
 
 | ファイル | 中身 |
 | --- | --- |
 | `engine.py` | C# ランタイムと同じ意味論の Python 実装（約 720 行）。IR を読み、状態機械・期限・監視を動かす |
-| `multi_robot_demo.py` | 5 台のロボットが 5 通りの結末（完了・応答期限切れ・バッテリ違反・配送遅延・未割当）になるように組んだシナリオの実行 |
+| `multi_robot_demo.py` | 5 台のロボットが 5 通りの結果（完了・応答期限切れ・バッテリ違反・配送遅延・未割当）になるように組んだシナリオの実行 |
 
 ### コードを読む（任意、約 30 分）
 
@@ -265,7 +265,7 @@ python3 -m cadl.runtime.multi_robot_demo --log session4_baseline.ndjson
    | `100ms` | `robot-2-1` は `Violated` のままだが、原因が `monitor:battery_guard` から `deadline:accept` に変わる（モニタより先に期限が発火する）。 |
    | `50ms` | 完了するロボットがなくなる。`robot-0-1`〜`robot-3-1` がすべて `deadline:accept` で `Violated` になる。 |
 
-   `my_delivery_v2.cadl` には `deadline_watch` モニターと `late_failure` 遷移が無いので、`5s`・`1s`・`100ms` の実行では `robot-3-1` は `Violated` ではなく `Delivering` で終わります。自分の v2 で再現できるのは、同梱例の 5 通りの結末のうち 4 通りです。
+   `my_delivery_v2.cadl` には `deadline_watch` モニターと `late_failure` 遷移が無いので、`5s`・`1s`・`100ms` の実行では `robot-3-1` は `Violated` ではなく `Delivering` で終わります。自分の v2 で再現できるのは、同梱例の 5 通りの結果のうち 4 通りです。
 
 **振り返り**: 期限が厳しすぎると（ここでは `50ms`）、ロボットがどう動いてもすべての契約が違反になります。期限が緩すぎると（`5s` と `1s` は同じ結果）、不正な動作を見逃します。実際の SoS では、期限の値をどのような手順で決めればよいでしょうか（ヒント：ベースラインのデータと、許容する偽陽性率）。
 

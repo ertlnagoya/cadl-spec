@@ -1,7 +1,7 @@
 ---
 sidebar_position: 0
 title: "CADL仕様書 v0.3"
-description: "CADL言語仕様書 v0.3 の入口ページ。概要，アーキテクチャ全体像，読み方，cadlツールの入手方法，関連ツールを示します。"
+description: "CADL言語仕様書 v0.3 の最初のページ。概要，アーキテクチャの構成，読み方，cadlツールの入手方法，関連ツールを示します。"
 ---
 
 # CADL: Contract Architecture Description Language
@@ -27,7 +27,7 @@ CADLは，制度層（Institution）・プロトコル層（Protocol）・アル
 CADL仕様からシミュレータ設定の自動生成や設計整合性の検証を行うツールチェーンも
 提供します。
 
-## アーキテクチャ全体像
+## アーキテクチャの構成
 
 ```mermaid
 flowchart LR
@@ -129,9 +129,9 @@ flowchart LR
 - **[cadl-raspimouse-simulator](https://github.com/ertlnagoya/cadl-raspimouse-simulator)** —
   ハンズオン教材で使用するシミュレータ。
 
-## 手を動かして学ぶ
+## 実際に書いて学ぶ
 
-仕様を読むだけでなく実際に書いて動かしたい場合は，[テキストブック](../textbook/index.md)を参照してください。ロボット配送を題材に，仕様の記述からコード生成・シミュレーション実行までを一通り体験できます。他のドメインを扱うコースは[ハンズオン教材](../handson/index.md)にあります。
+仕様を読むだけでなく実際に書いて動かしたい場合は，[テキストブック](../textbook/index.md)を参照してください。ロボット配送を題材に，仕様の記述からコード生成・シミュレーション実行までを一通り試せます。他のドメインを扱うコースは[ハンズオン教材](../handson/index.md)にあります。
 
 ## ステータス
 
