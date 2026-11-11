@@ -1705,30 +1705,38 @@ are these.
   `https` agent or a loopback address.
 - The request line, the headers, and the body of a request have to
   arrive within 10 seconds in all (`--read-timeout`); otherwise the
-  connection is closed and recorded as `read_timeout`. At most 64
-  connections are read at the same time, before authentication
-  (`--max-readers`); a further connection gets HTTP 503 and is recorded
-  as `overloaded` with the reason `readers`. A request takes one of 64
-  handler slots (`--max-handlers`) only after it is authenticated, and
-  keeps it while it is held; without a free slot it gets HTTP 503
-  (`overloaded`, `handlers`). So unauthenticated connections cannot take
-  the slots of the clients. One actor may have at most 16 held blocking
-  requests (`--max-held-per-actor`); a further blocking `SendMessage` of
-  that actor gets HTTP 503 before its decision (`overloaded`,
-  `held_per_actor` and the actor), so one client cannot take every slot.
-  The records of `unauthenticated_request`, `overloaded`, and
-  `read_timeout` are kept to at most 20 a second for each event; the
-  next record of the event counts the requests that were not recorded
-  (`;not_recorded_before=N` in its `reason`). A peer that keeps 64 slow
-  connections open still delays other connections, by up to the read
-  deadline each time; the gateway does not limit connections by address.
+  connection is closed and recorded as `read_timeout`. Before
+  authentication, at most 4 connections of one remote address
+  (`--max-readers-per-address`) and at most 64 connections in all
+  (`--max-readers`) are read at the same time. A further connection of
+  an address that has 4 is closed at once (`overloaded`, `address`); when
+  all 64 are in use, a connection waits up to one second for one and then
+  gets HTTP 503 (`overloaded`, `readers`). A request is counted against
+  the 64 requests handled at the same time (`--max-handlers`) only after
+  it is authenticated, also while it is held; beyond that it gets HTTP
+  503 (`overloaded`, `handlers`). So unauthenticated connections cannot
+  take the places of the clients. One actor may have at most 16 requests
+  handled at the same time (`--max-handlers-per-actor`), held blocking
+  requests and requests to a slow agent included, and at most 64 holds,
+  blocking or not (`--max-holds-per-actor`); a further request of that
+  actor gets HTTP 503 before its decision (`overloaded`, with the reason
+  `handlers_per_actor` or `holds_per_actor` and the actor). So one client
+  cannot take every place, or create holds without end; the cap on holds
+  also refuses that actor's messages that would not be held. The records
+  of `unauthenticated_request`, `overloaded`, and `read_timeout` are kept
+  to at most 20 a second for each event; the next record of the event
+  counts the requests that were not recorded (`;not_recorded_before=N`
+  in its `reason`). Many hosts together can still keep the 64 readers
+  busy and make the gateway refuse requests for as long as they go on;
+  where this matters, the gateway belongs behind a proxy or a firewall
+  that limits connections.
 
 The gateway does not read the header `A2A-Extensions`, does not answer
 `ExtensionSupportRequiredError` (-32008), does not read `A2A-Version` as
 a query parameter, and does not check that a part `raw` is base64.
 
 The A2A gateway is tested with a fake A2A agent in a thread of the test
-and a fake client, standard library only, in 73 tests: allow,
+and a fake client, standard library only, in 75 tests: allow,
 denial by the default, a message without name, escalation that is
 approved, rejected, or expires, with and without `returnImmediately`, a
 held task that is cancelled before a signed approval arrives or after
@@ -1740,8 +1748,9 @@ receiver at both gateways,
 eight kinds of failed authentication, 27 kinds of malformed input, an
 agent that is down or answers wrongly, a release that cannot be passed
 on, more requests than handlers, slow connections that send their
-body a byte at a time, more connections than readers, more held requests
-of one actor than allowed, the nonces of one actor, and the isolation of
+body a byte at a time, more connections than readers, peers of one
+address that reconnect at once, more requests and more holds of one actor
+than allowed, the nonces of one actor, and the isolation of
 tasks and contexts. In every scenario the agent receives no request that was not
 allowed or released, and `cadl agents-run` on the trace writes the same
 audit log as the gateway. An independent review of the first version
@@ -1763,7 +1772,11 @@ connections could take every handler slot, because a slot was taken
 before the request was read and authenticated and the timeout applied
 to each read only; that the correction of the set receiver refused to
 start with files that `cadl` 0.3.24 accepted; and that one client could
-use up the cap of the nonces for all. Each is corrected and has a test.
+use up the cap of the nonces for all. A fourth review found that peers
+of one address that reconnected at once kept every reader busy, that the
+holds of `returnImmediately` requests were not capped per actor, and
+that one actor could take every handler with requests to a slow agent.
+Each is corrected and has a test.
 None of the reviews found a request that reached the agent without a
 decision; the first checked
 this also in a run of 12 threads whose log of 280 records
