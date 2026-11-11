@@ -1196,8 +1196,10 @@ of agent *X* to agent *Y* carries a `Message` with `role`, `parts`,
 `messageId`, and optionally `contextId`, `taskId`, `metadata`, and
 `extensions`. A gateway in front of *Y*, for any of the bindings of
 A2A (JSON-RPC, gRPC, HTTP and JSON), maps such a request to the message
-`X -> Y : e` as follows. From `cadl` 0.3.25 the reference implementation
-does so for the JSON-RPC binding; G.13 gives its readings.
+`X -> Y : e` as follows. A `SendStreamingMessage` is the same message,
+decided before any event of the stream is passed on. From `cadl` 0.3.25
+the reference implementation does so for the JSON-RPC binding, and
+from 0.3.26 also for its streams; G.13 gives its readings.
 
 - *X* is the authenticated client of the request: A2A authenticates
   the client by the security schemes of the agent card of *Y*, and the
@@ -1648,25 +1650,30 @@ are these.
   binds it to what the approver saw. An approval through the inbox is
   given to the runtime and never delivered, so the receiver of such a
   rule, when it is a set, a range, or an index variable, is resolved to
-  a concrete actor: the actor of the gateway (`Y`, or the tool server of
-  the MCP gateway) when the reference can match it, else, at the MCP
-  gateway, its client (`--agent`) when the reference can match it, else
-  the first declared member of the set. A gateway does not start when a
+  a concrete actor. An index variable takes its value from the bindings
+  of the contract instance of a ground of the hold, in the rule's
+  contract (from 0.3.26). Otherwise the receiver is the actor of the
+  gateway (`Y`, or the tool server of the MCP gateway) when the reference
+  can match it, else, at the MCP gateway, its client (`--agent`) when
+  the reference can match it, else the first declared member of the
+  set. A gateway does not start when a
   contract that its actor is a party of escalates and has no
   `counts_as:` rule that creates `approval`; G-9 already makes such a
   file an error.
-- Only `SendMessage` is decided. `GetTask` and `CancelTask` carry no
-  message between actors; they pass, without a decision, for tasks that
-  the agent or the gateway gave to the same actor in this run.
+- Only `SendMessage` and `SendStreamingMessage` are decided. `GetTask`,
+  `CancelTask`, and `SubscribeToTask` carry no message between actors;
+  they pass, without a decision, for tasks that the agent or the gateway
+  gave to the same actor in this run.
   `CancelTask` changes the state of the agent and is recorded as
-  `task_cancel` before it is passed on; `GetTask` is not recorded. A
+  `task_cancel` before it is passed on; `GetTask` and `SubscribeToTask`
+  are not recorded. A
   `SendMessage` likewise names only such tasks (`taskId`,
   `referenceTaskIds`) and contexts (`contextId`). Anything else is
   `TaskNotFoundError` (-32001) and is recorded as `task_refused`; a
   context id that the gateway has not seen is refused too, because it
   may be a context of another client or of an earlier run. `tenant` is
   refused (-32602), because tasks are kept by their id.
-  `SendStreamingMessage`, `SubscribeToTask`, `ListTasks`, and
+  `ListTasks` and
   `GetExtendedAgentCard` are refused with `UnsupportedOperationError`
   (-32004), the methods of push notifications and a `SendMessage` with a
   push notification configuration with
@@ -1692,11 +1699,47 @@ are these.
   of the enforcement point, and the answer comes from the closing record
   of the hold: a hold whose deadline passed before the step is
   `expired`, and the client gets a rejected task.
+- Streams (from `cadl` 0.3.26). `SendStreamingMessage` is decided once,
+  with the checks of `SendMessage`, before anything is passed on, and
+  its answer is a stream of Server-Sent Events, each event one JSON-RPC
+  response on one `data:` line, re-serialised by the gateway. An allowed
+  request is passed on as a stream, and the agent's events are relayed
+  one at a time; each is parsed strictly, has to answer this request,
+  and has to belong to one task, or one message, of the same client,
+  otherwise the stream ends with `InvalidAgentResponseError` (-32006,
+  `invalid_response`) and nothing after it is passed on. A line of the
+  agent with a carriage return other than at its end ends the stream in
+  the same way, and comments of the agent are not passed on. A denial is
+  a stream of one event, the rejected task. A held stream sends SSE
+  comments (one a second) until the hold closes, then the events of the
+  released request or one rejected task; a client that closes the
+  connection withdraws the request, as for a blocking request. With
+  `returnImmediately` a held stream is one event, the submitted task of
+  the gateway, and the released request is passed on as `SendMessage`.
+  `SubscribeToTask` follows a task of the client: the stream of the
+  agent for it, and, for a task of the gateway that is held, comments
+  until the hold closes, then the stream of the agent's task under the
+  id of the gateway's task, or the final task. So every event of the
+  agent that reaches a client belongs to an allowed or released request
+  of that client. A stream keeps its place among the requests handled at
+  the same time until it ends. Errors found before the stream begins are
+  answered as plain JSON-RPC errors, as A2A allows.
+- Push notifications and the gRPC binding stay refused. A push
+  notification configuration names a URL of the client to which the
+  agent, or a gateway that relays, sends requests: the gateway would
+  call addresses that its clients choose, from inside the network it
+  protects, which is server-side request forgery. The gRPC binding needs
+  HTTP/2 and Protocol Buffers, which the standard library does not
+  provide, and the reference implementation adds no runtime dependency.
 - A request is read with one `Content-Length` of at most 1 MiB and
   without `Transfer-Encoding`, one request per connection; the body is
   parsed as strictly as a line of the MCP gateway and passed on
   re-serialised, with a JSON-RPC id and headers of the gateway; the
-  client's `Authorization` is not passed on. A task or context that the
+  client's `Authorization` is not passed on. A header line with
+  whitespace before its colon, a folded header line, or a bare carriage
+  return in the headers is refused with HTTP 400 (from 0.3.26): the
+  parser of the standard library takes such a line as the end of the
+  headers, so that a `Transfer-Encoding` after it would not be seen. A task or context that the
   agent gives to a second actor is not shown to it (-32006,
   `invalid_response`). A request that cannot be sent after an allow or a
   release gives -32603 and `forward_failed`; one that was sent and got
@@ -1709,9 +1752,12 @@ are these.
   authentication, at most 4 connections of one remote address (an IPv4
   address, or the /64 prefix of an IPv6 address, since one host usually
   has a whole /64; an IPv4-mapped IPv6 address counts as its IPv4
-  address) (`--max-readers-per-address`) and at most 64 connections in all
-  (`--max-readers`) are read at the same time. A further connection of
-  an address that has 4 is closed at once (`overloaded`, `address`); when
+  address) (`--max-readers-per-address`), at most 16 connections of one
+  IPv4 /24 or IPv6 /48 (`--max-readers-per-prefix`, from 0.3.26), and at
+  most 64 connections in all (`--max-readers`) are read at the same
+  time. A further connection of an address that has 4, or of a prefix
+  that has 16, gets HTTP 503 at once (`overloaded`, `address` or
+  `prefix`; before 0.3.26 it was closed without an answer); when
   all 64 are in use, a connection waits up to one second for one and then
   gets HTTP 503 (`overloaded`, `readers`). A request is counted against
   the 64 requests handled at the same time (`--max-handlers`) only after
@@ -1728,10 +1774,13 @@ are these.
   of `unauthenticated_request`, `overloaded`, and `read_timeout` are kept
   to at most 20 a second for each event; the next record of the event
   counts the requests that were not recorded (`;not_recorded_before=N`
-  in its `reason`). Many hosts together can still keep the 64 readers
-  busy and make the gateway refuse requests for as long as they go on;
-  where this matters, the gateway belongs behind a proxy or a firewall
-  that limits connections. Behind a proxy every client has the address
+  in its `reason`). The read deadlines of all connections are kept in
+  one thread. What remains: hosts in at least four different /24 (or
+  /48) networks together can keep the 64 readers busy, 16 per network,
+  and make the gateway refuse every new connection for as long as they
+  go on; one network alone cannot. A process cannot tell such hosts from
+  clients before they authenticate, so where this matters the gateway
+  belongs behind a proxy or a firewall that limits connections. Behind a proxy every client has the address
   of the proxy, so `--max-readers-per-address` has to be raised there,
   or the proxy has to buffer the requests before it passes them on.
 
@@ -1739,8 +1788,50 @@ The gateway does not read the header `A2A-Extensions`, does not answer
 `ExtensionSupportRequiredError` (-32008), does not read `A2A-Version` as
 a query parameter, and does not check that a part `raw` is base64.
 
+**Signed holds.** From `cadl` 0.3.26, both gateways take `--hold-key
+FILE`: every hold that they publish in the inbox then carries
+`"kind": "hold"` and `hold_mac`, the HMAC-SHA256 under that key of the
+canonical JSON of G.8 of the hold without `hold_mac`, which includes the
+run, the held message, the times, the arguments, and their SHA-256, and
+`run.json` says `"holds_signed": true`. `cadl mcp-approve --hold-key
+FILE` verifies the MAC before it shows or signs the hold, and refuses a
+hold without it or with a wrong one; without `--hold-key` it refuses a
+signed hold and warns for an unsigned one. In every case it refuses a
+hold whose shown arguments do not have the SHA-256 that it names. The
+hold key is a key of the gateway: it differs from the key of the log and
+from every approver key, and the approvers hold it to verify, so it
+protects the holds against whoever can write the inbox but cannot read
+that key, as the approver keys protect the approvals. The approver keys
+still authenticate the approvals; the hold key adds nothing to them, and
+without it the gateway still refuses an approval of other arguments
+than those held (`wrong_message`), but the approver could be shown
+arguments that are not the held ones. A hold is authenticated for the
+approver only when `mcp-approve` is given `--hold-key`; the option is
+optional for backward compatibility.
+
+**SDKs.** The gateways are tested with the official SDKs (from `cadl`
+0.3.26): an MCP server of `mcp` 2.3.0 over stdio behind
+`cadl mcp-gateway`, driven by the `ClientSession` of the SDK, which
+negotiates the revision 2025-11-25 with `initialize`, and by its
+`Client`, which negotiates 2026-07-28 with `server/discover`; and an
+A2A agent of `a2a-sdk` 1.3.0 (JSON-RPC, Starlette, and uvicorn) behind
+`cadl a2a-gateway`, driven by the `a2a-sdk` client, with and without
+streaming, with the header `CADL-HMAC` added by an event hook of its
+`httpx` client. The scenarios are allow, deny, a hold approved and one
+rejected through `cadl mcp-approve`, `returnImmediately` with
+`GetTask`, `CancelTask`, and `SubscribeToTask`, and streams that are
+allowed, denied, or held; in each the agent or server receives nothing
+that was not allowed or released, and `cadl agents-run` on the trace
+writes the same audit log. These tests found no incompatibility of the
+non-streaming paths. The one incompatibility was the refusal of
+streaming: the SDK client streams by default when the agent card says
+`streaming: true`, and the gateway answered -32004; 0.3.26 implements
+the streams. The tests are skipped where the SDKs are not installed, and
+a job of the continuous integration installs them on Python 3.12; they
+are not dependencies of `cadl`.
+
 The A2A gateway is tested with a fake A2A agent in a thread of the test
-and a fake client, standard library only, in 75 tests: allow,
+and a fake client, standard library only, in 95 tests: allow,
 denial by the default, a message without name, escalation that is
 approved, rejected, or expires, with and without `returnImmediately`, a
 held task that is cancelled before a signed approval arrives or after
@@ -1754,8 +1845,12 @@ agent that is down or answers wrongly, a release that cannot be passed
 on, more requests than handlers, slow connections that send their
 body a byte at a time, more connections than readers, peers of one
 address that reconnect at once, more requests and more holds of one actor
-than allowed, the nonces of one actor, and the isolation of
-tasks and contexts. In every scenario the agent receives no request that was not
+than allowed, the nonces of one actor, the isolation of
+tasks and contexts, streams that are allowed, denied, held and approved
+or rejected, withdrawn when the client goes, or ended by a bad event of
+the agent, subscriptions, signed holds and forged hold files, receivers
+bound by the hold's instance, malformed header lines, and the caps per
+address and per prefix. In every scenario the agent receives no request that was not
 allowed or released, and `cadl agents-run` on the trace writes the same
 audit log as the gateway. An independent review of the first version
 found that a context id that the gateway had not seen was claimed by
@@ -1780,6 +1875,11 @@ use up the cap of the nonces for all. A fourth review found that peers
 of one address that reconnected at once kept every reader busy, that the
 holds of `returnImmediately` requests were not capped per actor, and
 that one actor could take every handler with requests to a slow agent.
+A fifth review, of 0.3.25, found that a connection beyond the cap of its address
+was closed without an answer, that each connection had a timer thread
+of its own, that an index variable as receiver of an approval rule was
+not resolved with the bindings of the hold, and that a header line with
+whitespace before its colon hid the headers after it.
 Each is corrected and has a test.
 None of the reviews found a request that reached the agent without a
 decision; the first checked
@@ -1854,16 +1954,18 @@ log that is rewritten from a changed line on; keeping the last digest
 elsewhere (`--anchor`), or a key, does; the `hash` field of the header
 is not authenticated, so the verifier has to know whether a log is
 keyed. The MCP gateway over stdio and the A2A gateway over JSON-RPC
-have been tested with fake servers, agents, and clients, not with
-implementations of others. The A2A gateway needs a client that computes
+have been tested with fake servers, agents, and clients, and from
+0.3.26 with the official SDKs named above, not with other
+implementations. The A2A gateway needs a client that computes
 the header `CADL-HMAC`, keeps the owners of tasks only for one run, and
-does not support streaming, push notifications, `ListTasks`, tenants,
-or the gRPC and the HTTP and JSON bindings. A gateway
+does not support push notifications, `ListTasks`, tenants, or the gRPC
+and the HTTP and JSON bindings. A gateway
 observes messages and time, not `values`: a norm that reads a
 quantity sees missing data (G.5). It does not create or end
 host-created contract instances after its first line. The approver's
 tool signs the held message that the gateway publishes, so it trusts
-the gateway for what it shows. The keys of the approvers separate them
+the gateway for what it shows; with `--hold-key` it verifies that the
+gateway published it. The keys of the approvers separate them
 only when each approver uses an account of their own: whoever shares
 the account of the gateway can read every key in its keyring, and the
 directory protects only against parties that cannot read the key
