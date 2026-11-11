@@ -1706,8 +1706,10 @@ are these.
 - The request line, the headers, and the body of a request have to
   arrive within 10 seconds in all (`--read-timeout`); otherwise the
   connection is closed and recorded as `read_timeout`. Before
-  authentication, at most 4 connections of one remote address
-  (`--max-readers-per-address`) and at most 64 connections in all
+  authentication, at most 4 connections of one remote address (an IPv4
+  address, or the /64 prefix of an IPv6 address, since one host usually
+  has a whole /64; an IPv4-mapped IPv6 address counts as its IPv4
+  address) (`--max-readers-per-address`) and at most 64 connections in all
   (`--max-readers`) are read at the same time. A further connection of
   an address that has 4 is closed at once (`overloaded`, `address`); when
   all 64 are in use, a connection waits up to one second for one and then
@@ -1729,7 +1731,9 @@ are these.
   in its `reason`). Many hosts together can still keep the 64 readers
   busy and make the gateway refuse requests for as long as they go on;
   where this matters, the gateway belongs behind a proxy or a firewall
-  that limits connections.
+  that limits connections. Behind a proxy every client has the address
+  of the proxy, so `--max-readers-per-address` has to be raised there,
+  or the proxy has to buffer the requests before it passes them on.
 
 The gateway does not read the header `A2A-Extensions`, does not answer
 `ExtensionSupportRequiredError` (-32008), does not read `A2A-Version` as
