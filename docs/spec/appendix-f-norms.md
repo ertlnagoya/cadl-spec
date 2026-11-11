@@ -68,7 +68,7 @@ four gaps. Version 0.1 of this extension is a first step on each:
 
 Norms 0.1 deliberately stays small: it fixes the vocabulary and the
 static and dynamic semantics, so that design-time checking (by
-translation to a model checker) and runtime monitoring can be added by
+translation to a model checker, F.12) and runtime monitoring can be added by
 processors without changing the language. It does not give the
 institutional parameters α, β, and λ a formal meaning for norms (F.7);
 the grounding extension ([Appendix J](./appendix-j-grounding.md))
@@ -1024,9 +1024,20 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   the monitor cannot read a CADL file. Before `cadl codegen` writes the
   module it checks that the module compiles and that every name it uses
   is defined in it, and it refuses to generate otherwise.
-- The Solidity, OPA, and Unity C# targets do not monitor norms, and
-  translation of norms to a model checker for design-time checking is
-  not implemented.
+- The Solidity, OPA, and Unity C# targets do not monitor norms.
+- From `cadl` 0.3.24, `cadl norms-check` implements F.12: it builds the
+  model of one contract instance (`--bindings`, `--members`, `--step`,
+  `--horizon`), runs the questions with PRISM 4.11 (`prism` on PATH;
+  explicit engine, with strategies exported), and evaluates every
+  witness with the engine of `cadl norms-eval`. Without PRISM it
+  reports that nothing was checked and can still write the model and
+  the properties (`--export`). Storm is not used. The translation is
+  tested against `cadl norms-eval` by running the generated PRISM text,
+  with an interpreter of the subset it uses, on random and exhaustive
+  paths of environment choices and comparing the state of every norm
+  at every observation; the interpreter is in turn compared with paths
+  of the PRISM simulator, and the answers of PRISM with explicit
+  fixpoints over the reachable states.
 
 ## F.11 Backward compatibility
 
@@ -1040,3 +1051,207 @@ lowered to the IR), and SHOULD report them as undeclared extension
 keys. Processors that do not implement the extension MUST NOT reject
 such files; they SHOULD emit a single informational diagnostic per
 file.
+
+## F.12 Design-time checking by a model checker {/* #f12-design-time-checking */}
+
+F.5 judges the norms of one contract instance on one trace. This section
+defines a translation of the norms of one contract instance into a
+finite Markov decision process (MDP) in the PRISM language
+[[Kwiatkowska+, CAV 2011]](./appendix-b-references.md), whose paths are
+all the traces of the instance up to a bounded length. A model checker
+then answers questions over all behaviours before any trace exists: can
+a norm be violated at all, is every activation of an obligation
+followed by a way to keep it, are two norms in conflict, is a power ever
+exercised. The model has no probabilities: every choice is a
+nondeterministic choice of the environment, and the questions are
+qualitative. Detecting norms that oblige and forbid the same act is a
+known problem of normative multi-agent systems
+[[Vasconcelos+, JAAMAS 2009]](./appendix-b-references.md); SymboleoPC
+checks properties of legal contracts with the model checker nuXmv
+[[Parvizimosaed+, SoSyM 2025]](./appendix-b-references.md). This
+section is for processors that offer such a check; it does not change
+F.1 to F.11.
+
+### The contract instance
+
+The model is built for one contract and one contract instance. The index
+variables of the contract (`i` in `ROBOT[i]`) have fixed values, and
+every set of actors has a fixed number of members, `A[lo]` to
+`A[lo+n-1]`; for a set with an integer upper bound, n is at most the
+declared size. A reference `A[*]`, `A[lo..hi]`, or an unbound `A[i]` in
+a message event stands for the members of the instance that the table
+of F.3 makes it match.
+
+### What the environment chooses
+
+At each observation the environment chooses three things.
+
+1. **Messages.** The message events of the model are the concrete
+   messages (sender, receiver, name, arguments) that the message events
+   of the translated triggers, `until:`s, contents of obligations,
+   prohibitions and powers, and `when:`s of counts-as rules denote in
+   the instance. A message that no such term matches does not change
+   the state of a translated norm and is left out. The environment
+   chooses a subset of the message events; each occurs at most once in
+   an observation, in a fixed order (the order of the model).
+2. **Values.** The predicates of v0.1 compare one quantity with
+   literals. The literals compared with a quantity cut its domain into
+   classes on which every such comparison has the same value: for
+   numbers c<sub>1</sub> < … < c<sub>k</sub>, the classes below
+   c<sub>1</sub>, each c<sub>j</sub>, each open interval between two of
+   them, and above c<sub>k</sub>; for symbolic and text values, each
+   literal and one other value; for a boolean quantity, true and false.
+   One representative stands for each class, and *no value* is a class
+   of every quantity, for which the predicates that use it are
+   undefined (F.5). The environment chooses one class per quantity; the
+   choices are grouped by the predicates they decide, so that two
+   choices that give every predicate the same three-valued value are
+   one choice.
+3. **The end.** Whether the instance ends at this observation (step 6
+   of F.5). This covers both the end signalled for an instance without
+   `lifecycle:` and a terminal lifecycle state.
+
+### Time
+
+Observations take place at the multiples of a **step** Δ: observation n
+is at time nΔ. Δ is given, or is the greatest common divisor of the
+durations of the translated deadlines, temporal operators, and
+assumptions (1 s when there are none); a given Δ must divide each of
+them. A deadline d becomes d/Δ steps and an interval w of `within`,
+`throughout`, or `until` becomes w/Δ steps.
+
+The model is **exact for the traces whose observations are the
+multiples of Δ**, from 0 to the end of the instance: every time that F.5
+compares (the active time of a norm with its deadline, an observation
+with the end of an interval) is then a whole number of steps, so the
+comparison in steps has the same result as the comparison in seconds,
+and an observation that carries nothing is an observation like any
+other (F.5). The model does **not** cover observations between two
+multiples of Δ, nor traces that skip a multiple: an observation between
+two ticks can detect a passed deadline earlier, or see a value that
+holds only between ticks. A check of a property of such traces needs a
+smaller Δ.
+
+The **horizon** H bounds the instance: it ends at observation H at the
+latest. By default H = 2 + Σ (d + w + 2) over the translated obligations
+and prohibitions, with d and w the deadline and the interval of the
+content in steps (0 when absent), so that each norm can be activated,
+judged, and followed by a reparation in turn. The answers are about
+instances of at most H + 1 observations; a larger horizon covers longer
+instances.
+
+### The state and the transition
+
+The state of the model after an observation consists of the step
+number; whether the instance has ended; for every translated norm its
+state (F.5; `discharged` is split into the norms that were in force and
+those that the end of the instance found `inactive`, and `violated` into
+the verdicts `violated` and `excused`), whether it was activated at that
+observation, its active time in steps (counted up to deadline + 1), and,
+for a content with a temporal operator, the pending candidates by their
+age with the information F.4 needs to decide them (whether an undefined
+value was seen; for `until`, also whether the prefix was undefined), and
+whether a candidate decided true or not true is still waiting for the
+norm to be judged (while it is `suspended`); for every predicate whose
+rising edge is an event, its value at the previous observation; for
+every temporal assumption, its status, and whether an assumption has
+failed; for every power whether it has been exercised, and for every
+obligation or prohibition with a reparation whether the reparation has
+been activated.
+
+One transition of the model is one observation: the steps of F.5 in
+their order ("Order within one observation"), each applied to the state
+left by the previous one, for the choice of the environment. After the
+end of the instance the state does not change.
+
+### What is translated
+
+Version 0.1 of the translation translates message events (with
+literal arguments or names), institutional events of counts-as rules,
+and predicates made of comparisons of a quantity (`A.q`, `A[k].q`, or
+`A[i].q` with `i` bound) with a literal (`==`, `!=`, `<`, `<=`, `>`,
+`>=`, `IN`), a boolean quantity used as a condition, `AND`, `OR`, and
+`NOT`; a content that is one bounded temporal operator over such
+predicates; deadlines; `until:`; counts-as rules with `if:`; powers and
+their effects; reparations; and `assume:` items of these forms (for the
+verdict `excused`). It does not translate quantifiers, aggregates,
+wildcard references in predicates, arithmetic, comparisons of two
+quantities, `request` fields, `now`, `state`, a temporal operator
+combined with other operators or nested in another, and amendments
+(F.6). A norm with such a part is reported as **not translated**, with
+the reason, and so is a norm whose behaviour depends on one: the
+reparation of a norm that is not translated, the target of an effect of
+a power that is not translated, and a norm whose trigger, content, or
+`until:` is an event of a counts-as rule that is not translated. When an
+`assume:` item is not translated, a violation may be `excused` in the
+traces, and the model does not tell. Norms that F.10 does not judge
+(not evaluable) stay `inactive` in the model, as in the traces.
+`guarantee:` items do not change norm states and are not translated.
+
+### Questions
+
+The questions are PRISM properties over labels of the model. Two
+readings of the end are used. In the **any end** reading
+(`early_end=true`) the instance may end at every observation; it is used
+for questions of possibility. In the **full** reading
+(`early_end=false`) the instance runs to the horizon; it is used for
+questions of necessity, since ending the instance early discharges an
+obligation before its deadline and would answer every such question
+trivially.
+
+| Question | Reading | Property | Answer |
+| --- | --- | --- | --- |
+| Can norm n be activated? | any end | `Pmax=? [ F "a_n" ]` | yes when > 0 |
+| Can it be violated? | any end | `Pmax=? [ F "v_n" ]` | yes when > 0 |
+| Can it be fulfilled? | any end | `Pmax=? [ F "f_n" ]` | yes when > 0 |
+| Is it violated in every instance? | full | `Pmin=? [ F "v_n" ]` | yes when = 1 |
+| Can every activation be kept? | full | `Pmax=? [ F ("j_n" & !"v_n" & P>=1 [ F "v_n" ]) ]` | no when > 0 |
+| Are n and m in conflict? | full | `Pmax=? [ F (!"v_n" & !"v_m" & !(P<1 [ G !"v_n" ]) & !(P<1 [ G !"v_m" ]) & P>=1 [ F ("v_n" \| "v_m") ]) ]` | yes when > 0 |
+| Can power p be exercised? | any end | `Pmax=? [ F "x_p" ]` | yes when > 0 |
+| Can the reparation of n be activated? | any end | `Pmax=? [ F "r_n" ]` | yes when > 0 |
+
+`"a_n"` holds once n has been activated, `"v_n"` when it is violated
+(with either verdict), `"f_n"` when it is fulfilled, `"j_n"` at the
+observation at which it was activated, `"x_p"` once p has been
+exercised, and `"r_n"` once the reparation of n has been activated. In
+an MDP, `P>=1 [ F φ ]` says that every resolution of the choices reaches
+φ, and `!(P<1 [ G !φ ])` that some resolution avoids φ forever.
+
+An activation that **cannot be kept** is an observation at which the
+norm becomes active and after which every continuation violates it, for
+example a reparation with a deadline of 0 s, which is first judged at
+the next observation. The question is asked at activations, because
+any obligation with a deadline reaches, by inaction of its bearer, a
+state from which it is violated whatever follows. Two obligations or
+prohibitions n and m are **in conflict** when a state is reachable in
+which neither is violated, each can still be kept on its own, and every
+continuation violates one of them, for example an obligation whose
+content a prohibition forbids while both are in force. A conflict may
+arise through a reparation: keeping n violates a third norm whose
+reparation is m.
+
+### Witnesses
+
+Every answer that something is possible comes with a **witness**: a
+trace in the format of the reference implementation, with one
+observation at each multiple of Δ, that F.5 evaluates to the claimed
+verdict. It is the path of the strategy the model checker gives for the
+`Pmax` property, followed, after the target is reached, by observations
+without messages and without values until the instance ends. For an
+activation that cannot be kept the witness reaches the activation and
+continues without messages and values to the horizon. For a conflict
+there are two witnesses from the state of conflict: one keeps n and
+violates m, the other keeps m and violates n. For a norm violated in
+every instance, the instance without messages and values serves as an
+example. A processor SHOULD evaluate every witness by F.5 and report a
+witness that does not give the claimed verdict as its own error.
+
+### Limits
+
+Version 0.1 refuses a horizon of more than 1 000 observations, more than
+16 message events, more than 8 192 choices of the environment per
+observation, and quantities with more than 20 000 combinations of
+classes in one group of predicates. The model checker explores the
+reachable states explicitly; the number of transitions is the number of
+reachable states times the number of choices, which grows with the
+message events and the classes of values.

@@ -273,7 +273,16 @@ RD-6.1, RD-6.2, RD-6.3, and RD-6.5: it defines first-class norms,
 bounded temporal operators with four-valued verdicts, counts-as rules,
 and what happens to running norms on an amendment. The
 generated Python code monitors norms at run time
-([F.10](./appendix-f-norms.md#f10-reference-implementation-status)).
+([F.10](./appendix-f-norms.md#f10-reference-implementation-status)),
+and the norms of one contract instance can be checked at design time:
+[F.12](./appendix-f-norms.md#f12-design-time-checking) translates them,
+with discrete time and classes of values, into an MDP for PRISM
+[[Kwiatkowska+, CAV 2011]](./appendix-b-references.md) and asks whether
+each norm can be violated, whether every activation can be kept,
+whether two norms are in conflict
+[[Vasconcelos+, JAAMAS 2009]](./appendix-b-references.md), and whether
+a power is ever exercised, each "yes" with a trace that the runtime
+semantics of F.5 confirms.
 The grounding extension
 ([Appendix J](./appendix-j-grounding.md), `grounding` 0.1) is a first
 step towards the link to α, β, and λ: it derives from the norms of a
@@ -283,7 +292,9 @@ with them, measures how many norms carry a sanction or a reward, and
 gives sanctions a numeric magnitude that λ scales. The indices are
 counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
-design-time checking by a model checker, monitoring in the other
+design-time checking beyond F.12 (quantifiers and arithmetic in
+predicates, several contract instances, open sets of actors, continuous
+time, amendments, and which party can avoid a violation), monitoring in the other
 generated runtimes, indices that are weighted or aggregated over the
 contracts of an SoS, norms per regime, and the derivation of model
 probabilities from norms remain open. We found no work that handles first-class norm

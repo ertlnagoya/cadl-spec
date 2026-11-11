@@ -231,3 +231,5 @@ description: "References cited in the CADL specification."
 [113] C. Mu, "Automated Game-Theoretic Verification of Security Systems," in Proc. QEST, LNCS 11785, Springer, pp. 239-256, 2019, doi:10.1007/978-3-030-30281-8_14.
 
 [114] C. Baier and J.-P. Katoen, Principles of Model Checking, MIT Press, Cambridge, MA, 2008, ISBN 978-0-262-02649-9.
+
+[115] W. W. Vasconcelos, M. J. Kollingbaum, and T. J. Norman, "Normative conflict resolution in multi-agent systems," Autonomous Agents and Multi-Agent Systems, vol. 19, no. 2, pp. 124-152, 2009, doi:10.1007/s10458-008-9070-9.
