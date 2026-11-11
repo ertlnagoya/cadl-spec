@@ -236,17 +236,33 @@ keeps the meaning it has in the core language.
 
 **When their value is known.** The value of an operator at time t can
 depend on observations after t. It is **decided** at the first
-observation that determines it. `within(d, p)` is decided true, and
-`throughout(d, p)` false, at the observation in `[t, t + d]` that shows
-it; `until(p, q, d)` is decided true at the observation at which `q`
-holds, and false at an observation at which `p` fails before `q` has
-held. Otherwise the value is decided at the first observation whose time
-stamp is after `t + d`: the interval is then over, `within` and `until`
-are false, and `throughout` is true. Before that the value is not
-decided, and a decided value does not change. The end of an interval is
-therefore not known at the time `t + d` itself but at the first
-observation after it; that observation need not change any quantity
-(F.5).
+observation that determines it; before that it is not decided, and a
+decided value does not change.
+
+For an operator whose operands contain no temporal operator, the rule is
+as follows. `within(d, p)` is decided true, and `throughout(d, p)`
+false, at the observation in `[t, t + d]` that shows it;
+`until(p, q, d)` is decided true at the observation at which `q` holds,
+and false at an observation at which `p` fails before `q` has held.
+Otherwise the value is decided at the first observation whose time stamp
+is after `t + d`. The interval is then over: `within` and `until` are
+false and `throughout` is true, unless an operand was undefined (F.5) at
+an observation of the interval; in that case the value is undefined,
+since a value of that operand could have decided it otherwise. The end
+of an interval is therefore not known at the time `t + d` itself but at
+the first observation after it; that observation need not change any
+quantity (F.5).
+
+An operator whose operand contains a temporal operator is decided once
+the values of the operand on which it depends are decided, each by the
+same rule at its own observation. This can be later than `t + d`.
+`within(2s, throughout(5s, p))` at time t needs the value of
+`throughout(5s, p)` at the observations of `[t, t + 2s]`, and that
+value, when `p` keeps holding, is decided only by an observation more
+than 5 s later: the operator can stay undecided until an observation
+after `t + 7s`. In general the value of a `tpredicate` at time t is
+decided at the latest by the first observation after t plus the largest
+sum of the durations of operators nested in one another.
 
 A file that does not declare `norms: 0.1` reads `within`, `throughout`,
 and `until` as ordinary function names, as in the core language.
@@ -296,15 +312,15 @@ lifecycle state before the transitions of the current observation.
 
 A name that stands alone in a predicate, such as `load` in `load > 5` or
 `Delivered` in `ROBOT[i].status == Delivered`, is an observed quantity
-when the contract instance observes a quantity of that name, and a
-symbolic value otherwise. Which of the two it is does not depend on when
-its first value arrives: a quantity is undefined, not a symbolic value,
-at the observations before its first value. A symbolic value can only be
+or a symbolic value. The set of names that are observed quantities is
+fixed for the contract instance: it is given to the processor when the
+instance starts, or, for a recorded trace, it is the set of names that
+have a value in some observation of the instance. A name of this set is
+a quantity at every observation of the instance, and is undefined, not a
+symbolic value, at the observations before its first value. Every other
+name that stands alone is a symbolic value. A symbolic value can only be
 compared with a text value, by `==`, `!=`, or `IN`; a predicate that
-uses it in another way is undefined. A processor that receives
-the observations one at a time SHOULD be given the names of such
-quantities when the instance starts; a processor that is not given them
-can read a name as a quantity only from its first value on.
+uses it in another way is undefined.
 
 ### Norm instances
 
@@ -464,12 +480,23 @@ verdicts stay `pending`: a trace that stops before a deadline or the
 end of an interval does not decide it, and neither does the end of the
 contract instance for a temporal item whose interval is not over.
 
-The verdicts after an observation are those of the trace up to that
-observation, read as a prefix. They do not depend on later observations,
-and a verdict other than `pending` does not change afterwards. A
-processor MAY therefore compute the verdicts while the system runs,
-observation by observation; it gives the verdicts that a processor
+With the set of observed quantities fixed for the contract instance
+(see "Contract instances" above), the verdicts after an observation are
+those of the trace up to that observation, read as a prefix with the
+same set. They do not depend on later observations, and a verdict other
+than `pending` does not change afterwards. A processor MAY therefore
+compute the verdicts while the system runs, observation by observation;
+given the same set of quantities, it gives the verdicts that a processor
 reading the recorded trace gives.
+
+A processor that is not given the names of the quantities and learns
+them from the observations reads a name as a symbolic value until its
+first value arrives. For a predicate that uses such a name before its
+first value, it MAY give a verdict that differs from the one above. This
+is the only permitted difference. Such a processor SHOULD be given the
+names; the difference arises only where the name is compared with a text
+value, since any other use of a symbolic value is undefined, as is the
+quantity without a value.
 
 `excused` separates "the bearer failed" from "the bearer was not given
 what the contract assumes", which is the basis of assigning blame in
@@ -784,7 +811,10 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   for a file that uses such references in a `trigger:`, an `until:`, a
   `content:`, or a `counts_as:` rule SHOULD be computed again. It also
   rejects a trace whose time is not a finite number or whose actor and
-  message names are not well-formed. A norm or item that contains a function call
+  message names are not well-formed, and it ignores the observations
+  after the end of the contract instance entirely: up to 0.3.21 it took
+  the names of the observed quantities (F.5) also from them, so that such
+  an observation could change a verdict. A norm or item that contains a function call
   other than a temporal operator, a quantifier, or a wildcard reference
   is not evaluated and stays `pending`. `cadl norms-diff` compares two
   versions of a file and reports what F.6 does to the norms of each
@@ -806,17 +836,25 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   `cadl norms-eval`. As that command, it takes the lifecycle state from
   the observations and reports a `transition:` without applying it. It
   reads the points that F.4 and F.5 state for a processor that receives
-  the observations one at a time as follows: a passed deadline is
-  detected at the next observation, and the monitor tells the host the
-  time at which the next deadline of a norm passes, so that the host can
-  make an observation after it; the host names the quantities that are
-  written without an actor, and a name it does not name is a quantity
-  from its first value on (`cadl norms-eval` takes the names from the
-  whole trace); an observation after the end of the instance is ignored
-  with a warning; and it keeps the observations of the instance until
-  the instance is dropped. An amendment (F.6) is applied when the host
-  supplies the data of the monitor generated from the new version; the
-  monitor cannot read a CADL file.
+  the observations one at a time as follows. A passed deadline and the
+  end of an interval are detected at the next observation; the monitor
+  tells the host the earliest time stamp at which an observation is
+  certain to decide something that only waits for time (a little after
+  the deadline or the end of the interval, since content at the
+  deadline itself is in time; times are compared with a tolerance of
+  10<sup>-9</sup> s). The host names the quantities that are written
+  without an actor; a name it does not name is read as a symbolic value
+  until its first value, which is the difference F.5 permits
+  (`cadl norms-eval` takes the names from the observations of the
+  instance in the trace). An observation after the end of the instance
+  has no effect and is counted in a warning. An observation that is
+  malformed, or whose amendment cannot be applied, is refused and leaves
+  the monitor as it was. The monitor keeps the observations of the
+  instance until it is dropped. An amendment (F.6) is applied when the
+  host supplies the data of the monitor generated from the new version;
+  the monitor cannot read a CADL file. Before `cadl codegen` writes the
+  module it checks that the module compiles and that every name it uses
+  is defined in it, and it refuses to generate otherwise.
 - The Solidity, OPA, and Unity C# targets do not monitor norms, and
   translation of norms to a model checker for design-time checking is
   not implemented.

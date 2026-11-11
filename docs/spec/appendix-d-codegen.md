@@ -49,9 +49,11 @@ with temporal operators, for one contract instance while the system
 runs: it is given one observation at a time and returns the norm
 instances and items whose state or verdict (`pending`, `fulfilled`,
 `violated`, `excused`) changed. Unlike the other modules of the package,
-it does not import `cadl`: it carries the contracts as data and the
-evaluation code of `cadl norms-eval`, and uses only the standard library
-of Python.
+it does not import `cadl`: it carries the declared actors and the
+contracts as data (one JSON text) and the evaluation code of
+`cadl norms-eval`, and uses only the standard library of Python. The
+generator checks the module before it writes it and writes nothing when
+the check fails.
 [F.10](./appendix-f-norms.md#f10-reference-implementation-status) gives
 the details. The `solidity`, `opa`, and `unity-csharp` targets do not
 monitor norms; `solidity` and `opa` leave the items with temporal
