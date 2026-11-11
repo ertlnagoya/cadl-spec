@@ -1521,14 +1521,14 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   and E2 fail. Cells with the same claim are joined (I.9) unless
   `--no-merge` is given.
 - `cadl model-export` writes the file of I.11 (`smg` and the `player`
-  constructs, with the renaming of H.11). Deviation: at commit
-  120e44c of the implementation, the keywords that I.11 adds for a
-  strategic model (`player`, `endplayer`, `smg`, `csg`, `tptg`) are
-  not yet in its list, so a name equal to one of them is exported
-  unchanged.
-- A payoff with a `sanction_of:` or `reward_of:` term is parsed and
-  its queries are reported as `not_evaluated` (I-7); Appendix J is not
-  implemented.
+  constructs, with the renaming of H.11 and of the keywords that I.11
+  adds for a strategic model, and a check that two players do not
+  collide).
+- A payoff with a `sanction_of:` or `reward_of:` term gets the weight
+  of J.7, and J-14 is used in `--certify`
+  ([J.11](./appendix-j-grounding.md#j11-reference-implementation-status));
+  the status `not_evaluated` of I.13 remains for a processor without
+  Appendix J.
 - Every number of I.12 is reproduced by `cadl game-check`: payoffs,
   best-response values, and gains as the fractions printed; λ\* and
   κ\* through the gains, and the table of λ\* by `--set`; statuses,

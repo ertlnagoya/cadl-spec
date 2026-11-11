@@ -166,8 +166,15 @@ norm_ref        = identifier , "." , identifier ;               (* string *)
 - A `norm_ref` is a quoted string `"C.n"`: the `id` of a contract, a
   dot, and the `id` of a norm of that contract.
 
-An empty text (`sanction: ""`, `reward: ""`) and a YAML null count as
-absent. An unquoted item name that a YAML 1.1 loader reads as a
+A text that is empty or consists of white space only
+(`sanction: ""`, `reward: " "`) counts as empty, and a YAML null
+counts as absent, for every key of this appendix. A text is taken
+after YAML loading: an unquoted scalar that the loader reads as a
+number or a boolean is the text as written (`sanction: 0` is the text
+"0" and carries an incentive), and an author SHOULD quote such a text.
+A `reward:` that is a sequence or a mapping is an error (J-4). A
+magnitude MUST be written as a decimal: a YAML 1.1 loader reads `1e3`
+as a string, which is an error of J-4, and `1.0e-7` as a number. An unquoted item name that a YAML 1.1 loader reads as a
 boolean or null MUST be quoted
 ([A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)).
 
@@ -196,14 +203,21 @@ the whole party only when it is equal to the only entry of `parties:`
 with that actor name. Any other reference with an integer index or a
 range is **member-specific**. A bare set name, `A` for an actor
 declared with a range, matches no member (F.3): it gives no pair, and
-a processor SHOULD warn. Indices and ranges are compared as written,
-ignoring white space.
+a processor SHOULD warn (J-3); it is not member-specific. Indices and
+ranges are compared as written; the core parser does not accept white
+space inside an index. For example, with
+`parties: [DISPATCHER, "ROBOT[1]", "ROBOT[2]"]` the target `ROBOT[2]`
+is member-specific, and only `ROBOT[*]`, `ROBOT[i]`, or a range gives
+the pair of an item and ROBOT.
 
 A pair (x, q) is given
 
 - **by a sharing entry**, when an entry `"S -> T : x"` of
   `information.sharing` has the item x and a target T that denotes the
-  whole party q;
+  whole party q; an entry that is not of this form with one item, such
+  as `"A -> B : x, y"` or `"A -> B : f(5s)"`, which the core parser
+  accepts leniently (A.12), gives no pair, and a processor SHOULD warn
+  (J-3);
 - **by an obligation**, or **by a permission**, when a sharing norm of
   that kind lists x in `shares:` and has as content a message
   `S -> T : m` whose receiver T denotes the whole party q.
@@ -224,7 +238,11 @@ declared items only, to "complete sharing". A processor reports, with
 that are not given, and the **member-specific** entries and norms: an
 entry or norm that would give a pair but whose target is
 member-specific (as in `"DISPATCHER -> ROBOT[3] : route"`) gives no
-pair and is listed separately.
+pair and is listed separately, each entry and each norm once, however
+many items it names. A contract that declares `alpha: 0` and whose
+sharing entries are all member-specific has α̂ = 0 and gets no warning
+of J-6, although a member-specific entry is sharing; the index does
+not see it.
 
 What the definition does not look at:
 
@@ -271,7 +289,7 @@ for the powers only, to the end point "single actor decides all" of
 
 β̂ does not depend on `authority.decision_holder`. A processor reports
 with β̂: the number of powers per bearer; for each power, the number of
-norms named in its `effects:`; and, when the decision holder names a
+distinct norms named in its `effects:`; and, when the decision holder names a
 single actor h, the **share of the decision holder** k(h) divided by
 the number of powers. The counts are not weighted by the effects: a
 power that discharges one norm and a power that discharges another
@@ -650,15 +668,18 @@ about the same construct, a processor gives one diagnostic.
   item, each declared in `grounding.items` of the same contract and
   each once. A processor SHOULD warn when the receiver of the message
   has the actor name of the origin of a listed item; when the target
-  of a sharing entry or the receiver of a sharing norm is not a party
-  of the contract, or is a bare set name (J.4); and when an entry of `information.sharing` names an
+  of a sharing entry that names a declared item, or the receiver of a
+  sharing norm, is not a party of the contract or is a bare set name
+  (J.4); when an entry of `information.sharing` that names a declared
+  item is not of the form of J.4 with one item; and when an entry of `information.sharing` names an
   item that `grounding.items` does not declare while the contract
   declares items.
 - **J-4.** `on_violation.magnitude` and `on_fulfilment.magnitude` MUST
   be finite numbers that are not negative. `on_fulfilment:` is allowed
   only for an obligation or a prohibition (as `on_violation:`, N-4)
-  and MUST have at least one of `reward:` and `magnitude:`. A
-  processor SHOULD warn about a `magnitude:` of zero next to a
+  and MUST have at least one of `reward:` and `magnitude:` that is not
+  empty (J.3). A `reward:` MUST be a text (a scalar); a sequence or a
+  mapping is an error. A processor SHOULD warn about a `magnitude:` of zero next to a
   `sanction:` or `reward:` text that is not empty.
 - **J-5.** For every contract of the file, a processor that implements
   the extension and reports MUST compute α̂, β̂, and χ by the
@@ -672,7 +693,8 @@ about the same construct, a processor gives one diagnostic.
   index, and their difference. For `lambda` it reports the declared
   value next to χ and no difference. The comparisons of J-6 to J-9 and
   J-13 are exact; a declared value is the decimal that is written
-  (H.2).
+  (H.2). The quantities are defined for a file without errors: for a
+  file with an error of J-2 to J-4, no quantity is reported.
 - **J-6.** A processor SHOULD warn, and name a construct that is the
   counterexample, when a contract declares `alpha: 0` and has a given
   pair, or has a non-empty `information.sharing` while α̂ is
@@ -682,7 +704,8 @@ about the same construct, a processor gives one diagnostic.
   bear a power (J.5).
 - **J-7.** A processor SHOULD warn when the declared `alpha` or `beta`
   and the defined index differ by more than the tolerance of the
-  contract and J-6 gives no warning for that parameter, and when the
+  contract and the declared value is neither 0 nor 1 (J-6 tests the
+  end points, also where it gives no warning), and when the
   decision holder names a single actor whose share of the powers is
   smaller than β̂.
 - **J-8.** For a contract that has `norms:`, a processor SHOULD warn
@@ -694,7 +717,10 @@ about the same construct, a processor gives one diagnostic.
   design and every parameter bound to `C.alpha` or `C.beta` whose
   index is defined, a processor SHOULD emit an informational
   diagnostic when the fixed value of the parameter under the design
-  differs from the index by more than the tolerance of C.
+  differs from the index by more than the tolerance of C. It is not
+  emitted for a design whose fixed value equals the declared value of
+  a parameter that J-6 or J-7 already reported. A file without
+  `transitions:` has the one design `base`.
 - **J-10.** `sanction_of:` and `reward_of:` are allowed only in a file
   that also declares `stochastic: 0.1` and `games: 0.1`. A term MUST
   have at most one of `weight:`, `sanction_of:`, and `reward_of:`. The
@@ -715,48 +741,74 @@ about the same construct, a processor gives one diagnostic.
   `C`, a processor SHOULD warn about every obligation or prohibition
   of `C` that has a magnitude greater than zero, whose bearer is
   covered by an actor reference of some player, and that no term names
-  with the corresponding key. It SHOULD also warn about a term with a
+  with the key that corresponds to that magnitude (a norm with both
+  magnitudes needs both terms). It SHOULD also warn about a term with a
   `weight:` in which a parameter bound to `C.lambda` occurs: the size
   of such a term is not checked against a norm.
 - **J-12.** A processor that evaluates a payoff with a `sanction_of:`
   or `reward_of:` term MUST report, with every result that depends on
   the payoff, the assumption of J.7 for each such term. For every
-  `sanction_of:` term and every design it SHOULD report the expected
-  accumulated value, until the target of the payoff, of the reward
-  structure of the term under the compliance profile at the fixed
-  values. A value greater than zero is information, not a warning: an
-  obligation can be violated by chance although the bearer complies.
-  A value of zero is condition (ii) of J.7 for the compliance profile.
+  `sanction_of:` and every `reward_of:` term and every design it SHOULD
+  report the expected accumulated value, until the target of the
+  payoff, of the reward structure of the term under the compliance
+  profile at the fixed values. A value greater than zero is
+  information, not a warning: an obligation can be violated by chance
+  although the bearer complies. For a `sanction_of:` term a value of
+  zero is condition (ii) of J.7 for the compliance profile; a
+  `reward_of:` term breaks (ii) whatever its value, by the sign of its
+  weight.
 - **J-13.** A processor that compares two versions of a contract
   SHOULD report every change of an `on_violation.magnitude`, an
   `on_fulfilment:` block, a `shares:` list, and `grounding.items`, and
   SHOULD warn when, for α or for β, the declared value and the index
   are defined in both versions and (x′ − x)·(x̂′ − x̂) is less than
   zero, where x and x̂ are the declared value and the index of the old
-  version and x′ and x̂′ those of the new one.
+  version and x′ and x̂′ those of the new one. When only one of the
+  two versions declares the extension, the changes of these keys are
+  reported against their absence, the processor says that the indices
+  are not compared, and no direction warning is given. A norm that is
+  new in the second version is listed with its magnitudes,
+  `on_fulfilment:`, and `shares:`.
 - **J-14.** A processor MAY certify a cell `[a, b]` of an equilibrium
   map (I.9) from evaluations at its end points, and MUST NOT do so
   unless all of the following hold:
   1. the query has exactly one open parameter ℓ (which no regime
-     assigns, I-9);
+     assigns, I-9); ℓ is the open parameter of the query, whether or
+     not it is bound to a `C.lambda`;
   2. condition (i) of J.7 holds for ℓ, checked on the text of the
      model: ℓ occurs in no `prob:` and in no reward `value:`, and in
      every `weight:` of every player, and in every weight defined by
-     J.7, ℓ occurs with a power of at most one;
+     J.7, ℓ occurs with a power of at most one, counted on the text
+     (the powers of the factors of a product add up, and nothing
+     cancels: `lambda * lambda - lambda * lambda` has the power two);
   3. the design is well-defined and the profile admissible at one
      value of ℓ in the cell (by the proposition, then at every value);
      this is a reminder and no separate check, since the evaluations
      of condition 4 establish it at a and at b;
   4. the evaluations at a and at b are exact (I.8);
   5. for a claim that p is a deviator, condition (ii) of J.7 holds for
-     p in that design: the form of the weights is checked on the text,
-     and the expected value 0 under the profile is computed exactly.
+     p in that design: every weight of p in which ℓ occurs is, at the
+     values used for the other parameters, −m·ℓ with m ≥ 0, and the
+     expected value 0 under the profile is computed exactly.
 
   Then the cell is `equilibrium` when the profile is an ε-equilibrium
   at a and at b, and p is a deviator on the cell when condition 5
-  holds and gain_p > ε at b. No other claim follows: a gain above ε at
-  both ends does not make a player a deviator on the cell without
-  condition 5.
+  holds and gain_p > ε at b. No other status follows: a gain above ε
+  at both ends does not make a player a deviator on the cell without
+  condition 5. A processor may report, besides the status, the gain
+  bounds `[0, max(g(a), g(b))]` for each player of an `equilibrium`
+  cell (by convexity) and `[g(b), g(a)]` for a deviator (by
+  monotonicity), where g(a) and g(b) are the gains at the ends, and the
+  canonical best response at b as the deviation of a deviator; it does
+  not claim `from_every_state`.
+
+  A processor that uses this rule together with the conditions of I.9
+  applies it to cells that those conditions leave `undecided`; a cell
+  carries the deviators that either method establishes. The rule is a
+  rule of this appendix: a file that does not declare
+  `grounding: 0.1` cannot use it. Its argument does not use norms; an
+  end-point method for a file that declares only `games` is left to a
+  later version of Appendix I.
 
 Rule A.4 that `alpha`, `beta`, and `lambda` lie in `[0, 1]` is
 unchanged, and so are the rules N-1 to N-12 and I-1 to I-11.
@@ -892,55 +944,115 @@ Each contract under `institution.contracts` gains the field
 }
 ```
 
-`grounding` is `null` when the extension is not declared. `items` is
+The field `grounding` and the four norm fields are absent unless the
+extension is declared (with `norms: 0.1`); the IR of every other file
+is unchanged. `items` is
 an empty mapping and `tolerance` the default when the contract has no
 `grounding:` block. `alpha`, `beta`, or `coverage` is `null` when the
 quantity is undefined; otherwise the first two fields are its
 numerator and denominator, so that the exact ratio can be formed.
 `by_sharing`, `by_obligation`, and `by_permission` count pairs and
-may overlap; `member_specific` counts entries and norms. `holder` is
+may overlap; `member_specific` counts entries and norms, each once,
+and does not count bare set names. `holder` is
 the count k(h) of the decision holder, or `null` when it does not
 name a single actor; `bearers` maps each bearer reference, as written,
-to its number of powers. The four norm fields are written only when
-the extension is declared; magnitudes are `null` when absent, and an
+to its number of powers. Magnitudes are `null` when absent, and an
 empty text is `null`.
 
 A payoff term of the IR of
 [I.13](./appendix-i-games.md) gains the fields `sanction_of` and
-`reward_of` (a string `C.n`, or `null`), written only when the
-extension is declared. For a term with one of them, `weight` is the
-defined weight as text: `-m * p` or `m * p`, with m the magnitude as
-the shortest decimal that round-trips and p the `id` of the parameter
+`reward_of` (a string `C.n`, or `null`), written for every term when
+the extension is declared (both `null` for a term with a written
+weight). For a term with one of them, `weight` is the defined weight
+as text: `-m * p` or `m * p`, with m the magnitude written as a plain
+decimal without exponent (as the numbers of H.11) and p the `id` of the parameter
 bound to `C.lambda` (`"-2 * lambda"` in J.7). Diagnostics are not in
 the IR.
 
 ## J.11 Reference implementation status {/* #j11-reference-implementation-status */}
 
-Grounding 0.1 is **not implemented** in `cadl` 0.3.22.
+The reference implementation implements grounding 0.1 from `cadl`
+0.3.23 as follows. Up to 0.3.22, the extension name was unknown and
+its keys were ignored without a diagnostic.
 
-- `cadl check` reports the extension name `grounding` as unknown, with
-  an informational diagnostic, and ignores `grounding:`, `shares:`,
-  `on_fulfilment:`, and `magnitude:`, which are keys it does not know.
-  The file of J.9 passes `cadl check` 0.3.22 with that one diagnostic.
-  The file of J.7 fails for the reasons given in
-  [I.14](./appendix-i-games.md#i14-reference-implementation-status).
-- `cadl` 0.3.22 also ignores these keys, without any diagnostic, in a
-  file that does not declare `grounding`, as it does every unknown
-  key, and it accepts any value for them. A processor that implements
-  the extension reports them as undeclared extension keys (J.12).
-- Planned: the rules J-1 to J-8 in `cadl check`, with the quantities
-  shown by a command `cadl norms-indices` (text and JSON) and written
-  to the IR of J.10; J-9 to J-12 and J-14 together with the
-  implementation of Appendix I; J-13 in `cadl norms-diff`.
-- The quantities of J.9 were computed by hand and checked with a
-  script that reads the YAML of the example and applies the
-  definitions of J.4; the numbers of J.7 are those of I.12.
+- `cadl check` applies the rules J-1 to J-9, and in a strategic
+  model J-10 to J-12 (the SHOULDs as warnings, J-9 and J-12 as
+  informational diagnostics), and lowers the
+  keys to the IR of J.10. An undeclared use gets one warning per file
+  (J.12). A key that this appendix does not define inside `grounding:`
+  or `on_fulfilment:` (a typo such as `tolerence:`) gets a warning; a
+  typo of `magnitude:` inside `on_violation:` or of `shares:` cannot be
+  told from an unknown key of the core language and is silent.
+- `cadl norms-indices FILE [--contract ID] [--format text|json]`
+  reports the quantities of J.4 with all their counts, the comparisons
+  of J.5, and the diagnostics of J-9 per design. It refuses a file
+  with an error, in particular of J-2 to J-4 (exit status 2); warnings
+  do not change the exit status 0.
+- `cadl norms-diff` reports the findings of J-13, including a version
+  that does not declare the extension. By default it compares the
+  contracts that have `norms:` or `counts_as:`; a contract without
+  norms whose `grounding.items` change is compared with `--contract`.
+- The keys are kept apart from the norms read by Appendix F, so
+  `cadl norms-eval`, `cadl agents-run`, the boundary decision, and the
+  generated monitor give the same verdicts with and without them. The
+  generated monitor of an annotated file is identical to that of the
+  file without the keys only when every annotated norm already had an
+  `on_violation:` block: adding `on_violation: { magnitude: m }` to a
+  norm without one creates the block, and the monitor then carries
+  the default severity, with the same behaviour.
+- The core parser reads `alpha`, `beta`, and `lambda` as binary
+  floating-point numbers; the shortest decimal that round-trips is
+  taken as the written decimal (J-5), so a value with more than 17
+  significant digits is not recovered. A reference without an index
+  to an undeclared actor counts as a single actor (other rules report
+  it), and `bearers` is keyed by the reference without white space.
+- With Appendix I (`cadl game-check`), the link of J.7 is
+  implemented: a `sanction_of:` or `reward_of:` term gets the weight
+  of J.7, every
+  check and map result carries the assumption of J.7, and J-14 is used
+  in `--certify` in a file that declares `grounding: 0.1` when its
+  conditions hold (the map reports whether it applies and why not;
+  cells it certifies carry `method: "endpoints (J-14)"`). With the link
+  implemented, the status `not_evaluated` of I.13 cannot arise for a
+  valid file: an unusable reference is an error of J-1 or J-10.
+- Verification of the indices: an independent review compared the
+  quantities with two scripts on 4 300 and 2 000 random contracts,
+  with no disagreement. The invariant of J.12 held on 4 454 random
+  files and on 174 sources of the test suite: adding
+  `- grounding: 0.1` to a file that declares `norms: 0.1` gained no
+  error. The lemmas of J.4 were tested as properties on seeded random
+  contracts. The verdicts of `cadl norms-eval` and `cadl agents-run`
+  on the bundled traces were identical with and without magnitudes
+  and `on_fulfilment:` on every norm, and the outputs of the 17
+  bundled examples of 0.3.22 (331 files) were identical to 0.3.22.
+- Verification of the link: an independent review ran 840 generated
+  models through the programming interface with the bounds of I.9
+  disabled, so that every decided cell came from J-14 (12 416 point
+  evaluations), and 320 through the command line (3 496 point
+  evaluations), against an oracle that enumerates all strategies: no
+  wrong claim. The implementer's fuzzing certified cells by J-14 on
+  1 200 models, among them games with ℓ in a probability or in a
+  weight that is not affine, which J-14 refused (50 733 point
+  evaluations, no wrong claim), and detected injected errors that drop
+  conditions 2 and 5.
+- The example of J.7 gives every result of the first example of I.12
+  with the written weight; J-12 reports 0 in both designs. The least
+  magnitudes at λ = 0.1 are reproduced exactly: with
+  `magnitude: 3.00216915218125` (480347064349/160000000000)
+  `comply_nash` is an equilibrium in CENTRALIZED and with
+  3.00216915218124 it is not; with 1.20746604863125
+  (193194567781/160000000000) it is one in DISTRIBUTED and with
+  1.20746604863124 it is not. A value written in a file has at most 15
+  significant digits (H.2), so the threshold is tested with these two
+  neighbours.
+- The quantities of J.9 are those printed by `cadl norms-indices` for
+  the example, with one warning (J-7 for `beta`).
 
 ## J.12 Backward compatibility
 
 Files written against CADL v0.3 without this extension remain valid
-and are read the same way. The extension changes no verdict of
-Appendix F and no result of Appendices H and I: a term with
+and are read the same way, and their IR does not change (J.10). The
+extension changes no verdict of Appendix F and no result of Appendices H and I: a term with
 `sanction_of:` is a term of I.6 with a defined weight.
 
 **Declaring the extension never invalidates a file that declares
@@ -955,7 +1067,9 @@ A file that uses `grounding:`, `shares:`, `on_fulfilment:`,
 `on_violation.magnitude`, `sanction_of:`, or `reward_of:` without
 declaring `grounding: 0.1` does not conform to this appendix. A
 processor that implements the extension does not interpret these keys
-in such a file and SHOULD report them as undeclared extension keys:
+in such a file and SHOULD report them as undeclared extension keys,
+with one warning per file that lists the keys used (a key whose value
+is null is not used):
 no quantity is computed, and a payoff term with `sanction_of:` or
 `reward_of:` is an error by I-7. A file that declares `grounding: 0.1`
 without `norms: 0.1` gets the error of J-1.

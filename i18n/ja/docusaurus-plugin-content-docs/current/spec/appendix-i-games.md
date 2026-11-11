@@ -1203,11 +1203,11 @@ IRに含めない。
   算術が厳密であるので，`inconclusive` は生じない。条件Nには，セルの中心での標準の最適応答（I.9）を
   用い，E1とE2がともに成り立たないプレイヤーについてだけNを試す。`--no-merge` を付けない限り，
   主張が同じセルを結合する（I.9）。
-- `cadl model-export` は，I.11のファイル（`smg` と `player` の構成。H.11の改名を伴う）を書き出す。
-  逸脱：実装のコミット120e44cでは，I.11が戦略モデルのために加えるキーワード（`player`，`endplayer`，
-  `smg`，`csg`，`tptg`）はまだその一覧になく，そのどれかに等しい名前は，そのままエクスポートされる。
-- `sanction_of:` または `reward_of:` の項を持つ利得は構文解析し，その問い合わせを `not_evaluated` と
-  報告する（I-7）。付録Jは実装していない。
+- `cadl model-export` は，I.11のファイル（`smg` と `player` の構成。H.11の改名と，I.11が戦略モデルの
+  ために加えるキーワードの改名を伴い，2人のプレイヤーが衝突しないことを検査する）を書き出す。
+- `sanction_of:` または `reward_of:` の項を持つ利得は，J.7の重みを持ち，J-14は `--certify` で用いる
+  （[J.11](./appendix-j-grounding.md#j11-reference-implementation-status)）。I.13の `not_evaluated` は，
+  付録Jを持たない処理系のために残る。
 - I.12のどの数値も，`cadl game-check` が再現する。利得，最適応答値，逸脱利得は，表示される分数として，
   λ\* と κ\* は逸脱利得を通して，λ\* の表は `--set` によって，`status`，逸脱者，`from_every_state` も
   再現する。1つ目の例のマップは，`comply_by_lambda` では結合後に設計ごとに3個のセル（解析したセルは11個，

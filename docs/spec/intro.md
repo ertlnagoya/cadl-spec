@@ -187,15 +187,15 @@ Version 0.2 is valid under Version 0.3 and is read the same way.
   turn-based game among players and defines whether a named
   memoryless deterministic profile, in particular compliance, is an
   equilibrium against unilateral deviations, also as a map over
-  parameters. It is specified and not yet implemented in the reference
-  implementation.
+  parameters. The reference implementation provides it from `cadl`
+  0.3.23 (`cadl game-check`).
 - **Grounding extension**: `grounding: 0.1`
   ([Appendix J](./appendix-j-grounding.md)) derives indices for α
   and β and a coverage measure for incentives from the norms of a
   contract, compares the declared values with the indices, and
-  defines the payoff term of the sanction of a norm. It
-  is specified and not yet implemented in the reference
-  implementation.
+  defines the payoff term of the sanction of a norm. The reference
+  implementation provides it from `cadl` 0.3.23
+  (`cadl norms-indices`).
 
 Version 0.2 reconciled the text of Version 0.1 with the reference
 implementation. The changes that affect how a Version 0.1 file is read are:

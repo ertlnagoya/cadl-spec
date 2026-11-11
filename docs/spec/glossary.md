@@ -251,7 +251,8 @@ Terms of the stochastic model extension; see
 ## Strategic model extension
 
 Terms of the strategic model extension; see
-[Appendix I](./appendix-i-games.md).
+[Appendix I](./appendix-i-games.md). The reference implementation
+provides it from `cadl` 0.3.23 (`cadl game-check`).
 
 - **Strategic model** — A `model:` block with `kind: smg`: the model
   of Appendix H in which some commands are owned by players, read as a
@@ -276,7 +277,8 @@ Terms of the strategic model extension; see
 ## Grounding extension
 
 Terms of the grounding extension; see
-[Appendix J](./appendix-j-grounding.md).
+[Appendix J](./appendix-j-grounding.md). The reference implementation
+provides it from `cadl` 0.3.23 (`cadl norms-indices`).
 
 - **Derived index** — α̂ or β̂: a ratio of counts computed from the
   norms of one contract. α̂ is the fraction of (declared item, party)

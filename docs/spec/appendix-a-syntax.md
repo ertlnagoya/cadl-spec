@@ -551,11 +551,13 @@ deviates from this appendix as follows (checked against `cadl` 0.3.22).
   ([Appendix I, I.14](./appendix-i-games.md#i14-reference-implementation-status))
   and `grounding` 0.1
   ([Appendix J, J.11](./appendix-j-grounding.md#j11-reference-implementation-status))
-  are specified and not implemented in `cadl` 0.3.22: their names get
-  the informational diagnostic for an unknown extension. For a model
-  with `kind: smg`, `cadl check` 0.3.22 reports errors of S-1 and S-9
-  where H.10 and H.15 ask for one informational diagnostic, and it
-  ignores the keys of Appendix J without a diagnostic.
+  are implemented from `cadl` 0.3.23 (`cadl game-check`,
+  `cadl norms-indices`); the two sections named state what each
+  covers. Up to 0.3.22 their names got the informational diagnostic
+  for an unknown extension; for a model with `kind: smg`, `cadl check`
+  0.3.22 reports errors of S-1 and S-9 where H.10 and H.15 ask for one
+  informational diagnostic, and it ignores the keys of Appendix J
+  without a diagnostic.
 
 Releases of `cadl` before 0.3.7 differed in several of these points; the history
 is in the
