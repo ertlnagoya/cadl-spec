@@ -6,7 +6,7 @@ title: "Appendix B — Notation quick reference"
 
 # Appendix B — Notation quick reference
 
-The CADL notation, the commands and the file locations used in this textbook, on one page. Chapter 3 explains what each construct means. The CADL listings of this appendix fit together into one file, which passes `cadl check` and `cadl verify` of `cadl` 0.3.18.
+The CADL notation, the commands and the file locations used in this textbook, on one page. Chapter 3 explains what each construct means. The CADL listings of this appendix fit together into one file, which passes `cadl check` and `cadl verify` of `cadl` 0.3.22.
 
 ## B.1 The skeleton of a file
 
@@ -130,7 +130,7 @@ Conditions (`assume`, `guarantee`, `on:`, `when:`, `rule:` and others) are writt
 | `cadl check <file>` | Checks syntax, types and the static rules of the SoS-DSL extension | 3.9, 4.3 |
 | `cadl verify <file>` | Does what `cadl check` does and also looks for contradictions between assumptions and guarantees and for deadlocks in protocols | 3.9 |
 | `cadl sim-ir <file> --format json` | Writes the IR as JSON | 4.3, 5.3 |
-| `cadl codegen --target unity-csharp -o <dir> <file>` | Generates Unity C# from the IR (`--target` is `python`, `solidity`, `opa` or `unity-csharp`) | 7.6 |
+| `cadl codegen --target unity-csharp -o <dir> <file>` | Generates Unity C# from the IR (`--target` is `python`, `solidity`, `opa` or `unity-csharp`; `agent-rego` and `agent-cedar` generate the boundary policies of the agent governance extension) | 7.6 |
 | `./scripts/sos_dsl_handson_e2e.sh <file> --unity <dir>` | Checks the file, writes the IR, generates the C# and copies it into the Unity project in one go; `--unity ""` skips the copy | 7.3 |
 | `python3 -m cadl.runtime.multi_robot_demo [--summary] [--log <file>] [--ir <file>]` | Runs the five-robot demo on the reference runtime: `--summary` prints a table of final states, `--log` writes an NDJSON trace, `--ir` uses your own IR | 7.5, 7.9 |
 | `streamlit run app.py` (in `cadl-explorer`) | Starts cadl-explorer | 6.3 |

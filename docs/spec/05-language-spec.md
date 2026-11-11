@@ -66,8 +66,9 @@ of keys is in [Appendix A, §A.11](./appendix-a-syntax.md#a11-reserved-keywords)
 
 In v0.3 a regime is a name. It is introduced by appearing in `from:` /
 `to:` of `transitions:`; there is no separate declaration, and the
-language has no syntax that attaches contracts or parameter values to a
-regime.
+core language has no syntax that attaches contracts or parameter values to a
+regime. The stochastic model extension assigns parameter values per regime
+inside its probabilistic model ([Appendix H, H.6](./appendix-h-stochastic.md)).
 
 ### 5.1.1 Graduated Description Levels
 
@@ -86,8 +87,12 @@ to the verification level by adding blocks.
 | Design | Designers, Researchers<br />Advanced Students | Institutional parameters (α,β,λ),<br />Protocol procedures,<br />Transition conditions, Metrics | Explicit parameter values<br />Type annotations<br />Constraint expressions |
 | Verification | SoS Architects<br />Verification Engineers | assume-guarantee contracts,<br />Safety invariants,<br />Formal properties (temporal logic) | Formal predicates and quantifiers<br />Annotations for SMT/model checking<br />Code generation/synthesis specification |
 
-v0.3 has no syntax for type annotations, temporal-logic properties, or
-synthesis. Three entries of the table therefore describe the intended
+The core language of v0.3 has no syntax for type annotations, temporal-logic properties, or
+synthesis. Two extensions add temporal properties of limited forms: the norms
+extension adds bounded temporal operators in assumptions, guarantees and norms
+([Appendix F, F.4](./appendix-f-norms.md)), and the stochastic model extension
+adds properties of a probabilistic model in the PRISM property language
+([Appendix H, H.8](./appendix-h-stochastic.md)). Three entries of the table therefore describe the intended
 direction: "Type annotations" in the design-level row and, in the
 verification-level row, "Formal properties (temporal logic)" and the
 synthesis part of "Code generation/synthesis specification". The rest of

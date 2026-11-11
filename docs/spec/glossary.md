@@ -156,8 +156,9 @@ governance structure. CADL can describe all four.
   environmental conditions: the environmental parameter space divided
   into regions, each assigned a regime. The stochastic model extension
   defines it precisely as a query on a parametric Markov model
-  ([Appendix H, H.9](./appendix-h-stochastic.md)); computing it is not
-  yet supported, and the `cadl regime-map` command reports something
+  ([Appendix H, H.9](./appendix-h-stochastic.md)), and
+  `cadl model-check --regime-map ID --certify` computes it as a set of
+  certified cells. The `cadl regime-map` command reports something
   narrower: the graph of regime names and transitions. *Example:* low failure rate and low latency → centralised regime; high failure rate or high latency → distributed regime.
 - **Regime transition** (also: *institutional transition*) — Switching from one regime to another in
   response to a change in environmental conditions. Safety (collision avoidance, for instance) must be kept during the switch. *Example:* when communication latency exceeds 300 ms, switch from centralised to distributed operation, keeping "no collisions, no lost orders" during the switch.

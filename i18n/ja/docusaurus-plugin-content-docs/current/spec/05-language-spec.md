@@ -63,7 +63,7 @@ sos:
 
 この骨格は主要なブロックだけを示しており，`description`，`verification`，`codegen`，`extensions`，`motivation` は省略している。キーの完全な一覧は[付録AのA.11節](./appendix-a-syntax.md#a11-reserved-keywords)にある。
 
-v0.3では，運用モード（regime）は名前である。`transitions:` の `from:` / `to:` に現れることで導入され，別個の宣言はない。また，契約やパラメータ値をモードに結び付ける構文は言語にない。
+v0.3では，運用モード（regime）は名前である。`transitions:` の `from:` / `to:` に現れることで導入され，別個の宣言はない。また，契約やパラメータ値をモードに結び付ける構文はコア言語にない。確率モデル拡張は，確率モデルの中でモードごとにパラメータの値を割り当てる（[付録HのH.6節](./appendix-h-stochastic.md)）。
 
 ### 5.1.1 段階的記述レベル
 
@@ -75,7 +75,7 @@ CADLには，利用者の専門性と記述の目的に応じた3段階の記述
 | 設計レベル (Design) | 設計者・研究者・上級学生 | 制度パラメータ(α,β,λ)，プロトコル手順，遷移条件，メトリクス | パラメータ値の明示 / 型注釈の付与 / 制約式の記述 |
 | 検証レベル (Verification) | SoSアーキテクト・検証エンジニア | assume-guarantee契約，安全不変条件，形式的性質（時相論理） | 形式的述語・量化子 / SMT/モデル検査用注釈 / codegen/synthesis指定 |
 
-v0.3には，型注釈，時相論理の性質，synthesisを書く構文はない。したがって，表のうち次の3つは目指す方向を述べたものである。設計レベルの行の「型注釈の付与」と，検証レベルの行の「形式的性質（時相論理）」，および「codegen/synthesis指定」のうちsynthesisの部分である。検証レベルの行の残りは，v0.3に存在する。assume-guarantee契約，安全不変条件，形式的述語・量化子，SMT・モデル検査を指定する `verification:` 項目の `method:`（[A.8節](./appendix-a-syntax.md#a8-verification-block)），`codegen:` ブロック（[A.9節](./appendix-a-syntax.md#a9-codegen-block)）である。v0.3の検証レベルのファイルに書ける内容は，下の断片に示す。
+v0.3のコア言語には，型注釈，時相論理の性質，synthesisを書く構文はない。2つの拡張が，限られた形の時相的な性質を加える。規範拡張は，前提，保証，規範に有界の時相演算子を加え（[付録FのF.4節](./appendix-f-norms.md)），確率モデル拡張は，確率モデルの性質をPRISMの性質記述言語で書けるようにする（[付録HのH.8節](./appendix-h-stochastic.md)）。したがって，表のうち次の3つは目指す方向を述べたものである。設計レベルの行の「型注釈の付与」と，検証レベルの行の「形式的性質（時相論理）」，および「codegen/synthesis指定」のうちsynthesisの部分である。検証レベルの行の残りは，v0.3に存在する。assume-guarantee契約，安全不変条件，形式的述語・量化子，SMT・モデル検査を指定する `verification:` 項目の `method:`（[A.8節](./appendix-a-syntax.md#a8-verification-block)），`codegen:` ブロック（[A.9節](./appendix-a-syntax.md#a9-codegen-block)）である。v0.3の検証レベルのファイルに書ける内容は，下の断片に示す。
 
 以下に，家庭内ルールの「家事分担」を題材に，同一の制度が，概要レベル，設計レベル，および設計レベルのファイルに追加する断片としての検証レベルで，どのように記述されるかの例を示す。
 
