@@ -163,7 +163,9 @@ a `counts_as:` rule.
 
 `A[k]` is a **member** of the set `A` when `A` is declared with a range
 and `k` lies within its integer bounds: a set declared as `A[1..3]`
-does not contain `A[7]`. An actor that is not declared, or that lies
+does not contain `A[7]`. When the declared upper bound is symbolic
+(`A[1..N]`), every index from the lower bound on is a member, and
+`A[0]` is not. An actor that is not declared, or that lies
 outside the bounds of its set, matches no reference.
 
 In these predicates the reserved identifiers of
@@ -725,8 +727,13 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   follows 0.3.21 matches them by the table of F.3; verdicts computed
   for a file that uses such references in a `trigger:`, an `until:`, a
   `content:`, or a `counts_as:` rule SHOULD be computed again. It also
-  rejects a trace whose time is not a finite number or whose actor and
-  message names are not well-formed. A norm or item that contains a function call
+  tests the lower bound of a set with a symbolic upper bound. The time
+  of a trace is a finite number of at most 2<sup>53</sup> in absolute
+  value, so epoch seconds and epoch milliseconds are accepted. The
+  actors and the name of a message of a trace are read as written:
+  `ROBOT[ 2 ]`, which 0.3.21 read as `ROBOT[2]`, is a trace error. This
+  is deliberate, because two spellings of one actor in a recorded trace
+  defeat a check that compares names. A norm or item that contains a function call
   other than a temporal operator, a quantifier, or a wildcard reference
   is not evaluated and stays `pending`. `cadl norms-diff` compares two
   versions of a file and reports what F.6 does to the norms of each
