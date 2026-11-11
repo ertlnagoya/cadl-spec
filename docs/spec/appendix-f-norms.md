@@ -1041,7 +1041,11 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   construct, and such a `guarantee:` item is left out with a warning.
   The Solidity monitor also refuses `*`, `/`, literals with more than
   six decimals, a temporal operator inside another one, and a monitor
-  whose creation code would exceed the limit of EIP-3860. Their
+  whose creation code would exceed the limit of EIP-3860, and it refuses
+  an observation that would make a bare name read inside a temporal
+  operator known after the first observation; the gas of a norm whose
+  content has a temporal operator grows with the observations inside its
+  open window. Their
   arithmetic is decimal (Rego) or fixed-point with six decimals
   (Solidity), and they compute times exactly, where `cadl norms-eval`
   computes with binary floating point and a tolerance; D.5 lists these

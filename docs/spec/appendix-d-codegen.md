@@ -194,7 +194,9 @@ state is a JSON object with these keys:
 keeps the state of one contract instance. Its constructor takes the
 address of the reporter (the deployer when it is the zero address,
 `reporter()`); only the reporter may call `begin`, `observe`,
-`addQuantities`, and `finish`. `begin(bindings, request, quantities)`
+`addQuantities`, and `finish`. The reporter cannot be changed: if its
+key is lost, the monitor stays as it is and records no further
+observation. `begin(bindings, request, quantities)`
 may be called before the first observation, `observe(t, values,
 messages, hasState, state, end)` records one observation,
 `addQuantities(names)` adds names of quantities written without an
@@ -226,7 +228,21 @@ tests, an observation of the example of F.8 costs about
 the 300-second window of its assumption is open and after it (at most
 1.1 × 10<sup>6</sup>, at the first observation), and one of a contract
 with two items over a window of 10<sup>5</sup> seconds about
-3.6 × 10<sup>5</sup> gas at the 320th observation.
+3.6 × 10<sup>5</sup> gas at the 320th observation. A norm whose content
+has a temporal operator is different: each observation inside an open
+window of its content adds a candidate that every later observation
+reads until the window closes, about 4 × 10<sup>4</sup> gas per
+observation inside the window (a `throughout(1000s, …)` content at one
+observation per second costs 1.3 × 10<sup>7</sup> gas per observation
+after 320 observations). The host SHOULD keep the observations inside
+such a window well below the block gas limit divided by that amount: a
+monitor whose observations reach the block gas limit cannot record any
+further observation and does not recover. `cadl codegen` names each
+such norm in a warning. The generated file is to be compiled with solc
+0.8.24 or later and `--optimize --optimize-runs 1`, as its header says:
+without the optimizer the runtime code exceeds the limit of EIP-170, and
+the estimate of the creation code holds for the optimizer with 1 or 200
+runs.
 
 **Differences from `cadl norms-eval`.** The monitors decide each
 observation with the observations received so far, as the Python
@@ -256,6 +272,13 @@ change):
   and the actors and names of messages in ASCII letters, digits, and
   `_`. It receives bindings as integers or strings, so its host refuses
   a binding written with a fraction or an exponent.
+- In Solidity, a bare name read inside a temporal operator (a quantity
+  such as `flag` in `throughout(10s, A.s == flag)`, as opposed to a
+  symbol) must be given in `begin` when it is a quantity, or be observed
+  at the first observation: the scans keep the values they have read,
+  so an `observe` or `addQuantities` that would make such a name known
+  later is refused (it reverts). `cadl norms-eval` and the Rego monitor
+  read the earlier observations again with the new name.
 - The Rego monitor trusts the state it is given: it checks the format
   and the contract of the state, not its content. The host keeps the
   states it stores intact and passes each one to the next step only.
