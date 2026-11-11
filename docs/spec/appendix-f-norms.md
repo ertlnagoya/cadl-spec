@@ -331,6 +331,122 @@ name that stands alone is a symbolic value. A symbolic value can only be
 compared with a text value, by `==`, `!=`, or `IN`; a predicate that
 uses it in another way is undefined.
 
+### Quantifiers and aggregates
+
+A quantified predicate `exists x in D: p` or `for all x in D: p`, and
+a comprehension `f(e for x in D)` as the argument of an aggregate
+function ([Appendix A, A.10](./appendix-a-syntax.md#a10-expressions)),
+are evaluated at an observation over a **domain** `D`. The domain names
+a declared set of actors: `A`, `A[*]`, or `A[lo..hi]`. The domain of a
+comprehension may also be a range of integers `lo..hi`. A predicate with
+any other domain is not evaluated (F.10).
+
+The variable `x` takes the indices of the members of the domain. In `p`
+or `e`, an actor reference indexed by `x` (`A[x]`, also inside an index
+expression such as `A[x+1]`) denotes the member with that index, and
+an index that is not a member of `A` (F.3) denotes no member, so a
+quantity of it is undefined, whatever the trace gives for it; `x.q`
+denotes the quantity `q` of that member (`r.load` in
+`sum(r.load for r in ROBOT[*])`); and `x` alone is the integer index,
+so `j != k` says that `j` and `k` are different members. Within `p` or
+`e`, `x` hides an index of the same name that the contract instance
+binds, an observed quantity of the same name, and the variable of an
+enclosing quantifier or comprehension. It never hides a symbolic bound
+of a set declaration: the bound `N` of a set declared as `A[1..N]` is
+read outside every quantifier and comprehension, also when one of them
+has a variable named `N` (N-14).
+
+**Closed and open domains.** The members of a set are those of F.3; a
+range `A[lo..hi]` keeps the members within its bounds. When every bound
+is an integer, the domain is **closed**: it is exactly those members.
+A symbolic bound (`N` in a set declared as `A[1..N]`, in `A[2..N]`, or
+in `1..N`) has a value at an observation when the contract instance
+binds the name to an integer or the name is an observed quantity whose
+value at the observation is an integer. A domain with a symbolic bound
+is closed as well when every such bound has a value and, for the
+symbolic bound of the set declaration, no member with an index beyond
+its value has been named at or before the observation. F.3
+makes every index from the lower bound on a member, whatever value the
+bound has, so a member named beyond the value keeps the domain open; a
+processor SHOULD warn when that happens. Otherwise the domain is
+**open**: the number of members is not known. The **known members** of an open domain at an observation are
+the members of the set, within the integer bounds, that the contract
+instance has named at that observation or before: in the name of a
+value (`A[3].delivery`), as the sender or receiver of a message, or by
+binding an index `i` to `k` where a norm or a `counts_as:` rule of the
+contract writes `A[i]`. Observations after the current one are never
+used, so an open domain is not closed by what is observed later.
+
+A processor MAY limit the number of members of a closed domain that it
+enumerates, since a bound that the trace gives can be arbitrarily
+large. A closed domain with more members than the limit is then
+evaluated as an open domain, with its known members; by the argument
+below this is sound, and only a value that the closed domain would
+decide may become undefined. A processor that does so SHOULD warn and
+name the set and the size.
+
+**Values.** Over a closed domain the quantifiers follow Kleene's
+three-valued logic: `exists x in D: p` is true when `p` is true for
+some member, false when `p` is false for every member, and undefined
+otherwise; `for all x in D: p` is false when `p` is false for some
+member, true when `p` is true for every member, and undefined
+otherwise. Over an empty domain `exists` is false and `for all` is
+true. Over an open domain only a known member decides: `exists` is
+true when `p` is true for some known member, `for all` is false when
+`p` is false for some known member, and the value is undefined
+otherwise, also when `p` has the same value for every known member and
+when no member is known. When `p` contains a temporal operator (F.4),
+the value is not decided while it is not decided for a member that
+could still decide it.
+
+The rule for open domains is sound. Let a closed domain contain the
+known members with the values they have at the observation, and any
+further members with any values, defined or not; such a domain is a
+possible completion of the open domain, whatever value the bound later
+takes, because it contains every member named so far. A member for which `p`
+is true makes `exists` true over that domain too, and a member for
+which `p` is false makes `for all` false, because in Kleene's logic a
+disjunction with a true operand is true and a conjunction with a false
+operand is false, whatever the other operands are. So a value that is
+true or false over the open domain is the value over every such closed
+domain. The rule is also the strongest one: when the known members do
+not decide, a further member for which `p` is true, or false, changes
+the value, and undefined is the value F.5 gives to a predicate that
+refers to quantities without values. In particular `exists` over an
+open domain is never false and `for all` never true: a prohibition
+whose `content:` is such an `exists` is violated when known members
+witness it, and otherwise, as for every undefined content, it is not.
+
+**Aggregates.** Of the aggregate functions of a comprehension, the
+norms extension evaluates `sum`, `count`, `min`, `max`, and `avg`.
+`count(p for x in D)` is the number of members for which `p` is true,
+where a value of `p` counts as true when it is true or a number other
+than 0, and a text value or a symbolic value makes the count
+undefined;
+the other functions take the values of `e`, which are numbers. `sum`
+and `count` of an empty domain are 0. An aggregate is undefined over an
+open domain, when `e` (for `count`, `p`) is undefined for a member,
+when a value of `e` is not a number, and for `min`, `max`, and `avg`
+over an empty domain. A predicate that compares such a value is
+undefined. Another function, and a temporal operator inside a
+comprehension, are not evaluated (F.10).
+
+A wildcard or range reference outside a domain, as in
+`ROBOT[*].battery > 10` or `count(ROBOT[*].status == Collision)`, has
+no value that Appendix A defines in a predicate, and a predicate that
+contains one is not evaluated (F.10). The quantified form states the
+meaning: `for all j in ROBOT: ROBOT[j].battery > 10` and
+`count(ROBOT[j].status == Collision for j in ROBOT)`.
+
+The domain and its known members at an observation depend only on the
+observations up to it. The values of quantified predicates and
+aggregates therefore keep the property of the verdicts below: the
+verdicts after an observation are those of the trace up to it. A
+predicate that is undefined at an observation because its domain is
+open may have a value at a later observation, when a member is named
+or the bound gets a value; its value at the earlier observation stays
+undefined.
+
 ### Norm instances
 
 A norm instance is in one of six states:
@@ -623,6 +739,25 @@ A norms-aware processor MUST, in addition to existing checks:
 - **N-12.** A processor SHOULD warn when a permission and a prohibition
   of the same contract have the same `bearer:` and textually identical
   `content:`, since the two conflict.
+- **N-13.** A processor SHOULD warn when the `trigger:` of a prohibition
+  is a `message_event` and every occurrence of the trigger is an
+  occurrence of the content: the content is a `message_event` with the
+  same message name, with the same argument values when the content has
+  arguments, and with actor references that match every actor that
+  those of the trigger match (`D -> R[i] : go` and `D -> R[1..3] : go`
+  for a set declared as `R[1..3]`); or the content is an institutional
+  event that a `counts_as:` rule without `if:` creates from such a
+  message. The check is a best effort and does not detect every such
+  prohibition (for example, one whose content is a predicate that the
+  trigger message makes true). Such a prohibition is violated at the observation
+  that activates it (F.5, step 4), which is rarely what is meant: a
+  prohibition of a second occurrence is a quantified predicate over
+  the state (F.5, "Quantifiers and aggregates") or an `until:`-bounded
+  prohibition triggered by an earlier event.
+- **N-14.** A processor SHOULD warn when the variable of a quantifier
+  or a comprehension has the name of a symbolic bound of a declared set
+  (`for all N in S: ...` with `S[1..N]`). The bound keeps its own value
+  inside the quantifier (F.5), which a reader may not expect.
 
 ### Relation to the core checks
 
@@ -798,9 +933,9 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
 `cadl` 0.3.19 as follows:
 
 - `cadl` parses `norms:` and `counts_as:` and the temporal operators of
-  F.4, applies rules N-1 to N-12 in `cadl check` (N-8, N-12, and the
-  SHOULDs of N-3 and N-9 as warnings), and lowers both blocks to the IR
-  of F.9.
+  F.4, applies rules N-1 to N-14 in `cadl check` (N-8, N-12, N-13, N-14,
+  and the SHOULDs of N-3 and N-9 as warnings; N-13 and N-14 from `cadl`
+  0.3.23), and lowers both blocks to the IR of F.9.
 - The SMT checks of `cadl verify` leave out `assume:` and `guarantee:`
   items that contain temporal operators and report each one as not
   checked (F.7). `cadl codegen` leaves the same items out of the
@@ -838,9 +973,19 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   also ignores the observations after the end of the contract instance
   entirely: up to 0.3.21 it took the names of the observed quantities
   (F.5) also from them, so that such an observation could change a
-  verdict. A norm or item that contains a function call
-  other than a temporal operator, a quantifier, or a wildcard reference
-  is not evaluated and stays `pending`. `cadl norms-diff` compares two
+  verdict. Up to `cadl` 0.3.22 a norm or item that contains a
+  quantifier or an aggregate was not evaluated. From `cadl` 0.3.23 it
+  evaluates them as F.5 defines ("Quantifiers and aggregates"); it
+  enumerates at most 10 000 members of a closed domain and evaluates a
+  larger one as an open domain, with a warning. A norm or
+  item that contains a function call other than a temporal operator or
+  `sum`, `count`, `min`, `max`, or `avg` of a comprehension, a wildcard
+  or range reference outside the domain of a quantifier or a
+  comprehension (`ROBOT[*].battery`), a quantifier or comprehension
+  whose domain is not a set of actors or a range, `x.q` for a variable
+  `x` over a range of integers, or a temporal operator inside a
+  comprehension is not evaluated and stays `pending`, with the reason
+  in the report. `cadl norms-diff` compares two
   versions of a file and reports what F.6 does to the norms of each
   contract, including every carried-over norm whose `content` or
   `deadline:` changes and a `transform:` target that the new version
