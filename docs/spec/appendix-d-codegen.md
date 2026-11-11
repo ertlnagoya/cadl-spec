@@ -274,8 +274,9 @@ change):
   a binding written with a fraction or an exponent.
 - In Solidity, a bare name read inside a temporal operator (a quantity
   such as `flag` in `throughout(10s, A.s == flag)`, as opposed to a
-  symbol) must be given in `begin` when it is a quantity, or be observed
-  at the first observation: the scans keep the values they have read,
+  symbol) must be given in `begin` (or `addQuantities` before the first
+  observation) when it is a quantity, or be observed at the first
+  observation; a name that is a binding is not affected: the scans keep the values they have read,
   so an `observe` or `addQuantities` that would make such a name known
   later is refused (it reverts). `cadl norms-eval` and the Rego monitor
   read the earlier observations again with the new name.
