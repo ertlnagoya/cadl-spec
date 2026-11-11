@@ -220,6 +220,16 @@ description: "CADL仕様書が引用する参考文献の一覧。"
 
 [107] J. W. Cutler, C. Disselkoen, A. Eline, S. He, K. Headley, M. Hicks, K. Hietala, E. Ioannidis, J. Kastner, A. Mamat, D. McAdams, M. McCutchen, N. Rungta, E. Torlak, and A. M. Wells, "Cedar: A New Language for Expressive, Fast, Safe, and Analyzable Authorization," Proc. ACM Program. Lang., vol. 8, no. OOPSLA1, pp. 670-697, 2024, doi:10.1145/3649835. The language reference is the Cedar Policy Language Reference Guide, https://docs.cedarpolicy.com/ (accessed Nov. 2026).
 
-[108] M. Kwiatkowska, G. Norman, D. Parker, and G. Santos, "PRISM-games 3.0: Stochastic Game Verification with Concurrency, Equilibria and Time," in Proc. CAV, Part II, LNCS 12225, pp. 475-487, 2020, doi:10.1007/978-3-030-53291-8_25.
+[108] M. Kwiatkowska, G. Norman, D. Parker, and G. Santos, "PRISM-games 3.0: Stochastic Game Verification with Concurrency, Equilibria and Time," in Proc. CAV, Part II, LNCS 12225, pp. 475-487, 2020, doi:10.1007/978-3-030-53291-8_25. The modelling and property languages for games are described in the PRISM-games manual, https://www.prismmodelchecker.org/games/ (accessed Nov. 2026).
 
 [109] T. Quatmann, C. Dehnert, N. Jansen, S. Junges, and J.-P. Katoen, "Parameter Synthesis for Markov Models: Faster Than Ever," in Proc. ATVA, LNCS, Springer, pp. 50-67, 2016, doi:10.1007/978-3-319-46520-3_4.
+
+[110] D. P. Bertsekas and J. N. Tsitsiklis, "An Analysis of Stochastic Shortest Path Problems," Mathematics of Operations Research, vol. 16, no. 3, pp. 580-595, 1991, doi:10.1287/moor.16.3.580.
+
+[111] M. L. Puterman, Markov Decision Processes: Discrete Stochastic Dynamic Programming, John Wiley & Sons, New York, 1994, doi:10.1002/9780470316887.
+
+[112] T. Chen, V. Forejt, M. Kwiatkowska, D. Parker, and A. Simaitis, "Automatic verification of competitive stochastic systems," Formal Methods in System Design, vol. 43, no. 1, pp. 61-92, 2013, doi:10.1007/s10703-013-0183-7.
+
+[113] C. Mu, "Automated Game-Theoretic Verification of Security Systems," in Proc. QEST, LNCS 11785, Springer, pp. 239-256, 2019, doi:10.1007/978-3-030-30281-8_14.
+
+[114] C. Baier and J.-P. Katoen, Principles of Model Checking, MIT Press, Cambridge, MA, 2008, ISBN 978-0-262-02649-9.

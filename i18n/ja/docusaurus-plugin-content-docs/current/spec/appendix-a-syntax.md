@@ -107,7 +107,7 @@ extension_decl = hyphen_name , ":" , scalar ;
 セマンティックバージョンの文字列を書く。
 
 **拡張点。** `extensions:` は，ファイルが依存する言語拡張を，名前とバージョンの組
-（たとえば `- sos-dsl: 0.1`）として宣言する。次の5つの拡張を定義している。
+（たとえば `- sos-dsl: 0.1`）として宣言する。次の7つの拡張を定義している。
 最後のもの以外は，宣言できる名前を持つ。
 
 - SoS-DSL拡張（[付録E](./appendix-e-sos-dsl.md)）。名前 `sos-dsl`，バージョン `0.1` として
@@ -120,6 +120,12 @@ extension_decl = hyphen_name , ":" , scalar ;
   `delegations:` を，禁止に `on_denied:` を追加する。
 - 確率モデル拡張（[付録H](./appendix-h-stochastic.md)）。名前 `stochastic`，バージョン `0.1` として宣言する。
   `sos_body` にキー `model:` を追加する。
+- 戦略モデル拡張（[付録I](./appendix-i-games.md)）。名前 `games`，バージョン `0.1` として宣言する。
+  `stochastic` を必要とし，`model:` にプレイヤー，プロファイル，利得，均衡問い合わせを追加する。
+- 根拠付け拡張（[付録J](./appendix-j-grounding.md)）。名前 `grounding`，バージョン `0.1` として宣言する。
+  `norms` を必要とし，`contract_def`（A.4）にキー `grounding:` を，規範にキー `shares:` と
+  `on_fulfilment:` を，その `on_violation:` に `magnitude:` を追加する。`games` とともに用いるときは，
+  利得の項にキー `sanction_of:` と `reward_of:` を追加する。
 - 動機拡張（[付録C](./appendix-c-motivation.md)）。`motivation_block` を定義する。
   v0.3では `extensions:` に書く名前を持たず，`motivation:` ブロックを書くだけで用いる。
 
@@ -172,7 +178,8 @@ contract_def      = "id:"      , identifier ,
                     [ "norms:"            , { "-" , norm_def } ] ,    (* 付録F *)
                     [ "counts_as:"        , { "-" , counts_as_def } ] , (* 付録F *)
                     [ "enforcement:"      , enforcement_block ] ,     (* 付録G *)
-                    [ "delegations:"      , { "-" , delegation_def } ] ; (* 付録G *)
+                    [ "delegations:"      , { "-" , delegation_def } ] , (* 付録G *)
+                    [ "grounding:"        , grounding_block ] ;       (* 付録J *)
 
 authority_block   = [ "decision_scope:"  , text ] ,
                     [ "decision_holder:" , actor_ref ] ,
@@ -339,6 +346,14 @@ indexed_ref      = identifier ,
 1回評価する。たとえば `sum(ROBOT[i].goal_count for i in 1..N)` や
 `sum(r.load for r in ROBOT[*])` である。
 
+この付録は，量化子と内包表記の形を定めるが，集約関数の集合や，観測の上でのこれらの式の値は
+定めない。規範拡張は，その動的意味論のためにこれらを定める。量化子と内包表記の定義域
+（記号の境界を持ちうるアクターの集合，または範囲），束縛された識別子の意味，集約関数
+`sum`，`count`，`min`，`max`，`avg`，およびメンバーがすべてはわかっていない定義域の上での
+3値の値である（[付録FのF.5節](./appendix-f-norms.md)の「限量子と集約」）。
+`ROBOT[*].battery > 10` のように定義域の外で `*` または範囲を持つ `indexed_ref` は，
+文法は受け付けるが，述語の中で定まった値を持たない。
+
 `assume:` または `guarantee:` の要素がこの文法に従わなくても，構文エラーには
 ならない。その要素は*不透明な述語*として保持され，処理系はそれを変更せずに
 引き渡し，形式検証の対象から除く。これにより，設計レベルでは自然言語による
@@ -364,11 +379,13 @@ AND    OR    NOT    true    false    for all    exists    in
 | `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `metrics` `verification` `codegen` `motivation` `model` |
 | `context` | `environment` `assumptions` |
 | アクター | `id` `role` `autonomy` `capabilities` `interface`（`input` `output`） |
-| 契約 | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` `norms` `counts_as` `enforcement` `delegations` |
+| 契約 | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` `norms` `counts_as` `enforcement` `delegations` `grounding` |
 | 規範（付録F） | `id` `kind` `bearer` `counterparty` `trigger` `until` `content` `deadline` `on_violation`（`severity` `sanction` `reparation` `transition`） `effects`（`activate` `suspend` `resume` `discharge`） `on_amendment`（`transform`） |
 | counts-as規則（付録F） | `when` `creates` `if` |
 | エージェント統治（付録G） | アクターの `agent`（`kind` `protocol` `tools`），契約の `enforcement`（`default` `point`）と `delegations`（`norm` `to` `grant` `revoke` `max_depth` `until`），禁止の `on_denied`（`escalate_to` `timeout` `fallback` `notify`） |
 | 確率モデル（付録H） | `model`（`kind` `parameters` `variables` `commands` `labels` `regimes` `rewards` `properties` `regime_maps`）。各要素のキーはH.2に示す |
+| 戦略モデル（付録I） | `model`（`players` `profiles` `compliance` `payoffs` `equilibria`），コマンドの `owner`，性質とモードマップの `profile`。各要素のキーはI.2に示す |
+| 根拠付け（付録J） | 契約の `grounding`（`items` `tolerance`），規範の `shares`，`on_fulfilment`（`reward` `magnitude`），`on_violation`（`magnitude`），利得の項の `sanction_of` `reward_of` |
 | `authority` | `decision_scope` `decision_holder` `beta` `mode` |
 | `information` | `alpha` `views` `sharing` |
 | `incentives` | `type` `lambda` `rules` |
@@ -384,7 +401,7 @@ AND    OR    NOT    true    false    for all    exists    in
 列挙値: `Directed` `Acknowledged` `Collaborative` `Virtual`（SoSの型），
 `low` `medium` `high`（自律度），`smt` `model_check` `simulation` `proof`
 （検証手法），`ms` `s` `min` `h`（時間の単位）。拡張のキーと値は
-[付録C](./appendix-c-motivation.md)，[付録E](./appendix-e-sos-dsl.md)，[付録F](./appendix-f-norms.md)，[付録G](./appendix-g-agents.md)，[付録H](./appendix-h-stochastic.md)に示す。
+[付録C](./appendix-c-motivation.md)，[付録E](./appendix-e-sos-dsl.md)，[付録F](./appendix-f-norms.md)，[付録G](./appendix-g-agents.md)，[付録H](./appendix-h-stochastic.md)，[付録I](./appendix-i-games.md)，[付録J](./appendix-j-grounding.md)に示す。
 
 ## A.12 リファレンス実装の状況（`cadl` 0.3） {/* #a12-reference-implementation-status-v03 */}
 
@@ -402,9 +419,9 @@ AND    OR    NOT    true    false    for all    exists    in
 みなされ，宣言されていなければならない。単独で現れる名前は状態変数とみなされ，
 検査されない。`condition:`，`safety_invariant:`，`formula:`，`expr:`，モニターの
 `rule:`，ライフサイクルの `when:`，およびメッセージイベントでない `on:` の述語については，未宣言のアクターの検査を行わない。それ以外の必須キーが
-欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.22で確認）。
+欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.23で確認）。
 
-- **式。** `cadl` 0.3.22では，式はA.10とA.11に従う。既知の相違はない。`cadl` 0.3.17までは，
+- **式。** `cadl` 0.3.23では，式はA.10とA.11に従う。既知の相違はない。`cadl` 0.3.17までは，
   `factor` の単項 `-` を受け付けなかった。それを使った項目は不透明な述語として保持し，
   ライフサイクルの `on:` と `when:`，モニターの `rule:` については `cadl check` が警告を出した。
 - **識別子。** `cadl` 0.3.9からは，`cadl check` は，アクター，契約，プロトコル，メトリクスのid，
@@ -460,7 +477,13 @@ AND    OR    NOT    true    false    for all    exists    in
   キー `stochastic_model` を出力する。この拡張を用いないファイルでは，その値は `null` である。
   `cadl` 0.3.22は，H.9の認証付きのモードマップ，G.5からG.8のランタイムと規則G-17からG-19，
   および生成したPythonコードでの規範のオンライン監視を追加する。それぞれの範囲は，上に挙げた
-  3つの節に示す。
+  3つの節に示す。拡張 `games` 0.1
+  （[付録IのI.14節](./appendix-i-games.md#i14-reference-implementation-status)）と `grounding` 0.1
+  （[付録JのJ.11節](./appendix-j-grounding.md#j11-reference-implementation-status)）は，`cadl` 0.3.23から
+  実装している（`cadl game-check`，`cadl norms-indices`）。それぞれの範囲は，挙げた2つの節に示す。
+  0.3.22までは，これらの名前には，未知の拡張に対する情報レベルの診断が出ていた。`kind: smg` を持つ
+  モデルについて，`cadl check` 0.3.22は，H.10とH.15が1つの情報レベルの診断を求めるところで，S-1とS-9の
+  誤りを報告する。また，付録Jのキーを，診断なしに無視する。
 
 `cadl` の0.3.7より前のリリースは，これらの点のいくつかで異なっていた。その経緯は，cadlリポジトリの
 [CHANGELOG](https://github.com/ertlnagoya/cadl/blob/master/CHANGELOG.md)にある。
