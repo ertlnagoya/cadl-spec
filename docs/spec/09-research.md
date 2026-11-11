@@ -272,7 +272,9 @@ and Z3 is used only for satisfiability. The norms extension
 RD-6.1, RD-6.2, RD-6.3, and RD-6.5: it defines first-class norms,
 bounded temporal operators with four-valued verdicts, counts-as rules,
 and what happens to running norms on an amendment. The
-generated Python code monitors norms at run time
+generated Python code monitors norms at run time, and so do the
+generated Rego, as a step function that is given the stored state,
+and Solidity, for the contracts they support
 ([F.10](./appendix-f-norms.md#f10-reference-implementation-status)),
 and the norms of one contract instance can be checked at design time:
 [F.12](./appendix-f-norms.md#f12-design-time-checking) translates them,
@@ -295,8 +297,14 @@ counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
 design-time checking that F.12 does not cover (quantifiers and arithmetic in
 predicates, several contract instances, sets of actors whose size is not fixed, continuous
-time, amendments, and which party can avoid a violation), monitoring in the other
-generated runtimes, weighted indices, norms per regime, and the derivation of model
+time, amendments, and which party can avoid a violation),
+monitoring in the Unity C#
+runtime, monitoring in the generated Rego and Solidity of what they
+refuse (quantifiers, aggregates, wildcard and range references in
+predicates, index expressions, and amendments; in Solidity also `*`,
+`/`, literals with more than six decimals, nested temporal operators,
+and contracts whose creation code exceeds the limit of EIP-3860),
+weighted indices, norms per regime, and the derivation of model
 probabilities from norms remain open. We found no work that handles first-class norm
 objects together with the institutional parameters α, β, and λ, the
 composition of many contracts in an SoS, and amendment during operation.

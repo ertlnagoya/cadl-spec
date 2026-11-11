@@ -1067,8 +1067,8 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   checked (F.7). `cadl codegen` leaves the same items out of the
   contract code of every target, with a comment in the code and a
   warning; it does not translate temporal operators into the target
-  languages. The Python target monitors them in a separate module (see
-  below).
+  languages. The Python target monitors them in a separate module, and
+  from `cadl` 0.3.25 the OPA and Solidity targets too (see below).
 - A numeric `deadline:` of a norm is read as seconds, the lenient form
   that [A.12](./appendix-a-syntax.md#a12-reference-implementation-status-v03)
   describes for lifecycle deadlines. `cadl check` looks for temporal
@@ -1161,7 +1161,35 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   the monitor cannot read a CADL file. Before `cadl codegen` writes the
   module it checks that the module compiles and that every name it uses
   is defined in it, and it refuses to generate otherwise.
-- The Solidity, OPA, and Unity C# targets do not monitor norms.
+- From `cadl` 0.3.25, `cadl codegen -t opa` and `-t solidity` write a
+  monitor of the norms for each contract of a file that declares
+  `norms: 0.1` ([Appendix D, D.5](./appendix-d-codegen.md#d5-norms-monitors-of-the-opa-and-solidity-targets)).
+  The Rego monitor is a step function: it computes the next state of the
+  monitor (a JSON object that the host stores) and the changes from the
+  previous state and one observation. The Solidity monitor is a contract
+  that stores the state and takes the time of an observation as an
+  argument. Both follow the order of one observation of F.5 as
+  `cadl norms-eval` does, and read the points of F.4 and F.5 for a
+  processor that receives observations one at a time as the Python
+  monitor does. They do not evaluate quantifiers, aggregates, wildcard
+  or range references in predicates, index expressions, or amendments:
+  a contract that uses one of them in a norm, a counts-as rule, or an
+  `assume:` item gets no monitor, with a warning that names the
+  construct, and such a `guarantee:` item is left out with a warning.
+  The Solidity monitor also refuses `*`, `/`, literals with more than
+  six decimals, a temporal operator inside another one, and a monitor
+  whose creation code would exceed the limit of EIP-3860, and it refuses
+  an observation that would make a bare name read inside a temporal
+  operator known after the first observation; the gas of a norm whose
+  content has a temporal operator grows with the observations inside its
+  open window. Their
+  arithmetic is decimal (Rego) or fixed-point with six decimals
+  (Solidity), and they compute times exactly, where `cadl norms-eval`
+  computes with binary floating point and a tolerance; D.5 lists these
+  and the other differences. The reference implementation
+  compares both with `cadl norms-eval` after every observation, the
+  Solidity monitor on an EVM.
+- The Unity C# target does not monitor norms.
 - From `cadl` 0.3.25, `cadl norms-check` implements F.12: it builds the
   model of one contract instance (`--bindings`, `--members`, `--step`,
   `--horizon`), runs the questions with PRISM 4.11 (`prism` on PATH;
