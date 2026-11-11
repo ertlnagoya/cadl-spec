@@ -439,7 +439,11 @@ of a comprehension and `b` contains no quantifier and no comprehension
 (so its value does not depend on a domain), is therefore decided from
 the members known at the observation when that is possible. Every
 element that is undefined, and on an open domain every member not yet
-known, may take any value; the aggregate then lies in an interval:
+known, may take any value; the aggregate then lies in an interval. An
+element whose value is of the wrong kind (a value of `e` that is not a
+number, or for `count` a value of `p` that is a text or a symbolic
+value) still makes the aggregate, and the comparison, undefined, as
+stated above.
 
 | Aggregate | Interval |
 | --- | --- |
@@ -534,7 +538,16 @@ robot has not stopped, and `within(d, p)` reads the domain of `p` at
 each observation of the interval. That no robot has stopped is
 written with a quantifier, `for all j in ROBOT[*]: NOT ROBOT[j].stopped`.
 N-15 names the cases where the reading may not be what the author
-means.
+means. Three of them follow from the rule that one group denotes one
+member in a comparison: `ROBOT[*].pos != ROBOT[*].pos` compares each
+robot with itself and is never true (that the positions are pairwise
+distinct is
+`for all j in ROBOT[*]: for all k in ROBOT[*]: j == k OR ROBOT[j].pos != ROBOT[k].pos`);
+`count(ROBOT[*].delivery == ROBOT[*].delivery)` counts every robot with
+a delivery; and `within(5s, ROBOT[*].status == Delivered)` needs all
+robots delivered at one observation of the interval (each robot within
+5 s on its own is
+`for all j in ROBOT[*]: within(5s, ROBOT[j].status == Delivered)`).
 
 The references of a message event are matched as in F.3 and are not
 rewritten. A wildcard or range reference in the arguments of a message
@@ -864,8 +877,12 @@ A norms-aware processor MUST, in addition to existing checks:
   `x <= 3`), that is bound by a comparison with a second group (the
   comparison must hold for every combination of members), or whose
   group is bound in both operands of an `OR` (each operand quantifies
-  on its own), and when an aggregate argument has two or more groups
-  (it is not evaluated).
+  on its own), whose group stands on both sides of one comparison, also
+  in an aggregate argument (each member is compared with itself), or
+  that is bound inside the predicate argument of `within`, `throughout`,
+  or `until` (all members at one observation), and when an aggregate
+  argument has two or more groups (it is not evaluated). The warning
+  SHOULD name the quantified form that the author probably meant.
 
 ### Relation to the core checks
 

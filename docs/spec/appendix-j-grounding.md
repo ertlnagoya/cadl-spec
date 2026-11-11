@@ -414,8 +414,10 @@ Each is undefined when its denominator is zero. A processor reports
 them with the sums of the counts of J-5 that apply (the three ways of
 giving a pair, the member-specific entries and norms, the powers per
 bearer, the norms with a reparation only and with a transition); there
-is no decision holder of the SoS. The quantities are invariant under
-reordering the contracts, and those of each contract are unchanged.
+is no decision holder of the SoS. When several single actors have the
+largest K, all of them are named, sorted by name. The quantities and
+their report are invariant under reordering the contracts, and those
+of each contract are unchanged.
 
 **No weights.** A weighted index, which would count a contract or a
 norm more than another, is not defined, because every weight would be
@@ -461,8 +463,11 @@ everything not mentioned unchanged:
   with one item that it shares with the other party has α̂ = 1; adding
   a contract that declares one item and shares nothing gives
   α̂_SoS = 1/2. Adding a contract can also lower β̂_SoS, as in the
-  counterexample after Lemma 4, and by Lemma 4 it never raises β̂_SoS
-  above the larger of its old value and the β̂ of C′.
+  counterexample after Lemma 4. It never raises β̂_SoS above the larger
+  of its old value and the β̂ of C′, by the mediant inequality: for
+  every single actor a, (K(a) + k′(a)) / (n + n′) lies between K(a)/n,
+  which is at most the old β̂_SoS, and k′(a)/n′, which is at most the
+  β̂ of C′, where n and n′ are the numbers of powers.
 
 ## J.5 Relation to the declared parameters
 
@@ -1076,8 +1081,9 @@ the indices of a contract:
 }
 ```
 
-`contracts` lists the contracts in the order of the file. `bearers`
-sums the powers of each bearer reference over all contracts; `beta` has
+`contracts` lists the ids of the contracts, sorted. `bearers` sums the
+powers of each bearer reference over all contracts, sorted by the
+reference; `beta` has
 no `holder`. The field is absent when the extension is not declared or
 the file has fewer than two contracts.
 
