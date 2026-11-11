@@ -292,8 +292,8 @@ with them, measures how many norms carry a sanction or a reward, and
 gives sanctions a numeric magnitude that λ scales. The indices are
 counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
-design-time checking beyond F.12 (quantifiers and arithmetic in
-predicates, several contract instances, open sets of actors, continuous
+design-time checking that F.12 does not cover (quantifiers and arithmetic in
+predicates, several contract instances, sets of actors whose size is not fixed, continuous
 time, amendments, and which party can avoid a violation), monitoring in the other
 generated runtimes, indices that are weighted or aggregated over the
 contracts of an SoS, norms per regime, and the derivation of model
