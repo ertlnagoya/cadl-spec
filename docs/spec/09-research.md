@@ -280,13 +280,13 @@ step towards the link to α, β, and λ: it derives from the norms of a
 contract an index of information sharing over declared items and an
 index of the concentration of powers, compares the declared α and β
 with them, measures how many norms carry a sanction or a reward, and
-gives sanctions a numeric magnitude that λ scales. The indices are
+gives sanctions a numeric magnitude that λ scales; the same indices
+are also computed over all contracts of an SoS. The indices are
 counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
 design-time checking by a model checker, monitoring in the other
-generated runtimes, indices that are weighted or aggregated over the
-contracts of an SoS, norms per regime, and the derivation of model
-probabilities from norms remain open. We found no work that handles first-class norm
+generated runtimes, weighted indices, norms per regime, and the
+derivation of model probabilities from norms remain open. We found no work that handles first-class norm
 objects together with the institutional parameters α, β, and λ, the
 composition of many contracts in an SoS, and amendment during operation.
 We also found no tool that connects deontic blame semantics with

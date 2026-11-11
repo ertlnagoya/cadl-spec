@@ -388,8 +388,11 @@ bound identifier, the aggregate functions `sum`, `count`, `min`, `max`,
 and `avg`, and three-valued values over domains whose members are not
 all known ([Appendix F, F.5](./appendix-f-norms.md), "Quantifiers and
 aggregates"). An `indexed_ref` with `*` or a range outside a domain,
-as in `ROBOT[*].battery > 10`, is accepted by the grammar but has no
-defined value in a predicate.
+as in `ROBOT[*].battery > 10`, is shorthand that the norms extension
+rewrites into a quantifier or a comprehension
+([Appendix F, F.5](./appendix-f-norms.md), "Wildcard and range
+references"): the smallest comparison that contains it holds for every
+member, and in the argument of an aggregate it ranges over the members.
 
 An item of `assume:` or `guarantee:` that does not conform to this
 grammar is not a syntax error: it is retained as an *opaque predicate*,

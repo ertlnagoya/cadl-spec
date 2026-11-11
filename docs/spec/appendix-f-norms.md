@@ -431,13 +431,6 @@ over an empty domain. A predicate that compares such a value is
 undefined. Another function, and a temporal operator inside a
 comprehension, are not evaluated (F.10).
 
-A wildcard or range reference outside a domain, as in
-`ROBOT[*].battery > 10` or `count(ROBOT[*].status == Collision)`, has
-no value that Appendix A defines in a predicate, and a predicate that
-contains one is not evaluated (F.10). The quantified form states the
-meaning: `for all j in ROBOT: ROBOT[j].battery > 10` and
-`count(ROBOT[j].status == Collision for j in ROBOT)`.
-
 The domain and its known members at an observation depend only on the
 observations up to it. The values of quantified predicates and
 aggregates therefore keep the property of the verdicts below: the
@@ -446,6 +439,76 @@ predicate that is undefined at an observation because its domain is
 open may have a value at a later observation, when a member is named
 or the bound gets a value; its value at the earlier observation stays
 undefined.
+
+### Wildcard and range references
+
+A **wildcard reference** `A[*]` or a **range reference** `A[lo..hi]`
+in a predicate, outside the domain of a quantifier or a comprehension,
+is shorthand for a quantifier or a comprehension over the members of
+`A`, or over the members within the range, with that reference as the
+domain. Two such references belong to the same **group** when they
+have the same actor name and the same index as written: `A[*]` and
+`A[*]` do, `A[*]` and `A[1..3]` do not. A predicate is rewritten in
+two steps.
+
+1. **Aggregate arguments.** Let `f(e)` be a call of `sum`, `count`,
+   `min`, `max`, or `avg` whose only argument `e` is not a
+   comprehension; inner calls are rewritten first. The call binds the
+   references in `e` that are not inside a further aggregate call. When
+   they form one group with domain `D`, `f(e)` stands for
+   `f(e' for x in D)`, where `e'` is `e` with every reference of the
+   group replaced by `A[x]`, and `x` is a variable that occurs nowhere
+   else. When they form two or more groups, the call is not evaluated
+   (F.10): a comprehension has to state which members are combined.
+2. **Comparisons.** Every other reference is bound by the smallest
+   comparison (`==`, `!=`, `<`, `<=`, `>`, `>=`, or `IN`) that contains
+   it. A reference that no comparison contains is bound by the
+   smallest of the following that contains it: an operand of `AND`,
+   `OR`, or `NOT`, the predicate of a quantifier, a predicate argument
+   of a temporal operator, and the whole predicate. Such a part `s`
+   with the groups `G1`, ..., `Gn`, ordered by the first reference of
+   each as written, stands for
+   `for all x1 in D1: ... for all xn in Dn: s'`, where `s'` is `s` with
+   every reference of `Gi` replaced by `A[xi]`.
+
+Within one comparison, all references of one group therefore denote
+the same member, and the comparison has to hold for every member, or
+for every combination of members when it has several groups. Different
+comparisons quantify on their own.
+
+| Predicate | Stands for |
+| --- | --- |
+| `ROBOT[*].battery > 10` | `for all j in ROBOT[*]: ROBOT[j].battery > 10` |
+| `ROBOT[*].x > ROBOT[*].y` | `for all j in ROBOT[*]: ROBOT[j].x > ROBOT[j].y` |
+| `ROBOT[*].x == BASE[*].y` | `for all j in ROBOT[*]: for all k in BASE[*]: ROBOT[j].x == BASE[k].y` |
+| `NOT ROBOT[*].stopped` | `NOT (for all j in ROBOT[*]: ROBOT[j].stopped)` |
+| `ROBOT[*].x > 0 OR ROBOT[*].y > 0` | `(for all j in ROBOT[*]: ROBOT[j].x > 0) OR (for all k in ROBOT[*]: ROBOT[k].y > 0)` |
+| `within(5s, ROBOT[1..3].ready)` | `within(5s, for all j in ROBOT[1..3]: ROBOT[j].ready)` |
+| `count(ROBOT[*].status == Collision) >= 2` | `count(ROBOT[j].status == Collision for j in ROBOT[*]) >= 2` |
+| `sum(ROBOT[*].load) > BASE[*].limit` | `for all k in BASE[*]: sum(ROBOT[j].load for j in ROBOT[*]) > BASE[k].limit` |
+
+The rewritten predicate is evaluated as above. The rules for open
+domains, the limit on the number of members a processor enumerates, and
+the dependence on the observations up to the current one therefore
+apply unchanged. The comparison is the scope, not the whole predicate,
+so that `NOT`, `AND`, `OR`, and the temporal operators combine truth
+values as they do elsewhere: `NOT ROBOT[*].stopped` is true when some
+robot has not stopped, and `within(d, p)` reads the domain of `p` at
+each observation of the interval. That no robot has stopped is
+written with a quantifier, `for all j in ROBOT[*]: NOT ROBOT[j].stopped`.
+N-15 names the cases where the reading may not be what the author
+means.
+
+The references of a message event are matched as in F.3 and are not
+rewritten. A wildcard or range reference in the arguments of a message
+event is not evaluated (F.10).
+
+Before this subsection, these references had no value in a predicate
+(Appendix A, A.10), and the components of the reference implementation
+that read them do so in different ways (F.10). The rewriting above
+agrees with the quantified forms that earlier versions of this
+appendix gave as their meaning, and with the use of `count(A[*]...)` in
+the examples.
 
 ### Norm instances
 
@@ -758,6 +821,14 @@ A norms-aware processor MUST, in addition to existing checks:
   or a comprehension has the name of a symbolic bound of a declared set
   (`for all N in S: ...` with `S[1..N]`). The bound keeps its own value
   inside the quantifier (F.5), which a reader may not expect.
+- **N-15.** A processor SHOULD warn when a predicate has a wildcard or
+  range reference (F.5, "Wildcard and range references") that is bound
+  under a `NOT` (`NOT A[*].x > 3` is true when some member has
+  `x <= 3`), that is bound by a comparison with a second group (the
+  comparison must hold for every combination of members), or whose
+  group is bound in both operands of an `OR` (each operand quantifies
+  on its own), and when an aggregate argument has two or more groups
+  (it is not evaluated).
 
 ### Relation to the core checks
 
@@ -933,9 +1004,10 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
 `cadl` 0.3.19 as follows:
 
 - `cadl` parses `norms:` and `counts_as:` and the temporal operators of
-  F.4, applies rules N-1 to N-14 in `cadl check` (N-8, N-12, N-13, N-14,
+  F.4, applies rules N-1 to N-15 in `cadl check` (N-8, N-12 to N-15,
   and the SHOULDs of N-3 and N-9 as warnings; N-13 and N-14 from `cadl`
-  0.3.23), and lowers both blocks to the IR of F.9.
+  0.3.23, N-15 from `cadl` 0.3.24), and lowers both blocks to the IR
+  of F.9.
 - The SMT checks of `cadl verify` leave out `assume:` and `guarantee:`
   items that contain temporal operators and report each one as not
   checked (F.7). `cadl codegen` leaves the same items out of the
@@ -977,15 +1049,22 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   quantifier or an aggregate was not evaluated. From `cadl` 0.3.23 it
   evaluates them as F.5 defines ("Quantifiers and aggregates"); it
   enumerates at most 10 000 members of a closed domain and evaluates a
-  larger one as an open domain, with a warning. A norm or
+  larger one as an open domain, with a warning. Up to `cadl` 0.3.23 a
+  norm or item with a wildcard or range reference outside the domain of
+  a quantifier or a comprehension (`ROBOT[*].battery > 10`) was not
+  evaluated. From `cadl` 0.3.24 it rewrites such a predicate as F.5
+  defines ("Wildcard and range references") when it reads the contract,
+  and evaluates the result with the code for quantifiers and aggregates;
+  the variables it introduces have names that no predicate can write. A
+  file without such references gives the same results as before. A norm or
   item that contains a function call other than a temporal operator or
-  `sum`, `count`, `min`, `max`, or `avg` of a comprehension, a wildcard
-  or range reference outside the domain of a quantifier or a
-  comprehension (`ROBOT[*].battery`), a quantifier or comprehension
-  whose domain is not a set of actors or a range, `x.q` for a variable
-  `x` over a range of integers, or a temporal operator inside a
-  comprehension is not evaluated and stays `pending`, with the reason
-  in the report. `cadl norms-diff` compares two
+  `sum`, `count`, `min`, `max`, or `avg` of a comprehension, an
+  aggregate argument with references of two or more groups, a wildcard
+  or range reference in the arguments of a message event, a quantifier
+  or comprehension whose domain is not a set of actors or a range,
+  `x.q` for a variable `x` over a range of integers, or a temporal
+  operator inside a comprehension is not evaluated and stays `pending`,
+  with the reason in the report. `cadl norms-diff` compares two
   versions of a file and reports what F.6 does to the norms of each
   contract, including every carried-over norm whose `content` or
   `deadline:` changes and a `transform:` target that the new version
@@ -1027,6 +1106,22 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
 - The Solidity, OPA, and Unity C# targets do not monitor norms, and
   translation of norms to a model checker for design-time checking is
   not implemented.
+- The other components read a wildcard reference outside a domain in
+  their own way, and `cadl` 0.3.24 does not change them. `cadl verify`
+  reads `A[*].q` as one unconstrained variable per group, shared by
+  all `assume:` and `guarantee:` items of the contract, so it does not
+  range over the members either. The contract
+  code of the Solidity and OPA targets and the predicate evaluator of
+  the Unity C# target drop the index and read `A[*].q` as one quantity
+  `A.q` (in Unity, of the snapshot of the contract instance), so they
+  do not range over the members. The contract code of the Python target
+  looks up the set name `A` in its table of actors, which holds the
+  members under their own names (`A[1]`), so the reference has no value
+  there. The Python target keeps the conditions of protocols, such as
+  `count(ROBOT[*].status == Collision) >= 2`, as comments, and the
+  simulator generators of `cadl sim-gen` copy predicates as text. The
+  monitors of Appendix E and the simulator outputs are therefore the
+  same as in `cadl` 0.3.23.
 
 ## F.11 Backward compatibility
 
