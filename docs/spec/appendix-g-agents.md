@@ -191,6 +191,12 @@ actor as follows:
 | `A[1..N]` (symbolic bound) | every member of the set `A`; the bounds are not compared |
 | `A[i]` | false when the concrete actor is not a member of `A`. Otherwise: exactly `A[v]` when the contract instance binds `i` to `v`, and **unknown** when it binds no value to `i`. |
 
+The table is that of [F.3](./appendix-f-norms.md), which the norms
+engine uses for the events of a trace, with one difference: where the
+contract instance binds no value to `i`, F.3 lets `A[i]` match every
+member, and the boundary takes the match as unknown and resolves it
+fail-closed (G.5).
+
 `A[k]` is a **member** of the set `A` when `A` is declared with a range
 and `k` lies within its integer bounds (a set declared as `A[1..3]`
 does not contain `A[7]`); when the declared upper bound is symbolic,
@@ -314,7 +320,15 @@ stop them all. `default: deny` closes the policy for them too.
 ### Effect of a decision on the trace
 
 - **`allow`.** The message takes effect and becomes an observation,
-  with the time of the decision as its time stamp.
+  with the time of the decision as its time stamp, for the instances of
+  the enforced contracts that govern it. An instance of an enforced
+  contract observes a message only when its contract governs the
+  message: a message that no enforced contract governs (step 1) is an
+  observation for no enforced contract, and a message that one enforced
+  contract governs is no observation for another that does not. So a
+  message cannot trigger, end, or fulfil a norm of an enforced contract,
+  or create an institutional event in it, without having been decided by
+  that contract. Contracts that are not enforced keep F.5 unchanged.
 - **`deny`.** The message does not take effect and is **not an
   observation**: it triggers no norm, creates no institutional event,
   fires no lifecycle transition, fulfils no obligation, and violates no
@@ -350,16 +364,18 @@ When the decision is `escalate`, the enforcement point creates a
 **hold** with a `hold_id` unique within the enforcement point, the
 message, the time of the decision, the grounds, the approver, and a
 deadline (the time of the decision plus the `timeout` of the result, or
-none). The grounds of a hold are all prohibitions that apply to the
-message, each with the contract instances in which it applies; these
-are the *contract instances of the grounds*. A hold without deadline in a contract instance that never ends
+none). A **ground of a hold** is a prohibition in one contract
+instance in which it applies to the message. The grounds of a hold are
+all of them, over all governing contracts, and their contract instances
+are the *contract instances of the grounds*. A prohibition that applies
+in two contract instances is two grounds. A hold without deadline in a contract instance that never ends
 is held for ever. How the hold id reaches the approver depends on the
 protocol.
 
 | State | Entered when | Closing record (G.8) |
 | --- | --- | --- |
 | `held` | the hold is created; the only state that is not final | — |
-| `approved` | the approver approves; the message is released | `allow`, reason `approved` (or the denial of the re-check) |
+| `approved` | the approver approves; the message is released | `allow`, reason `approved` (or the denial of the release) |
 | `rejected` | the approver rejects | `deny`, reason `rejected` |
 | `expired` | the deadline has passed | `deny`, reason `expired`, with the deadline as `time` |
 | `cancelled` | a contract instance of a ground ends, or a contract of a ground is amended | `deny`, reason `cancelled` |
@@ -377,9 +393,9 @@ The order of steps within one observation (F.5) is extended:
 
 - **After step 1:** an `approval` (`rejection`) whose hold id names a
   `held` hold, whose performer (F.5, item 7) is the approver of that
-  hold, and which was created in an instance of a contract that has a
-  ground of the hold makes it `approved` (`rejected`). When the hold
-  has grounds in several contracts, one such event is enough; an event
+  hold, and which was created in a contract instance of a ground of the
+  hold makes it `approved` (`rejected`). When the hold has several
+  contract instances of grounds, one such event is enough; an event
   that one message creates in several contract instances is one event.
   Any other `approval` or `rejection` changes no hold and SHOULD be
   recorded as unauthorised. Then the grants, revocations, and `until:`
@@ -389,24 +405,45 @@ The order of steps within one observation (F.5) is extended:
 - **After step 6:** each hold that became `approved` at this
   observation is released, in the order of creation.
 
-**Release.** The message is re-checked on the current state. It is
-denied with the reason `undeclared_tool` if it is now a call of an
-undeclared tool, `no_instance` if a contract instance of a ground is no
-longer running, and `prohibition` (with that prohibition in `norms`) if
-a prohibition outside the grounds of the hold now applies. Nothing else
-is re-checked: the approval stands in for the permission. A denial of
-the re-check is final. It creates no hold, also when the new
-prohibition has an `escalate_to:`, and the hold stays `approved`. Its
-result has `escalate_to: null`; `contracts` is empty for
-`undeclared_tool`, lists the contracts of the instances that are no
-longer running for `no_instance`, and lists the contracts of the new
-prohibitions for `prohibition`, with their `timeout`, `fallback`, and
-`notify` as in G.10. Otherwise the
-message takes effect as **the immediately following observation, with
+**Release.** The message is decided again, on the current state and at
+the time of the approving observation. The approval stands in for the
+permission and for the grounds, and for nothing else:
+
+1. If the message is now a call of an undeclared tool: `deny`, reason
+   `undeclared_tool`.
+2. A governing contract that has a ground of the hold denies with the
+   reason `no_instance` when a contract instance of one of its grounds
+   is no longer running, and with the reason `prohibition` when one of
+   its prohibitions applies in a contract instance in which it is not a
+   ground of the hold (`norms` lists these prohibitions). This includes
+   a prohibition of the grounds that now applies in another contract
+   instance, for example one created after the hold. Otherwise the
+   contract allows: it tests neither a permission nor its default.
+3. Every other governing contract decides in full by step 3 of G.5 and
+   has to allow, by a permission, original or derived and valid now, or
+   by its default. A contract that would decide `escalate` denies, with
+   the reason `prohibition`.
+4. If no contract denies, the message is released. Otherwise the
+   release is denied; the result is formed as in step 4 of G.5 from the
+   contracts that deny: `contracts` lists them, the reason is the first
+   of `no_instance`, `prohibition`, `default` among them, and for
+   `prohibition` the `norms`, `timeout`, `fallback`, and `notify` are
+   those of G.10. `escalate_to` is `null`.
+
+A denial of the release is final: it creates no hold, and the hold
+stays `approved`. With these rules a release keeps what G.5 and G.7
+state for every other message: a message governed by two enforced
+contracts is allowed by both, and no actor acts on an authority that
+its originator no longer has. A delegation revoked, a contract instance
+ended, or a contract amended between the hold and the approval in a
+contract without a ground therefore denies the release. If the message
+is released, it
+takes effect as **the immediately following observation, with
 the time stamp of the approving observation**, before any other message
 is decided. As an addition to F.5, item 3, it is not an occurrence of
-the content of the prohibitions among its grounds: an approved
-exception does not violate them. An approval releases one message; a
+the content of a prohibition in a contract instance in which that
+prohibition is a ground of the hold: an approved exception does not
+violate its grounds. An approval releases one message; a
 later message with the same sender, receiver, and name is decided
 again.
 
@@ -497,7 +534,7 @@ with five more fields:
 | --- | --- |
 | `time` | The time of the decision, on the clock of the trace. |
 | `message` | `from`, `to`, and `name`, as in the policy input. |
-| `instances` | The running instances of the governing contracts: contract `id` and an identifier of the instance. |
+| `instances` | The running instances of the governing contracts: contract `id` and an identifier of the instance. In a closing record: the contract instances of the grounds of the hold, whether they are still running or not. |
 | `hold_id` | For an `escalate` decision and for the record that closes the hold; otherwise `null`. |
 | `outcome` | In the record that closes a hold, its final state; otherwise `null`. |
 
@@ -507,7 +544,7 @@ final state (table of G.6). The closing record keeps the `contracts`,
 `norms`, and `escalate_to` of the hold; when its reason is `rejected`,
 `expired`, or `cancelled`, it also keeps the `fallback` and `notify` of
 the hold, so that the sender finds them in the denial. Its `timeout` is
-`null`. When the re-check denies (G.6), the closing record has the
+`null`. When the release is denied (G.6), the closing record has the
 result of that denial instead, and its `outcome` is `approved`. The
 `time` of a closing record is the time of the observation that closed
 the hold, except for `expired`, where it is the deadline; such a record
@@ -515,25 +552,30 @@ is written when the expiry is found, before the next decision or
 observation, so the times of a log never decrease.
 
 Grants, revocations, and acts recorded as unauthorised SHOULD be
-written to the same log, as **event records**. An event record has no
-result; it has the field `event` in place of `decision`, and these
-fields:
+written to the same log, as **event records**, and so SHOULD every
+other change of the state on which later decisions rest: the end of a
+derived instance for any cause, the start and the end of a contract
+instance, and an amendment. An event record has no result; it has the
+field `event` in place of `decision`, and these fields:
 
 | Field | Content |
 | --- | --- |
 | `time`, `message` | As in an audit record: the observation and the message that the event comes from; `message` is `null` when there is none. |
-| `event` | `grant`, `revoke`, `unauthorised_grant`, `unauthorised_approval`, `unauthorised_rejection`, or `unauthorised_act` (an act that F.5, item 7 records as unauthorised). |
-| `instances` | The contract instance or instances in which the event took place. |
-| `norm` | For a grant or a revocation, the delegable permission as `<contract id>.<norm id>`; otherwise `null`. |
-| `chain` | For a `grant`, the chain of the derived instance of the receiver; for a `revoke` that has an effect, the chain of the revoked instance; otherwise `null`. |
+| `event` | `grant`, `revoke`, `delegation_end` (a derived instance ended for another cause than a revoke message; one record per derived instance), `instance_start`, `instance_end`, `amendment`, `unauthorised_grant`, `unauthorised_approval`, `unauthorised_rejection`, or `unauthorised_act` (an act that F.5, item 7 records as unauthorised). |
+| `instances` | The contract instance or instances in which the event took place; for `amendment`, the running instances of the amended contracts. |
+| `norm` | For a grant, a revocation, or a `delegation_end`, the delegable permission as `<contract id>.<norm id>`; otherwise `null`. |
+| `chain` | For a `grant`, the chain of the derived instance of the receiver; for a `revoke` that has an effect, the chain of the revoked instance; for a `delegation_end`, the chain of the instance that ended; otherwise `null`. |
 | `holders` | The holders whose derived instance the event created or discharged, in the order of creation; otherwise empty. |
 | `hold_id` | For an unauthorised approval or rejection, the hold id it carried, if any; otherwise `null`. |
-| `reason` | `null` for a grant or a revocation that has an effect; `holder_exists` for a grant that is a no-op (condition 5 of G.7); `no_effect` for a revoke message that does not satisfy (a); for `unauthorised_grant` the first condition that fails: `no_authority` (1), `not_in_to` (2), `in_chain` (3), `max_depth` (4); for an unauthorised approval or rejection `unknown_hold`, `not_held`, `not_approver`, or `other_contract`; for `unauthorised_act`, `no_power`. |
+| `reason` | `null` for a grant or a revocation that has an effect; `holder_exists` for a grant that is a no-op (condition 5 of G.7); `no_effect` for a revoke message that does not satisfy (a); for `unauthorised_grant` the first condition that fails: `no_authority` (1), `not_in_to` (2), `in_chain` (3), `max_depth` (4); for an unauthorised approval or rejection `unknown_hold`, `not_held`, `not_approver`, or `other_instance` (not created in a contract instance of a ground); for `unauthorised_act`, `no_power`; for `delegation_end` the cause: `until`, `original_discharged`, `instance_end`, or `amendment`; for `instance_end`, `end` or `terminal_state`; for `amendment`, the name of the new version; for `instance_start`, `null`. |
 
 Records are written in the order in which the enforcement point
 produces them: the record of a decision, then the event records of the
 observation that the message becomes, then the closing records of the
-holds that this observation approved or rejected. This appendix defines
+holds that this observation approved or rejected. A change of the
+in-force flag of a norm has no record of its own: it follows from the
+recorded messages, from the times, and from the values that the
+predicates of the contract read. This appendix defines
 no integrity protection for the log, such as a hash chain or a
 signature; a deployment that needs one adds it outside the record.
 
@@ -581,7 +623,10 @@ An agents-aware processor MUST, in addition to the checks of
   every rule that creates `approval` or `rejection` MUST have as
   `when:` a `message_event` whose sender is the `escalate_to:` of a
   prohibition of the contract, and no norm `id` may equal either name;
-  these are the only uses that are errors. A reference to the two
+  the sender and the receiver of that `message_event` MUST be parties
+  of the contract (every actor that the reference can name matches a
+  party), so that the contract governs the approver's message and its
+  instances observe it. These are the only uses that are errors. A reference to the two
   events in a `trigger:`, `until:`, or `content:` is allowed.
 - **G-10.** A `fallback:` MUST be a `message_event` whose sender is
   textually equal to the `bearer:` of its prohibition and whose
@@ -881,9 +926,11 @@ decision is `escalate`. The hold `h-1` is created with the approver
 `OPERATOR -> PLANNER : approve("h-1")`, an ordinary message that the
 default allows. After step 1 of that observation the event `approval`,
 performed by `OPERATOR`, carries the hold id `h-1`, and the hold
-becomes `approved`. After step 6 the re-check finds a declared tool, a
-running instance, and no prohibition outside the grounds, so the held
-message becomes the next observation, with the time stamp 09:03:40. It
+becomes `approved`. After step 6 the message is decided again: the
+tool is declared, the instance of the ground is running, no prohibition
+applies outside the grounds, and no other enforced contract governs the
+call, so the held message becomes the next observation, with the time
+stamp 09:03:40. It
 is not an occurrence of the content of `no_delete`, which stays
 `active`. Had the operator sent `reject("h-1")`, or nothing until
 09:13:00, the closing record would be a `deny` with the reason
@@ -990,8 +1037,9 @@ the grants and revocations observed so far, and the running contract
 instances from the trace; it builds the policy input of G.10 from them
 and calls the decision function of `cadl agents-decide`. It then
 applies the decision as G.5 says, keeps the holds and the derived
-instances (G.6, G.7), and writes the audit records and event records
-of G.8, as JSON Lines when `--audit` is given. Hold ids are `h-1`,
+instances (G.6, G.7), decides an approved message again before it
+releases it, and writes the audit records and event records of G.8, as
+JSON Lines when `--audit` is given. Hold ids are `h-1`,
 `h-2`, and so on, in the order of creation.
 
 The trace is that of `cadl norms-eval` (JSON Lines with `t`,
@@ -1004,7 +1052,8 @@ this order: holds whose deadline lies before its time expire; instances
 are created; the time and the values of the line are observed without
 message (G.5), together with an amendment; each message is decided, and
 an allowed one is one observation; a change of lifecycle state and the
-end of instances are a last observation.
+end of instances are a last observation. Messages after the end of an
+instance are still decided and recorded.
 
 Three points are readings of the implementation and not rules of this
 appendix. An amendment applies to the enforced contracts whose
@@ -1012,35 +1061,65 @@ definition differs between the two versions, and it may not add or
 remove an enforced contract. After a violation, the window clock of a
 prohibition stops while the prohibition is suspended, as it does before
 (F.5). A message matches the content of an obligation, for the verdict
-`excused`, as at the boundary: on sender, receiver, and name. The
-runtime is not connected to a protocol, and it does not protect the log
-against later changes.
+`excused`, as at the boundary: on sender, receiver, and name.
+
+Known limits. The runtime is not connected to a protocol: it replays a
+trace and does not run agents or tools. It does not protect the log
+against later changes. The log has no record for a change of the
+in-force flag of a norm (G.8). A trace gives time as a number of
+seconds of at most 10<sup>10</sup> in absolute value, and the audit
+file is written only when the whole trace was replayed.
 
 The tests replay each step of the runtime through the decision function
 with the state the runtime computed, and through the generated Rego
 policy under OPA 1.22.3: 81 decisions of nine hand-written scenarios
 (the three calls of G.12, rejection, timeout, a prohibition between a
 trigger and an `until:`, delegation with a depth limit, two contracts
-with bound indices and host-created instances) and 4 200 decisions of
-fourteen generated traces over seven files gave the same result in
-both. The expected records of the scenario tests were derived from the
-text of this appendix before the runtime was run, and the runtime
-produced them. The generated traces showed one defect of the runtime,
-since corrected: holds that expired together were closed in the order
-of creation, not of their deadlines, so the times of the log could
-decrease.
+with bound indices and host-created instances) and 7 800 decisions of
+26 generated traces over eleven files gave the same result in both. The
+generated traces have host-created instances with different bindings,
+senders outside the declared sets and undeclared senders, a hold with a
+ground in one of two contracts, and revocations, ends of instances, and
+amendments between a hold and its approval. Every release in them, 176
+with 15 denied, and 13 more with 8 denied under random amendments, was
+checked from its recorded policy input against the rules of G.6. A
+second model of G.4 to G.7, written from the text of this appendix
+without code of the reference implementation, gave the same 5 101
+decision and closing records on 32 further traces. The expected records
+of the scenario tests were derived from the text of this appendix
+before the runtime was run, and the runtime produced them.
 
-Writing the runtime showed these gaps in the text of agents 0.1, which
-this revision of the appendix closes without changing a rule of G.9:
-the state on which a message is decided did not include deadlines that
-had passed since the last observation (G.5); the contract in which an
-`approval` has to be created, and the order of holds that expire
-together, were not stated (G.6); the result of a re-check that denies
-was not stated (G.6); whether the `until:` of a delegation ends the
-entry or its instances was open (G.7); the `fallback` that G.12 lets
-the sender find in a closing record was excluded by G.10; and the
-records of grants, revocations, and unauthorised acts had no format
-(G.8).
+An independent review of the first version of the runtime found
+defects that these tests had not shown, in the implementation and in
+the text. All of them let a message take effect that should not have,
+and all are corrected. The grounds of a hold were kept per contract and
+not per contract instance, so an approval also covered the same
+prohibition in an instance created later (G.6). The re-check of a
+released message tested only new prohibitions, so a message was
+released although another governing contract no longer allowed it, for
+example after a revocation (G.6; the text said "nothing else is
+re-checked"). An actor reference with a range in a `trigger:`, an
+`until:`, or a `counts_as:` rule matched every actor of that name, and
+`A[*]` matched actors outside the declared set; this was a defect of
+`cadl norms-eval` since 0.3.20 (F.3, F.10). An instance observed
+messages that its contract does not govern (G.5). The generated traces
+had also shown one defect: holds that expired together were closed in
+the order of creation, not of their deadlines.
+
+Writing and reviewing the runtime showed these gaps in the text of
+agents 0.1, which this revision of the appendix closes: the state on
+which a message is decided did not include deadlines that had passed
+since the last observation, and it was not said which contract
+instances observe an allowed message (G.5); the grounds of a hold, the
+contract instance in which an `approval` has to be created, the
+decision at a release, and the order of holds that expire together were
+not stated or were stated too weakly (G.6); whether the `until:` of a
+delegation ends the entry or its instances was open (G.7); the
+`fallback` that G.12 lets the sender find in a closing record was
+excluded by G.10; the records of grants, revocations, unauthorised
+acts, and other changes of state had no format (G.8); and nothing
+required the contract to govern the approver's message (G-9, the only
+rule of G.9 that changes).
 
 The generated policies have been run with OPA 1.22.3 and the Cedar CLI
 4.14.1 and compared with `cadl agents-decide`. Under OPA the full
@@ -1067,8 +1146,9 @@ keep exactly the meaning of [Appendix F](./appendix-f-norms.md). For an
 enforced contract this appendix makes these additions to F.5 and no
 other change: the instance of a contract without host exists from the
 start of the enforcement point; a denied or held message is not an
-observation; the time of a decision is observed before the message is
-decided; permissions and prohibitions have an in-force flag; an
+observation; an instance of an enforced contract observes only the
+messages that its contract governs; the time of a decision is observed
+before the message is decided; permissions and prohibitions have an in-force flag; an
 obligation whose content the contract itself denied or held is
 `excused` (all G.5); `approval` and `rejection` carry a hold id, the
 order of steps is extended, and a released message does not violate

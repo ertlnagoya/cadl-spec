@@ -145,6 +145,27 @@ event. Values that contain `[`, `]`, `*`, `->`, or `": "` SHOULD be quoted
 and MUST be quoted inside a flow sequence, as for every scalar of
 [Appendix A](./appendix-a-syntax.md).
 
+A `message_event` `S -> R : m` **occurs** at an observation that
+carries a message with the name `m` whose sender matches `S` and whose
+receiver matches `R`; when `m` is written with arguments, they must
+equal the arguments of the message. An actor reference matches a
+concrete actor of a message as follows, wherever a `message_event`
+stands: in a `trigger:`, an `until:`, a `content:`, and the `when:` of
+a `counts_as:` rule.
+
+| Reference | Matches |
+| --- | --- |
+| `A` | the actor `A`, declared without index; never an indexed member `A[k]` |
+| `A[3]` | the member `A[3]` |
+| `A[*]` | every member of the declared set `A` |
+| `A[1..3]` | the members `A[1]` to `A[3]`; with a symbolic bound (`A[1..N]`), every member of the set |
+| `A[i]` | the member `A[v]` when the contract instance binds `i` to `v`; every member of the set when it binds no value to `i` (a processor SHOULD warn) |
+
+`A[k]` is a **member** of the set `A` when `A` is declared with a range
+and `k` lies within its integer bounds: a set declared as `A[1..3]`
+does not contain `A[7]`. An actor that is not declared, or that lies
+outside the bounds of its set, matches no reference.
+
 In these predicates the reserved identifiers of
 [Appendix E, E.4](./appendix-e-sos-dsl.md#e4-static-semantics) are
 available as in a `rule`: `now`, `request`, and, when the contract has a
@@ -697,7 +718,15 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   `cadl` repository), and applies the amendments of F.6 that the trace
   names. It takes the lifecycle state from the trace and does not run
   the lifecycle state machine: a `transition:` requested by a violation
-  is reported, not applied. A norm or item that contains a function call
+  is reported, not applied. Up to `cadl` 0.3.21 it matched the actor
+  references of message events too widely: a range such as `A[1..2]`
+  matched every actor named `A[k]`, and `A[*]` and an unbound `A[i]`
+  also matched actors outside the declared set. The release that
+  follows 0.3.21 matches them by the table of F.3; verdicts computed
+  for a file that uses such references in a `trigger:`, an `until:`, a
+  `content:`, or a `counts_as:` rule SHOULD be computed again. It also
+  rejects a trace whose time is not a finite number or whose actor and
+  message names are not well-formed. A norm or item that contains a function call
   other than a temporal operator, a quantifier, or a wildcard reference
   is not evaluated and stays `pending`. `cadl norms-diff` compares two
   versions of a file and reports what F.6 does to the norms of each
