@@ -178,7 +178,7 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
 
 同梱の例題 `examples/sos_dsl_robot_delivery.cadl`（166 行）を例に、自分の書いた 1 行がどのファイルのどの部分に変換されるかを追います。手順を進めるのには必要ありません。コマンドが何を作ったのかを知りたくなったときに読んでください。
 
-**(1) 仕様 → IR**。`.cadl` の `deadline: 5s` は、`cadl_repo/src/cadl/parser.py` が構文解析し、`sim/lower.py` が IR に変換すると `"deadline_ms": 5000` という JSON になります（IR 全体で 297 行）。IR は、人が読み書きしやすくするための書き方を取り除き、機械が実行しやすい形にした中間表現です。
+**(1) 仕様 → IR**。`.cadl` の `deadline: 5s` は、`cadl_repo/src/cadl/parser.py` が構文解析し、`sim/lower.py` が IR に変換すると `"deadline_ms": 5000` という JSON になります（IR 全体で 300 行）。IR は、人が読み書きしやすくするための書き方を取り除き、機械が実行しやすい形にした中間表現です。
 
 **(2) IR → C#**。`codegen/unity_csharp/contract_emitter.py` が IR を読んで、契約 1 つにつき 3 ファイルを生成します：状態の列挙（`DeliverySlaState.cs`）、状態機械本体（`DeliverySlaContract.cs`）、監視ルール（`DeliverySlaMonitors.cs`）。これに共有ランタイム 5 ファイル（下の表）を足した計 783 行が `unity/Assets/Scripts/SoSDsl/` に配置されます。
 
@@ -206,6 +206,10 @@ $ python3 -m cadl.runtime.multi_robot_demo --summary
 2. `Generated/DeliverySlaContract.cs` の `HandleEvent` を読み（10 分）、`.cadl` の遷移がそのまま if 文になっているのを確かめる。
 3. `engine.py` の `ContractRuntime.tick` を読む（10 分）。
 
+### ほかの生成先
+
+本書で使う生成先は `--target unity-csharp` だけです。`python`、`solidity`、`opa` も同じファイルからコードを生成し、`agent-rego` と `agent-cedar` はエージェント統治拡張の境界の方針を生成します。規範拡張を宣言したファイルでは、`opa` は契約ごとに Rego の規範モニターも出力し、`solidity` は規範モニターのコントラクトも出力します。どちらも観測から規範の判定を計算します（仕様書の[付録 D](../spec/appendix-d-codegen.md) D.5 節）。
+
 ## 7.7 チェック
 
 ```bash
@@ -221,7 +225,7 @@ PYTHONPATH=src python3 -m pytest tests/test_unity_csharp_structural.py -q
 
 ここまでで、次のものができています。
 
-- 297 行の Sim-IR JSON（同梱の例の場合）。
+- 300 行の Sim-IR JSON（同梱の例の場合）。
 - 783 行の Unity に貼れる C# ツリー（Unity プロジェクトに配置済み）。
 - C# のトレースがどうなるべきかを示す、Python のリファレンス実装。
 

@@ -178,7 +178,7 @@ The Unity run in Chapter 8 assigns deliveries at different times and gives the r
 
 Following the bundled example `examples/sos_dsl_robot_delivery.cadl` (166 lines), this section traces where one line you write ends up. You do not need it to follow the procedure; read it when you want to know what the commands produced.
 
-**(1) Spec → IR.** The `deadline: 5s` in your `.cadl` file is parsed by `cadl_repo/src/cadl/parser.py`, and once `sim/lower.py` lowers it into the IR it becomes the JSON `"deadline_ms": 5000` (the whole IR is 297 lines). The IR is an intermediate representation that discards the "human-friendly notation" and keeps only the "form that machines can easily execute".
+**(1) Spec → IR.** The `deadline: 5s` in your `.cadl` file is parsed by `cadl_repo/src/cadl/parser.py`, and once `sim/lower.py` lowers it into the IR it becomes the JSON `"deadline_ms": 5000` (the whole IR is 300 lines). The IR is an intermediate representation that discards the "human-friendly notation" and keeps only the "form that machines can easily execute".
 
 **(2) IR → C#.** `codegen/unity_csharp/contract_emitter.py` reads the IR and generates three files per contract: the state enum (`DeliverySlaState.cs`), the state machine itself (`DeliverySlaContract.cs`), and the monitoring rules (`DeliverySlaMonitors.cs`). Together with 5 shared runtime files (listed below), a total of 783 lines is placed under `unity/Assets/Scripts/SoSDsl/`.
 
@@ -206,6 +206,10 @@ Following the bundled example `examples/sos_dsl_robot_delivery.cadl` (166 lines)
 2. Read `HandleEvent` in `Generated/DeliverySlaContract.cs` (10 min) and confirm that the transitions of the `.cadl` file became `if` statements as they are.
 3. Read `ContractRuntime.tick` in `engine.py` (10 min).
 
+### Other targets
+
+This textbook uses only `--target unity-csharp`. The targets `python`, `solidity` and `opa` generate code from the same file, and `agent-rego` and `agent-cedar` generate the boundary policies of the agent governance extension. For a file that declares the norms extension, `opa` also writes a norms monitor in Rego for each contract, and `solidity` a monitor contract; each one computes the verdicts of the norms from the observations ([Appendix D](../spec/appendix-d-codegen.md), Section D.5, of the specification).
+
 ## 7.7 Check
 
 ```bash
@@ -221,7 +225,7 @@ These nine tests catch the structural bugs that would prevent Unity from compili
 
 You now have:
 
-- A 297-line Sim-IR JSON (for the bundled example).
+- A 300-line Sim-IR JSON (for the bundled example).
 - A 783-line Unity-ready C# tree, dropped into the Unity project.
 - A Python proof-of-concept showing what the C# trace **must** look like once it runs.
 

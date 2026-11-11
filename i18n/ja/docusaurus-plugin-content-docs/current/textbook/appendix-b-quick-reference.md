@@ -6,7 +6,7 @@ title: "付録 B — 記法の早見表"
 
 # 付録 B — 記法の早見表
 
-本書で使う CADL の書き方、コマンド、ファイルの場所を 1 ページにまとめます。それぞれの意味は第 3 章で説明しています。この付録の CADL の例は、つなげると 1 つのファイルになり、`cadl` 0.3.22 の `cadl check` と `cadl verify` を通ります。
+本書で使う CADL の書き方、コマンド、ファイルの場所を 1 ページにまとめます。それぞれの意味は第 3 章で説明しています。この付録の CADL の例は、つなげると 1 つのファイルになり、`cadl` 0.3.25 の `cadl check` と `cadl verify` を通ります。
 
 ## B.1 ファイルの構成
 
@@ -130,12 +130,13 @@ sos:
 | `cadl check <file>` | 構文、型、SoS-DSL の静的な規則を検査する | 3.9、4.3 |
 | `cadl verify <file>` | `cadl check` に加え、前提と保証の矛盾、プロトコルのデッドロックを検査する | 3.9 |
 | `cadl sim-ir <file> --format json` | IR を JSON で出力する | 4.3、5.3 |
-| `cadl codegen --target unity-csharp -o <dir> <file>` | IR から Unity の C# を生成する（`--target` は `python`、`solidity`、`opa`、`unity-csharp`。`agent-rego` と `agent-cedar` は、エージェント統治拡張の境界の方針を生成する） | 7.6 |
+| `cadl codegen --target unity-csharp -o <dir> <file>` | IR から Unity の C# を生成する（`--target` は `python`、`solidity`、`opa`、`unity-csharp`。`agent-rego` と `agent-cedar` は、エージェント統治拡張の境界の方針を生成する）。規範拡張を宣言したファイルでは、`opa` と `solidity` が契約ごとの規範モニターも生成する（仕様書の[付録 D](../spec/appendix-d-codegen.md) D.5 節） | 7.6 |
 | `./scripts/sos_dsl_handson_e2e.sh <file> --unity <dir>` | 検査、IR の出力、C# の生成、Unity プロジェクトへの配置をまとめて行う。`--unity ""` で配置を省く | 7.3 |
 | `python3 -m cadl.runtime.multi_robot_demo [--summary] [--log <file>] [--ir <file>]` | 参照ランタイムで 5 台のデモを動かす。`--summary` は終わりの状態の表、`--log` は NDJSON のトレース、`--ir` は自分の IR を使う | 7.5、7.9 |
 | `streamlit run app.py`（`cadl-explorer` で） | cadl-explorer を起動する | 6.3 |
 | `nats-server -p 4222` | NATS を起動する | 8.2 |
 | `go run .`（`arbitrator/C-SoS/main` で） | arbitrator を起動する | 8.2 |
+| `cadl --help` | すべてのコマンドを表示する。本書で使わない拡張のコマンドとして、規範拡張の `norms-eval` と `norms-check`（[付録 F](../spec/appendix-f-norms.md)）、エージェント統治拡張の `agents-run`、`audit-verify`、`mcp-gateway`、`a2a-gateway`（[付録 G](../spec/appendix-g-agents.md)）、確率モデル拡張の `model-check`（[付録 H](../spec/appendix-h-stochastic.md)）、戦略モデル拡張の `game-check`（[付録 I](../spec/appendix-i-games.md)）、根拠付け拡張の `norms-indices`（[付録 J](../spec/appendix-j-grounding.md)）も表示される | 2.4、11.2 |
 
 ## B.6 ソースファイルの場所
 

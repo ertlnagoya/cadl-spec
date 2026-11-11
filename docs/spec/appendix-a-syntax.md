@@ -475,7 +475,7 @@ predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
 monitor `rule:`, lifecycle `when:`, and an `on:` that is not a message
 event are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. `cadl` 0.3
-deviates from this appendix as follows (checked against `cadl` 0.3.24).
+deviates from this appendix as follows (checked against `cadl` 0.3.25).
 
 - **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.23; no
   deviation is known. Up to `cadl` 0.3.17 the unary `-` of `factor` was

@@ -241,3 +241,5 @@ description: "References cited in the CADL specification."
 [118] Model Context Protocol, "Specification," revision 2026-07-28, https://modelcontextprotocol.io/specification/2026-07-28 (accessed Nov. 2026); in particular "Transports: stdio" and "Server Features: Tools".
 
 [119] Agent2Agent (A2A) Project, "Agent2Agent (A2A) Protocol Specification," version 1.0.0, https://a2a-protocol.org/latest/specification/ (accessed Nov. 2026).
+
+[120] W. W. Vasconcelos, M. J. Kollingbaum, and T. J. Norman, "Normative conflict resolution in multi-agent systems," Autonomous Agents and Multi-Agent Systems, vol. 19, no. 2, pp. 124-152, 2009, doi:10.1007/s10458-008-9070-9.

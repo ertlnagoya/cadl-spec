@@ -45,3 +45,14 @@ not that its deadlines and rules are the right ones.
   deterministic mock in place of the LLM (a function that returns a
   fixed sequence of drafts) to watch the loop run, then switch to a
   real LLM.
+
+## 10.2 Agents that act while the system runs
+
+In 10.1 an LLM writes a contract, and the contract is checked before it is used. When LLM agents
+act on their own while the system runs, the agent governance extension of the specification
+([Appendix G](../spec/appendix-g-agents.md)) decides each message that an agent sends from the
+norms of its contract: allow, deny, or escalate to a human. `cadl` 0.3.25 makes this decision in a
+gateway between an agent and an MCP tool server (`cadl mcp-gateway`) and in a gateway between the
+clients and an A2A agent (`cadl a2a-gateway`). Every decision is written to an audit log, and
+`cadl audit-verify` checks its hash chain (Sections G.8, G.11 and G.13). This textbook does not use
+these commands.

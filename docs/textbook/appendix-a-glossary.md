@@ -74,7 +74,7 @@ The terms used in this textbook, grouped by topic. The right-hand column gives t
 | **`cadl verify`** | The command that does what `cadl check` does and, with an SMT solver, also looks for contradictions between assumptions and guarantees and for deadlocks in protocols | 3.9 |
 | **SMT solver / Z3** | A program that decides whether logical formulas can hold together. `cadl verify` uses Z3 [8] | 2.1, 3.9 |
 | **IR** (intermediate representation, Sim-IR) | The content of a CADL file as JSON in three layers (institution / protocol / algorithm). `cadl sim-ir` writes it, and the other tools read it | 2.1, 7.6 |
-| **Code generation** (`cadl codegen`) | Producing executable code from the IR. `--target` selects the target (`python`, `solidity`, `opa`, `unity-csharp`) | 7.3, 7.6 |
+| **Code generation** (`cadl codegen`) | Producing executable code from the IR. `--target` selects the target (`python`, `solidity`, `opa`, `unity-csharp`, and `agent-rego` and `agent-cedar` for the agent governance extension) | 7.3, 7.6 |
 | **e2e script** | `cadl_repo/scripts/sos_dsl_handson_e2e.sh`, which checks the file, writes the IR, generates the C# and copies it into the Unity project in one go | 7.3 |
 | **Python reference runtime** | A hand-written interpreter (`engine.py`) that reads the IR directly and replays how contract instances move between states. Used to cross-check the generated C# | 7.5, 7.6 |
 | **`multi_robot_demo`** | A demo that runs five robots through fixed scripts on the reference runtime. `--summary` prints a table of final states, `--log` writes an NDJSON trace, `--ir` uses your own IR | 7.2, 7.9 |

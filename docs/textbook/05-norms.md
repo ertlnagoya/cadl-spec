@@ -197,6 +197,8 @@ monitors[0].id    : battery_guard
 
 The same file now describes both the structure (Chapter 4) and the rules (Chapter 5). The IR is no longer "structural-only" — it carries enough information to build a runtime.
 
+The monitors of this chapter belong to the SoS-DSL extension. The norms extension of the specification ([Appendix F](../spec/appendix-f-norms.md)) writes the norms of a contract as obligations, permissions, prohibitions and powers. Their conditions may use quantifiers and aggregates over a set of actors (Section F.5). `cadl norms-eval` judges the norms on a recorded trace, and `cadl norms-check` checks the norms of one contract with the model checker PRISM before the system runs, for example whether two norms conflict (Section F.12). This textbook does not use the norms extension.
+
 ## 5.8 Exercises
 
 ### Exercise 5.1 (★) — Add the basic lifecycle

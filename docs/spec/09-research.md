@@ -13,7 +13,7 @@ tool already solves part of a problem, we say which part CADL would hand
 to that tool and which question the tool cannot answer.
 
 The starting point is this specification (Version 0.3) and the reference
-implementation `cadl` 0.3.24. It checks the satisfiability of contracts
+implementation `cadl` 0.3.25. It checks the satisfiability of contracts
 with Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), detects
 protocol deadlocks by structural analysis, supports the SoS-DSL extension
 ([Appendix E](./appendix-e-sos-dsl.md): `lifecycle:`, `monitors:`,
@@ -272,8 +272,19 @@ and Z3 is used only for satisfiability. The norms extension
 RD-6.1, RD-6.2, RD-6.3, and RD-6.5: it defines first-class norms,
 bounded temporal operators with four-valued verdicts, counts-as rules,
 and what happens to running norms on an amendment. The
-generated Python code monitors norms at run time
-([F.10](./appendix-f-norms.md#f10-reference-implementation-status)).
+generated Python code monitors norms at run time, and so do the
+generated Rego, as a step function that is given the stored state,
+and Solidity, for the contracts they support
+([F.10](./appendix-f-norms.md#f10-reference-implementation-status)),
+and the norms of one contract instance can be checked at design time:
+[F.12](./appendix-f-norms.md#f12-design-time-checking) translates them,
+with discrete time and classes of values, into an MDP for PRISM
+[[Kwiatkowska+, CAV 2011]](./appendix-b-references.md) and asks whether
+each norm can be violated, whether every activation can be kept,
+whether two norms are in conflict
+[[Vasconcelos+, JAAMAS 2009]](./appendix-b-references.md), and whether
+a power is ever exercised, each "yes" with a trace that the runtime
+semantics of F.5 confirms.
 The grounding extension
 ([Appendix J](./appendix-j-grounding.md), `grounding` 0.1) is a first
 step towards the link to α, β, and λ: it derives from the norms of a
@@ -284,9 +295,17 @@ gives sanctions a numeric magnitude that λ scales; the same indices
 are also computed over all contracts of an SoS. The indices are
 counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
-design-time checking by a model checker, monitoring in the other
-generated runtimes, weighted indices, norms per regime, and the
-derivation of model probabilities from norms remain open. We found no work that handles first-class norm
+design-time checking that F.12 does not cover (quantifiers and arithmetic in
+predicates, several contract instances, sets of actors whose size is not fixed, continuous
+time, amendments, and which party can avoid a violation),
+monitoring in the Unity C#
+runtime, monitoring in the generated Rego and Solidity of what they
+refuse (quantifiers, aggregates, wildcard and range references in
+predicates, index expressions, and amendments; in Solidity also `*`,
+`/`, literals with more than six decimals, nested temporal operators,
+and contracts whose creation code exceeds the limit of EIP-3860),
+weighted indices, norms per regime, and the derivation of model
+probabilities from norms remain open. We found no work that handles first-class norm
 objects together with the institutional parameters α, β, and λ, the
 composition of many contracts in an SoS, and amendment during operation.
 We also found no tool that connects deontic blame semantics with
@@ -417,7 +436,7 @@ such as voting and dissent (RD-8.4) and plan-level verification
 ## 9.9 Research Roadmap
 We organize the above research directions along a time axis and present
 a short-, medium-, and long-term research roadmap. The order follows the
-current implementation: items that extend what `cadl` 0.3.24 already
+current implementation: items that extend what `cadl` 0.3.25 already
 provides come first.
 
 | **Period** | **Key Challenges** | **Content** |

@@ -74,7 +74,7 @@ title: "付録 A — 用語集"
 | **`cadl verify`** | `cadl check` に加え、SMT ソルバで前提と保証の矛盾や、プロトコルのデッドロックを検査するコマンド | 3.9 |
 | **SMT ソルバ / Z3** | 論理式が同時に成り立つかを判定するプログラム。`cadl verify` は Z3 [8] を使う | 2.1、3.9 |
 | **IR**（中間表現、Sim-IR） | CADL ファイルの内容を 3 層（institution / protocol / algorithm）の JSON にしたもの。`cadl sim-ir` が出力し、以降のツールはこれを読む | 2.1、7.6 |
-| **コード生成**（`cadl codegen`） | IR から実行可能なコードを作ること。`--target` で生成先（`python`、`solidity`、`opa`、`unity-csharp`）を選ぶ | 7.3、7.6 |
+| **コード生成**（`cadl codegen`） | IR から実行可能なコードを作ること。`--target` で生成先（`python`、`solidity`、`opa`、`unity-csharp`、エージェント統治拡張の `agent-rego` と `agent-cedar`）を選ぶ | 7.3、7.6 |
 | **e2e スクリプト** | `cadl_repo/scripts/sos_dsl_handson_e2e.sh`。検査、IR の出力、C# の生成、Unity プロジェクトへの配置をまとめて行う | 7.3 |
 | **Python 参照ランタイム** | IR を直接読み込み、契約インスタンスの状態の移り変わりを再現する手書きのインタプリタ（`engine.py`）。生成された C# の結果との照合に使う | 7.5、7.6 |
 | **`multi_robot_demo`** | 参照ランタイムで 5 台のロボットを決まったシナリオで動かすデモ。`--summary` で終わりの状態の表、`--log` で NDJSON のトレース、`--ir` で自分の IR を使う | 7.2、7.9 |
