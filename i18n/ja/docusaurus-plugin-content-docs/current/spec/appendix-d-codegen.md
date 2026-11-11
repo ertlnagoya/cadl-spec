@@ -17,7 +17,7 @@ description: "CADL v0.3のコード生成ターゲットの一覧。各ターゲ
 
 | ターゲット名 | カテゴリ | 生成物 | リファレンス実装モジュール | コマンド |
 |-------------|---------|--------|-------------------|---------|
-| `python` | ランタイムコード | Python パッケージ（アクター，契約モニター，プロトコル，モードコントローラ，メトリクス，ランタイム） | `cadl.codegen` | `cadl codegen -t python` |
+| `python` | ランタイムコード | Python パッケージ（アクター，契約モニター，プロトコル，モードコントローラ，メトリクス，ランタイム。`norms: 0.1` を宣言したファイルでは，[付録F](./appendix-f-norms.md)の規範のモニターも含む） | `cadl.codegen` | `cadl codegen -t python` |
 | `solidity` | 制度契約 | Solidity [[Solidity Documentation]](./appendix-b-references.md) スマートコントラクト（契約ごとに 1 つ） | `cadl.codegen.solidity` | `cadl codegen -t solidity` |
 | `opa` | 制度ポリシー | Rego / OPA [[Open Policy Agent]](./appendix-b-references.md) ポリシー（契約ごとに 1 つ） | `cadl.codegen.opa` | `cadl codegen -t opa` |
 | `unity-csharp` | ランタイムコード | [付録E](./appendix-e-sos-dsl.md) のライフサイクルとモニターを実行する Unity C# クラス | `cadl.codegen.unity_csharp` | `cadl codegen -t unity-csharp` |
@@ -36,6 +36,19 @@ Python のシミュレータ設定を `codegen:` の項目から要求するこ�
 最右列に示すとおりコマンドラインでターゲットを選択する。ファイル中の
 `codegen:` の項目は構文解析されるが，まだ生成を駆動しない。`cadl` 0.3.9 からは，
 実装が出力できないターゲットを指定した項目に警告が出る（D.4）。
+
+規範拡張（[付録F](./appendix-f-norms.md)）を宣言したファイルに対しては，`python` ターゲットは
+モジュール `norms_monitor.py` も出力する（`cadl` 0.3.21 の後の開発版）。このモジュールは，
+各契約の `norms:` と `counts_as:` のブロック，および `assume:` と `guarantee:` の項目を，
+時相演算子を含む項目も含めて，システムの動作中に 1 つの契約インスタンスについて監視する。
+観測を 1 つずつ受け取り，状態または判定（`pending`，`fulfilled`，`violated`，`excused`）が
+変わった規範インスタンスと項目を返す。パッケージの他のモジュールと違い，`cadl` をインポートしない。
+宣言されたアクターと契約をデータ（1 つの JSON テキスト）として持ち，`cadl norms-eval` の
+評価コードを含み，Python の標準ライブラリだけを用いる。生成器は，モジュールを書き出す前に検査し，
+検査に失敗した場合は何も書き出さない。
+詳細は [F.10](./appendix-f-norms.md#f10-reference-implementation-status) に示す。
+`solidity`，`opa`，`unity-csharp` の各ターゲットは規範を監視しない。`solidity` と `opa` は，
+時相演算子を含む項目を生成する検査から外し，コメントを残して警告を出す。
 
 ## D.2 二層ジェネレータ構成
 
@@ -66,7 +79,8 @@ src/cadl/
   契約のライフサイクルとモニター（[付録E](./appendix-e-sos-dsl.md)）をそのシミュレーションの
   中で実行する場合は **`unity-csharp`**。
 - **`python`**: アクター，契約モニター，プロトコルの実行可能な
-  ランタイムの骨格が必要な場合。**`ros2`** は実ロボットの駆動のために
+  ランタイムの骨格が必要な場合，または[付録F](./appendix-f-norms.md)の規範を
+  システムの動作中に監視する場合。**`ros2`** は実ロボットの駆動のために
   予約されており，`cadl` 0.3 では未実装。
 - **`solidity`**: Institution 層契約をオンチェーン（ブロックチェーン）
   で強制する場合。
