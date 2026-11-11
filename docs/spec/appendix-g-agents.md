@@ -714,8 +714,11 @@ the method as `reason`), a response for which no request is in flight
 (`unsolicited_response`), a call that was allowed or released but
 could not be sent (`forward_failed`), and, at an A2A gateway, a request
 without an authenticated sender (`unauthenticated_request`), a request
-that names a task or a context of another client (`task_refused`), and a
-request that was sent but got no valid response (`invalid_response`). These records change no decision,
+that names a task or a context of another client (`task_refused`), a
+request that was sent but got no valid response (`invalid_response`), a
+cancellation of a task that is passed on or withdraws a hold
+(`task_cancel`), and a request beyond the number of requests handled at
+the same time (`overloaded`). These records change no decision,
 and they are only as trustworthy as the host that writes them: a log
 replayed from a trace that anyone could write proves nothing about
 them.
@@ -1598,60 +1601,93 @@ OUT.jsonl` is the A2A gateway of G.11 for the JSON-RPC binding of A2A
 1.0.0: an HTTP server in front of the agent `Y` of the file
 (`kind: llm_agent`, `protocol: a2a`), which passes requests on to the
 agent at URL. It shares the enforcement point, the trace, the log, the
-holds, and the inbox with the MCP gateway, and its trace replays through
-`cadl agents-run` to the same audit log, byte for byte. Where G.11
-leaves a choice, the gateway takes the one that lets less through. Its
-readings are these.
+holds, and the inbox with the MCP gateway, and `cadl agents-run` on its
+trace writes the same audit log, byte for byte. Where G.11 leaves a
+choice, the gateway takes the one that lets less through. Its readings
+are these.
 
 - The sender is authenticated for every request, before the body is
   read as JSON. A2A leaves the scheme to the agent card; the gateway
-  uses keys of the actors as the approvals do: the header
-  `Authorization: CADL-HMAC` carries the actor, a nonce, and an
-  HMAC-SHA256 under the actor's key over the canonical JSON of G.8 of
-  the actor, the run id of the gateway, the nonce, the HTTP method, the
-  path, and the SHA-256 of the body. A nonce is accepted once in a run.
-  A bearer token, which whoever sees it can send again, is not accepted.
-  Every actor of the keys is an actor of the file. A request without a
-  valid header gets HTTP 401 with the run id, is recorded as
-  `unauthenticated_request` (at most 20 records a second, the next one
-  counting the requests not recorded), and is not decided.
+  uses keys of the actors, as the approvals do. The request carries
+  exactly one header `Authorization: CADL-HMAC actor="X",
+  nonce="N", mac="M"`, where `X` is a concrete actor, `N` 32 and `M` 64
+  lowercase hexadecimal digits. `M` is the HMAC-SHA256 under the key
+  of `X` of the canonical JSON of G.8 of the object
+  `{"scheme": "cadl-a2a-request/1", "actor": X, "run_id": R,
+  "nonce": N, "method": "POST", "path": "/", "body_sha256": D}`, where
+  `R` is the run id of the gateway and `D` the SHA-256 of the body in
+  lowercase hexadecimal. The field `scheme` separates this MAC from the
+  MAC of an inbox file, also when an actor uses one key for both. The
+  headers `A2A-Version` and `Content-Type` are not covered by the MAC.
+  A nonce is accepted once in a run; the gateway keeps the nonces of a
+  run in memory, so memory grows with the authenticated requests, and
+  after 1 000 000 of them it refuses every further request (reason
+  `nonce_limit`) until it is started again, with a new run id. A bearer
+  token, which whoever sees it can send again, is not accepted. Every
+  actor of the keys is an actor of the file. A request without a valid
+  header gets HTTP 401 with the run id, is recorded as
+  `unauthenticated_request`, and is not decided.
 - The extension of G.11 has the URI
   `https://www.ertl.jp/cadl-spec/a2a/agents-message/v0.1`; its value is
-  `{"name": e, "args": [...]}` with an identifier and at most 16 strings.
-  A message without it is answered with a rejected task and recorded as
-  `unauthorised_message` with the reason `no_name`, without a decision;
-  a value of another form is a JSON-RPC error -32602.
+  `{"name": e, "args": [...]}`, where `e` is an identifier of at most
+  64 characters and the arguments are at most 16 strings of at most 256
+  characters. A message without it is answered with a rejected task and
+  recorded as `unauthorised_message` with the reason `no_name`, without
+  a decision; a value of another form is a JSON-RPC error -32602. An
+  agent card given with `--agent-card` has to declare the extension
+  under `capabilities.extensions`, or the gateway does not start.
 - Approvals do not come as A2A messages. A message whose name is that of
   a `counts_as:` rule that creates `approval` or `rejection`, whatever
   the receiver of the rule, is rejected and recorded as
   `unauthorised_message` with the reason `approval_as_message`.
   Approvals come through the inbox, as for the MCP gateway, bound to the
   arguments of the held message, which are the whole `params` of its
-  `SendMessage`. An A2A approval would name the hold only.
+  `SendMessage`; an A2A message would carry the hold id and nothing that
+  binds it to what the approver saw. When the receiver of such a rule
+  is a set or a range, an approval through the inbox becomes the message
+  to the actor of the gateway (`Y`, or the tool server of the MCP
+  gateway), provided that actor is a member. A gateway does not start
+  when a contract that its actor is a party of escalates and none of its
+  rules that create `approval` has a receiver that the gateway can name
+  in this way, because the holds of that contract could never be
+  approved.
 - Only `SendMessage` is decided. `GetTask` and `CancelTask` carry no
-  message between actors; they pass, without a decision and without a
-  record, for tasks that the agent or the gateway gave to the same actor
-  in this run. A `SendMessage` likewise names only such tasks
-  (`taskId`, `referenceTaskIds`) and contexts (`contextId`). Anything
-  else is `TaskNotFoundError` (-32001) and is recorded as
-  `task_refused`; a context id that the gateway has not seen is refused
-  too, because it may be a context of another client or of an earlier
-  run. `tenant` is refused (-32602), because tasks are kept by their id.
+  message between actors; they pass, without a decision, for tasks that
+  the agent or the gateway gave to the same actor in this run.
+  `CancelTask` changes the state of the agent and is recorded as
+  `task_cancel` before it is passed on; `GetTask` is not recorded. A
+  `SendMessage` likewise names only such tasks (`taskId`,
+  `referenceTaskIds`) and contexts (`contextId`). Anything else is
+  `TaskNotFoundError` (-32001) and is recorded as `task_refused`; a
+  context id that the gateway has not seen is refused too, because it
+  may be a context of another client or of an earlier run. `tenant` is
+  refused (-32602), because tasks are kept by their id.
   `SendStreamingMessage`, `SubscribeToTask`, `ListTasks`, and
   `GetExtendedAgentCard` are refused with `UnsupportedOperationError`
   (-32004), the methods of push notifications and a `SendMessage` with a
   push notification configuration with
   `PushNotificationNotSupportedError` (-32003), and any other method
-  with -32601; all are recorded as `method_refused`. A request without
-  the header `A2A-Version: 1.0` is refused with `VersionNotSupportedError`
-  (-32009); under A2A 1.0.0 a missing header means version 0.3.
+  with -32601; all are recorded as `method_refused`. The header
+  `A2A-Version` has to be `1.0` or `1.0.N`, with surrounding spaces
+  removed; otherwise, also when it is missing, the request gets
+  `VersionNotSupportedError` (-32009), because under A2A 1.0.0 a missing
+  header means version 0.3.
 - A denial is a task of the gateway in `TASK_STATE_REJECTED` whose
   status message names the reason, the norms, the hold, the fallback,
-  and `notify`. A held blocking request waits; with `returnImmediately`
-  the client gets a task of the gateway in `TASK_STATE_SUBMITTED`, which
-  keeps its id after a release and shows the agent's task under it. A
-  client that cancels that task, or closes the connection of a blocking
-  held request (also over TLS), withdraws the request (G.6).
+  and `notify`. A held request that waits for its answer (a blocking
+  request) waits until the hold closes; with `returnImmediately` the
+  client gets a task of the gateway in `TASK_STATE_SUBMITTED`, which
+  keeps its id after a release and shows the agent's task under it. If
+  the released request cannot be passed on, that task becomes
+  `TASK_STATE_FAILED` and the log gets `forward_failed`. A client that
+  cancels the task of a held request, or closes the connection of a
+  held blocking request, withdraws the request (G.6). Bytes that the
+  client sends while its request is held are read and dropped; a
+  half-closed connection (the client has shut down its sending side)
+  counts as closed, which withdraws the request. A withdrawal is a step
+  of the enforcement point, and the answer comes from the closing record
+  of the hold: a hold whose deadline passed before the step is
+  `expired`, and the client gets a rejected task.
 - A request is read with one `Content-Length` of at most 1 MiB and
   without `Transfer-Encoding`, one request per connection; the body is
   parsed as strictly as a line of the MCP gateway and passed on
@@ -1661,30 +1697,50 @@ readings are these.
   `invalid_response`). A request that cannot be sent after an allow or a
   release gives -32603 and `forward_failed`; one that was sent and got
   no valid response gives -32006 and `invalid_response`. An address
-  other than loopback needs TLS.
+  other than loopback needs TLS, and `--upstream-token` needs an
+  `https` agent or a loopback address.
+- At most 64 requests are handled at the same time (`--max-handlers`;
+  held blocking requests count); a request beyond that gets HTTP 503
+  and is recorded as `overloaded`. The records of `unauthenticated_request`
+  and of `overloaded` are kept to at most 20 a second for each event; the
+  next record of the event counts the requests that were not recorded
+  (`;not_recorded_before=N` in its `reason`).
+
+The gateway does not read the header `A2A-Extensions`, does not answer
+`ExtensionSupportRequiredError` (-32008), does not read `A2A-Version` as
+a query parameter, and does not check that a part `raw` is base64.
 
 The A2A gateway is tested with a fake A2A agent in a thread of the test
-and a fake client, standard library only, in 58 tests: allow, denial by
-the default, a message without name, escalation that is approved,
-rejected, or expires, with and without `returnImmediately`, a held task
-that is cancelled before a signed approval arrives, a client that closes
-the connection of a held request over TCP and over TLS, a grant through
-the inbox, an approval re-addressed to another held message with other
-arguments, eight kinds of failed authentication, 27 kinds of malformed
-input, an agent that is down or answers wrongly, and the isolation of
-tasks and contexts. In every scenario the agent receives no request that
-was not allowed or released, and `cadl agents-run` on the trace writes
-the same audit log as the gateway. An independent review of the first
-version found that a context id that the gateway had not seen was
-claimed by whoever named it first, also in a later run, so that a client
-could continue the context of another; that `tenant` let a client read
-the task of another tenant with the same id; that an approval rule with
-a set as receiver was not recognised, so that an approval came as an A2A
+and a fake client, standard library only, in 67 tests: allow,
+denial by the default, a message without name, escalation that is
+approved, rejected, or expires, with and without `returnImmediately`, a
+held task that is cancelled before a signed approval arrives or after
+its deadline, a client that closes the connection of a held request over
+TCP (also after sending more bytes, or by a half-close) and over TLS, a
+grant through the inbox, an approval re-addressed to another held
+message with other arguments, approval rules with a set as receiver,
+eight kinds of failed authentication, 27 kinds of malformed input, an
+agent that is down or answers wrongly, a release that cannot be passed
+on, more requests than handlers, and the isolation of tasks and
+contexts. In every scenario the agent receives no request that was not
+allowed or released, and `cadl agents-run` on the trace writes the same
+audit log as the gateway. An independent review of the first version
+found that a context id that the gateway had not seen was claimed by
+whoever named it first, also in a later run, so that a client could
+continue the context of another; that `tenant` let a client read the
+task of another tenant with the same id; that an approval rule with a
+set as receiver was not recognised, so that an approval came as an A2A
 message, not bound to the held arguments, and was passed on to the
 agent; and that a TLS client that closed with close_notify did not
-withdraw its held request. Each is corrected and has a test. The review
-found no request that reached the agent without a decision, in its
-proofs of concept and in a run of 12 threads whose log of 280 records
+withdraw its held request. A second review found that the correction of
+the third defect left holds under such a rule that could never be
+approved, also at the MCP gateway; that a client that sent more bytes
+and then closed was not seen as gone; that a cancellation after a
+deadline that the ticker had not yet observed was answered as cancelled
+while the log said `expired`; and that a cancellation reached the agent
+without a record. Each is corrected and has a test. Neither review found
+a request that reached the agent without a decision; the first checked
+this also in a run of 12 threads whose log of 280 records
 `cadl agents-run` reproduced.
 
 The trace is that of `cadl norms-eval` (JSON Lines with `t`,
