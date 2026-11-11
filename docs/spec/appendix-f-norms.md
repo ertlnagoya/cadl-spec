@@ -1307,6 +1307,27 @@ At each observation the environment chooses three things.
    and the model keeps one value for them; a quantity whose value is used
    in another way (by `min`, `max`, `sum`, `avg`, or arithmetic) keeps a
    value of each class.
+
+   Quantities compared with each other (`A.x < B.y`, `A.x == B.y`,
+   `max(...) < A.y`) form groups. For a group of k quantities the classes
+   hold k values below, between, and above the literals, so that the k
+   quantities can take every order and every pattern of equalities that
+   values of a trace can take, and likewise k texts (ordered as norms-eval
+   orders texts, by Python's order of strings), k lists, and k objects;
+   a text literal with the character U+0000 in such an order is not
+   translated. This is exact: the value of a predicate depends only on
+   the order of the quantities of a group among themselves and with the
+   literals, which these values realise.
+
+   Arithmetic (`+`, `-`, `*`, `/`), `sum`, and `avg` are translated only
+   for quantities with a finite domain. CADL declares none for the
+   quantities of a norm, so the domain is given to the processor, as a
+   range of integers lo..hi per quantity (`--domain` in the reference
+   implementation). Such a quantity takes the integers of its domain and
+   the values that are not numbers; the answers then hold for the traces
+   in which every number of such a quantity is an integer of its domain,
+   and the report names the quantities and their domains. A predicate
+   with arithmetic over a quantity without a domain is not translated.
 3. **The end.** Whether the instance ends at this observation (step 6
    of F.5). This covers both the end signalled for an instance without
    `lifecycle:` and a terminal lifecycle state.
@@ -1373,13 +1394,14 @@ from comparisons (`==`, `!=`, `<`, `<=`, `>`, `>=`, `IN`) of a quantity
 a set, `A[j+1].q` for a quantifier variable `j`) with a literal or with
 `count` of a comprehension, quantities used as conditions, `AND`, `OR`,
 `NOT`, the quantifiers `exists` and `for all`, the aggregates `count`,
-and `min` and `max` compared with a literal, of comprehensions over a
-set or a range, and wildcard and range references in predicates, which
+`min`, and `max` of comprehensions over a set or a range, comparisons
+of two quantities, and, for quantities with a domain, arithmetic,
+`sum`, and `avg`, and wildcard and range references in predicates, which
 F.5 reads as quantifiers or comprehensions; a content that is one bounded
 temporal operator over such predicates; deadlines; `until:`; counts-as
 rules with `if:`; powers and their effects; reparations; and `assume:`
 items of these forms (for the verdict `excused`). It does not translate
-arithmetic, `sum`, `avg`, comparisons of two quantities, `request`
+arithmetic, `sum`, and `avg` over a quantity without a domain, `request`
 fields, `now`, `state`, a temporal operator combined with other
 operators or nested in another, and amendments
 (F.6). A norm with such a part is reported as **not translated**, with
