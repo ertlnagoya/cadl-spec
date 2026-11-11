@@ -13,7 +13,7 @@ tool already solves part of a problem, we say which part CADL would hand
 to that tool and which question the tool cannot answer.
 
 The starting point is this specification (Version 0.3) and the reference
-implementation `cadl` 0.3.23. It checks the satisfiability of contracts
+implementation `cadl` 0.3.24. It checks the satisfiability of contracts
 with Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), detects
 protocol deadlocks by structural analysis, supports the SoS-DSL extension
 ([Appendix E](./appendix-e-sos-dsl.md): `lifecycle:`, `monitors:`,
@@ -280,13 +280,13 @@ step towards the link to α, β, and λ: it derives from the norms of a
 contract an index of information sharing over declared items and an
 index of the concentration of powers, compares the declared α and β
 with them, measures how many norms carry a sanction or a reward, and
-gives sanctions a numeric magnitude that λ scales. The indices are
+gives sanctions a numeric magnitude that λ scales; the same indices
+are also computed over all contracts of an SoS. The indices are
 counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
 design-time checking by a model checker, monitoring in the other
-generated runtimes, indices that are weighted or aggregated over the
-contracts of an SoS, norms per regime, and the derivation of model
-probabilities from norms remain open. We found no work that handles first-class norm
+generated runtimes, weighted indices, norms per regime, and the
+derivation of model probabilities from norms remain open. We found no work that handles first-class norm
 objects together with the institutional parameters α, β, and λ, the
 composition of many contracts in an SoS, and amendment during operation.
 We also found no tool that connects deontic blame semantics with
@@ -417,7 +417,7 @@ such as voting and dissent (RD-8.4) and plan-level verification
 ## 9.9 Research Roadmap
 We organize the above research directions along a time axis and present
 a short-, medium-, and long-term research roadmap. The order follows the
-current implementation: items that extend what `cadl` 0.3.23 already
+current implementation: items that extend what `cadl` 0.3.24 already
 provides come first.
 
 | **Period** | **Key Challenges** | **Content** |

@@ -231,3 +231,13 @@ description: "References cited in the CADL specification."
 [113] C. Mu, "Automated Game-Theoretic Verification of Security Systems," in Proc. QEST, LNCS 11785, Springer, pp. 239-256, 2019, doi:10.1007/978-3-030-30281-8_14.
 
 [114] C. Baier and J.-P. Katoen, Principles of Model Checking, MIT Press, Cambridge, MA, 2008, ISBN 978-0-262-02649-9.
+
+[115] K. A. Hansen, M. Koucký, N. Lauritzen, P. B. Miltersen, and E. P. Tsigaridas, "Exact Algorithms for Solving Stochastic Games," in Proc. STOC, ACM, pp. 205-214, 2011, doi:10.1145/1993636.1993665; full version arXiv:1202.3898, https://arxiv.org/abs/1202.3898.
+
+[116] M. Ummels and D. Wojtczak, "The Complexity of Nash Equilibria in Stochastic Multiplayer Games," Logical Methods in Computer Science, vol. 7, no. 3, paper 20, 2011, doi:10.2168/LMCS-7(3:20)2011.
+
+[117] O. Madani, S. Hanks, and A. Condon, "On the undecidability of probabilistic planning and related stochastic optimization problems," Artificial Intelligence, vol. 147, no. 1-2, pp. 5-34, 2003, doi:10.1016/S0004-3702(02)00378-8.
+
+[118] Model Context Protocol, "Specification," revision 2026-07-28, https://modelcontextprotocol.io/specification/2026-07-28 (accessed Nov. 2026); in particular "Transports: stdio" and "Server Features: Tools".
+
+[119] Agent2Agent (A2A) Project, "Agent2Agent (A2A) Protocol Specification," version 1.0.0, https://a2a-protocol.org/latest/specification/ (accessed Nov. 2026).
