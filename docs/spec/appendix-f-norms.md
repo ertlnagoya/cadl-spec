@@ -780,7 +780,7 @@ its norm in the **old** version:
 
 | `on_amendment:` | Effect |
 | --- | --- |
-| `carry_over` (default) | The instance continues under the norm with the same `id` in the new version, keeping its state and the time already elapsed against its deadline. It is `discharged` instead when the new version has no norm with that `id` or when that norm has a different `kind`. If the content changes, the instance is judged on the new content from this observation on. If the elapsed time already exceeds the new deadline (elapsed time equal to it does not), the instance is decided when the new version takes effect, before step 1: an obligation, also a suspended one, becomes `violated`, and a prohibition, also a suspended one, becomes `fulfilled`, because its window has closed. |
+| `carry_over` (default) | The instance continues under the norm with the same `id` in the new version, keeping its state and the time already elapsed against its deadline. It is `discharged` instead when the new version has no norm with that `id` or when that norm has a different `kind`. If the content changes, the instance is judged on the new content from this observation on, and its pending candidates (the observations of its window at which a temporal content is not yet decided, F.5 step 4) are dropped; otherwise they are kept. If the elapsed time already exceeds the new deadline (elapsed time equal to it does not), the window has closed. An instance without a pending candidate is then decided when the new version takes effect, before step 1: an obligation, also a suspended one, becomes `violated`, and a prohibition, also a suspended one, becomes `fulfilled`. An instance with a pending candidate stays in force and gets no new candidate, and step 4 decides it when its candidates are decided: a candidate whose content holds fulfils an obligation or violates a prohibition, and when none holds the obligation becomes `violated` and the prohibition `fulfilled`. The verdict is thus the one that the new version gives when it applies from the start of the instance, whenever the pending candidates lie within the new window; a pending candidate outside it still counts, because it arose under the old version. |
 | `discharge` | The instance is `discharged`. |
 | `transform: X` | The instance is `discharged`, and the norm `X` of the new version is activated if it is `inactive`, with the time already elapsed counted against its deadline (for an obligation or prohibition; for a permission or power the time has no effect). If `X` is not `inactive`, nothing more happens. |
 
@@ -1144,33 +1144,42 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   what `cadl norms-eval` does at an amendment. A pair of versions is
   made from a bundled example with norms: the old version gets random
   `on_amendment:` policies, and the new version is the old one with
-  deadlines and contents changed, kinds changed, norms added (also as a
-  reparation target) and removed, and powers added that suspend or
-  resume norms. A trace takes random environment choices of the models
-  of F.12, of the old version before the amendment and of the new
-  version from it on, and amends at a random observation. For every
-  norm instance, the state right after the new version takes effect and
-  the time elapsed against its deadline are predicted from the findings
-  of `norms-diff` and the states before the amendment alone (carried
-  over with its elapsed time, violated or fulfilled because the elapsed
-  time exceeds the new deadline, discharged, transformed with the
-  elapsed time of the old norm, removed, added and active at once or
-  inactive), and compared with `norms-eval`; six pairs written by hand
-  reach the rarer rows of the table of F.6 in every run. On 3 000 random
-  pairs there was no difference, and each of 15 errors injected into one
-  of the two commands is detected. The comparison found that up to
-  0.3.26 `norms-eval`, the Python monitor, and the model of F.12 left a
-  carried-over prohibition whose elapsed time exceeded its new deadline
-  active until step 4 of the observation, where a power could still
-  suspend it, and left a suspended one suspended, while F.6 makes it
-  `fulfilled` when the new version takes effect; 0.3.27 applies the
-  rule at the amendment, and F.6 now names the suspended prohibition.
-  For the prediction, `norms-diff` from 0.3.27 also reports every norm
-  whose `on_amendment:` is `discharge`, the kind of a `transform:`
-  target, what a shorter deadline does to a prohibition, and deadlines
-  exactly; up to 0.3.26 it compared them rounded to milliseconds, so two
-  numeric deadlines that `norms-eval` distinguishes could be reported as
-  equal.
+  deadlines (also non-integer ones) and contents changed, contents made
+  temporal, kinds changed, norms added (also as a reparation target) and
+  removed, and powers added that suspend or resume norms. A trace takes
+  random environment choices of the models of F.12, of the old version
+  before the amendment and of the new version from it on, and amends at
+  a random observation. For every norm instance, the state right after
+  the new version takes effect and the time elapsed against its deadline
+  are predicted from the findings of `norms-diff` and the states and
+  pending candidates before the amendment alone (carried over with its
+  elapsed time, violated or fulfilled because the elapsed time exceeds
+  the new deadline, kept in force by a pending candidate, discharged,
+  transformed with the elapsed time of the old norm, removed, added and
+  active at once or inactive), and compared with `norms-eval`; when a
+  pending candidate keeps a late instance in force, its later decision is
+  checked against the values of the candidates, computed from the
+  content alone. Eight pairs written by hand reach the rarer rows of the
+  table of F.6 in every run. On 3 000 random pairs there was no
+  difference, and each of 16 errors injected into one of the two
+  commands is detected; two errors injected into the model of F.12 are
+  detected by paths that go on after the amendment. The comparison and
+  its review found two defects of 0.3.26, in `norms-eval`, the Python
+  monitor, and the model of F.12. A carried-over prohibition whose
+  elapsed time exceeded its new deadline stayed active until step 4 of
+  the observation, where a power could still suspend it, and a suspended
+  one stayed suspended, while F.6 makes it `fulfilled` when the new
+  version takes effect. A late obligation was violated at the amendment
+  although a pending candidate of its temporal content could still
+  fulfil it. 0.3.27 applies the rule that F.6 now states: a late instance
+  without a pending candidate is decided at the amendment, one with a
+  pending candidate is decided by its candidates. For the prediction,
+  `norms-diff` from 0.3.27 also reports every norm whose
+  `on_amendment:` is `discharge`, the kind of a `transform:` target,
+  what a shorter deadline does to an obligation and a prohibition, and
+  deadlines exactly; up to 0.3.26 it compared them rounded to
+  milliseconds, so two numeric deadlines that `norms-eval` distinguishes
+  could be reported as equal.
 - From `cadl` 0.3.22,
   `cadl codegen -t python` writes, for a file that declares
   `norms: 0.1`, a module `norms_monitor.py` into the generated package
@@ -1377,7 +1386,8 @@ its elapsed time under the new definition, discharges it when the new
 version has no norm with its id, keeps its pending candidates only when
 its content is unchanged, violates an obligation whose elapsed time
 exceeds the new deadline (with the reparation of the new definition),
-and fulfils a prohibition whose elapsed time exceeds it; a
+and fulfils a prohibition whose elapsed time exceeds it, both only when
+the norm has no pending candidate, which otherwise decides it at step 4; a
 norm of the new version that the instance does not have becomes
 inactive, and active at once when it has no trigger and is not a target;
 an `assume:` item with the same text continues, a new one is evaluated

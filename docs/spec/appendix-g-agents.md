@@ -2179,9 +2179,10 @@ random instance sets. Under OPA the full result was equal for the
 49 572 inputs of the first part and for 211 200 inputs of 30 random
 files. A Cedar request carries the message only; for each of the
 530 916 requests the Cedar answer was the decision for the message
-alone on the contracts without their norms that are not static, and for
-each of the 2 161 572 inputs in the cases of G.10 it was the decision
-for the full input, where Deny stands for deny and escalate. Each reason
+alone on the contracts without their norms that are not static. Of the
+2 161 572 inputs, 2 022 265 are in the cases of G.10, and for each of
+them the Cedar answer was the decision for the full input, where Deny
+stands for deny and escalate. Each reason
 for which G.10 leaves an input to the runtime (a governing contract
 without a running instance, a permission or a prohibition that is not
 static and can match, a derived instance that can match) occurs, and
