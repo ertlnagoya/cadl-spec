@@ -1,4 +1,4 @@
-<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-i-games" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix I: Strategic Model Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix I: Strategic Model Extension | CADL"/><meta data-rh=true name=description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations or from every reachable state, with deviation gains, and equilibrium maps over institutional parameters with certified cells, also from the end points of a cell."/><meta data-rh=true property=og:description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations or from every reachable state, with deviation gains, and equilibrium maps over institutional parameters with certified cells, also from the end points of a cell."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games","name":"Appendix I: Strategic Model Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.99c65fb1.js defer></script><script src=/cadl-spec/assets/js/main.60e54b48.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-i-games" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix I: Strategic Model Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix I: Strategic Model Extension | CADL"/><meta data-rh=true name=description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations or from every reachable state, with deviation gains, and equilibrium maps over institutional parameters with certified cells, also from the end points of a cell."/><meta data-rh=true property=og:description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations or from every reachable state, with deviation gains, and equilibrium maps over institutional parameters with certified cells, also from the end points of a cell."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games","name":"Appendix I: Strategic Model Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.3f42e912.js defer></script><script src=/cadl-spec/assets/js/main.60e54b48.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-689")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label="Skip to main content"><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/docs/quickstart/>Quick Start</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/docs/spec/intro/>Specification</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/textbook/>Textbook</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/handson/>Hands-on</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>English</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-i-games/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-i-games/ target=_self rel="noopener noreferrer" class=dropdown__link lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=Search aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/intro/><span title="CADL Specification v0.3" class=linkLabel_E58b>CADL Specification v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/introduction/><span title="1. Introduction" class=linkLabel_E58b>1. Introduction</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/objectives/><span title="2. Language Objectives" class=linkLabel_E58b>2. Language Objectives</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/comparison/><span title="3. Comparison with Existing Languages" class=linkLabel_E58b>3. Comparison with Existing Languages</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/requirements/><span title="4. Requirements Specification" class=linkLabel_E58b>4. Requirements Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/language-spec/><span title="5. Language Specification" class=linkLabel_E58b>5. Language Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/design/><span title="6. Design" class=linkLabel_E58b>6. Design</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/examples/><span title="7. Domain-Specific Description Examples" class=linkLabel_E58b>7. Domain-Specific Description Examples</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/use-cases/><span title="8. Use Cases and Novelty Analysis" class=linkLabel_E58b>8. Use Cases and Novelty Analysis</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/research/><span title="9. Research Directions and Open Challenges" class=linkLabel_E58b>9. Research Directions and Open Challenges</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/roadmap/><span title="10. Implementation Roadmap" class=linkLabel_E58b>10. Implementation Roadmap</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-a-syntax/><span title="Appendix A: Syntax Reference (EBNF)" class=linkLabel_E58b>Appendix A: Syntax Reference (EBNF)</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-b-references/><span title="Appendix B: References" class=linkLabel_E58b>Appendix B: References</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-c-motivation/><span title="Appendix C: Motivation Extension" class=linkLabel_E58b>Appendix C: Motivation Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-d-codegen/><span title="Appendix D: Codegen Target Catalog" class=linkLabel_E58b>Appendix D: Codegen Target Catalog</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><span title="Appendix E: SoS-DSL Extension" class=linkLabel_E58b>Appendix E: SoS-DSL Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-f-norms/><span title="Appendix F: Norms Extension" class=linkLabel_E58b>Appendix F: Norms Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-g-agents/><span title="Appendix G: Agent Governance Extension" class=linkLabel_E58b>Appendix G: Agent Governance Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-h-stochastic/><span title="Appendix H: Stochastic Model Extension" class=linkLabel_E58b>Appendix H: Stochastic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/docs/spec/appendix-i-games/><span title="Appendix I: Strategic Model Extension" class=linkLabel_E58b>Appendix I: Strategic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-j-grounding/><span title="Appendix J: Grounding of the Institutional Parameters" class=linkLabel_E58b>Appendix J: Grounding of the Institutional Parameters</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/glossary/><span title=Glossary class=linkLabel_E58b>Glossary</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/cadl-spec/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Appendix I: Strategic Model Extension</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Appendix I — Strategic Model Extension (games 0.1)</h1></header>
@@ -772,14 +772,66 @@ states that the relaxed process reaches from s under it. Other sound
 methods are admissible, for example exact reasoning on the rational
 functions U_p and BR_p, or the certification by the end points of a
 cell below, which proves that a gain is convex or monotone in a
-parameter. An open item, not normative: by the performance-difference
-identity, U_p(τ, v) − U_p(v) is the expected sum, along the play of τ
-from s₀ until φ_p, of the one-step advantages Q_p(s, c, v) − V_p(s, v)
-of the commands that τ takes; bounding these advantages on a cell and
-maximising their sum in the relaxed process would bound the gain
-directly instead of comparing bounds of two functions as N and E1 do.
-Such a method is one of the sound methods that this paragraph admits;
-the reference implementation does not use it (I.14).</p>
+parameter. The conditions PD+ and PD− below bound a gain directly
+through the one-step advantages.</p>
+<p><strong>Conditions from the one-step advantages.</strong> For a state s of p in
+R_C(p) in which φ_p does not hold, a command c of En(s), and a valuation
+v of C at which s is a state of Reach_p, the <strong>advantage</strong></p>
+<div class="language-text codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-text codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">A_p(s, c, v)  =  Q_p(s, c, v) − V_p(s, v)</span><br/></div></code></pre></div></div>
+<p>is the gain of taking c once in s and following the profile afterwards;
+it is 0 for the command that the profile selects. For a strategy τ of p
+and a state s of Reach_p at θ(v), write U_p(τ, s, v) for the payoff of p
+in the game started in s when p plays τ and the others follow the
+profile. The <strong>performance-difference identity</strong> states</p>
+<div class="language-text codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-text codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">U_p(τ, s, v) − V_p(s, v)  =  E[ Σ_t A_p(s_t, c_t, v) ]</span><br/></div></code></pre></div></div>
+<p>where the expectation is over the plays from s under σ[p↦τ] until φ_p,
+s_t is the state of step t and c_t the command taken in it, and a step
+in a state of another player, or in a state in which τ selects the
+command of the profile, adds 0. <em>Proof.</em> Given s_t and c_t, the
+expectation of ρ_p(s_t, c_t) + V_p(s_(t+1), v) is Q_p(s_t, c_t, v). The
+sum of the advantages is therefore, in expectation, the accumulated
+payoff of p minus V_p(s, v) plus the value V_p at the first state in
+which φ_p holds, which is 0. Every state of the play is in Reach_p, and
+the expected number of steps is finite since the profile is admissible
+(I.6). ∎ V*_p(s, v) − V_p(s, v) is the largest of these expectations
+over the strategies τ of p (I.7).</p>
+<p>Suppose a method gives, for each such s and each command c other than
+the one the profile selects, numbers a⁻_p(s, c) ≤ A_p(s, c, v) ≤
+a⁺_p(s, c) for every v in C at which s is a state of Reach_p, both 0 for
+the command of the profile and in the states of the other players. Let
+g⁺_p(s) be an upper bound, over all strategies of p and all v in C at
+which s is a state of Reach_p, of the expected sum of a⁺_p along the
+play from s, and g⁻_p(τ, s) a lower bound, over these v, of the expected
+sum of a⁻_p along the play of τ from s. Then:</p>
+<ul>
+<li class=""><strong>PD+.</strong> gain_p(v) ≤ ε on C when g⁺_p(s₀) ≤ ε. For
+<code>concept: every_reachable_state</code>, sgain_p(v) ≤ ε on C when
+g⁺_p(s) ≤ ε for every state s of R_C(p) in which φ_p does not hold.
+When g⁺_p(s) ≤ 0 for all these states, V*_p(s, v) = V_p(s, v) for
+every state s of Reach_p at every valuation of C, as under E2.</li>
+<li class=""><strong>PD−.</strong> p is a deviator on C when g⁻_p(τ, s₀) > ε for a strategy τ
+of p, and, for <code>concept: every_reachable_state</code>, also when
+g⁻_p(τ, s) > ε for a state s of R⁺_C(p) in which φ_p does not hold.</li>
+</ul>
+<p>PD+ may take the place of E1 or E1*, and of E2 for <code>from_every_state</code>;
+PD− may take the place of N or N_s. These conditions, too, are
+sufficient, not necessary. Unlike E1 and N, they do not compare a bound
+of the payoff under one strategy with a bound of the payoff under
+another, so the variation of U_p over the cell does not enter twice.
+With σ(s) the command of the profile, V_p(s, v) = Q_p(s, σ(s), v), and
+since both distributions sum to 1,</p>
+<div class="language-text codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-text codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">A_p(s, c, v)  =  ρ_p(s, c) − ρ_p(s, σ(s))</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">                 + Σ_s′ (P(s, c, s′) − P(s, σ(s), s′)) · (V_p(s′, v) − m)</span><br/></div></code></pre></div></div>
+<p>for every number m, with ρ_p and P at v. The difference of the two step
+payoffs and each difference of two probabilities is a single function
+of the open parameters and is bounded on C as such (at the corners when
+it is multi-affine, by an exact interval enclosure otherwise); V_p(s′, v)
+is bounded by l_p(s′) and u_p(s′), and the products by interval
+arithmetic. A successor s′ whose difference is not zero at v is in
+Reach_p at v, since both commands are allowed in s. In the relaxation
+above, g⁺_p(s) is the maximal value from s with the step reward a⁺_p,
+and g⁻_p(τ, s) the minimal value from s with the commands of p fixed by
+τ and the step reward a⁻_p; they are bounds for the same reason as b_p
+and d_p(τ).</p>
 <p><strong>Certification by the end points of a cell.</strong> When the only open
 parameter enters the game through weights only, a cell can be decided
 from two exact evaluations. A processor MAY decide a cell [a, b] of an
@@ -1011,13 +1063,17 @@ a strategic model as the model file of
 <a class="" href=/cadl-spec/docs/spec/appendix-h-stochastic/#h11-export>H.11</a> with two changes:</p>
 <ol>
 <li class="">the first line is <code>smg</code> instead of <code>dtmc</code>;</li>
-<li class="">after it, for each player that owns a command of the design, in
-declaration order, one construct that lists the action labels of
-the commands of the design that the player owns, in the order of
-their first declaration:</li>
+<li class="">after it, for each player, in declaration order, one construct that
+lists the action labels of the commands of the design that the
+player owns, in the order of their first declaration; the list is
+empty for a player that owns no command of the design:</li>
 </ol>
 <div class="language-text codeBlockContainer_nxD4 theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_ovcf><pre tabindex=0 class="prism-code language-text codeBlock_jdMY thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_iQfT><div class=token-line style=color:#393A34><span class="token plain">smg</span><br/></div><div class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br/></div><div class=token-line style=color:#393A34><span class="token plain">player R_</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">  [careful], [careless]</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">endplayer</span><br/></div></code></pre></div></div>
-<p>A player that owns no command of the design is not written. All
+<p>A player that owns no command of the design is written with the empty
+list, as <code>player D</code> followed by <code>endplayer</code>. Without such players, a
+design without owned commands would give an <code>smg</code> file without any
+<code>player</code> construct, which PRISM-games 3.2.4 rejects, and a player that
+is not written cannot be named in a coalition. All
 commands of the design are written, whatever a profile selects;
 unowned commands and the deadlock command are allocated to no player.
 A player name is renamed by the rule of H.11 when it equals a keyword
@@ -1028,8 +1084,10 @@ language; every name of the exported model is renamed by this
 extended list.
 This appendix does not determine whether PRISM-games accepts a player
 whose name equals another identifier of the model; an exporter SHOULD
-report such a name. A parameter that is open only in an equilibrium
-map is written with its fixed value (I.13).</p>
+report such a name. PRISM-games 3.2.4 accepts such a player when the
+other identifier is a variable, a label, an action label, a parameter,
+a reward structure, or the module <code>main</code> (I.14). A parameter that is
+open only in an equilibrium map is written with its fixed value (I.13).</p>
 <p>Version 0.1 defines <strong>no properties file</strong> for a strategic model. A
 payoff is a sum of expected rewards with weights of either sign, and
 the question of I.7 is a best response to a fixed profile. The
@@ -1039,8 +1097,12 @@ guarantee against the other players, as in
 <a class="" href=/cadl-spec/docs/spec/appendix-b-references/>[Chen+, FMSD 2013]</a>, and equilibria of
 its own choosing; neither is the question of this appendix, and a
 translation is left to a later version. The syntax above was checked
-against the PRISM-games manual (accessed Nov. 2026); files exported in
-this form have not been run through PRISM-games (I.14).</p>
+against the PRISM-games manual (accessed Nov. 2026), and files exported
+in this form were run through PRISM-games 3.2.4 (I.14). PRISM-games
+3.2.4 rejects a reward structure with a negative reward and has no
+exact engine for games, so a payoff whose weights have both signs is
+not one reward structure of the exported file, and the values that
+PRISM-games computes are floating-point numbers.</p>
 <h2 class="anchor anchorTargetStickyNavbar_MWp5" id=i12-example>I.12 Example<a href=#i12-example class=hash-link aria-label="Direct link to I.12 Example" title="Direct link to I.12 Example" translate=no>​</a></h2>
 <p>The first example extends that of
 <a class="" href=/cadl-spec/docs/spec/appendix-h-stochastic/>H.12</a> by one choice; the second, at the
@@ -1144,8 +1206,13 @@ p_fail = 289/729 = 0.396433: when the dispatcher fails that often, a
 failed attempt costs the robot so much that it is careful without any
 sanction. Up to p_fail = 0.2 the centralised regime needs the stronger
 incentive; at p_fail = 0.3 the distributed one does. On this map U_R
-varies with p_fail, so E1 decides no <code>equilibrium</code> cell (I.9); the
-cells away from the curve are decided by E2 and N.</p>
+varies with p_fail, so E1 decides no <code>equilibrium</code> cell (I.9). For D,
+whose gain is 0, E2 holds on every cell. For R, the cells away from the
+curve are decided mostly by PD+ and PD−: in a bisection of CENTRALIZED
+to the resolution of 0.05 (I.14), before cells are joined, PD+
+establishes V*_R = V_R on each of the 91 <code>equilibrium</code> cells, where
+E1 and E2 fail, and PD− establishes R as a deviator on 66 of the 68
+<code>not_equilibrium</code> cells, N on the other 2.</p>
 <h3 class="anchor anchorTargetStickyNavbar_MWp5" id=a-second-example-two-deciding-players>A second example: two deciding players<a href=#a-second-example-two-deciding-players class=hash-link aria-label="Direct link to A second example: two deciding players" title="Direct link to A second example: two deciding players" translate=no>​</a></h3>
 <p>In the first example only the robot chooses, so the check of each
 player is an optimisation of one player. In the second, the
@@ -1309,7 +1376,8 @@ exact. For condition N it uses the canonical best response at the
 centre of the cell (I.9) and tries N only for a player for whom E1
 and E2 fail. Cells with the same claim are joined (I.9) unless
 <code>--no-merge</code> is given. Since the version after 0.3.23, the cells that
-N, E1 and E2 leave undecided are decided from their end points (I.9)
+N, E1 and E2 (and PD+ and PD− below) leave undecided are decided from
+their end points (I.9)
 when condition A holds, in any strategic model; the map reports
 whether A holds, for which players the gain is non-increasing (B−)
 or non-decreasing (B+) from s₀, or why the end points are not used,
@@ -1317,11 +1385,27 @@ and such cells carry <code>method: "end points (I.9)"</code>. The concept
 <code>every_reachable_state</code> is implemented for checks and maps (E2, E1*,
 N, N_s, and the end points); for N_s, R⁺_C(p) is computed per cell,
 τ is the canonical best response on Reach_p at the centre of the
-cell, and s is the first state of S that satisfies the condition.</li>
+cell, and s is the first state of S that satisfies the condition.
+Since the version after 0.3.26, PD+ and PD− (I.9) are used as well.
+For a player for whom E1 (E1* for <code>every_reachable_state</code>) and E2
+fail, the advantages are bounded on the cell as I.9 describes: the
+difference of the step payoffs and each difference of probabilities
+exactly (at the corners, or by interval enclosure when it is not
+multi-affine), the values of the successors by l_p and u_p, and m the
+middle of the hull of these bounds. PD+ is tried before N, with g⁺_p(s)
+the maximal value of the relaxed process; PD− is tried when N fails,
+with τ the canonical best response at the centre of the cell, and with
+the strategy and the states of N_s for N_s. An <code>equilibrium</code> cell
+carries <code>from_every_state: true</code> when every player satisfies E2 or
+PD+ with g⁺_p(s) ≤ 0 in every state of R_C(p) without φ_p, in any
+combination, and, for <code>concept: every_reachable_state</code> with ε = 0,
+always.
+<code>games_eval.USE_ADVANTAGES = False</code> gives the maps of 0.3.26.</li>
 <li class=""><code>cadl model-export</code> writes the file of I.11 (<code>smg</code> and the <code>player</code>
 constructs, with the renaming of H.11 and of the keywords that I.11
 adds for a strategic model, and a check that two players do not
-collide).</li>
+collide). Up to 0.3.26 it did not write a player that owns no command
+of the design.</li>
 <li class="">A payoff with a <code>sanction_of:</code> or <code>reward_of:</code> term gets the weight
 of J.7, and J-14 (the end points of I.9) is used in <code>--certify</code>
 (<a class="" href=/cadl-spec/docs/spec/appendix-j-grounding/#j11-reference-implementation-status>J.11</a>);
@@ -1332,11 +1416,13 @@ best-response values, and gains as the fractions printed; λ* and
 κ* through the gains, and the table of λ* by <code>--set</code>; statuses,
 deviators, and <code>from_every_state</code>. The maps of the first example
 have 3 cells per design after joining for <code>comply_by_lambda</code> (11
-cells analysed, about 0.4 s for both designs), and 257 and 17 cells
-after joining (3 849 and 271 analysed, about 6.3 s) for
-<code>comply_by_lambda_and_failure</code>, with the fractions given in I.12
-(CENTRALIZED: 0.808838 <code>equilibrium</code>, 0.141235 <code>not_equilibrium</code>,
-409/8192 undecided). For <code>watched_map</code> a bisection gives 5 cells
+cells analysed, about 0.4 s for both designs), and 105 and 13 cells
+after joining (567 and 115 analysed, about 1.5 s) for
+<code>comply_by_lambda_and_failure</code> (CENTRALIZED: 0.811768 <code>equilibrium</code>,
+0.138672 <code>not_equilibrium</code>, 203/4096 undecided). Without PD+ and PD−,
+as up to 0.3.26, they are 257 and 17 cells after joining (3 849 and 271
+analysed, about 6.3 s; CENTRALIZED: 0.808838, 0.141235, 409/8192).
+For <code>watched_map</code> a bisection gives 5 cells
 after joining (17 analysed); <code>--partition 4 --no-merge</code> gives the
 table of I.12. Times are wall-clock on a laptop.</li>
 <li class="">Verification by the implementer, with an oracle that shares no code
@@ -1395,32 +1481,95 @@ examples and on the files of the reviews are those of 0.3.23.</li>
 <li class="">Three open parameters, measured on the bundled examples with one
 more parameter opened (λ ∈ [0, 0.4], p_fail ∈ [0, 0.5], and
 p_loss ∈ [0, 0.5] in the first; λ, κ ∈ [0, 0.4] and
-p_fail ∈ [0, 0.5] in the second, CENTRALIZED), with the default
-budget (<code>--max-cells 20000</code>), processor time on a laptop. In the
-first example, DISTRIBUTED reaches the resolution 0.1 with 3 891
+p_fail ∈ [0, 0.5] in the second, CENTRALIZED, profile
+<code>comply_if_watched</code>), with the default budget (<code>--max-cells 20000</code>),
+processor time on a laptop. Without PD+ and PD−, as up to 0.3.26, in
+the first example DISTRIBUTED reaches the resolution 0.1 with 3 891
 cells analysed (139 after joining; 0.838 of the region
 <code>equilibrium</code>, 0.062 <code>not_equilibrium</code>) and 0.05 with 15 853 (526);
 CENTRALIZED exhausts the budget with 39 999 cells analysed and 0.269
 undecided (1 059 after joining; 0.700 <code>equilibrium</code>, 0.030
-<code>not_equilibrium</code>). Both designs take 59 s (resolution 0.1) and
-76 s (0.05), about 1.4 ms per analysed cell, as with two parameters;
-<code>concept: every_reachable_state</code> gives the same cells in 63 s. The
-second example exhausts the budget as well, with 0.260 undecided
-after 39 999 cells (71 s). What grows is the number of cells, not
-the time per cell: the cells next to the boundary must be small in
-all three directions, and N and E1 compare bounds of two different
-functions, which drift apart on a cell that is wide in a parameter
-on which the payoff depends strongly. In CENTRALIZED, cells near
-λ = 0 stay undecided at a width of 1/32 in p_fail and p_loss
-although R gains about 0.23 at their centres. No error was found,
-and no change was made; a sharper sufficient condition that bounds
-U_p(τ) − U_p(σ) directly through the one-step advantages
-Q_p(s, c) − V_p(s) along τ (the performance-difference identity) is
-an open item; I.9 already admits it as another sound method. In the fuzzing above,
-the games with three or four players, most of them with three open
-parameters, took about 0.9 s each (wall-clock, check, map with a
-budget of 24 cells, and oracle).</li>
-<li class="">Not exercised: the export of I.11 was not run through PRISM-games.</li>
+<code>not_equilibrium</code>). Both designs take 50 s (resolution 0.1) and
+82 s (0.05). The second example exhausts the budget as well, with
+0.260 undecided after 39 999 cells (77 s). The cells next to the
+boundary must be small in all three directions, and N and E1 compare
+bounds of two different functions, which drift apart on a cell that
+is wide in a parameter on which the payoff depends strongly: in
+CENTRALIZED, cells near λ = 0 stay undecided at a width of 1/32 in
+p_fail and p_loss although R gains about 0.23 at their centres. With
+PD+ and PD− (since the version after 0.3.26), CENTRALIZED reaches the
+resolution 0.1 with 7 987 cells analysed (921 after joining; 0.849
+<code>equilibrium</code>, 0.051 <code>not_equilibrium</code>) and 0.05 with 27 031
+(3 037; 0.889 and 0.062), and DISTRIBUTED with 463 (39) and 2 271
+(154). Both designs take 18 s (resolution 0.1) and 64 s (0.05);
+<code>concept: every_reachable_state</code> gives the same cells as <code>nash</code>, with
+and without PD+ and PD−. The second example still exhausts the
+budget, with 0.200 undecided after 39 999 cells (290 after joining;
+0.410 <code>equilibrium</code>, 0.390 <code>not_equilibrium</code>; 92 s). There the
+advantage of <code>trust</code> for the dispatcher in the initial state is the
+difference of the values of two different successors, watched and not
+watched, and PD+ bounds it with l_p and u_p of the two states, which
+drift apart with p_fail as the bounds of E1 do: on cells of width 1/8
+in p_fail, the upper bound of the gain of D exceeds the largest gain
+at the corners by about 0.1 to 0.4. A coupled relaxation, in which the
+plays from the two successors take the same corner in each step,
+decided more of this map in an experiment (0.129 undecided after
+39 999 cells) but took about four times as long, and is not used;
+bounds of such differences of values remain an open item. In the
+fuzzing above, the games with three or four players, most of them
+with three open parameters, took about 0.9 s each (wall-clock, check,
+map with a budget of 24 cells, and oracle).</li>
+<li class="">Verification of PD+ and PD− (version after 0.3.26), by the
+implementer, with the oracle above: 5 200 random games of
+<code>tests/games_fuzz.py</code> (2 600 of the kind of the first verification,
+800 that ask for <code>every_reachable_state</code>, 900 with three or four
+players, two thirds of them with three open parameters, 700 games of
+the end points without grounding, and 200 with grounding), 3 486
+<code>equilibrium</code> and 4 693 <code>not_equilibrium</code> cells, 167 069 exact point
+evaluations, no wrong claim, and the checks at the fixed values agreed
+with the oracle on every model. The drivers of the independent
+reviews, through the command line: the driver of the review of the
+maps (860 models, 16 042 evaluations), the ten generator presets of
+the review of Appendix J (600 models, 5 868 evaluations), and the
+eight presets of the review of 0.3.24 (560 models, 7 149
+evaluations): no wrong claim. Three injected errors of the new
+conditions (the term of the successors left out, the lower and the
+upper bounds of the advantages exchanged, the differences of payoffs
+and probabilities taken at the centre of the cell only) are each
+detected by fuzzing and by the test suite; the earlier injected errors
+are run with PD+ and PD− switched off and are still detected.</li>
+<li class="">Since the version after 0.3.26, the export of I.11 is run through
+PRISM-games 3.2.4, the binary release of the PRISM-games project
+(prismmodelchecker.org/games, for macOS arm64 and Linux x86-64). The
+exported model file is passed unchanged, followed by a module that
+synchronises on the action labels of the players and lets every
+player but one take only the command of the profile, and by a reward
+structure per player. Since PRISM-games rejects negative rewards and
+has no exact engine for games, V_p is computed term by term from the
+exported reward structures, with <code>&lt;&lt;p>> R{"r"}max=? [ F φ_p ]</code> while
+every player follows the profile, and V*_p from the structure
+ρ_p(s, c) + h(s) − Σ_s′ P(s, c, s′) · h(s′), which is not negative
+for h(s) a multiple of the largest expected number of steps from s
+until φ_p, and whose maximum from s is V*_p(s) + h(s), since the added
+terms telescope along every play. The values come from value
+iteration (<code>-e 1e-12</code>) and are compared with a relative tolerance of
+10⁻⁶. On the three bundled examples and 200 games of
+<code>tests/games_fuzz.py</code> (two to four players, both concepts, the games
+of the end points), in 212 pairs of a design and a profile, the
+number of states, 2 240 payoffs and best-response values, V_p and
+V*_p − V_p in 7 813 states of Reach_p, 212 statuses with their
+deviators (in 118 of them a gain equals ε, which the exact gain of
+<code>cadl</code> is there), and 69 values of <code>from_every_state</code> agreed with
+<code>cadl game-check</code>; so did 200 other games run earlier. One export
+error was found and corrected (I.11): a player that owns no command
+of the design was not written, so a design without owned commands
+gave an <code>smg</code> file without players, which PRISM-games rejects. A
+player named like a variable, a label, an action label, a parameter,
+a reward structure, or the module <code>main</code> is accepted.
+<code>tests/test_games_prism_games.py</code> runs the comparison when
+PRISM-games is installed, and the CI installs the Linux release for
+one Python version (12 tests; about 7 minutes in an emulated Linux
+x86-64 container on a laptop).</li>
 </ul>
 <h2 class="anchor anchorTargetStickyNavbar_MWp5" id=i15-backward-compatibility>I.15 Backward compatibility<a href=#i15-backward-compatibility class=hash-link aria-label="Direct link to I.15 Backward compatibility" title="Direct link to I.15 Backward compatibility" translate=no>​</a></h2>
 <p>Files written against CADL v0.3 without this extension remain valid
