@@ -264,7 +264,7 @@ at the 1000th (from `cadl` 0.3.26; 0.3.25 read every candidate at every
 observation, 1.3 × 10<sup>7</sup> gas at the 320th). A monitor whose
 observation would exceed the block gas limit cannot record it and does
 not recover, so the bound matters. The generated file is to be compiled with solc
-0.8.24 to 0.8.37 (checked; its pragma is `>=0.8.24 <0.9.0`) and
+0.8.24 to 0.8.37 (checked; its pragma is `>=0.8.24 <=0.8.37`) and
 `--optimize --optimize-runs 1`, as its header says: without the
 optimizer the runtime code exceeds the limit of EIP-170, and the
 estimates of the creation code and of the runtime code hold for the
@@ -285,7 +285,8 @@ change):
   number n / 10<sup>k</sup>; it refuses `/` (a quotient is not always a
   decimal number), and a product whose exact value could have more than
   4095 decimals (every number has at most 400, F.5). Both monitors, like
-  `cadl norms-eval`, refuse a number outside the range of F.5. The
+  `cadl norms-eval`, refuse a number outside the range of F.5 in an
+  observation, its request or its bindings. The
   Solidity monitor holds six decimals and refuses `*`, `/`, and literals
   with more decimals; its host passes numbers with at most six decimals.
   For the inputs that meet these limits, the verdicts agree with

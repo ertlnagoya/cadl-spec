@@ -340,8 +340,9 @@ are compared exactly, without a tolerance: content at exactly the
 deadline is in time (item 2 below), and content one microsecond after
 it is not. A processor MAY refuse a number with more than 400
 significant digits, with more than 400 decimals, or with an absolute
-value of 10<sup>308</sup> or more; it then treats the observation as an
-error. A predicate with such a literal is not evaluated.
+value above 1.7976931348623157 × 10<sup>308</sup>, the largest finite
+double (every finite double is inside this range); it then treats the
+observation as an error. A predicate with such a literal is not evaluated.
 
 ### Quantifiers and aggregates
 
