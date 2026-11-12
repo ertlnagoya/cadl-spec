@@ -276,7 +276,8 @@ generated Python code monitors norms at run time, and so do the
 generated Rego, as a step function that is given the stored state,
 and Solidity, for the contracts they support
 ([F.10](./appendix-f-norms.md#f10-reference-implementation-status)),
-and the norms of one contract instance can be checked at design time:
+and the norms of a contract can be checked at design time, in one contract
+instance or in up to four instances together, and across amendments:
 [F.12](./appendix-f-norms.md#f12-design-time-checking) translates them,
 with discrete time and classes of values, into an MDP for PRISM
 [[Kwiatkowska+, CAV 2011]](./appendix-b-references.md) and asks whether
