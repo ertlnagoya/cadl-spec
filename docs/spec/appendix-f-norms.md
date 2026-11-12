@@ -331,6 +331,19 @@ name that stands alone is a symbolic value. A symbolic value can only be
 compared with a text value, by `==`, `!=`, or `IN`; a predicate that
 uses it in another way is undefined.
 
+A number, in a predicate and in an observation, is the exact decimal
+number it is written as: `0.1` is one tenth, and the time stamp
+`1700000000.123` is that number of seconds. Arithmetic (`+`, `-`, `*`,
+`/`, and `avg`) is exact, on rational numbers, so `0.1 + 0.2 == 0.3`
+holds. Time stamps, the bounds of the intervals of F.4, and deadlines
+are compared exactly, without a tolerance: content at exactly the
+deadline is in time (item 2 below), and content one microsecond after
+it is not. A processor MAY refuse a number with more than 400
+significant digits, with more than 400 decimals, or with an absolute
+value above 1.7976931348623157 × 10<sup>308</sup>, the largest finite
+double (every finite double is inside this range); it then treats the
+observation as an error. A predicate with such a literal is not evaluated.
+
 ### Quantifiers and aggregates
 
 A quantified predicate `exists x in D: p` or `for all x in D: p`, and
@@ -1147,8 +1160,7 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   tells the host the earliest time stamp at which an observation is
   certain to decide something that only waits for time (a little after
   the deadline or the end of the interval, since content at the
-  deadline itself is in time; times are compared with a tolerance of
-  10<sup>-9</sup> s). The host names the quantities that are written
+  deadline itself is in time). The host names the quantities that are written
   without an actor; a name it does not name is read as a symbolic value
   until its first value, which is the difference F.5 permits
   (`cadl norms-eval` takes the names from the observations of the
@@ -1180,19 +1192,35 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   six decimals, a temporal operator inside another one, and a monitor
   whose creation code would exceed the limit of EIP-3860, and it refuses
   an observation that would make a bare name read inside a temporal
-  operator known after the first observation; the gas of a norm whose
-  content has a temporal operator grows with the observations inside its
-  open window. Their
-  arithmetic is decimal (Rego) or fixed-point with six decimals
-  (Solidity), and they compute times exactly, where `cadl norms-eval`
-  computes with binary floating point and a tolerance; D.5 lists these
-  and the other differences. The reference implementation
+  operator known after the first observation. From `cadl` 0.3.26 it
+  reduces a content with one temporal operator to that operator (its
+  dual under `NOT`), refuses two temporal operators in one content,
+  `NOT until(...)`, and a temporal operator inside a comparison, and
+  decides the candidates of a temporal content together, so that the
+  gas of an observation does not grow with the observations inside a
+  window. The Rego monitor refuses `/`, whose result is not always
+  a decimal number. Both compute numbers and times exactly, as F.5 says,
+  and agree with `cadl norms-eval` on the inputs that meet their
+  limits; D.5 lists them. From `cadl` 0.3.26, `cadl norms-eval`, the
+  Python monitor, `cadl agents-run`, and the Rego monitor refuse a
+  number outside the range of F.5 (a trace error with its line), and a
+  numeric `deadline:` is exact. The reference implementation
   compares both with `cadl norms-eval` after every observation, the
   Solidity monitor on an EVM.
 - The Unity C# target does not monitor norms.
+- From `cadl` 0.3.26, numbers and times are exact as F.5 states.
+  Up to `cadl` 0.3.25, `cadl norms-eval`, the Python monitor, and
+  `cadl agents-run` computed with binary floating point and compared
+  times with a tolerance of 10<sup>-9</sup> s, so that `0.1 + 0.2 == 0.3`
+  did not hold and a deadline within the spacing of the floats of an
+  observation (about 2.4 × 10<sup>-7</sup> s near epoch seconds) could
+  be judged on the wrong side. The example traces and the traces of the
+  test suite of `cadl` give the same verdicts with both.
 - From `cadl` 0.3.25, `cadl norms-check` implements F.12: it builds the
   model of one contract instance (`--bindings`, `--members`, `--step`,
-  `--horizon`), runs the questions with PRISM 4.11 (`prism` on PATH;
+  `--horizon`; from `cadl` 0.3.26 also `--domain` for
+  arithmetic, `--instance` / `--instances` for several instances, and
+  `--version` for amendments), runs the questions with PRISM 4.11 (`prism` on PATH;
   explicit engine, with strategies exported), and evaluates every
   witness with the engine of `cadl norms-eval`. `--timeout` bounds the
   time of all runs of PRISM together (600 s by default). Without PRISM
@@ -1202,8 +1230,10 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   used. The translation is tested against `cadl norms-eval` by running
   the generated PRISM text, with an interpreter of the subset it uses,
   on random paths of environment choices and on every path of at most
-  two observations of one contract, and comparing the state of every
-  norm at every observation; the interpreter is in turn compared with
+  two observations (one for several instances and for amendments) of
+  small contracts, and comparing the state of every norm at every
+  observation; random values of every JSON type are checked to fall
+  into a class of the model; the interpreter is in turn compared with
   paths of the PRISM simulator, and the answers of PRISM with explicit
   fixpoints over the reachable states.
 - The other components read a wildcard reference outside a domain in
@@ -1264,7 +1294,76 @@ every set of actors has a fixed number of members, `A[lo]` to
 `A[lo+n-1]`; for a set with an integer upper bound, n is at most the
 declared size. A reference `A[*]`, `A[lo..hi]`, or an unbound `A[i]` in
 a message event stands for the members of the instance that the table
-of F.3 makes it match.
+of F.3 makes it match. For a set with a symbolic upper bound
+(`ROBOT[1..N]`), the instance binds N to the last index of its members,
+as a trace that binds N does; quantifiers, aggregates, and wildcard
+references in predicates (F.5) then range over a closed domain, the
+members of the instance. For a set with integer bounds the domain is
+the declared set; its members beyond the n of the instance send no
+message and have no value in the model, and the report says so.
+
+### Several contract instances
+
+A model may also hold several instances of the same contract, each
+with its own bindings (`--instance`, repeated, or `--instances N` in
+the reference implementation). The instances share the observations
+(the step and the horizon), the choices of the environment (the message
+events of all of them, and the quantities, which are the same quantities
+in every instance), and they start together at the first observation.
+Each instance has its own norm instances and their states, its own
+institutional events, its own assumptions and their failure (so the
+verdict `excused` is per instance), and its own end: in the any end
+reading each instance ends at an observation of its own, in the full
+reading all end at the horizon. After its end the state of an instance
+does not change, and the observations after it are not part of it (F.5).
+The trace of an instance is the sequence of observations up to its end
+with its bindings, and the model is exact for each of these traces as
+F.12 states for one instance. The questions are asked for every norm of
+every instance, named `id@k` for the instance k, and conflicts for every
+pair of obligations and prohibitions in the same instance or in two of
+them: a conflict across instances arises, for example, when the bearer
+of a norm of one instance is obliged to do what a norm of another
+instance forbids. A witness holds the trace of every instance over the
+same observations, and each is evaluated by F.5 with the bindings of its
+instance. The number of instances is at most 4 in version 0.1, and the
+end of the instances multiplies the choices of the environment by 2 per
+instance.
+
+### Amendments
+
+A model of one instance may also hold later versions of the file
+(`--version FILE`, repeated, in the reference implementation). At every
+observation the environment may choose to amend the contract to the
+next version, at most once per version and in their order. The
+amendment takes effect at that observation before step 1, as F.6
+defines and norms-eval applies it: a final norm instance is not
+affected; an inactive one takes the definition of the new version, or
+is removed when the new version has no norm with its id; an active or
+suspended one follows its `on_amendment:`: `discharge` discharges it,
+`transform: X` discharges it and activates X, when X is inactive, with
+the elapsed time of the old norm, and `carry_over` keeps its state and
+its elapsed time under the new definition, discharges it when the new
+version has no norm with its id, keeps its pending candidates only when
+its content is unchanged, and violates an obligation whose elapsed time
+exceeds the new deadline (with the reparation of the new definition); a
+norm of the new version that the instance does not have becomes
+inactive, and active at once when it has no trigger and is not a target;
+an `assume:` item with the same text continues, a new one is evaluated
+from the amendment on, and the others are closed; the counts-as rules of
+the new version apply from then on. The variables of a norm id of any
+version are shared by all versions and sized for each of them (the
+largest deadline, interval, and set of candidates); a norm that the
+instance does not have (of a version not yet in force, or removed) is
+absent. The model is exact for the traces whose `amend` lines name the
+given versions in their order, as F.12 states for one version. Not
+translated, with the reason: versions with other actors or another
+lifecycle, a norm whose kind changes between versions (F.6 discharges
+it), a version with a norm or a counts-as rule that is not translated,
+and amendments together with several instances. The questions are
+asked for every norm id of any version; a witness that needs an
+amendment names the version file in its `amend` line. The amendment
+doubles the choices of the environment and multiplies the commands by
+the number of versions.
 
 ### What the environment chooses
 
@@ -1278,25 +1377,90 @@ At each observation the environment chooses three things.
    the state of a translated norm and is left out. The environment
    chooses a subset of the message events; each occurs at most once in
    an observation, in a fixed order (the order of the model).
-2. **Values.** The predicates of v0.1 compare one quantity with
-   literals. The literals compared with a quantity cut its domain into
-   classes on which every such comparison has the same value: for
-   numbers c<sub>1</sub> < … < c<sub>k</sub>, the classes below
-   c<sub>1</sub>, each c<sub>j</sub>, each open interval between two of
-   them, and above c<sub>k</sub>; for symbolic and text values, each
-   literal and one other value; for a boolean quantity, true and false.
-   One representative stands for each class, and *no value* is a class
-   of every quantity, for which the predicates that use it are
-   undefined (F.5). The environment chooses one class per quantity; the
-   choices are grouped by the predicates they decide, so that two
-   choices that give every predicate the same three-valued value are
-   one choice. The classes assume that every value of a quantity has
-   the type of the literals it is compared with (numbers, booleans, or
-   symbols and texts), or that it has no value. A trace with a value of
-   another type, such as a text where numbers are compared or a boolean
-   compared with numbers, can give a predicate a value that no class
-   gives it (true, false or undefined); the answers do not cover such
-   traces.
+2. **Values.** A trace may give a quantity any JSON value. The values
+   are cut into classes on which every predicate of the model has the
+   same value as norms-eval evaluates it (F.5): no value; true; false;
+   for numbers, the numbers below, at, between, and above the numeric
+   literals compared with the quantity, together with 0 (a number used
+   as a condition is true unless it is 0) and, when a boolean literal is
+   compared with it, 1 (an ordering compares true as 1); each text
+   literal and each name without a value compared with it, and one other
+   text; and, for a quantity that is not compared with another
+   quantity, one value for lists and objects, which no comparison with a
+   literal tells apart (a literal is never a list or an object). One representative stands for each class. The model evaluates
+   every predicate on the representatives with the evaluator of
+   norms-eval, so a comparison of values of different types (a text with
+   a number, a boolean with a number) has in the model the value it has
+   in a trace: undefined where norms-eval cannot compare the two values,
+   false where it compares them as unequal. The environment chooses one
+   class per quantity; combinations of classes that give every predicate
+   the same three-valued value are one choice. When a quantity occurs
+   only in comparisons with literals and as a condition (also inside a
+   quantifier or as the element of `count`), two values that give every
+   such comparison the same value give every predicate the same value,
+   and the model keeps one value for them; a quantity whose value is used
+   in another way (by `min`, `max`, `sum`, `avg`, or arithmetic) keeps a
+   value of each class.
+
+   Quantities compared with each other (`A.x < B.y`, `A.x == B.y`,
+   `max(...) < A.y`) form groups. Every quantity of a group takes the
+   literals of the whole group (so `A.x == B.y AND B.y > 3` gives `A.x`
+   the literal 3 too), and for a group of k quantities the classes hold,
+   besides each literal, k values in every gap: below the smallest
+   literal, between two adjacent literals, and above the largest; likewise
+   k texts (ordered as norms-eval orders texts, by Python's order of
+   strings) and k objects (which are only equal or not, never ordered).
+   Lists are ordered too, lexicographically, but not always comparable:
+   two lists whose first different elements have different kinds (a
+   number and a text, say) are neither less nor greater, and the
+   comparison is undefined, so `[1, "a"] < [1, 2]` is undefined while
+   `[1] < [1, "a"]` and `[1] < [1, 2]` are true. Quantities only tested for
+   equality get k different lists. For quantities ordered (`<`, `<=`, `>`,
+   `>=`) against each other the classes hold lists that realise every
+   pattern of pairwise outcomes (equal, less, greater, not comparable)
+   that lists of a trace can have: for two quantities `[]`, `[0]` and
+   `["a"]` (4 patterns), for three `[]`, `[0]`, `[1]`, `["a"]`, `["b"]`,
+   `[{"d": 0}]`, `[0, 0]`, and `[0, "a"]` (29 patterns). The outcomes of
+   three lists are decided at the at most two positions where their
+   elements first differ, so lists of length at most two whose elements
+   realise the outcomes at those positions suffice; an enumeration of all
+   lists of length at most two over 0, 1, 2, `"a"`, `"b"`, two objects,
+   and null yields the 29 patterns, which these eight lists realise.
+   Four or more quantities ordered against each other are not
+   translated. A text literal with the character
+   U+0000 in such an order is not translated. Numbers are computed
+   exactly; the values in a gap are integers or floats strictly inside
+   it, since a value of a trace is an integer or a float, and a gap that
+   holds fewer than k of them gets all of them.
+
+   This is exact. Take values v<sub>1</sub>, …, v<sub>k</sub> of the
+   quantities of a group in a trace, all numbers, and the common sorted
+   literals c<sub>1</sub> < … < c<sub>m</sub>. Each v<sub>i</sub> equals a
+   literal or lies in one gap, and a gap holds at most k of the distinct
+   v<sub>i</sub>. Map a v<sub>i</sub> that equals a literal to it, and the
+   distinct v<sub>i</sub> of each gap, in their order, to the first grid
+   values of that gap in their order (the gap holds at least as many grid
+   values as distinct values of a trace). The map keeps every comparison
+   of two quantities of the group (order and equality, within a gap and
+   across gaps) and every comparison of a quantity with a literal, so
+   every predicate of the group has the same value on the image. The
+   argument is the same for texts. Lists and objects are not compared
+   with literals, and the comparison of two of them depends only on the
+   pattern of outcomes, which the lists and objects of the classes
+   realise. For values of mixed types,
+   comparisons across types do not depend on the value within a type
+   (an ordering compares true and false as 1 and 0, which are literals of
+   every group).
+
+   Arithmetic (`+`, `-`, `*`, `/`), `sum`, and `avg` are translated only
+   for quantities with a finite domain. CADL declares none for the
+   quantities of a norm, so the domain is given to the processor, as a
+   range of integers lo..hi per quantity (`--domain` in the reference
+   implementation). Such a quantity takes the integers of its domain and
+   the values that are not numbers; the answers then hold for the traces
+   in which every number of such a quantity is an integer of its domain,
+   and the report names the quantities and their domains. A predicate
+   with arithmetic over a quantity without a domain is not translated.
 3. **The end.** Whether the instance ends at this observation (step 6
    of F.5). This covers both the end signalled for an instance without
    `lifecycle:` and a terminal lifecycle state.
@@ -1356,19 +1520,24 @@ end of the instance the state does not change.
 
 ### What is translated
 
-Version 0.1 of the translation translates message events (with
-literal arguments or names), institutional events of counts-as rules,
-and predicates made of comparisons of a quantity (`A.q`, `A[k].q`, or
-`A[i].q` with `i` bound) with a literal (`==`, `!=`, `<`, `<=`, `>`,
-`>=`, `IN`), a boolean quantity used as a condition, `AND`, `OR`, and
-`NOT`; a content that is one bounded temporal operator over such
-predicates; deadlines; `until:`; counts-as rules with `if:`; powers and
-their effects; reparations; and `assume:` items of these forms (for the
-verdict `excused`). It does not translate quantifiers, aggregates,
-wildcard references in predicates, arithmetic, comparisons of two
-quantities, `request` fields, `now`, `state`, a temporal operator
-combined with other operators or nested in another, and amendments
-(F.6). A norm with such a part is reported as **not translated**, with
+The translation translates message events (with literal arguments or
+names), institutional events of counts-as rules, and predicates built
+from comparisons (`==`, `!=`, `<`, `<=`, `>`, `>=`, `IN`) of a quantity
+(`A.q`, `A[k].q`, `A[i].q` with `i` bound, `r.q` for a variable `r` over
+a set, `A[j+1].q` for a quantifier variable `j`) with a literal or with
+`count` of a comprehension, quantities used as conditions, `AND`, `OR`,
+`NOT`, the quantifiers `exists` and `for all`, the aggregates `count`,
+`min`, and `max` of comprehensions over a set or a range, comparisons
+of two quantities, and, for quantities with a domain, arithmetic,
+`sum`, and `avg`, and wildcard and range references in predicates, which
+F.5 reads as quantifiers or comprehensions; a content that is one bounded
+temporal operator over such predicates; deadlines; `until:`; counts-as
+rules with `if:`; powers and their effects; reparations; and `assume:`
+items of these forms (for the verdict `excused`). It does not translate
+arithmetic, `sum`, and `avg` over a quantity without a domain, `request`
+fields, `now`, `state`, and a temporal operator combined with other
+operators or nested in another; amendments are translated as described
+above. A norm with such a part is reported as **not translated**, with
 the reason, and so is a norm whose behaviour depends on one: the
 reparation of a norm that is not translated, the target of an effect of
 a power that is not translated, and a norm whose trigger, content, or
@@ -1459,13 +1628,20 @@ witness that does not give the claimed verdict as its own error.
 
 Version 0.1 refuses a horizon of more than 1 000 observations, more than
 16 message events, more than 8 192 choices of the environment per
-observation, and quantities with more than 20 000 combinations of
-classes in one group of predicates. The model checker explores the
+observation, and quantities with more than 50 000 combinations of
+classes in one group of predicates. A predicate over the members of a
+set reads one quantity per member, and the classes of these quantities
+multiply: with c classes per quantity, m members, and q quantities read
+per member, a group has up to c<sup>m q</sup> combinations, which is
+what the limit of 50 000 bounds. The model checker explores the
 reachable states explicitly; the number of transitions is the number of
 reachable states times the number of choices, which grows with the
 message events and the classes of values. The time of a check grows
 with the number of commands of the model (four per choice of the environment) and
 of reachable states: an instance with 12 message events (4 096
 choices, 16 384 commands) took more than ten minutes. A processor
-SHOULD bound the time of the model checker and report when the bound is
-exceeded.
+SHOULD bound the time of the model checker, and of building the model,
+and report when the bound is exceeded. The limit on choices is checked
+together with the ends of several instances and the versions: a model
+may have at most 32 768 commands. A refusal for too many combinations of
+classes names the predicates and the quantities that cause it.
