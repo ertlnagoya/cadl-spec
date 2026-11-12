@@ -1823,15 +1823,29 @@ are these.
   whose token and credentials are random values of the gateway. The
   gateway takes a notification there only with these values and, with
   mutual TLS, from the agent's certificate; it has to be one
-  `StreamResponse` of the task of the configuration, and the owner of
-  that task has to be the client of the configuration. Then the gateway
+  `StreamResponse` of the task of the configuration, and the gateway has
+  to have recorded the client of the configuration as the owner of that
+  task and of its context. A configuration given with `SendMessage` is
+  bound to the task that the agent's answer names: the result of an
+  allowed or released request, or the first event of its stream, which
+  the gateway claims for the client before it binds the configuration.
+  Until then a notification of that configuration is dropped, and a
+  notification never makes the client the owner of a task or a context;
+  so an agent that sends notifications before its answer loses them.
+  Then the gateway
   sends it to the client's URL with the client's token and credentials
   (A2A 4.3.3) and records `push_sent` or `push_failed`; anything else is
   `push_dropped`. The client's URL is checked when the configuration is
   given, and again at every notification, since a name can resolve to
   other addresses later: it matches an entry of `--push-allow` (a URL,
   whose path is a prefix when it ends with `/`, a host with an optional
-  port, or an IP address or network); it is `https` unless its host is a
+  port, which without a port allows every port and every path of that
+  host, or an IP address or network, which allows the addresses that a
+  matching host resolves to and, for a single address, that address as a
+  host, but no host name by itself); its path has no `.` or `..` segment,
+  no backslash, and no percent-encoded dot, slash, or backslash, so that
+  the path that is compared is the path that the server reads; it is
+  `https` unless its host is a
   loopback address or `localhost`; and every address that its host
   resolves to is a global unicast address, or lies in an address or a
   network of the allowlist. Private, loopback, link-local, shared,
@@ -1851,7 +1865,9 @@ are these.
   are answered by the gateway; `DeleteTaskPushNotificationConfig` stops
   the relay at once and is passed on. A client has at most 64
   configurations, and the gateway relays at most 16 notifications at the
-  same time. Not covered: a configuration created with
+  same time; a configuration that waits with a held request, or for
+  the agent's answer, counts against the 64, and the count and the
+  addition are one step. Not covered: a configuration created with
   `CreateTaskPushNotificationConfig` for a held task of the gateway (it
   is given with the `SendMessage`), and retries of a failed notification.
 - The gRPC binding (from 0.3.28), as the optional extra `cadl-lang[grpc]`.
@@ -1868,12 +1884,26 @@ are these.
   the response message, strictly: an answer of the agent that does not
   fit is `invalid_response`. An error is a gRPC status of 5.4 with a
   `google.rpc.Status` whose details hold the `ErrorInfo`, in the trailing
-  metadata `grpc-status-details-bin` (10.6). The readers, the handshakes,
-  and the read deadline below are those of the HTTP listener: the
-  connections of the gRPC listener are handled by gRPC, which delivers a
-  request message only once it has arrived whole; at most `--max-handlers`
-  plus 16 calls run at the same time, and a request message is at most
-  1 MiB.
+  metadata `grpc-status-details-bin` (10.6). The gateway receives the
+  request message itself (its handlers take the request as a stream),
+  because gRPC hands a unary call to a worker before its message has
+  arrived. A call is refused at once, before its message is awaited,
+  unless its metadata has a header that could authenticate: one header of
+  the form above that names an actor with a key and, with mutual TLS, the
+  actor of the certificate. Then, until its message has arrived, the call
+  takes one of the places of calls not yet authenticated, with the caps of
+  the HTTP listener (4 per remote address, 16 per IPv4 /24 or IPv6 /48,
+  64 in all; beyond them `RESOURCE_EXHAUSTED` and `overloaded`), and it is
+  cancelled at the read deadline (`read_timeout`). The service has
+  workers for these 64 calls next to `--max-handlers` plus 16 handled
+  ones, so calls that wait for their message cannot take the workers of
+  authenticated calls. HTTP/2 is limited to 16 concurrent streams per
+  connection, 16 KiB of metadata, pings no more often than every 10
+  seconds without data, and 2 minutes of an idle connection; a request
+  message is at most 1 MiB. What remains is the same as at the HTTP
+  listener: whoever knows the name of an actor with a key can forge a
+  header of the right form, and such calls of one address or network can
+  hold its places until the read deadline.
 - A request is read with one `Content-Length` of at most 1 MiB and
   without `Transfer-Encoding`, one request per connection; the body is
   parsed as strictly as a line of the MCP gateway and passed on
@@ -2060,7 +2090,7 @@ of its own, that an index variable as receiver of an approval rule was
 not resolved with the bindings of the hold, and that a header line with
 whitespace before its colon hid the headers after it.
 Each is corrected and has a test.
-From 0.3.28, 17 more tests (`tests/test_a2a_bindings.py`) cover mutual
+From 0.3.28, 24 more tests (`tests/test_a2a_bindings.py`) cover mutual
 TLS (a certificate and a header of different actors, no certificate, one
 of another CA, one of no actor, one with two common names, a replayed
 nonce, peers that never end their handshake and take no reader, the cap
@@ -2074,11 +2104,22 @@ redirect, a slow and a failing webhook, a host name that resolves to
 loopback, a held request with `returnImmediately`, the agent's
 certificate), the checks of addresses with a resolver of the test, and
 the gRPC binding (allow, deny, a hold, streams, errors, failed
-authentication, unknown fields, mutual TLS, push notifications). In each,
+authentication, unknown fields, mutual TLS, push notifications, calls
+that never send their message). In each,
 the agent receives nothing that was not allowed or released, no
 notification reaches a client that did not register it, and
-`cadl agents-run` writes the same audit log. The new tests ran five times
-in a row and three runs at the same time without a failure.
+`cadl agents-run` writes the same audit log. An independent review of
+these bindings found no request that reached the agent without a
+decision, no way around the authentication or the checks of addresses,
+and no replay. It found that a configuration given with `SendMessage` was
+not bound to its task, so that its client could not list or delete it
+and the first notification bound it to any task it named; that calls of
+the gRPC listener that never sent their message held its workers without
+a deadline; that gRPC with mutual TLS accepted a certificate with two
+common names; and that dot segments, also percent-encoded, let a callback
+URL leave the path prefix of its entry. Each is corrected and has a
+test. The new tests ran five times in a row and three runs at the same
+time without a failure.
 None of the reviews found a request that reached the agent without a
 decision; the first checked
 this also in a run of 12 threads whose log of 280 records
