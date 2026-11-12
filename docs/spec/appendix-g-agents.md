@@ -2002,8 +2002,9 @@ showed two readings that the gateway has to make. The routes of 11.3.2
 subscribe with `POST`, and the `a2a.proto` with `GET`; the SDK server
 takes both, and so does the gateway. The table of 5.4 on the published
 page of A2A 1.0.0 gives 400 for `TaskNotCancelableError` and 500 for
-`InvalidAgentResponseError`, as the SDK does, where the text of the
-release in the repository of A2A gives 409 and 502; the gateway follows
+`InvalidAgentResponseError`, as the SDK does, where
+`docs/specification.md` at the tag `v1.0.0` of the repository of A2A
+gives 409 and 502; the gateway follows
 the published page. The tests are skipped where the SDKs are not installed, and
 a job of the continuous integration installs them on Python 3.12; they
 are not dependencies of `cadl`.
