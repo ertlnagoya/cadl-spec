@@ -1192,7 +1192,7 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
 - The Unity C# target does not monitor norms.
 - From `cadl` 0.3.25, `cadl norms-check` implements F.12: it builds the
   model of one contract instance (`--bindings`, `--members`, `--step`,
-  `--horizon`; from the release after 0.3.25 also `--domain` for
+  `--horizon`; from `cadl` 0.3.26 also `--domain` for
   arithmetic, `--instance` / `--instances` for several instances, and
   `--version` for amendments), runs the questions with PRISM 4.11 (`prism` on PATH;
   explicit engine, with strategies exported), and evaluates every
@@ -1376,15 +1376,33 @@ At each observation the environment chooses three things.
    value of each class.
 
    Quantities compared with each other (`A.x < B.y`, `A.x == B.y`,
-   `max(...) < A.y`) form groups. For a group of k quantities the classes
-   hold k values below, between, and above the literals, so that the k
-   quantities can take every order and every pattern of equalities that
-   values of a trace can take, and likewise k texts (ordered as norms-eval
-   orders texts, by Python's order of strings), k lists, and k objects;
-   a text literal with the character U+0000 in such an order is not
-   translated. This is exact: the value of a predicate depends only on
-   the order of the quantities of a group among themselves and with the
-   literals, which these values realise.
+   `max(...) < A.y`) form groups. Every quantity of a group takes the
+   literals of the whole group (so `A.x == B.y AND B.y > 3` gives `A.x`
+   the literal 3 too), and for a group of k quantities the classes hold,
+   besides each literal, k values in every gap: below the smallest
+   literal, between two adjacent literals, and above the largest; likewise
+   k texts (ordered as norms-eval orders texts, by Python's order of
+   strings), k lists, and k objects. A text literal with the character
+   U+0000 in such an order is not translated. Numbers are computed
+   exactly; the values in a gap are integers or floats strictly inside
+   it, since a value of a trace is an integer or a float, and a gap that
+   holds fewer than k of them gets all of them.
+
+   This is exact. Take values v<sub>1</sub>, …, v<sub>k</sub> of the
+   quantities of a group in a trace, all numbers, and the common sorted
+   literals c<sub>1</sub> < … < c<sub>m</sub>. Each v<sub>i</sub> equals a
+   literal or lies in one gap, and a gap holds at most k of the distinct
+   v<sub>i</sub>. Map a v<sub>i</sub> that equals a literal to it, and the
+   distinct v<sub>i</sub> of each gap, in their order, to the first grid
+   values of that gap in their order (the gap holds at least as many grid
+   values as distinct values of a trace). The map keeps every comparison
+   of two quantities of the group (order and equality, within a gap and
+   across gaps) and every comparison of a quantity with a literal, so
+   every predicate of the group has the same value on the image. The
+   argument is the same for texts, and for values of mixed types,
+   comparisons across types do not depend on the value within a type
+   (an ordering compares true and false as 1 and 0, which are literals of
+   every group).
 
    Arithmetic (`+`, `-`, `*`, `/`), `sum`, and `avg` are translated only
    for quantities with a finite domain. CADL declares none for the
@@ -1574,5 +1592,8 @@ message events and the classes of values. The time of a check grows
 with the number of commands of the model (four per choice of the environment) and
 of reachable states: an instance with 12 message events (4 096
 choices, 16 384 commands) took more than ten minutes. A processor
-SHOULD bound the time of the model checker and report when the bound is
-exceeded.
+SHOULD bound the time of the model checker, and of building the model,
+and report when the bound is exceeded. The limit on choices is checked
+together with the ends of several instances and the versions: a model
+may have at most 32 768 commands. A refusal for too many combinations of
+classes names the predicates and the quantities that cause it.
