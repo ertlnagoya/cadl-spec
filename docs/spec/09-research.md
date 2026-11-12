@@ -295,9 +295,10 @@ gives sanctions a numeric magnitude that λ scales; the same indices
 are also computed over all contracts of an SoS. The indices are
 counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
-design-time checking that F.12 does not cover (quantifiers and arithmetic in
-predicates, several contract instances, sets of actors whose size is not fixed, continuous
-time, amendments, and which party can avoid a violation),
+design-time checking that F.12 does not cover (arithmetic over a quantity
+without a given domain, amendments together with several contract instances,
+more than four instances, sets of actors whose size is not fixed, continuous
+time, and which party can avoid a violation),
 monitoring in the Unity C#
 runtime, monitoring in the generated Rego and Solidity of what they
 refuse (quantifiers, aggregates, wildcard and range references in
