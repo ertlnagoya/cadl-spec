@@ -1286,8 +1286,8 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   without `--domain`. Four or more quantities ordered against each other
   stay refused, for the reason that F.12 gives. Each part is compared
   with `cadl norms-eval` as above: instances with starts of their own on
-  random paths and on every path of at most four observations over two
-  choices (every order of starts and ends), amendments of two instances
+  random paths and on every path of at most three observations over two
+  choices (every order of starts and ends; four in a longer run), amendments of two instances
   with two and with three versions on random paths, which include
   instances that start after an amendment, and linear arithmetic on
   random paths, on values of a decimal grid, many of which lie on the
