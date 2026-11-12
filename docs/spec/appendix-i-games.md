@@ -1894,8 +1894,11 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   middle of the hull of these bounds. PD+ is tried before N, with g⁺_p(s)
   the maximal value of the relaxed process; PD− is tried when N fails,
   with τ the canonical best response at the centre of the cell, and with
-  the strategy and the states of N_s for N_s. A cell that PD+ decides with
-  g⁺_p(s) ≤ 0 for every player carries `from_every_state: true`.
+  the strategy and the states of N_s for N_s. An `equilibrium` cell
+  carries `from_every_state: true` when every player satisfies E2 or
+  PD+ with g⁺_p(s) ≤ 0 in every state of R_C(p) without φ_p, in any
+  combination, and, for `concept: every_reachable_state` with ε = 0,
+  always.
   `games_eval.USE_ADVANTAGES = False` gives the maps of 0.3.26.
 - `cadl model-export` writes the file of I.11 (`smg` and the `player`
   constructs, with the renaming of H.11 and of the keywords that I.11
