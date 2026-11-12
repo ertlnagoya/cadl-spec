@@ -54,7 +54,7 @@ description: "References cited in the CADL specification."
 
 [25] C. Folke, T. Hahn, P. Olsson, and J. Norberg, "Adaptive Governance of Social-Ecological Systems," Annual Review of Environment and Resources, vol. 30, pp. 441-473, 2005.
 
-[26] M. N. Zitouni, A. A. Anda, S. Rajpal, D. Amyot, and J. Mylopoulos, "Towards the LLM-Based Generation of Formal Specifications from Natural-Language Contracts: Early Experiments with Symboleo," in Proc. IEEE/ACM RAISE, pp. 1-9, 2025.
+[26] M. N. Zitouni, A. A. Anda, S. Rajpal, D. Amyot, and J. Mylopoulos, "Towards the LLM-Based Generation of Formal Specifications from Natural-Language Contracts: Early Experiments with Symboleo," in Proc. 2025 IEEE/ACM Requirements Engineering for AI-powered SoftwarE (RAISE), Ottawa, Canada, pp. 1-10, 2025; preprint arXiv:2411.15898, https://arxiv.org/abs/2411.15898.
 
 [27] G. Rosa, D. Moreno-Lumbreras, G. Robles, and J. M. González-Barahona, "Understanding Specification-Driven Code Generation with LLMs: An Empirical Study Design," SANER 2026 Registered Report (Stage 1), arXiv:2601.03878, 2026.
 
