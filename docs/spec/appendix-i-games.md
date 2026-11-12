@@ -904,14 +904,81 @@ states that the relaxed process reaches from s under it. Other sound
 methods are admissible, for example exact reasoning on the rational
 functions U_p and BR_p, or the certification by the end points of a
 cell below, which proves that a gain is convex or monotone in a
-parameter. An open item, not normative: by the performance-difference
-identity, U_p(τ, v) − U_p(v) is the expected sum, along the play of τ
-from s₀ until φ_p, of the one-step advantages Q_p(s, c, v) − V_p(s, v)
-of the commands that τ takes; bounding these advantages on a cell and
-maximising their sum in the relaxed process would bound the gain
-directly instead of comparing bounds of two functions as N and E1 do.
-Such a method is one of the sound methods that this paragraph admits;
-the reference implementation does not use it (I.14).
+parameter. The conditions PD+ and PD− below bound a gain directly
+through the one-step advantages.
+
+**Conditions from the one-step advantages.** For a state s of p in
+R_C(p) in which φ_p does not hold, a command c of En(s), and a valuation
+v of C at which s is a state of Reach_p, the **advantage**
+
+```text
+A_p(s, c, v)  =  Q_p(s, c, v) − V_p(s, v)
+```
+
+is the gain of taking c once in s and following the profile afterwards;
+it is 0 for the command that the profile selects. For a strategy τ of p
+and a state s of Reach_p at θ(v), write U_p(τ, s, v) for the payoff of p
+in the game started in s when p plays τ and the others follow the
+profile. The **performance-difference identity** states
+
+```text
+U_p(τ, s, v) − V_p(s, v)  =  E[ Σ_t A_p(s_t, c_t, v) ]
+```
+
+where the expectation is over the plays from s under σ[p↦τ] until φ_p,
+s_t is the state of step t and c_t the command taken in it, and a step
+in a state of another player, or in a state in which τ selects the
+command of the profile, adds 0. *Proof.* Given s_t and c_t, the
+expectation of ρ_p(s_t, c_t) + V_p(s_(t+1), v) is Q_p(s_t, c_t, v). The
+sum of the advantages is therefore, in expectation, the accumulated
+payoff of p minus V_p(s, v) plus the value V_p at the first state in
+which φ_p holds, which is 0. Every state of the play is in Reach_p, and
+the expected number of steps is finite since the profile is admissible
+(I.6). ∎ V\*_p(s, v) − V_p(s, v) is the largest of these expectations
+over the strategies τ of p (I.7).
+
+Suppose a method gives, for each such s and each command c other than
+the one the profile selects, numbers a⁻_p(s, c) ≤ A_p(s, c, v) ≤
+a⁺_p(s, c) for every v in C at which s is a state of Reach_p, both 0 for
+the command of the profile and in the states of the other players. Let
+g⁺_p(s) be an upper bound, over all strategies of p and all v in C at
+which s is a state of Reach_p, of the expected sum of a⁺_p along the
+play from s, and g⁻_p(τ, s) a lower bound, over these v, of the expected
+sum of a⁻_p along the play of τ from s. Then:
+
+- **PD+.** gain_p(v) ≤ ε on C when g⁺_p(s₀) ≤ ε. For
+  `concept: every_reachable_state`, sgain_p(v) ≤ ε on C when
+  g⁺_p(s) ≤ ε for every state s of R_C(p) in which φ_p does not hold.
+  When g⁺_p(s) ≤ 0 for all these states, V\*_p(s, v) = V_p(s, v) for
+  every state s of Reach_p at every valuation of C, as under E2.
+- **PD−.** p is a deviator on C when g⁻_p(τ, s₀) > ε for a strategy τ
+  of p, and, for `concept: every_reachable_state`, also when
+  g⁻_p(τ, s) > ε for a state s of R⁺_C(p) in which φ_p does not hold.
+
+PD+ may take the place of E1 or E1\*, and of E2 for `from_every_state`;
+PD− may take the place of N or N_s. These conditions, too, are
+sufficient, not necessary. Unlike E1 and N, they do not compare a bound
+of the payoff under one strategy with a bound of the payoff under
+another, so the variation of U_p over the cell does not enter twice.
+With σ(s) the command of the profile, V_p(s, v) = Q_p(s, σ(s), v), and
+since both distributions sum to 1,
+
+```text
+A_p(s, c, v)  =  ρ_p(s, c) − ρ_p(s, σ(s))
+                 + Σ_s′ (P(s, c, s′) − P(s, σ(s), s′)) · (V_p(s′, v) − m)
+```
+
+for every number m, with ρ_p and P at v. The difference of the two step
+payoffs and each difference of two probabilities is a single function
+of the open parameters and is bounded on C as such (at the corners when
+it is multi-affine, by an exact interval enclosure otherwise); V_p(s′, v)
+is bounded by l_p(s′) and u_p(s′), and the products by interval
+arithmetic. A successor s′ whose difference is not zero at v is in
+Reach_p at v, since both commands are allowed in s. In the relaxation
+above, g⁺_p(s) is the maximal value from s with the step reward a⁺_p,
+and g⁻_p(τ, s) the minimal value from s with the commands of p fixed by
+τ and the step reward a⁻_p; they are bounds for the same reason as b_p
+and d_p(τ).
 
 **Certification by the end points of a cell.** When the only open
 parameter enters the game through weights only, a cell can be decided
@@ -1149,10 +1216,10 @@ a strategic model as the model file of
 [H.11](./appendix-h-stochastic.md#h11-export) with two changes:
 
 1. the first line is `smg` instead of `dtmc`;
-2. after it, for each player that owns a command of the design, in
-   declaration order, one construct that lists the action labels of
-   the commands of the design that the player owns, in the order of
-   their first declaration:
+2. after it, for each player, in declaration order, one construct that
+   lists the action labels of the commands of the design that the
+   player owns, in the order of their first declaration; the list is
+   empty for a player that owns no command of the design:
 
 ```
 smg
@@ -1162,7 +1229,11 @@ player R_
 endplayer
 ```
 
-A player that owns no command of the design is not written. All
+A player that owns no command of the design is written with the empty
+list, as `player D` followed by `endplayer`. Without such players, a
+design without owned commands would give an `smg` file without any
+`player` construct, which PRISM-games 3.2.4 rejects, and a player that
+is not written cannot be named in a coalition. All
 commands of the design are written, whatever a profile selects;
 unowned commands and the deadlock command are allocated to no player.
 A player name is renamed by the rule of H.11 when it equals a keyword
@@ -1173,8 +1244,10 @@ language; every name of the exported model is renamed by this
 extended list.
 This appendix does not determine whether PRISM-games accepts a player
 whose name equals another identifier of the model; an exporter SHOULD
-report such a name. A parameter that is open only in an equilibrium
-map is written with its fixed value (I.13).
+report such a name. PRISM-games 3.2.4 accepts such a player when the
+other identifier is a variable, a label, an action label, a parameter,
+a reward structure, or the module `main` (I.14). A parameter that is
+open only in an equilibrium map is written with its fixed value (I.13).
 
 Version 0.1 defines **no properties file** for a strategic model. A
 payoff is a sum of expected rewards with weights of either sign, and
@@ -1185,8 +1258,12 @@ guarantee against the other players, as in
 [[Chen+, FMSD 2013]](./appendix-b-references.md), and equilibria of
 its own choosing; neither is the question of this appendix, and a
 translation is left to a later version. The syntax above was checked
-against the PRISM-games manual (accessed Nov. 2026); files exported in
-this form have not been run through PRISM-games (I.14).
+against the PRISM-games manual (accessed Nov. 2026), and files exported
+in this form were run through PRISM-games 3.2.4 (I.14). PRISM-games
+3.2.4 rejects a reward structure with a negative reward and has no
+exact engine for games, so a payoff whose weights have both signs is
+not one reward structure of the exported file, and the values that
+PRISM-games computes are floating-point numbers.
 
 ## I.12 Example
 
@@ -1448,8 +1525,13 @@ p_fail = 289/729 = 0.396433: when the dispatcher fails that often, a
 failed attempt costs the robot so much that it is careful without any
 sanction. Up to p_fail = 0.2 the centralised regime needs the stronger
 incentive; at p_fail = 0.3 the distributed one does. On this map U_R
-varies with p_fail, so E1 decides no `equilibrium` cell (I.9); the
-cells away from the curve are decided by E2 and N.
+varies with p_fail, so E1 decides no `equilibrium` cell (I.9). For D,
+whose gain is 0, E2 holds on every cell. For R, the cells away from the
+curve are decided mostly by PD+ and PD−: in a bisection of CENTRALIZED
+to the resolution of 0.05 (I.14), before cells are joined, PD+
+establishes V\*_R = V_R on each of the 91 `equilibrium` cells, where
+E1 and E2 fail, and PD− establishes R as a deviator on 66 of the 68
+`not_equilibrium` cells, N on the other 2.
 
 ### A second example: two deciding players
 
@@ -1793,7 +1875,8 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   centre of the cell (I.9) and tries N only for a player for whom E1
   and E2 fail. Cells with the same claim are joined (I.9) unless
   `--no-merge` is given. Since the version after 0.3.23, the cells that
-  N, E1 and E2 leave undecided are decided from their end points (I.9)
+  N, E1 and E2 (and PD+ and PD− below) leave undecided are decided from
+  their end points (I.9)
   when condition A holds, in any strategic model; the map reports
   whether A holds, for which players the gain is non-increasing (B−)
   or non-decreasing (B+) from s₀, or why the end points are not used,
@@ -1802,10 +1885,26 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   N, N_s, and the end points); for N_s, R⁺_C(p) is computed per cell,
   τ is the canonical best response on Reach_p at the centre of the
   cell, and s is the first state of S that satisfies the condition.
+  Since the version after 0.3.26, PD+ and PD− (I.9) are used as well.
+  For a player for whom E1 (E1\* for `every_reachable_state`) and E2
+  fail, the advantages are bounded on the cell as I.9 describes: the
+  difference of the step payoffs and each difference of probabilities
+  exactly (at the corners, or by interval enclosure when it is not
+  multi-affine), the values of the successors by l_p and u_p, and m the
+  middle of the hull of these bounds. PD+ is tried before N, with g⁺_p(s)
+  the maximal value of the relaxed process; PD− is tried when N fails,
+  with τ the canonical best response at the centre of the cell, and with
+  the strategy and the states of N_s for N_s. An `equilibrium` cell
+  carries `from_every_state: true` when every player satisfies E2 or
+  PD+ with g⁺_p(s) ≤ 0 in every state of R_C(p) without φ_p, in any
+  combination, and, for `concept: every_reachable_state` with ε = 0,
+  always.
+  `games_eval.USE_ADVANTAGES = False` gives the maps of 0.3.26.
 - `cadl model-export` writes the file of I.11 (`smg` and the `player`
   constructs, with the renaming of H.11 and of the keywords that I.11
   adds for a strategic model, and a check that two players do not
-  collide).
+  collide). Up to 0.3.26 it did not write a player that owns no command
+  of the design.
 - A payoff with a `sanction_of:` or `reward_of:` term gets the weight
   of J.7, and J-14 (the end points of I.9) is used in `--certify`
   ([J.11](./appendix-j-grounding.md#j11-reference-implementation-status));
@@ -1816,11 +1915,13 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   κ\* through the gains, and the table of λ\* by `--set`; statuses,
   deviators, and `from_every_state`. The maps of the first example
   have 3 cells per design after joining for `comply_by_lambda` (11
-  cells analysed, about 0.4 s for both designs), and 257 and 17 cells
-  after joining (3 849 and 271 analysed, about 6.3 s) for
-  `comply_by_lambda_and_failure`, with the fractions given in I.12
-  (CENTRALIZED: 0.808838 `equilibrium`, 0.141235 `not_equilibrium`,
-  409/8192 undecided). For `watched_map` a bisection gives 5 cells
+  cells analysed, about 0.4 s for both designs), and 105 and 13 cells
+  after joining (567 and 115 analysed, about 1.5 s) for
+  `comply_by_lambda_and_failure` (CENTRALIZED: 0.811768 `equilibrium`,
+  0.138672 `not_equilibrium`, 203/4096 undecided). Without PD+ and PD−,
+  as up to 0.3.26, they are 257 and 17 cells after joining (3 849 and 271
+  analysed, about 6.3 s; CENTRALIZED: 0.808838, 0.141235, 409/8192).
+  For `watched_map` a bisection gives 5 cells
   after joining (17 analysed); `--partition 4 --no-merge` gives the
   table of I.12. Times are wall-clock on a laptop.
 - Verification by the implementer, with an oracle that shares no code
@@ -1879,32 +1980,95 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
 - Three open parameters, measured on the bundled examples with one
   more parameter opened (λ ∈ [0, 0.4], p_fail ∈ [0, 0.5], and
   p_loss ∈ [0, 0.5] in the first; λ, κ ∈ [0, 0.4] and
-  p_fail ∈ [0, 0.5] in the second, CENTRALIZED), with the default
-  budget (`--max-cells 20000`), processor time on a laptop. In the
-  first example, DISTRIBUTED reaches the resolution 0.1 with 3 891
+  p_fail ∈ [0, 0.5] in the second, CENTRALIZED, profile
+  `comply_if_watched`), with the default budget (`--max-cells 20000`),
+  processor time on a laptop. Without PD+ and PD−, as up to 0.3.26, in
+  the first example DISTRIBUTED reaches the resolution 0.1 with 3 891
   cells analysed (139 after joining; 0.838 of the region
   `equilibrium`, 0.062 `not_equilibrium`) and 0.05 with 15 853 (526);
   CENTRALIZED exhausts the budget with 39 999 cells analysed and 0.269
   undecided (1 059 after joining; 0.700 `equilibrium`, 0.030
-  `not_equilibrium`). Both designs take 59 s (resolution 0.1) and
-  76 s (0.05), about 1.4 ms per analysed cell, as with two parameters;
-  `concept: every_reachable_state` gives the same cells in 63 s. The
-  second example exhausts the budget as well, with 0.260 undecided
-  after 39 999 cells (71 s). What grows is the number of cells, not
-  the time per cell: the cells next to the boundary must be small in
-  all three directions, and N and E1 compare bounds of two different
-  functions, which drift apart on a cell that is wide in a parameter
-  on which the payoff depends strongly. In CENTRALIZED, cells near
-  λ = 0 stay undecided at a width of 1/32 in p_fail and p_loss
-  although R gains about 0.23 at their centres. No error was found,
-  and no change was made; a sharper sufficient condition that bounds
-  U_p(τ) − U_p(σ) directly through the one-step advantages
-  Q_p(s, c) − V_p(s) along τ (the performance-difference identity) is
-  an open item; I.9 already admits it as another sound method. In the fuzzing above,
-  the games with three or four players, most of them with three open
-  parameters, took about 0.9 s each (wall-clock, check, map with a
-  budget of 24 cells, and oracle).
-- Not exercised: the export of I.11 was not run through PRISM-games.
+  `not_equilibrium`). Both designs take 50 s (resolution 0.1) and
+  82 s (0.05). The second example exhausts the budget as well, with
+  0.260 undecided after 39 999 cells (77 s). The cells next to the
+  boundary must be small in all three directions, and N and E1 compare
+  bounds of two different functions, which drift apart on a cell that
+  is wide in a parameter on which the payoff depends strongly: in
+  CENTRALIZED, cells near λ = 0 stay undecided at a width of 1/32 in
+  p_fail and p_loss although R gains about 0.23 at their centres. With
+  PD+ and PD− (since the version after 0.3.26), CENTRALIZED reaches the
+  resolution 0.1 with 7 987 cells analysed (921 after joining; 0.849
+  `equilibrium`, 0.051 `not_equilibrium`) and 0.05 with 27 031
+  (3 037; 0.889 and 0.062), and DISTRIBUTED with 463 (39) and 2 271
+  (154). Both designs take 18 s (resolution 0.1) and 64 s (0.05);
+  `concept: every_reachable_state` gives the same cells as `nash`, with
+  and without PD+ and PD−. The second example still exhausts the
+  budget, with 0.200 undecided after 39 999 cells (290 after joining;
+  0.410 `equilibrium`, 0.390 `not_equilibrium`; 92 s). There the
+  advantage of `trust` for the dispatcher in the initial state is the
+  difference of the values of two different successors, watched and not
+  watched, and PD+ bounds it with l_p and u_p of the two states, which
+  drift apart with p_fail as the bounds of E1 do: on cells of width 1/8
+  in p_fail, the upper bound of the gain of D exceeds the largest gain
+  at the corners by about 0.1 to 0.4. A coupled relaxation, in which the
+  plays from the two successors take the same corner in each step,
+  decided more of this map in an experiment (0.129 undecided after
+  39 999 cells) but took about four times as long, and is not used;
+  bounds of such differences of values remain an open item. In the
+  fuzzing above, the games with three or four players, most of them
+  with three open parameters, took about 0.9 s each (wall-clock, check,
+  map with a budget of 24 cells, and oracle).
+- Verification of PD+ and PD− (version after 0.3.26), by the
+  implementer, with the oracle above: 5 200 random games of
+  `tests/games_fuzz.py` (2 600 of the kind of the first verification,
+  800 that ask for `every_reachable_state`, 900 with three or four
+  players, two thirds of them with three open parameters, 700 games of
+  the end points without grounding, and 200 with grounding), 3 486
+  `equilibrium` and 4 693 `not_equilibrium` cells, 167 069 exact point
+  evaluations, no wrong claim, and the checks at the fixed values agreed
+  with the oracle on every model. The drivers of the independent
+  reviews, through the command line: the driver of the review of the
+  maps (860 models, 16 042 evaluations), the ten generator presets of
+  the review of Appendix J (600 models, 5 868 evaluations), and the
+  eight presets of the review of 0.3.24 (560 models, 7 149
+  evaluations): no wrong claim. Three injected errors of the new
+  conditions (the term of the successors left out, the lower and the
+  upper bounds of the advantages exchanged, the differences of payoffs
+  and probabilities taken at the centre of the cell only) are each
+  detected by fuzzing and by the test suite; the earlier injected errors
+  are run with PD+ and PD− switched off and are still detected.
+- Since the version after 0.3.26, the export of I.11 is run through
+  PRISM-games 3.2.4, the binary release of the PRISM-games project
+  (prismmodelchecker.org/games, for macOS arm64 and Linux x86-64). The
+  exported model file is passed unchanged, followed by a module that
+  synchronises on the action labels of the players and lets every
+  player but one take only the command of the profile, and by a reward
+  structure per player. Since PRISM-games rejects negative rewards and
+  has no exact engine for games, V_p is computed term by term from the
+  exported reward structures, with `<<p>> R{"r"}max=? [ F φ_p ]` while
+  every player follows the profile, and V\*_p from the structure
+  ρ_p(s, c) + h(s) − Σ_s′ P(s, c, s′) · h(s′), which is not negative
+  for h(s) a multiple of the largest expected number of steps from s
+  until φ_p, and whose maximum from s is V\*_p(s) + h(s), since the added
+  terms telescope along every play. The values come from value
+  iteration (`-e 1e-12`) and are compared with a relative tolerance of
+  10⁻⁶. On the three bundled examples and 200 games of
+  `tests/games_fuzz.py` (two to four players, both concepts, the games
+  of the end points), in 212 pairs of a design and a profile, the
+  number of states, 2 240 payoffs and best-response values, V_p and
+  V\*_p − V_p in 7 813 states of Reach_p, 212 statuses with their
+  deviators (in 118 of them a gain equals ε, which the exact gain of
+  `cadl` is there), and 69 values of `from_every_state` agreed with
+  `cadl game-check`; so did 200 other games run earlier. One export
+  error was found and corrected (I.11): a player that owns no command
+  of the design was not written, so a design without owned commands
+  gave an `smg` file without players, which PRISM-games rejects. A
+  player named like a variable, a label, an action label, a parameter,
+  a reward structure, or the module `main` is accepted.
+  `tests/test_games_prism_games.py` runs the comparison when
+  PRISM-games is installed, and the CI installs the Linux release for
+  one Python version (12 tests; about 7 minutes in an emulated Linux
+  x86-64 container on a laptop).
 
 ## I.15 Backward compatibility
 
