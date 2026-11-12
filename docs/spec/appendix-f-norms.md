@@ -1192,7 +1192,9 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
 - The Unity C# target does not monitor norms.
 - From `cadl` 0.3.25, `cadl norms-check` implements F.12: it builds the
   model of one contract instance (`--bindings`, `--members`, `--step`,
-  `--horizon`), runs the questions with PRISM 4.11 (`prism` on PATH;
+  `--horizon`; from the release after 0.3.25 also `--domain` for
+  arithmetic, `--instance` / `--instances` for several instances, and
+  `--version` for amendments), runs the questions with PRISM 4.11 (`prism` on PATH;
   explicit engine, with strategies exported), and evaluates every
   witness with the engine of `cadl norms-eval`. `--timeout` bounds the
   time of all runs of PRISM together (600 s by default). Without PRISM
@@ -1202,8 +1204,10 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   used. The translation is tested against `cadl norms-eval` by running
   the generated PRISM text, with an interpreter of the subset it uses,
   on random paths of environment choices and on every path of at most
-  two observations of one contract, and comparing the state of every
-  norm at every observation; the interpreter is in turn compared with
+  two observations (one for several instances and for amendments) of
+  small contracts, and comparing the state of every norm at every
+  observation; random values of every JSON type are checked to fall
+  into a class of the model; the interpreter is in turn compared with
   paths of the PRISM simulator, and the answers of PRISM with explicit
   fixpoints over the reachable states.
 - The other components read a wildcard reference outside a domain in
@@ -1298,6 +1302,42 @@ same observations, and each is evaluated by F.5 with the bindings of its
 instance. The number of instances is at most 4 in version 0.1, and the
 end of the instances multiplies the choices of the environment by 2 per
 instance.
+
+### Amendments
+
+A model of one instance may also hold later versions of the file
+(`--version FILE`, repeated, in the reference implementation). At every
+observation the environment may choose to amend the contract to the
+next version, at most once per version and in their order. The
+amendment takes effect at that observation before step 1, as F.6
+defines and norms-eval applies it: a final norm instance is not
+affected; an inactive one takes the definition of the new version, or
+is removed when the new version has no norm with its id; an active or
+suspended one follows its `on_amendment:`: `discharge` discharges it,
+`transform: X` discharges it and activates X, when X is inactive, with
+the elapsed time of the old norm, and `carry_over` keeps its state and
+its elapsed time under the new definition, discharges it when the new
+version has no norm with its id, keeps its pending candidates only when
+its content is unchanged, and violates an obligation whose elapsed time
+exceeds the new deadline (with the reparation of the new definition); a
+norm of the new version that the instance does not have becomes
+inactive, and active at once when it has no trigger and is not a target;
+an `assume:` item with the same text continues, a new one is evaluated
+from the amendment on, and the others are closed; the counts-as rules of
+the new version apply from then on. The variables of a norm id of any
+version are shared by all versions and sized for each of them (the
+largest deadline, interval, and set of candidates); a norm that the
+instance does not have (of a version not yet in force, or removed) is
+absent. The model is exact for the traces whose `amend` lines name the
+given versions in their order, as F.12 states for one version. Not
+translated, with the reason: versions with other actors or another
+lifecycle, a norm whose kind changes between versions (F.6 discharges
+it), a version with a norm or a counts-as rule that is not translated,
+and amendments together with several instances. The questions are
+asked for every norm id of any version; a witness that needs an
+amendment names the version file in its `amend` line. The amendment
+doubles the choices of the environment and multiplies the commands by
+the number of versions.
 
 ### What the environment chooses
 
@@ -1429,9 +1469,9 @@ temporal operator over such predicates; deadlines; `until:`; counts-as
 rules with `if:`; powers and their effects; reparations; and `assume:`
 items of these forms (for the verdict `excused`). It does not translate
 arithmetic, `sum`, and `avg` over a quantity without a domain, `request`
-fields, `now`, `state`, a temporal operator combined with other
-operators or nested in another, and amendments
-(F.6). A norm with such a part is reported as **not translated**, with
+fields, `now`, `state`, and a temporal operator combined with other
+operators or nested in another; amendments are translated as described
+above. A norm with such a part is reported as **not translated**, with
 the reason, and so is a norm whose behaviour depends on one: the
 reparation of a norm that is not translated, the target of an effect of
 a power that is not translated, and a norm whose trigger, content, or
