@@ -1103,6 +1103,28 @@ default cannot be told apart from "a non-static or derived permission
 might allow"; the Cedar target therefore covers static norms only, and
 the runtime decides the rest.
 
+Precisely, the Cedar policies decide a message as the decision function
+decides an input with only `message` on the enforced contracts without
+their norms that are not static. Their answer, with Deny for `deny` and
+`escalate`, is the decision for a policy input in these cases:
+
+1. an Allow by the policy for ungoverned messages, or a Deny by the
+   `forbid` policy of an undeclared tool, for every input;
+2. a Deny by the `forbid` policy of a static prohibition, when its
+   contract has a running instance in the input or the message is a
+   tool call; a contract without a running instance decides another
+   message by its default (G.5, step 3.1), so this Deny is not final
+   there;
+3. any answer, when every enforced contract that governs the message
+   has a running instance, no norm of these contracts that is not
+   static can match the message (its content and its bearer, with an
+   index bound by the contract instance counted as a match), and no
+   `derived` entry of these contracts in the input is of a permission
+   with the name of the message whose holder is the sender.
+
+In every other case the runtime decides with the decision function. A
+generator for Cedar SHOULD state these cases in the generated artifact.
+
 ## G.11 Mapping to agent protocols (informative)
 
 The decision function does not depend on a protocol. This section
@@ -2143,15 +2165,38 @@ bind the indices they use (G-17 and G-18, added at the end of G.9; no
 earlier rule changes).
 
 The generated policies have been run with OPA 1.22.3 and the Cedar CLI
-4.14.1 and compared with `cadl agents-decide`. Under OPA the full
-result was equal for 20 400 inputs (three variants of a file with two
-enforced contracts, actor sets, contract instances, in-force flags, and
-delegation chains). Under Cedar the outcome was equal for 5 640
-requests, where Deny stands for deny and escalate, except for the case
-that G.10 names: a prohibition that is not static is not enforced by
-the Cedar policies. The tests of the reference implementation repeat
-both comparisons when `opa` or `cedar` is installed. This run found a
-defect in the Rego policy of `cadl` 0.3.20: a reference `A[i]` whose
+4.14.1 and compared with `cadl agents-decide` on one input space. Its
+first part is a file with two enforced contracts in three variants (the
+`default:` of one contract omitted, `allow`, or `deny`): every message
+of 12 senders, 9 receivers, and 9 names, each without `instances` and
+with 16 sets of contract instances, bindings, in-force flags, and
+derived instances with valid and invalid chains (49 572 inputs). Its
+second part is 300 random files with one to three enforced contracts
+(and sometimes one that is not enforced), static and non-static
+permissions and prohibitions, `default: allow`, `deny`, or omitted,
+escalation, fallbacks, and delegations, each with 7 040 inputs from
+random instance sets. Under OPA the full result was equal for the
+49 572 inputs of the first part and for 211 200 inputs of 30 random
+files. A Cedar request carries the message only; for each of the
+530 916 requests the Cedar answer was the decision for the message
+alone on the contracts without their norms that are not static. Of the
+2 161 572 inputs, 2 022 265 are in the cases of G.10, and for each of
+them the Cedar answer was the decision for the full input, where Deny
+stands for deny and escalate. Each reason
+for which G.10 leaves an input to the runtime (a governing contract
+without a running instance, a permission or a prohibition that is not
+static and can match, a derived instance that can match) occurs, and
+for each some input has a decision that differs from the Cedar answer.
+The tests of the reference implementation repeat both comparisons on a
+smaller sample when `opa` or `cedar` is installed. This comparison found
+that the comment that `cadl` 0.3.26 and earlier write at the top of the
+Cedar policies called a Deny by the `forbid` policy of a static
+prohibition final. It is not final when the contract of the prohibition
+has no running instance and the message is not a tool call, because that
+contract then decides by its default; the second case of G.10 states
+this, and `cadl` 0.3.27 writes the three cases into the comment. The
+policies themselves were correct. An earlier run, on fewer inputs,
+found a defect in the Rego policy of `cadl` 0.3.20: a reference `A[i]` whose
 index the contract instance does not bind was treated as no match
 instead of unknown (G.4), so a prohibition with such a bearer did not
 apply, and a contract with `default: allow` allowed the message.
