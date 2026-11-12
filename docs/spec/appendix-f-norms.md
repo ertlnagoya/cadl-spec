@@ -1359,8 +1359,9 @@ At each observation the environment chooses three things.
    as a condition is true unless it is 0) and, when a boolean literal is
    compared with it, 1 (an ordering compares true as 1); each text
    literal and each name without a value compared with it, and one other
-   text; and one value for lists and objects, which no comparison tells
-   apart. One representative stands for each class. The model evaluates
+   text; and, for a quantity that is not compared with another
+   quantity, one value for lists and objects, which no comparison with a
+   literal tells apart (a literal is never a list or an object). One representative stands for each class. The model evaluates
    every predicate on the representatives with the evaluator of
    norms-eval, so a comparison of values of different types (a text with
    a number, a boolean with a number) has in the model the value it has
@@ -1382,7 +1383,25 @@ At each observation the environment chooses three things.
    besides each literal, k values in every gap: below the smallest
    literal, between two adjacent literals, and above the largest; likewise
    k texts (ordered as norms-eval orders texts, by Python's order of
-   strings), k lists, and k objects. A text literal with the character
+   strings) and k objects (which are only equal or not, never ordered).
+   Lists are ordered too, lexicographically, but not always comparable:
+   two lists whose first different elements have different kinds (a
+   number and a text, say) are neither less nor greater, and the
+   comparison is undefined, so `[1, "a"] < [1, 2]` is undefined while
+   `[1] < [1, "a"]` and `[1] < [1, 2]` are true. Quantities only tested for
+   equality get k different lists. For quantities ordered (`<`, `<=`, `>`,
+   `>=`) against each other the classes hold lists that realise every
+   pattern of pairwise outcomes (equal, less, greater, not comparable)
+   that lists of a trace can have: for two quantities `[]`, `[0]` and
+   `["a"]` (4 patterns), for three `[]`, `[0]`, `[1]`, `["a"]`, `["b"]`,
+   `[{"d": 0}]`, `[0, 0]`, and `[0, "a"]` (29 patterns). The outcomes of
+   three lists are decided at the at most two positions where their
+   elements first differ, so lists of length at most two whose elements
+   realise the outcomes at those positions suffice; an enumeration of all
+   lists of length at most two over 0, 1, 2, `"a"`, `"b"`, two objects,
+   and null yields the 29 patterns, which these eight lists realise.
+   Four or more quantities ordered against each other are not
+   translated. A text literal with the character
    U+0000 in such an order is not translated. Numbers are computed
    exactly; the values in a gap are integers or floats strictly inside
    it, since a value of a trace is an integer or a float, and a gap that
@@ -1399,7 +1418,10 @@ At each observation the environment chooses three things.
    of two quantities of the group (order and equality, within a gap and
    across gaps) and every comparison of a quantity with a literal, so
    every predicate of the group has the same value on the image. The
-   argument is the same for texts, and for values of mixed types,
+   argument is the same for texts. Lists and objects are not compared
+   with literals, and the comparison of two of them depends only on the
+   pattern of outcomes, which the lists and objects of the classes
+   realise. For values of mixed types,
    comparisons across types do not depend on the value within a type
    (an ordering compares true and false as 1 and 0, which are literals of
    every group).
@@ -1580,12 +1602,12 @@ witness that does not give the claimed verdict as its own error.
 
 Version 0.1 refuses a horizon of more than 1 000 observations, more than
 16 message events, more than 8 192 choices of the environment per
-observation, and quantities with more than 20 000 combinations of
+observation, and quantities with more than 50 000 combinations of
 classes in one group of predicates. A predicate over the members of a
 set reads one quantity per member, and the classes of these quantities
 multiply: with c classes per quantity, m members, and q quantities read
 per member, a group has up to c<sup>m q</sup> combinations, which is
-what the limit of 20 000 bounds. The model checker explores the
+what the limit of 50 000 bounds. The model checker explores the
 reachable states explicitly; the number of transitions is the number of
 reachable states times the number of choices, which grows with the
 message events and the classes of values. The time of a check grows
