@@ -8,7 +8,7 @@ This repository hosts the specification and teaching materials for **CADL (Contr
 
 | Section | English | 日本語 |
 | --- | --- | --- |
-| Specification (chapters 1–10, appendices A–H, glossary) | [docs/spec/intro](https://www.ertl.jp/cadl-spec/docs/spec/intro/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/spec/intro/) |
+| Specification (chapters 1–10, appendices A–J, glossary) | [docs/spec/intro](https://www.ertl.jp/cadl-spec/docs/spec/intro/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/spec/intro/) |
 | Quick Start (two paths: CADL Explorer in the browser, or the `cadl` CLI) | [docs/quickstart](https://www.ertl.jp/cadl-spec/docs/quickstart/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/quickstart/) |
 | Textbook (Course A with the exercises of a 5-session class; self-contained) | [docs/textbook](https://www.ertl.jp/cadl-spec/docs/textbook/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/textbook/) |
 | Hands-on course | [docs/handson](https://www.ertl.jp/cadl-spec/docs/handson/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/) |

@@ -16,13 +16,13 @@ CADL処理系は以下の4つの主要コンポーネントから構成される
 CADL記述を解析し，抽象構文木（AST）を生成する。静的型検査により，アクター参照の解決，契約当事者の整合性，パラメータの値域を検査する。`cadl` 0.3で利用できる。
 
 **検証エンジン (Verifier):**
-AST上で形式検証を実行する。`cadl` 0.3は，SMTソルバ（Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md)）による無矛盾性検証，プロトコルのデッドロック検出，モード遷移のグラフ解析を提供する。確率モデル拡張（[付録H](./appendix-h-stochastic.md)）を宣言したファイルについては，`cadl model-check` がパラメトリックなマルコフモデルの性質を内部の参照評価器により厳密な算術で評価し，認証付きのモードマップを計算する。`cadl model-export` は，そのモデルをPRISMとStormで読めるPRISM言語で書き出す。プロトコルのモデル検査と連続ダイナミクスの到達可能性解析は計画段階である。
+AST上で形式検証を実行する。`cadl` 0.3は，SMTソルバ（Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md)）による無矛盾性検証，プロトコルのデッドロック検出，モード遷移のグラフ解析を提供する。確率モデル拡張（[付録H](./appendix-h-stochastic.md)）を宣言したファイルについては，`cadl model-check` がパラメトリックなマルコフモデルの性質を内部の参照評価器により厳密な算術で評価し，認証付きのモードマップを計算する。`cadl model-export` は，そのモデルをPRISMとStormで読めるPRISM言語で書き出す。戦略モデル拡張（[付録I](./appendix-i-games.md)）も宣言したファイルについては，`cadl game-check` が，名前を付けた戦略の組（遵守など）が均衡であるかを厳密な算術で判定し，`--certify` を指定するとパラメータの上の均衡マップを計算する。規範拡張を宣言したファイルについては，`cadl norms-check` が，1つの契約インスタンスの規範をPRISMのモデルに変換し，各規範が発動，違反，履行されうるか，どの規範が衝突するかをPRISMで調べる。PRISMが返したトレースは，規範のエンジンがそれぞれ確認する（[付録FのF.12節](./appendix-f-norms.md)）。プロトコルのモデル検査と連続ダイナミクスの到達可能性解析は計画段階である。
 
 **コード生成器 (Code Generator):**
-CADL記述からコードを生成する。`cadl` 0.3は，Python（ランタイム），Solidity [[Solidity Documentation]](./appendix-b-references.md)，OPA/Rego [[Open Policy Agent]](./appendix-b-references.md)，Unity C#（SoS-DSL拡張向け，[付録E](./appendix-e-sos-dsl.md)），エージェント統治拡張の境界の方針（RegoとCedar，[付録G](./appendix-g-agents.md)）を対象とし，シミュレータ向けの設定も出力する。ターゲットは[付録D](./appendix-d-codegen.md)に一覧する。TypeScriptの生成と，SysMLv2 [[OMG, 2025]](./appendix-b-references.md) やAADL [[Feiler & Gluch, 2012]](./appendix-b-references.md) への変換は計画段階である。
+CADL記述からコードを生成する。`cadl` 0.3は，Python（ランタイム），Solidity [[Solidity Documentation]](./appendix-b-references.md)，OPA/Rego [[Open Policy Agent]](./appendix-b-references.md)，Unity C#（SoS-DSL拡張向け，[付録E](./appendix-e-sos-dsl.md)），エージェント統治拡張の境界の方針（RegoとCedar，[付録G](./appendix-g-agents.md)）を対象とし，シミュレータ向けの設定も出力する。ターゲットは[付録D](./appendix-d-codegen.md)に一覧する。規範拡張を宣言したファイルについては，RegoとSolidityのターゲットも，契約ごとに規範のモニターを出力する（[付録DのD.5節](./appendix-d-codegen.md)）。TypeScriptの生成と，SysMLv2 [[OMG, 2025]](./appendix-b-references.md) やAADL [[Feiler & Gluch, 2012]](./appendix-b-references.md) への変換は計画段階である。
 
 **ランタイムモニター (Runtime Monitor):**
-配備された制度の実行を監視し，契約違反の検出，制度遷移の実行，ログ記録を行う。`cadl` 0.3はこれらを，独立した監視サービスとしてではなく，生成したランタイムコード内のクラスとして提供する。規範拡張（[付録F](./appendix-f-norms.md)）を宣言したファイルについては，生成したPythonコードが，システムの動作中に規範も監視する。
+配備された制度の実行を監視し，契約違反の検出，制度遷移の実行，ログ記録を行う。`cadl` 0.3はこれらを，独立した監視サービスとしてではなく，生成したランタイムコード内のクラスとして提供する。規範拡張（[付録F](./appendix-f-norms.md)）を宣言したファイルについては，生成したPython，Rego，Solidityのコードが，システムの動作中に規範も監視する。エージェント統治拡張については，`cadl mcp-gateway` と `cadl a2a-gateway` が，エージェントとそれが呼び出すツールないしはエージェントとの間で動作し，すべてのメッセージを契約に照らして判定し，監査ログを書く。監査ログのハッシュチェーンは `cadl audit-verify` が検査する（[付録G](./appendix-g-agents.md)）。
 
 以下のパイプラインは，`cadl` 0.3が提供する段階を示す。
 
@@ -75,9 +75,10 @@ YAMLベースの構文を解析し，CADL固有の制約式・プロトコルス
 - `cadl iec62853` は，構文解析した定義からディペンダビリティの要約を作成する。
 - `cadl sim-validate`，`cadl sim-ir`，`cadl sim-gen` は，定義を三層のIRに変換し，シミュレータ向けの設定を生成する（[付録D](./appendix-d-codegen.md)）。
 - `cadl ai` は，LLMのAPIを通じて自然言語の記述からCADLファイルの草案を作成し，それを構文解析して型検査する。
-- `cadl norms-eval` は，記録したトレースの上で，1つの契約インスタンスの規範の判定を計算する。`cadl norms-diff` は，ファイルのあるバージョンから次のバージョンへの改正によって規範がどう変わるかを報告する（規範拡張，[付録F](./appendix-f-norms.md)）。
-- `cadl agents-decide` は，境界で1つのメッセージを判定する（許可，拒否，エスカレーション）。`cadl agents-run` は，記録したメッセージの列を参照ランタイムで再生し，保留，委任，監査記録を扱う（エージェント統治拡張，[付録G](./appendix-g-agents.md)）。どちらもオフラインで動作する。
-- `cadl model-check` と `cadl model-export` は，6.1節の検証エンジンの項で述べた（確率モデル拡張，[付録H](./appendix-h-stochastic.md)）。
+- `cadl norms-eval` は，記録したトレースの上で，1つの契約インスタンスの規範の判定を計算する。`cadl norms-diff` は，ファイルのあるバージョンから次のバージョンへの改正によって規範がどう変わるかを報告する（規範拡張，[付録F](./appendix-f-norms.md)）。`cadl norms-check` は，6.1節の検証エンジンの項で述べた。
+- `cadl norms-indices` は，各契約の規範から情報共有の指標，権能の集中の指標，インセンティブの被覆率を計算し，宣言されたαとβと比べる（根拠付け拡張，[付録J](./appendix-j-grounding.md)）。
+- `cadl agents-decide` は，境界で1つのメッセージを判定する（許可，拒否，エスカレーション）。`cadl agents-run` は，記録したメッセージの列を参照ランタイムで再生し，保留，委任，監査記録を扱う（エージェント統治拡張，[付録G](./appendix-g-agents.md)）。どちらもオフラインで動作する。ゲートウェイの `cadl mcp-gateway` と `cadl a2a-gateway` は，エージェントの動作中に同じ判定を行う（6.1節）。`cadl mcp-approve` は保留された呼び出しを承認ないしは却下し，`cadl mcp-message` はエージェント間の権限の付与といった他の統治対象のメッセージを動作中のMCPゲートウェイに伝え，`cadl audit-verify` は監査ログのハッシュチェーンを検査する。
+- `cadl model-check` と `cadl model-export`（確率モデル拡張，[付録H](./appendix-h-stochastic.md)），`cadl game-check`（戦略モデル拡張，[付録I](./appendix-i-games.md)）は，6.1節の検証エンジンの項で述べた。
 
 ## 6.3 検証エンジン
 
@@ -86,7 +87,7 @@ YAMLベースの構文を解析し，CADL固有の制約式・プロトコルス
 | **検証手法** | **検証対象** | **ツール基盤（設計）** | **リファレンス実装（`cadl` 0.3）** |
 |---|---|---|---|
 | SMTベース検証 | 契約間の無矛盾性。guaranteeの論理的整合性。 | Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), CVC5 [[Barbosa+, 2022]](./appendix-b-references.md) | Z3で利用できる: 各契約内および当事者を共有する契約間の無矛盾性，各契約のassumeの充足可能性，遷移条件の排他性。assumeからguaranteeが導かれるかどうかは，情報としてのみ報告する。CVC5は統合していない。 |
-| モデル検査 | プロトコルのデッドロック，ライブロック検出。到達可能状態の網羅的探索。 | UPPAAL [[Larsen+, 1997]](./appendix-b-references.md), NuSMV [[Cimatti+, 2002]](./appendix-b-references.md) | 統合していない。デッドロック検出は構造解析（`parallel`ブロックの分岐間での相互送信，バリアへの到達可能性，フォールバックの循環）で代替している。逐次に書かれたステップは順序付けられており，循環待ちとしては扱わない。ライブロック検出は計画段階である。確率モデル拡張の確率モデルは，PRISMとStormへ書き出せる（6.1節）。 |
+| モデル検査 | プロトコルのデッドロック，ライブロック検出。到達可能状態の網羅的探索。 | UPPAAL [[Larsen+, 1997]](./appendix-b-references.md), NuSMV [[Cimatti+, 2002]](./appendix-b-references.md) | 統合していない。デッドロック検出は構造解析（`parallel`ブロックの分岐間での相互送信，バリアへの到達可能性，フォールバックの循環）で代替している。逐次に書かれたステップは順序付けられており，循環待ちとしては扱わない。ライブロック検出は計画段階である。確率モデル拡張の確率モデルは，PRISMとStormへ書き出せる（6.1節）。1つの契約インスタンスの規範は，`cadl norms-check` がPRISM 4.11で検査する（6.1節）。 |
 | 到達可能性解析 | 制度遷移時の安全不変条件の保持。Hamilton-Jacobi到達可能性解析 [[Bansal+, 2017]](./appendix-b-references.md)。 | hj_reachability [[Stanford ASL]](./appendix-b-references.md) | 統合していない。代わりに，モード遷移グラフ上の到達可能性・行き止まり状態・閉路の解析と，Z3による各安全不変条件の充足可能性検査を利用できる。初期モードは遷移から推定し，出ていく遷移のないモードは失敗として報告する。 |
 | 構成的検証 | アクター追加・離脱時の差分検証。既存契約への影響分析。 | 独自実装 | 計画段階である。 |
 
