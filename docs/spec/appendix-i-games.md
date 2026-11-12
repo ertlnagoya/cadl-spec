@@ -2130,6 +2130,25 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   and probabilities taken at the centre of the cell only) are each
   detected by fuzzing and by the test suite; the earlier injected errors
   are run with PD+ and PD− switched off and are still detected.
+- Verification of the coupled bounds (version after 0.3.27), by the
+  implementer, with the oracle above: 5 200 random games of
+  `tests/games_fuzz.py` of the same kinds as for PD+ and PD−, 3 455
+  `equilibrium` and 4 913 `not_equilibrium` cells, 170 529 exact point
+  evaluations, no wrong claim; in 1 188 cases a player was decided by
+  PD+ or PD− with the coupled bounds. In the multi-affine games, every
+  coupled bound on the whole region and on two random sub-boxes was
+  also compared directly with the advantage that the oracle computes at
+  sample points: 251 933 comparisons, none outside the bounds. The
+  drivers of the earlier independent reviews were not available; a
+  driver through the command line (`cadl game-check --certify --format
+  json` on 860 generated games of four kinds, the decided cells checked
+  with the oracle) made 25 530 exact point evaluations without a wrong
+  claim. Three injected errors of the coupled bounds (the largest and
+  the least value exchanged, the difference of the step payoffs of the
+  first step left out, the step payoffs after the first step left out)
+  are each detected by the claims of the maps in fuzzing, by the direct
+  comparison, and on cells of the second example in
+  `tests/test_games_coupling.py`.
 - Since the version after 0.3.26, the export of I.11 is run through
   PRISM-games 3.2.4, the binary release of the PRISM-games project
   (prismmodelchecker.org/games, for macOS arm64 and Linux x86-64). The
