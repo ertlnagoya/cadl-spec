@@ -146,11 +146,12 @@ always one. The Solidity monitor uses
 fixed-point numbers with six decimals and therefore also refuses `*`,
 `/`, and literals with more than six decimals; it scans the window of a
 temporal operator once, as the observations arrive, and therefore also
-refuses a temporal operator inside another one, and, in the content
-of a norm, a temporal operator that is not the whole content (the
-candidates of such a content are decided together, see below); and it
-refuses a contract whose creation code would exceed the 49152 bytes of EIP-3860
-(`cadl codegen` estimates the size from the generated constructor). In
+refuses a temporal operator inside another one, a content of a norm
+with two temporal operators, a temporal operator inside a comparison,
+and `NOT until(...)` (see below); and it refuses a contract whose
+creation code would exceed the 49152 bytes of EIP-3860 or whose runtime
+code would exceed the 24576 bytes of EIP-170 (`cadl codegen` estimates
+both sizes from above). In
 a `guarantee:` item these lead to the item being left out, as above. An
 observation with `amend` is refused at run time.
 
@@ -218,16 +219,26 @@ a string; numbers, including the time, are fixed-point numbers times
 be replayed and tested; a deployment MAY pass `block.timestamp` times
 10<sup>6</sup>. A malformed observation reverts, which leaves the state
 as it was. The contract stores the model of the CADL contract as data,
-filled in by its constructor, and interprets it; three libraries hold
-the evaluation of predicates, the functions without state, and the
-judgement of temporal contents, so that each
+filled in by its constructor, and interprets it; four libraries hold
+the evaluation of predicates, the functions without state, the
+judgement of temporal contents, and the items, so that each
 runtime code stays within the size limit of EIP-170. The cost of an
 observation does not grow with the number of earlier observations: the
 window of a temporal operator is scanned once (each observation adds
 its own value to the scans that are open), a value is found by binary
 search, and the values that no later step can read are deleted, a few
-per new value. A norm whose content is one temporal operator keeps its
-candidates (the observations at which the content is still to be
+per new value. The content of a norm with a temporal operator is
+decided, at the observation of a candidate, up to that operator: the
+rest of the content has its value there (its names are fixed, see the
+differences below), so the content is true whatever the operator gives
+(the candidate holds at once), never true (no candidate), true exactly
+when the operator is true, or never true but undecided until the
+operator is decided (the candidate keeps the norm pending, as F.5
+does). Under an odd number of `NOT`, the operator is replaced by its
+dual on the negated operand (`NOT within(d, p)` is `throughout(d, NOT
+p)`, `NOT throughout(d, p)` is `within(d, NOT p)`); the parity is that
+of the content, so all candidates of a norm share one operator. Such a
+norm keeps its candidates (the observations at which the content is still to be
 decided) in a queue, oldest first, with what the observations since
 its last judgement say about the operands: for `within`, the first
 time the operand is true; for `throughout`, the first time it is false
@@ -253,10 +264,11 @@ at the 1000th (from `cadl` 0.3.26; 0.3.25 read every candidate at every
 observation, 1.3 × 10<sup>7</sup> gas at the 320th). A monitor whose
 observation would exceed the block gas limit cannot record it and does
 not recover, so the bound matters. The generated file is to be compiled with solc
-0.8.24 or later and `--optimize --optimize-runs 1`, as its header says:
-without the optimizer the runtime code exceeds the limit of EIP-170, and
-the estimate of the creation code holds for the optimizer with 1 or 200
-runs.
+0.8.24 to 0.8.37 (checked; its pragma is `>=0.8.24 <0.9.0`) and
+`--optimize --optimize-runs 1`, as its header says: without the
+optimizer the runtime code exceeds the limit of EIP-170, and the
+estimates of the creation code and of the runtime code hold for the
+optimizer with 1 or 200 runs.
 
 **Differences from `cadl norms-eval`.** The monitors decide each
 observation with the observations received so far, as the Python
@@ -271,12 +283,14 @@ change):
   (F.5). The Rego monitor reads a number as the decimal it is written as
   and keeps numbers and times in its state as `{"$q": [n, k]}`, the
   number n / 10<sup>k</sup>; it refuses `/` (a quotient is not always a
-  decimal number) and a number with more than 600 digits. The Solidity
-  monitor holds six decimals and refuses `*`, `/`, and literals with
-  more decimals; its host passes numbers with at most six decimals.
-  Within these limits the verdicts agree with `cadl norms-eval` on
-  every input. The results of the Rego monitor write times as JSON
-  numbers for the reader.
+  decimal number), and a product whose exact value could have more than
+  4095 decimals (every number has at most 400, F.5). Both monitors, like
+  `cadl norms-eval`, refuse a number outside the range of F.5. The
+  Solidity monitor holds six decimals and refuses `*`, `/`, and literals
+  with more decimals; its host passes numbers with at most six decimals.
+  For the inputs that meet these limits, the verdicts agree with
+  `cadl norms-eval`. The results of the Rego monitor write times as JSON
+  numbers for reference.
 - The monitors refuse inputs that `cadl norms-eval` accepts: a binding
   that is not an integer written as one (`1.0` and `1e2` are refused) or
   a string, a value of `values` that is a list or an object (in Rego a

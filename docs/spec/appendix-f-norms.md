@@ -338,7 +338,10 @@ number it is written as: `0.1` is one tenth, and the time stamp
 holds. Time stamps, the bounds of the intervals of F.4, and deadlines
 are compared exactly, without a tolerance: content at exactly the
 deadline is in time (item 2 below), and content one microsecond after
-it is not.
+it is not. A processor MAY refuse a number with more than 400
+significant digits, with more than 400 decimals, or with an absolute
+value of 10<sup>308</sup> or more; it then treats the observation as an
+error. A predicate with such a literal is not evaluated.
 
 ### Quantifiers and aggregates
 
@@ -1189,13 +1192,18 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   whose creation code would exceed the limit of EIP-3860, and it refuses
   an observation that would make a bare name read inside a temporal
   operator known after the first observation. From `cadl` 0.3.26 it
-  also refuses, in the content of a norm, a temporal operator that is
-  not the whole content, and it decides the candidates of a temporal
-  content together, so that the gas of an observation does not grow
-  with the observations inside a window. The Rego monitor refuses `/`, whose result is not always
+  reduces a content with one temporal operator to that operator (its
+  dual under `NOT`), refuses two temporal operators in one content,
+  `NOT until(...)`, and a temporal operator inside a comparison, and
+  decides the candidates of a temporal content together, so that the
+  gas of an observation does not grow with the observations inside a
+  window. The Rego monitor refuses `/`, whose result is not always
   a decimal number. Both compute numbers and times exactly, as F.5 says,
-  and agree with `cadl norms-eval` on every input they accept; D.5
-  lists what they refuse. The reference implementation
+  and agree with `cadl norms-eval` on the inputs that meet their
+  limits; D.5 lists them. From `cadl` 0.3.26, `cadl norms-eval`, the
+  Python monitor, `cadl agents-run`, and the Rego monitor refuse a
+  number outside the range of F.5 (a trace error with its line), and a
+  numeric `deadline:` is exact. The reference implementation
   compares both with `cadl norms-eval` after every observation, the
   Solidity monitor on an EVM.
 - The Unity C# target does not monitor norms.

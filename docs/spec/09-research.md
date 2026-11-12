@@ -303,7 +303,8 @@ runtime, monitoring in the generated Rego and Solidity of what they
 refuse (quantifiers, aggregates, wildcard and range references in
 predicates, index expressions, and amendments; in Rego also `/`; in Solidity also `*`,
 `/`, literals with more than six decimals, nested temporal operators,
-temporal operators that are not the whole content of a norm,
+two temporal operators in the content of a norm, `NOT until`,
+temporal operators inside a comparison,
 and contracts whose creation code exceeds the limit of EIP-3860),
 weighted indices, norms per regime, and the derivation of model
 probabilities from norms remain open. We found no work that handles first-class norm
