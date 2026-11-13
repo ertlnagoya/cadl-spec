@@ -1537,16 +1537,8 @@ At each observation the environment chooses three things.
    realise the outcomes at those positions suffice; an enumeration of all
    lists of length at most two over 0, 1, 2, `"a"`, `"b"`, two objects,
    and null yields the 29 patterns, which these eight lists realise.
-   Four or more quantities ordered against each other are not
-   translated, for a reason that does not depend on lists: besides
-   numbers and lists, every quantity of a group of k ≥ 4 has at least
-   15 classes (no value, true, false, at least 2k = 8 texts below and
-   above the text literals, and k = 4 objects), so the group has at
-   least 15<sup>4</sup> = 50 625 combinations of classes, more than the
-   limit of 50 000 (Limits), whatever lists realise the patterns of four
-   lists. A set of lists for four quantities would therefore never be
-   used within the limits of version 0.1, and the processor names the
-   classes and the combinations in its refusal. A text literal with the character
+   A group of four or more quantities ordered against each other is
+   translated by types and patterns, below. A text literal with the character
    U+0000 in such an order is not translated. Numbers are computed
    exactly; the values in a gap are integers or floats strictly inside
    it, since a value of a trace is an integer or a float, and a gap that
@@ -1570,6 +1562,59 @@ At each observation the environment chooses three things.
    comparisons across types do not depend on the value within a type
    (an ordering compares true and false as 1 and 0, which are literals of
    every group).
+
+   When the classes of the quantities of a component of predicates have
+   more than 50 000 combinations, or the component has a group of four
+   or more quantities ordered against each other, every group of the
+   component whose quantities have the same classes (none has a domain)
+   takes its valuations by **types and patterns** instead of the
+   product of the classes. By the last remark, a valuation of the group is decided by
+   a type for each quantity (no value, true, false, number, text,
+   object, list) and, for each type, a pattern of the quantities of
+   that type: for numbers and texts, the literal that each one equals
+   or the gap that it lies in, and the order, with ties, of those in
+   one gap, which take the first grid values of the gap in that order
+   (the map above); for objects, which of them are equal; for lists, the
+   pattern of pairwise outcomes. The model takes one valuation for each
+   choice of types and patterns. The map above, with the lists and
+   objects replaced by those of the same pattern, takes every valuation
+   of a trace to one of them and keeps every comparison of two
+   quantities and of a quantity with a literal, so these valuations
+   give the predicates every combination of values that a trace gives
+   them. The patterns of n lists are exactly the partitions into equal
+   lists with a **series-parallel** order of the classes, an order
+   without four classes a, b, c, d such that a < c, b < c, and b < d,
+   while a and b, a and d, and c and d are not comparable. No other
+   pattern occurs in a trace. The empty list is below every other list.
+   The lists that are not empty and have equal first elements form a
+   part whose pattern is that of their tails, and two lists of
+   different parts compare as their first elements. Those are compared
+   as numbers (true and false among them), as texts, or as lists by the
+   same rule, or not at all (two kinds, an object, null), so the order
+   of the first elements is a disjoint union of chains and of orders of
+   lists. Series-parallel orders are closed under disjoint union, under
+   putting one order below another, and under replacing each element of
+   an order by an order, so by induction on the length the order of the
+   lists is series-parallel. Every such pattern is realised: a pattern
+   of two classes or more is the series composition (every list of one
+   part below every list of the other) or the parallel composition (no
+   two comparable) of two smaller patterns, and the lists that realise
+   the two parts, prefixed with 0 and 1 for a series composition and
+   with 0 and `"a"` for a parallel one, realise it. One to five lists
+   have 1, 4, 29, 331, and 5 262 patterns; the 29 of three lists are
+   those of the eight lists above. The number of valuations of a group
+   is the sum, over the types of its quantities, of the products of the
+   numbers of patterns of each type. Four quantities with only the
+   literals 0 and 1 (which every group has) have 26 035 valuations,
+   where the product of their classes has more than
+   29<sup>4</sup> = 707 281 combinations (each has 29 classes that are
+   not lists), and 46 285 with one more numeric literal. Five
+   quantities ordered against each other have at least 424 213
+   valuations, more than the limit of 50 000 (Limits), and are not
+   translated; neither are four or more of them whose quantities do not
+   have the same classes, or that are in a component with linear
+   arithmetic below. The processor names the numbers of patterns per
+   type and of valuations in its refusal.
 
    Arithmetic (`+`, `-`, `*`, `/`), `sum`, and `avg` are **linear** when
    every product has a literal factor and every divisor is a literal
@@ -1823,7 +1868,13 @@ classes in one group of predicates. A predicate over the members of a
 set reads one quantity per member, and the classes of these quantities
 multiply: with c classes per quantity, m members, and q quantities read
 per member, a group has up to c<sup>m q</sup> combinations, which is
-what the limit of 50 000 bounds. In a component with linear
+what the limit of 50 000 bounds. For a group of quantities compared
+with each other that takes its valuations by types and patterns, the
+limit bounds the number of these valuations, times the classes of the
+other quantities of the component: the reference implementation
+builds the 26 035 valuations of four ordered quantities without other
+literals in about 2 seconds, and the 424 213 of five, which it refuses,
+would take about 30 seconds. In a component with linear
 arithmetic, the combinations are the points of the faces, summed over
 the choices of classes that are not numbers, and the same limit
 applies. The model checker explores the
