@@ -31,8 +31,8 @@ Storm. For a file that also declares the strategic model extension
 arithmetic whether a named strategy profile, such as compliance, is an
 equilibrium, and with `--certify` computes equilibrium maps over the
 parameters. For a file that declares the norms extension,
-`cadl norms-check` translates the norms of one contract instance into a
-model for PRISM and asks whether each norm can be activated, violated,
+`cadl norms-check` translates the norms of one or more instances of a
+contract, also when the contract is amended, into a model for PRISM and asks whether each norm can be activated, violated,
 and fulfilled and which norms conflict; the norms engine confirms each
 trace that PRISM returns ([Appendix F, F.12](./appendix-f-norms.md)).
 Model checking of protocols and reachability analysis of
