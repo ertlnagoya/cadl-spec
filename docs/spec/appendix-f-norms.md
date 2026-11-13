@@ -342,7 +342,8 @@ it is not. A processor MAY refuse a number with more than 400
 significant digits, with more than 400 decimals, or with an absolute
 value above 1.7976931348623157 × 10<sup>308</sup>, the largest finite
 double (every finite double is inside this range); it then treats the
-observation as an error. A predicate with such a literal is not evaluated.
+observation as an error. A predicate with such a literal is not evaluated;
+in a norm or a `counts_as:` rule it is an error (N-16).
 
 ### Quantifiers and aggregates
 
@@ -352,7 +353,8 @@ function ([Appendix A, A.10](./appendix-a-syntax.md#a10-expressions)),
 are evaluated at an observation over a **domain** `D`. The domain names
 a declared set of actors: `A`, `A[*]`, or `A[lo..hi]`. The domain of a
 comprehension may also be a range of integers `lo..hi`. A predicate with
-any other domain is not evaluated (F.10).
+any other domain is not evaluated (F.10); in a norm or a `counts_as:`
+rule it is an error (N-16).
 
 The variable `x` takes the indices of the members of the domain. In `p`
 or `e`, an actor reference indexed by `x` (`A[x]`, also inside an index
@@ -442,7 +444,8 @@ open domain, when `e` (for `count`, `p`) is undefined for a member,
 when a value of `e` is not a number, and for `min`, `max`, and `avg`
 over an empty domain. A predicate that compares such a value is
 undefined, except in the comparisons below. Another function, and a
-temporal operator inside a comprehension, are not evaluated (F.10).
+temporal operator inside a comprehension, are not evaluated (F.10); in
+a norm or a `counts_as:` rule they are errors (N-16).
 
 **Monotone aggregates in a comparison.** `count` cannot decrease when
 members are added to the domain, `max` cannot decrease, and `min` cannot
@@ -513,7 +516,8 @@ two steps.
    `f(e' for x in D)`, where `e'` is `e` with every reference of the
    group replaced by `A[x]`, and `x` is a variable that occurs nowhere
    else. When they form two or more groups, the call is not evaluated
-   (F.10): a comprehension has to state which members are combined.
+   (F.10), and in a norm or a `counts_as:` rule it is an error (N-16): a
+   comprehension has to state which members are combined.
 2. **Comparisons.** Every other reference is bound by the smallest
    comparison (`==`, `!=`, `<`, `<=`, `>`, `>=`, or `IN`) that contains
    it. A reference that no comparison contains is bound by the
@@ -564,7 +568,7 @@ robots delivered at one observation of the interval (each robot within
 
 The references of a message event are matched as in F.3 and are not
 rewritten. A wildcard or range reference in the arguments of a message
-event is not evaluated (F.10).
+event is an error (N-16).
 
 Before this subsection, these references had no value in a predicate
 (Appendix A, A.10), and the components of the reference implementation
@@ -894,8 +898,27 @@ A norms-aware processor MUST, in addition to existing checks:
   in an aggregate argument (each member is compared with itself), or
   that is bound inside the predicate argument of `within`, `throughout`,
   or `until` (all members at one observation), and when an aggregate
-  argument has two or more groups (it is not evaluated). The warning
-  SHOULD name the quantified form that the author probably meant.
+  argument of an `assume:` or `guarantee:` item has two or more groups
+  (it is not evaluated; in a norm or a `counts_as:` rule it is an error
+  of N-16). The warning SHOULD name the quantified form that the author
+  probably meant.
+- **N-16.** The `trigger:`, `until:`, and `content:` of a norm and the
+  `when:` of a `counts_as:` rule that are neither a `message_event` nor
+  an institutional event, and the `if:` of a `counts_as:` rule, MUST be
+  predicates of [Appendix A.10](./appendix-a-syntax.md#a10-expressions)
+  (a `tpredicate` for `content:`) that F.5 evaluates. A function call in
+  them MUST be a temporal operator of F.4, where N-10 allows one, or
+  `sum`, `count`, `min`, `max`, or `avg` of a comprehension or of an
+  argument whose references form one group; the domain of a quantifier
+  or a comprehension MUST be one that F.5 names; a variable over a range
+  of integers MUST NOT be written as `x.q`; and a number MUST lie in the
+  range of exact numbers. The message of a `message_event` MUST be an
+  identifier or a call whose arguments are such expressions without
+  wildcard or range references. A norm or rule that does not satisfy
+  N-16 could never be evaluated, so it is an error and not a norm that
+  stays `inactive`. Two forms are common mistakes: `2.5s` is not a
+  `duration_lit` (A.1), and is written `2500ms`; `'k'` is not a
+  `string`, and is written `"k"`.
 
 ### Relation to the core checks
 
@@ -1071,10 +1094,12 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
 `cadl` 0.3.19 as follows:
 
 - `cadl` parses `norms:` and `counts_as:` and the temporal operators of
-  F.4, applies rules N-1 to N-15 in `cadl check` (N-8, N-12 to N-15,
+  F.4, applies rules N-1 to N-16 in `cadl check` (N-8, N-12 to N-15,
   and the SHOULDs of N-3 and N-9 as warnings; N-13 and N-14 from `cadl`
-  0.3.23, N-15 from `cadl` 0.3.24), and lowers both blocks to the IR
-  of F.9.
+  0.3.23, N-15 from `cadl` 0.3.24, N-16 from `cadl` 0.3.30), and lowers
+  both blocks to the IR of F.9. The error of N-4 and N-16 for a
+  fractional duration says how to write it (`2.5s` as `2500ms`), and the
+  error of N-16 for a single-quoted string says to use double quotes.
 - The SMT checks of `cadl verify` leave out `assume:` and `guarantee:`
   items that contain temporal operators and report each one as not
   checked (F.7). `cadl codegen` leaves the same items out of the
@@ -1134,8 +1159,18 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   or range reference in the arguments of a message event, a quantifier
   or comprehension whose domain is not a set of actors or a range,
   `x.q` for a variable `x` over a range of integers, or a temporal
-  operator inside a comprehension is not evaluated and stays `pending`,
-  with the reason in the report. `cadl norms-diff` compares two
+  operator inside a comprehension is not evaluated. An `assume:` or
+  `guarantee:` item of that kind stays `pending`, with the reason in the
+  report. Up to `cadl` 0.3.29 a norm or a counts-as rule of that kind,
+  and one whose text is not a predicate at all (such as
+  `until(p, q, 2.5s)` or `x == 'k'`), was not evaluated either: the norm
+  stayed `inactive` with a warning, and `cadl check` reported a text that
+  is not a predicate only as a warning, and only when it had no temporal
+  operator. From `cadl` 0.3.30 these are errors of N-16, and `cadl
+  norms-eval`, the monitors of F.10 and Appendix D, `norms-check`, and
+  the runtime of Appendix G refuse such a norm or rule, and a norm with
+  a `deadline:` that is not a duration, in a file that was not checked.
+  Up to 0.3.29 they read such a deadline as no deadline. `cadl norms-diff` compares two
   versions of a file and reports what F.6 does to the norms of each
   contract, including every carried-over norm whose `content` or
   `deadline:` changes and a `transform:` target that the new version
@@ -1816,8 +1851,9 @@ reparation of a norm that is not translated, the target of an effect of
 a power that is not translated, and a norm whose trigger, content, or
 `until:` is an event of a counts-as rule that is not translated. When an
 `assume:` item is not translated, a violation may be `excused` in the
-traces, and the model does not tell. Norms that F.10 does not judge
-(not evaluable) stay `inactive` in the model, as in the traces.
+traces, and the model does not tell. A checked file has no norm that
+F.10 cannot judge (N-16); up to `cadl` 0.3.29 such a norm stayed
+`inactive` in the model, as in the traces.
 `guarantee:` items do not change norm states and are not translated.
 
 ### Questions

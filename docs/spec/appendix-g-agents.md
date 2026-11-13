@@ -2300,13 +2300,13 @@ is undefined because its domain is open is missing data (G.5). Up to
 outside the domain of a quantifier (`A[*].x > 0`). From `cadl` 0.3.24
 it rewrites such a reference as F.5 defines ("Wildcard and range
 references"), with the same code as `cadl norms-eval`, so
-`A[*].x > 0` is judged as `for all j in A[*]: A[j].x > 0`. The runtime
-still does not evaluate the other predicates that F.10 lists as not
-evaluated, such as an aggregate argument with references to two sets;
-a norm whose `trigger:`, `until:`, or `content:` is such a predicate
-is not judged, and its in-force flag is unknown for the whole run. By
-G.5 a prohibition of that kind then always applies and a permission
-never does: fail-closed, but perhaps not what the author expects.
+`A[*].x > 0` is judged as `for all j in A[*]: A[j].x > 0`. Up to
+`cadl` 0.3.29 a norm whose `trigger:`, `until:`, or `content:` was a
+predicate that F.10 does not evaluate, such as an aggregate argument
+with references to two sets, was not judged, and its in-force flag was
+unknown for the whole run; by G.5 such a prohibition always applied and
+such a permission never did. From `cadl` 0.3.30 such a norm is an error
+of N-16 (F.7), and the runtime and the gateways do not start with it.
 
 The tests replay each step of the runtime through the decision function
 with the state the runtime computed, and through the generated Rego

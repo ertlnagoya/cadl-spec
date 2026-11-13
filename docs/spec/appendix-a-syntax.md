@@ -83,6 +83,10 @@ literal         = string | int_literal | float_literal
                 | bool_literal | duration_lit ;
 ```
 
+A `duration_lit` is an integer followed by its unit: `2.5s` is not a
+duration, and the same time is written `2500ms`. A `string` is delimited
+by double quotes only: `'k'` is not a string.
+
 `identifier` names actors, contracts, protocols, regimes, and metrics.
 `hyphen_name` is used only for extension names and codegen target names
 (for example `sos-dsl`, `unity-csharp`). Numeric literals are unsigned.
