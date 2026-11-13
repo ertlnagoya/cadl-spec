@@ -382,7 +382,7 @@ none).
    are over at n. Those up to the last observation u with p′ undefined
    are undefined, the others true (none of them has seen p′ false, or it
    would be decided already). When p′ is false at n, the observations
-   from b to n are false. F(n) is n + 1 in the second case and b
+   from b to n are false. F(n) is n + 1 when p′ is false at n and b
    otherwise; the summary keeps F and u only.
 3. Let τ be t<sub>F(n)</sub> when F(n) ≤ n and t<sub>n</sub> otherwise.
    A run of fed values Y<sub>s</sub>, …, Y<sub>e</sub> with the decisive
@@ -391,12 +391,15 @@ none).
    hold an observation of the run; a run of undefined values marks the
    candidates up to e. A candidate with t<sub>k</sub> + d &lt; τ that is
    not decided becomes undefined when marked, and false for `within`
-   (true for `throughout`) otherwise, after the runs of n are fed. A run
-   of undefined values starts at F(n − 1), and the candidates whose
-   window ended before t<sub>F(n − 1)</sub> were decided at n − 1, so a
-   mark reaches only candidates whose window holds an undefined value: a
-   candidate up to F(n − 1) has that observation in its window, a later
-   one is itself in the run.
+   (true for `throughout`) otherwise, after the runs of n are fed. A
+   mark reaches only candidates whose window holds an undefined value. A
+   run of undefined values starts at F(n − 1). When F(n − 1) ≤ n − 1, τ
+   was t<sub>F(n − 1)</sub> at n − 1, so the candidates whose window ended
+   before t<sub>F(n − 1)</sub> were decided at n − 1; a candidate up to
+   F(n − 1) that is still undecided has that observation in its window,
+   and a later one is itself in the run. When F(n − 1) = n, every value
+   before n is decided, b = n, and n decides at most the run of false
+   values from n, so there is no run of undefined values to mark.
 4. These are the values of F.5 at every observation. By 1 the values that
    F.5 reads in the window of candidate k at n are decided exactly when
    they are fed, so a decisive value decides k at the same observation.
@@ -453,11 +456,11 @@ content `throughout(1000s, …)`, 5.2 × 10<sup>5</sup> for
 (at most 2.6 × 10<sup>6</sup>; the factors over two operators are
 about 1.4 for three and 3.0 for four, from the five words of a node), and the nested
 contents `within(1000s, throughout(500s, …))` and
-`throughout(1000s, within(500s, …))` 4.9 × 10<sup>5</sup> and
-5.0 × 10<sup>5</sup>, and 5.1 × 10<sup>5</sup> and 6.5 × 10<sup>5</sup>
+`throughout(1000s, within(10s, …))` 4.9 × 10<sup>5</sup> and
+5.0 × 10<sup>5</sup>, and 6.0 × 10<sup>5</sup> and 6.3 × 10<sup>5</sup>
 (at most 8.3 × 10<sup>5</sup>; the inner values of the second are
-decided from the 501st observation on, and each then decides the
-candidates of its window); `cadl` 0.3.25 read every candidate at every
+decided from the eleventh second on, and each then decides the
+candidates of its window false); `cadl` 0.3.25 read every candidate at every
 observation and used 1.3 × 10<sup>7</sup> gas at the 320th. A monitor whose observation would exceed the block gas limit cannot record it and does
 not recover, so the bound matters. The generated file is to be compiled with solc
 0.8.24 to 0.8.37 (checked; its pragma is `>=0.8.24 <=0.8.37`) and
