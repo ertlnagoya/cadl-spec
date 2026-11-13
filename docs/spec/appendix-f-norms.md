@@ -1615,7 +1615,11 @@ At each observation the environment chooses three things.
    number for which 10<sup>-k</sup>/2 · Σ<sub>j</sub> |(f B)<sub>j</sub>|
    < |f(p)| for every such f; the rounded point is in D<sup>n</sup> and
    in the face. So a face is left out only when it holds no point of a
-   trace, and no bound of the search can drop one. This is exact: the values of a trace lie in
+   trace, and no bound of the search can drop one. The point of a very
+   thin face can need more digits than norms-eval accepts in a number of
+   a trace (400); the witness that uses it is then reported as not
+   confirmed (exit status 3 in the reference implementation), never as a
+   wrong answer without notice. This is exact: the values of a trace lie in
    one face, with the same values that are not numbers, and the point of
    that face gives every predicate the value they give it. A comparison
    with a literal or between two quantities is a form too, so in such a
