@@ -1290,8 +1290,8 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   and `avg` without `--domain` by the faces of the linear arrangement,
   with an exact finite decimal point of every face that holds one, and
   assumes, and reports, a domain inferred from the literals for other
-  arithmetic without `--domain`, marking the findings that depend on it. Four or more quantities ordered against each other
-  stay refused, for the reason that F.12 gives. Each part is compared
+  arithmetic without `--domain`, marking the findings that depend on it. Version 0.3.28 still refuses
+  four or more quantities ordered against each other. Each part is compared
   with `cadl norms-eval` as above: instances with starts of their own on
   random paths and on every path of at most three observations over two
   choices (every order of starts and ends; four in a longer run), amendments of two instances
@@ -1311,6 +1311,21 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   that hold finite decimal points; the search is now exact. The examples are
   `norms_check_starts.cadl`, `norms_check_amend_v1.cadl` with
   `norms_check_amend_v2.cadl`, and `norms_check_linear.cadl`.
+- In `cadl` after 0.3.28 (not yet released), `cadl norms-check`
+  translates a group of four quantities ordered against each other by
+  types and patterns (F.12). Four such quantities without other
+  literals have 26 035 valuations, built in about 2 seconds; a contract
+  with four predicates over them has 68 choices, 272 commands, and
+  1 626 reachable states, and its check with PRISM takes about 20
+  seconds. Five or more are refused, with the numbers of patterns per
+  type and of valuations. The patterns of lists are compared with every
+  consistent pattern of four lists (331 of the 355 are series-parallel)
+  and with random nested lists of four and five; the valuations with
+  random JSON values of every type, with nested lists and objects; the
+  model with `cadl norms-eval` on random paths and by the witnesses;
+  and the valuations by types and patterns with the product of the
+  classes for groups of two and three quantities. Errors injected into
+  the construction were detected by these tests: 8 of 8.
 - The other components read a wildcard reference outside a domain in
   their own way, and `cadl` 0.3.24 does not change them. `cadl verify`
   reads `A[*].q` as one unconstrained variable per group, shared by
