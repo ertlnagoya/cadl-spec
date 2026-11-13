@@ -146,9 +146,8 @@ always one. The Solidity monitor uses
 fixed-point numbers with six decimals and therefore also refuses `*`,
 `/`, and literals with more than six decimals; it scans the window of a
 temporal operator once, as the observations arrive, and therefore also
-refuses a temporal operator inside another one, a content of a norm
-with two temporal operators, a temporal operator inside a comparison,
-and `NOT until(...)` (see below); and it refuses a contract whose
+refuses a temporal operator inside another one and a content of a norm
+with three or more temporal operators (see below); and it refuses a contract whose
 creation code would exceed the 49152 bytes of EIP-3860 or whose runtime
 code would exceed the 24576 bytes of EIP-170 (`cadl codegen` estimates
 both sizes from above). In
@@ -219,50 +218,141 @@ a string; numbers, including the time, are fixed-point numbers times
 be replayed and tested; a deployment MAY pass `block.timestamp` times
 10<sup>6</sup>. A malformed observation reverts, which leaves the state
 as it was. The contract stores the model of the CADL contract as data,
-filled in by its constructor, and interprets it; four libraries hold
-the evaluation of predicates, the functions without state, the
-judgement of temporal contents, and the items, so that each
-runtime code stays within the size limit of EIP-170. The cost of an
+filled in by its constructor, and interprets it. The model and the
+state are one struct in storage, which six libraries read and change:
+they hold the evaluation of predicates, the functions without state,
+the judgement of contents with one temporal operator, that of contents
+with two, the items, and the events, messages, counts-as rules and
+powers, so that each runtime code stays within the size limit of
+EIP-170. From `cadl` 0.3.28 the runtime code of the contract is
+estimated at 16 840 bytes, which leaves more than
+7 × 10<sup>3</sup> bytes below that limit (24 410 in 0.3.27). The cost of an
 observation does not grow with the number of earlier observations: the
 window of a temporal operator is scanned once (each observation adds
 its own value to the scans that are open), a value is found by binary
 search, and the values that no later step can read are deleted, a few
-per new value. The content of a norm with a temporal operator is
-decided, at the observation of a candidate, up to that operator: the
-rest of the content has its value there (its names are fixed, see the
-differences below), so the content is true whatever the operator gives
-(the candidate holds at once), never true (no candidate), true exactly
-when the operator is true, or never true but undecided until the
-operator is decided (the candidate keeps the norm pending, as F.5
-does). Under an odd number of `NOT`, the operator is replaced by its
-dual on the negated operand (`NOT within(d, p)` is `throughout(d, NOT
-p)`, `NOT throughout(d, p)` is `within(d, NOT p)`); the parity is that
-of the content, so all candidates of a norm share one operator. Such a
-norm keeps its candidates (the observations at which the content is still to be
-decided) in a queue, oldest first, with what the observations since
-its last judgement say about the operands: for `within`, the first
-time the operand is true; for `throughout`, the first time it is false
-and the first time it is undefined; for `until`, the first observation
-at which `q` is true and the first at which `p` is not. Together with
-the last candidate whose window has seen an undefined operand, these
+per new value.
+
+*One temporal operator.* The content of a norm with one temporal
+operator is decided, at the observation of a candidate, up to that
+operator: the rest of the content has its value there (its names are
+fixed, see the differences below), so the content is a function of the
+value of the operator, and the monitor reads it there with the
+operator undecided, true, and false. The content is then true whatever
+the operator gives (the candidate holds at once), never true (no
+candidate), true exactly when the operator is true, true exactly when
+it is false, true when it is true or false, or never true but
+undecided until the operator is decided (the candidate keeps the norm
+pending, as F.5 does). An undefined operator makes the content true
+only when the content is true with the operator undecided, so these
+cases are all: a comparison, an arithmetic operation, and the left
+side of `IN` are undefined when an operand is, and `AND`, `OR`, and
+`NOT` give a true or false result for an undefined operand only when
+they give it for an undecided one. This covers an operator under `NOT`,
+inside a comparison (`within(3s, p) == flag`, `until(p, q, 3s) <= A.y`),
+and in `IN`. A norm keeps three queues of candidates, oldest first:
+those that hold when the operator is true, those that hold when it is
+false, and those that only wait for it; a candidate that holds in both
+cases is in the first two. The second queue reads the dual operator on
+the negated operands: `NOT within(d, p)` is `throughout(d, NOT p)`,
+`NOT throughout(d, p)` is `within(d, NOT p)`, and `NOT until(p, q, d)`
+is the release below. Each queue keeps, with what the observations
+since its last judgement say about the operands: for `within`, the
+first time the operand is true; for `throughout`, the first time it is
+false and the first time it is undefined; for `until`, the first
+observation at which `q` is true and the first at which `p` is not;
+for the release, these two, the first observation at which `q` is not
+false, and the first at which `p` is false. Together with the last
+candidate whose window has seen an operand that rules it out, these
 decide every candidate by comparing times (for `throughout`, the
 newest candidate whose window ended before the first false or
-undefined value holds), with two binary searches over the queue and
+undefined value holds), with a few binary searches over the queue and
 without scanning a window per candidate; this holds also while the
 norm is suspended. Decided candidates are deleted a few per
-observation. So the cost of an observation is bounded and does not grow
-with the number of observations inside a window. In the
-tests, an observation of the example of F.8 costs about
+observation.
+
+*Release.* Write the values of a predicate at an observation in the
+three values of F.5 (true, false, undefined) with the connectives of
+Kleene, and let W be the observations of the window of candidate k.
+By F.4, `until(p, q, d)` at k is
+
+∨<sub>j ∈ W</sub> ( q<sub>j</sub> ∧ ∧<sub>k ≤ i &lt; j</sub> p<sub>i</sub> ),
+
+decided at the first observation at which a term is true, at the first
+at which `p` is false (every later term is false), or when the window
+is over, and undecided before. The negation of Kleene is an involution
+and satisfies the laws of De Morgan, so
+
+NOT `until(p, q, d)` = ∧<sub>j ∈ W</sub> ( ¬q<sub>j</sub> ∨ ∨<sub>k ≤ i &lt; j</sub> ¬p<sub>i</sub> ),
+
+the release of ¬p and ¬q: ¬q holds at every observation of the
+window up to and including the first at which ¬p holds. `NOT` keeps an
+undecided value undecided and turns a decided value into its negation,
+so the release is decided at the same observations as `until`. It is
+true exactly when every term is false. Let b be the first observation
+of W at which `p` is false, or the last of W when there is none. A
+term with j after b is false through p<sub>b</sub>. A term with j at or
+before b has no false p<sub>i</sub>, so it is false exactly when
+q<sub>j</sub> is false. Hence the release is true exactly when `q` is
+false at every observation of W up to b, and it is false or undefined
+otherwise; with undefined values this is the same statement, since a
+term with an undefined q<sub>j</sub> and no false p<sub>i</sub> is not
+false. The queue of the release therefore holds a candidate when `p` is
+false inside its window with `q` false before and at that observation,
+or when its window is over with `q` false in it; it removes every
+candidate when `p` is false (each window is then decided), the
+candidates for which `until` becomes true (`q` true with `p` true since
+the candidate), and those whose window is over; a candidate that has
+seen `q` not false is kept, undecided, until it is decided in one of
+these ways.
+
+*Two temporal operators.* For a content with two temporal operators
+the monitor reads the content once at the observation of a candidate
+and obtains its value for each of the 16 pairs of values of the
+operators (undecided, true, false, undefined); this covers a
+comparison of the two (`within(…) == throughout(…)`). An observation
+decides an operator for a range of candidates at a time: the
+candidates whose window is over become false (`throughout`: true), or
+undefined when an operand was undefined in the window; an operand true
+for `within`, false for `throughout`, or `p` false for `until` decides
+every open window; `q` true for `until` decides the candidates with
+`p` true since them. Binary searches over the candidates find these
+ranges. The candidates are the leaves of a segment tree in storage. A
+node records, for each pair of a set of operators still undecided for a
+candidate and of values that the operators can still take, whether a
+candidate below holds in that future and whether one is undecided in
+it (49 such pairs, in one 256-bit word). Deciding an operator for a range maps
+these pairs by shifts and masks and is propagated lazily, so an
+observation changes a few ranges in steps that grow with the logarithm
+of the number of candidates, and the root says whether a candidate
+holds and whether one is undecided. Three or more temporal operators
+in one content are refused. A candidate then depends on several
+operators decided at different observations: for m operators `within`
+joined by `AND`, finding a candidate that holds is a query over the
+other m − 1 operators of the candidates that one operator decides,
+and the pairs that a node records grow as 7<sup>m</sup> (343 for three
+operators), so the monitor keeps the cost of an observation bounded for
+at most two. The tree is not pruned: each activation of such a norm
+adds at least three storage slots per candidate (its observation, its
+time, its leaf, and the inner nodes above it), which stay in storage;
+the gas of an observation does not grow with them. Every monitor also
+keeps two entries per observation (its time and the lifecycle state
+before it), which are not deleted either.
+
+*Gas.* The figures below are measured with one value per observation;
+with two values an observation costs about 20 % more. In the tests, an observation of the example of F.8 costs about
 6.4 × 10<sup>5</sup> gas over 320 observations at one per second while
 the 300-second window of its assumption is open and after it (at most
-1.1 × 10<sup>6</sup>, at the first observation), and one of a contract
-with two items over a window of 10<sup>5</sup> seconds about
-3.6 × 10<sup>5</sup> gas at the 320th observation; a prohibition with
-the content `throughout(1000s, …)` at one observation per second costs
-3.8 × 10<sup>5</sup> gas at the 320th observation and 3.9 × 10<sup>5</sup>
-at the 1000th (from `cadl` 0.3.26; 0.3.25 read every candidate at every
-observation, 1.3 × 10<sup>7</sup> gas at the 320th). A monitor whose
-observation would exceed the block gas limit cannot record it and does
+1.2 × 10<sup>6</sup>, at the first observation). At one observation per
+second into windows of 1000 seconds in which every candidate stays
+undecided, an observation costs, at the 320th and at the 1000th
+observation, 4.4 × 10<sup>5</sup> and 4.5 × 10<sup>5</sup> gas for the
+content `throughout(1000s, …)`, 5.2 × 10<sup>5</sup> for
+`NOT until(…, 1000s)`, 5.1 × 10<sup>5</sup> for
+`throughout(1000s, …) == true`, and 5.9 × 10<sup>5</sup> for
+`within(1000s, …) OR throughout(1000s, …)` (at most
+8.0 × 10<sup>5</sup>); `cadl` 0.3.25 read every candidate at every
+observation and used 1.3 × 10<sup>7</sup> gas at the 320th. A monitor whose observation would exceed the block gas limit cannot record it and does
 not recover, so the bound matters. The generated file is to be compiled with solc
 0.8.24 to 0.8.37 (checked; its pragma is `>=0.8.24 <=0.8.37`) and
 `--optimize --optimize-runs 1`, as its header says: without the

@@ -13,7 +13,7 @@ tool already solves part of a problem, we say which part CADL would hand
 to that tool and which question the tool cannot answer.
 
 The starting point is this specification (Version 0.3) and the reference
-implementation `cadl` 0.3.27. It checks the satisfiability of contracts
+implementation `cadl` 0.3.28. It checks the satisfiability of contracts
 with Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), detects
 protocol deadlocks by structural analysis, supports the SoS-DSL extension
 ([Appendix E](./appendix-e-sos-dsl.md): `lifecycle:`, `monitors:`,
@@ -307,8 +307,7 @@ runtime, monitoring in the generated Rego and Solidity of what they
 refuse (quantifiers, aggregates, wildcard and range references in
 predicates, index expressions, and amendments; in Rego also `/`; in Solidity also `*`,
 `/`, literals with more than six decimals, nested temporal operators,
-two temporal operators in the content of a norm, `NOT until`,
-temporal operators inside a comparison,
+three or more temporal operators in the content of a norm,
 and contracts whose creation code exceeds the limit of EIP-3860),
 weighted indices, norms per regime, and the derivation of model
 probabilities from norms remain open. We found no work that handles first-class norm
@@ -442,7 +441,7 @@ such as voting and dissent (RD-8.4) and plan-level verification
 ## 9.9 Research Roadmap
 We organize the above research directions along a time axis and present
 a short-, medium-, and long-term research roadmap. The order follows the
-current implementation: items that extend what `cadl` 0.3.27 already
+current implementation: items that extend what `cadl` 0.3.28 already
 provides come first.
 
 | **Period** | **Key Challenges** | **Content** |

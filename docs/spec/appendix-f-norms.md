@@ -1238,7 +1238,14 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   `NOT until(...)`, and a temporal operator inside a comparison, and
   decides the candidates of a temporal content together, so that the
   gas of an observation does not grow with the observations inside a
-  window. The Rego monitor refuses `/`, whose result is not always
+  window. From `cadl` 0.3.28 it also decides a content with one
+  temporal operator under `NOT`, inside a comparison, or in `IN`
+  (`NOT until(...)` through the release of D.5, whose duality with
+  `until` D.5 proves for undefined values), and a content with two
+  temporal operators, whose candidates form a segment tree; it refuses
+  three or more temporal operators in one content. Its main contract
+  then leaves more than 7 × 10<sup>3</sup> bytes below the limit of
+  EIP-170. The Rego monitor refuses `/`, whose result is not always
   a decimal number. Both compute numbers and times exactly, as F.5 says,
   and agree with `cadl norms-eval` on the inputs that meet their
   limits; D.5 lists them. From `cadl` 0.3.26, `cadl norms-eval`, the
@@ -1276,6 +1283,34 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   into a class of the model; the interpreter is in turn compared with
   paths of the PRISM simulator, and the answers of PRISM with explicit
   fixpoints over the reachable states.
+- From `cadl` 0.3.28, `cadl norms-check` lets the environment choose
+  the start of each of several instances (`--starts any`, the default;
+  `--starts together` keeps the earlier model), translates amendments
+  together with several instances, translates linear arithmetic, `sum`,
+  and `avg` without `--domain` by the faces of the linear arrangement,
+  with an exact finite decimal point of every face that holds one, and
+  assumes, and reports, a domain inferred from the literals for other
+  arithmetic without `--domain`, marking the findings that depend on it. Four or more quantities ordered against each other
+  stay refused, for the reason that F.12 gives. Each part is compared
+  with `cadl norms-eval` as above: instances with starts of their own on
+  random paths and on every path of at most three observations over two
+  choices (every order of starts and ends; four in a longer run), amendments of two instances
+  with two and with three versions on random paths, which include
+  instances that start after an amendment, and linear arithmetic on
+  random paths, on values of a decimal grid, many of which lie on the
+  hyperplanes, on every point of a grid of two quantities, and on points
+  of faces that few points reach; random linear predicates with large
+  coefficients and coefficients with prime factors other than 2 and 5 are checked against finite decimal points
+  found by brute force. Errors injected into the translation
+  were detected by these tests: 5 of 6 for the starts (the sixth lets an
+  observation pass at which no instance runs, which changes no trace),
+  6 of 6 for amendments with several instances, 2 of 2 for the refusal,
+  and 10 of 10 for arithmetic, and 3 of 3 bounds put back into the
+  search for a finite decimal point of a face. A review found that the
+  first version of this search gave up after a bound and dropped faces
+  that hold finite decimal points; the search is now exact. The examples are
+  `norms_check_starts.cadl`, `norms_check_amend_v1.cadl` with
+  `norms_check_amend_v2.cadl`, and `norms_check_linear.cadl`.
 - The other components read a wildcard reference outside a domain in
   their own way, and `cadl` 0.3.24 does not change them. `cadl verify`
   reads `A[*].q` as one unconstrained variable per group, shared by
@@ -1347,31 +1382,53 @@ message and have no value in the model, and the report says so.
 A model may also hold several instances of the same contract, each
 with its own bindings (`--instance`, repeated, or `--instances N` in
 the reference implementation). The instances share the observations
-(the step and the horizon), the choices of the environment (the message
-events of all of them, and the quantities, which are the same quantities
-in every instance), and they start together at the first observation.
-Each instance has its own norm instances and their states, its own
-institutional events, its own assumptions and their failure (so the
-verdict `excused` is per instance), and its own end: in the any end
-reading each instance ends at an observation of its own, in the full
-reading all end at the horizon. After its end the state of an instance
-does not change, and the observations after it are not part of it (F.5).
-The trace of an instance is the sequence of observations up to its end
-with its bindings, and the model is exact for each of these traces as
-F.12 states for one instance. The questions are asked for every norm of
+(the step and the horizon) and the choices of the environment (the
+message events of all of them, and the quantities, which are the same
+quantities in every instance). Each instance has its own norm instances
+and their states, its own institutional events, its own assumptions and
+their failure (so the verdict `excused` is per instance), its own start,
+and its own end.
+
+The environment chooses the start of every instance: at each
+observation, each instance that has not started may start there, in any
+order, and an instance that has not started by the horizon starts at
+it. Some instance starts at the first observation, and at every
+observation some instance has started and not ended or starts there;
+an observation at which no instance runs changes nothing and is left
+out, so this loses no trace. In the any end reading each instance ends
+at an observation of its own, from its start on; in the full reading all
+end at the horizon. Before its start and after its end the state of an
+instance does not change, and these observations are not part of it
+(F.5). The first observation of an instance is its start in the sense of
+F.5: the norms without trigger that are not targets become active
+there, a predicate whose rising edge is an event has no previous value
+there, and the intervals of its `assume:` items begin there. The trace
+of an instance is the sequence of observations from its start to its
+end, at the times of the shared observations, with its bindings, and
+the model is exact for each of these traces as F.12 states for one
+instance. The horizon is shared: an instance that starts at observation s has at
+most H − s + 1 observations, and the report says so; a larger horizon
+covers longer late instances. A conflict across instances may need different starts: a
+reparation of one instance in force when another instance starts with
+an obligation that the reparation forbids. A processor MAY offer to let
+all instances start at the first observation instead (`--starts
+together` in the reference implementation), which needs fewer commands
+but does not cover traces whose instances start at different
+observations; the report says which reading was used. The questions are asked for every norm of
 every instance, named `id@k` for the instance k, and conflicts for every
 pair of obligations and prohibitions in the same instance or in two of
 them: a conflict across instances arises, for example, when the bearer
 of a norm of one instance is obliged to do what a norm of another
 instance forbids. A witness holds the trace of every instance over the
 same observations, and each is evaluated by F.5 with the bindings of its
-instance. The number of instances is at most 4 in version 0.1, and the
-end of the instances multiplies the choices of the environment by 2 per
-instance.
+instance. The number of instances is at most 4 in version 0.1. The
+starts and ends of n instances at one observation multiply the commands
+by at most 4<sup>n</sup> (each instance starts, ends, does both, or
+neither), and by 2<sup>n</sup> when they start together.
 
 ### Amendments
 
-A model of one instance may also hold later versions of the file
+A model may also hold later versions of the file
 (`--version FILE`, repeated, in the reference implementation). At every
 observation the environment may choose to amend the contract to the
 next version, at most once per version and in their order. The
@@ -1400,12 +1457,24 @@ absent. The model is exact for the traces whose `amend` lines name the
 given versions in their order, as F.12 states for one version. Not
 translated, with the reason: versions with other actors or another
 lifecycle, a norm whose kind changes between versions (F.6 discharges
-it), a version with a norm or a counts-as rule that is not translated,
-and amendments together with several instances. The questions are
+it), a version with a norm or a counts-as rule that is not translated. The questions are
 asked for every norm id of any version; a witness that needs an
 amendment names the version file in its `amend` line. The amendment
 doubles the choices of the environment and multiplies the commands by
 the number of versions.
+
+With several instances, the version in force is shared: one amendment
+takes effect at the same observation in every instance that runs there
+(it has started and not ended, or starts there), as norms-eval applies
+the `amend` line that the trace of each of them has at that
+observation. An instance that has ended is not amended. An instance
+that starts after an amendment is an instance of the version then in
+force: at its start it has the norms and `assume:` items of that
+version, its trace is evaluated with that version file, and its `amend`
+lines name only the later versions; a witness names, for each such
+instance, the file whose instance it is. Every instance has the same
+sequence of versions, each with the bindings of the instance, and the
+model is exact for each of these traces as stated above.
 
 ### What the environment chooses
 
@@ -1469,7 +1538,15 @@ At each observation the environment chooses three things.
    lists of length at most two over 0, 1, 2, `"a"`, `"b"`, two objects,
    and null yields the 29 patterns, which these eight lists realise.
    Four or more quantities ordered against each other are not
-   translated. A text literal with the character
+   translated, for a reason that does not depend on lists: besides
+   numbers and lists, every quantity of a group of k ≥ 4 has at least
+   15 classes (no value, true, false, at least 2k = 8 texts below and
+   above the text literals, and k = 4 objects), so the group has at
+   least 15<sup>4</sup> = 50 625 combinations of classes, more than the
+   limit of 50 000 (Limits), whatever lists realise the patterns of four
+   lists. A set of lists for four quantities would therefore never be
+   used within the limits of version 0.1, and the processor names the
+   classes and the combinations in its refusal. A text literal with the character
    U+0000 in such an order is not translated. Numbers are computed
    exactly; the values in a gap are integers or floats strictly inside
    it, since a value of a trace is an integer or a float, and a gap that
@@ -1494,15 +1571,86 @@ At each observation the environment chooses three things.
    (an ordering compares true and false as 1 and 0, which are literals of
    every group).
 
-   Arithmetic (`+`, `-`, `*`, `/`), `sum`, and `avg` are translated only
-   for quantities with a finite domain. CADL declares none for the
-   quantities of a norm, so the domain is given to the processor, as a
-   range of integers lo..hi per quantity (`--domain` in the reference
-   implementation). Such a quantity takes the integers of its domain and
-   the values that are not numbers; the answers then hold for the traces
-   in which every number of such a quantity is an integer of its domain,
-   and the report names the quantities and their domains. A predicate
-   with arithmetic over a quantity without a domain is not translated.
+   Arithmetic (`+`, `-`, `*`, `/`), `sum`, and `avg` are **linear** when
+   every product has a literal factor and every divisor is a literal
+   (`R.x * 0.5 - S.y / 4`, `sum(r.load for r in ROBOT) + 2 * D.r`). For
+   linear arithmetic the quantities need no domain. In a component of
+   predicates that share quantities and have such arithmetic, every
+   quantity without a domain is either a number, a variable of the
+   linear arrangement below, or one of its classes that are not numbers;
+   a quantity with a domain takes its classes. For each such choice,
+   with the other values fixed, every comparison and every number used
+   as a condition in the predicates is decided by the signs of linear
+   forms of the variables: the difference of the two sides of the
+   comparison, with one alternative per defined element of a `min` or
+   `max` and one per possible value of a `count`. A value built with
+   `+`, `-`, literal factors, `min`, and `max` is obtained from these
+   alternatives by least and greatest values alone, so its sign is
+   decided by their signs,
+   and the value of a `count` is decided by the forms of its elements.
+   Every predicate therefore has one value on each **face** of
+   the arrangement of the hyperplanes form = 0, the set of points at
+   which every form has a given sign (negative, zero, or positive), and
+   one point per face suffices. The points are found by a cylindrical
+   decomposition: the last variable is eliminated by keeping the forms
+   without it and adding, for every two forms with it, the difference of
+   their roots in it; a point of every cell of this projection is
+   extended in the last variable by the roots of the forms at that point
+   and a point below, between, and above them. The order of the roots is
+   the same over a cell of the projection, so the cells refine the faces
+   and every face gets a point. A value of a trace is an integer or a
+   float, a finite decimal, and a face may hold none (`3 * x == 1`). Let
+   D be the finite decimals, the integers with the powers of 10 inverted.
+   The affine hull H of a face is given by the forms that are zero on it.
+   The processor scales a maximal set of independent ones of them to
+   integer rows A x = b and brings A, by integer column operations of
+   determinant ±1 (extended Euclid), to A V = T, with T lower triangular
+   and nonzero on its diagonal in its first r columns and zero after
+   them. With x = V y, the points of H have y<sub>1</sub>, …,
+   y<sub>r</sub> fixed by T, and y<sub>r+1</sub>, … free. V and
+   V<sup>-1</sup> are integer matrices, so x is in D<sup>n</sup> exactly
+   when y is: H holds a point of D<sup>n</sup> exactly when the fixed
+   y<sub>i</sub> are in D, and its points in D<sup>n</sup> are then
+   x<sub>0</sub> + B t for t in D<sup>n-r</sup>, with x<sub>0</sub> in
+   D<sup>n</sup> and B the last n − r columns of V. When the fixed
+   y<sub>i</sub> are not all in D, no trace reaches the face, and it is
+   left out. Otherwise the face, open in H, holds its point p = x<sub>0</sub> +
+   B t<sup>\*</sup>. A form f that is not zero at p changes by at most
+   δ · Σ<sub>j</sub> |(f B)<sub>j</sub>| when every t<sub>j</sub> moves
+   by at most δ, and the forms that are zero at p stay zero on H. The
+   processor rounds t<sup>\*</sup> to k decimal places, with k the least
+   number for which 10<sup>-k</sup>/2 · Σ<sub>j</sub> |(f B)<sub>j</sub>|
+   < |f(p)| for every such f; the rounded point is in D<sup>n</sup> and
+   in the face. So a face is left out only when it holds no point of a
+   trace, and no bound of the search can drop one. The point of a very
+   thin face can need more digits than norms-eval accepts in a number of
+   a trace (400); the witness that uses it is then reported as not
+   confirmed (exit status 3 in the reference implementation), never as a
+   wrong answer without notice. This is exact: the values of a trace lie in
+   one face, with the same values that are not numbers, and the point of
+   that face gives every predicate the value they give it. A comparison
+   with a literal or between two quantities is a form too, so in such a
+   component a gap between literals needs one point, and the k values
+   per gap above are not needed. The report lists the quantities whose
+   numbers are taken from the arrangement.
+
+   Arithmetic that is not linear (a product or a division of two
+   quantities) is translated for quantities with a finite domain. CADL
+   declares none for the quantities of a norm, so the domain is given to
+   the processor, as a range of integers lo..hi per quantity (`--domain`
+   in the reference implementation). Such a quantity takes the integers
+   of its domain and the values that are not numbers; the answers then
+   hold for the traces in which every number of such a quantity is an
+   integer of its domain, and the report names the quantities and their
+   domains. When no domain is given, the processor assumes the integers
+   from one below the smallest to one above the largest numeric literal
+   of the predicate (and 0), and the report states this domain as an
+   assumption, with the predicate; the answers then hold only for such
+   traces. A processor MUST NOT give an answer that holds only under an
+   assumed domain without stating the assumption. The reference
+   implementation marks every norm whose trigger, `until:`, or content,
+   or a counts-as rule, reparation, or power on which it depends, reads
+   such a quantity, and every finding about such a norm.
 3. **The end.** Whether the instance ends at this observation (step 6
    of F.5). This covers both the end signalled for an instance without
    `lifecycle:` and a terminal lifecycle state.
@@ -1570,14 +1718,14 @@ a set, `A[j+1].q` for a quantifier variable `j`) with a literal or with
 `count` of a comprehension, quantities used as conditions, `AND`, `OR`,
 `NOT`, the quantifiers `exists` and `for all`, the aggregates `count`,
 `min`, and `max` of comprehensions over a set or a range, comparisons
-of two quantities, and, for quantities with a domain, arithmetic,
-`sum`, and `avg`, and wildcard and range references in predicates, which
+of two quantities, arithmetic, `sum`, and `avg` (linear ones for every
+value, others over a given or assumed domain), and wildcard and range
+references in predicates, which
 F.5 reads as quantifiers or comprehensions; a content that is one bounded
 temporal operator over such predicates; deadlines; `until:`; counts-as
 rules with `if:`; powers and their effects; reparations; and `assume:`
 items of these forms (for the verdict `excused`). It does not translate
-arithmetic, `sum`, and `avg` over a quantity without a domain, `request`
-fields, `now`, `state`, and a temporal operator combined with other
+`request` fields, `now`, `state`, and a temporal operator combined with other
 operators or nested in another; amendments are translated as described
 above. A norm with such a part is reported as **not translated**, with
 the reason, and so is a norm whose behaviour depends on one: the
@@ -1675,7 +1823,10 @@ classes in one group of predicates. A predicate over the members of a
 set reads one quantity per member, and the classes of these quantities
 multiply: with c classes per quantity, m members, and q quantities read
 per member, a group has up to c<sup>m q</sup> combinations, which is
-what the limit of 50 000 bounds. The model checker explores the
+what the limit of 50 000 bounds. In a component with linear
+arithmetic, the combinations are the points of the faces, summed over
+the choices of classes that are not numbers, and the same limit
+applies. The model checker explores the
 reachable states explicitly; the number of transitions is the number of
 reachable states times the number of choices, which grows with the
 message events and the classes of values. The time of a check grows
@@ -1684,6 +1835,6 @@ of reachable states: an instance with 12 message events (4 096
 choices, 16 384 commands) took more than ten minutes. A processor
 SHOULD bound the time of the model checker, and of building the model,
 and report when the bound is exceeded. The limit on choices is checked
-together with the ends of several instances and the versions: a model
+together with the starts and ends of several instances and the versions: a model
 may have at most 32 768 commands. A refusal for too many combinations of
 classes names the predicates and the quantities that cause it.
