@@ -321,7 +321,7 @@ ranges. The candidates are the leaves of a segment tree in storage. A
 node records, for each pair of a set of operators still undecided for a
 candidate and of values that the operators can still take, whether a
 candidate below holds in that future and whether one is undecided in
-it (49 such pairs, in one word). Deciding an operator for a range maps
+it (49 such pairs, in one 256-bit word). Deciding an operator for a range maps
 these pairs by shifts and masks and is propagated lazily, so an
 observation changes a few ranges in steps that grow with the logarithm
 of the number of candidates, and the root says whether a candidate
@@ -332,9 +332,15 @@ joined by `AND`, finding a candidate that holds is a query over the
 other m − 1 operators of the candidates that one operator decides,
 and the pairs that a node records grow as 7<sup>m</sup> (343 for three
 operators), so the monitor keeps the cost of an observation bounded for
-at most two.
+at most two. The tree is not pruned: each activation of such a norm
+adds at least three storage slots per candidate (its observation, its
+time, its leaf, and the inner nodes above it), which stay in storage;
+the gas of an observation does not grow with them. Every monitor also
+keeps two entries per observation (its time and the lifecycle state
+before it), which are not deleted either.
 
-*Gas.* In the tests, an observation of the example of F.8 costs about
+*Gas.* The figures below are measured with one value per observation;
+with two values an observation costs about 20 % more. In the tests, an observation of the example of F.8 costs about
 6.4 × 10<sup>5</sup> gas over 320 observations at one per second while
 the 300-second window of its assumption is open and after it (at most
 1.2 × 10<sup>6</sup>, at the first observation). At one observation per
