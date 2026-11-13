@@ -1958,7 +1958,7 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   exact. For condition N it uses the canonical best response at the
   centre of the cell (I.9) and tries N only for a player for whom E1
   and E2 fail. Cells with the same claim are joined (I.9) unless
-  `--no-merge` is given. Since the version after 0.3.23, the cells that
+  `--no-merge` is given. From `cadl` 0.3.24, the cells that
   N, E1 and E2 (and PD+ and PD− below) leave undecided are decided from
   their end points (I.9)
   when condition A holds, in any strategic model; the map reports
@@ -1969,7 +1969,7 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   N, N_s, and the end points); for N_s, R⁺_C(p) is computed per cell,
   τ is the canonical best response on Reach_p at the centre of the
   cell, and s is the first state of S that satisfies the condition.
-  Since the version after 0.3.26, PD+ and PD− (I.9) are used as well.
+  From `cadl` 0.3.27, PD+ and PD− (I.9) are used as well.
   For a player for whom E1 (E1\* for `every_reachable_state`) and E2
   fail, the advantages are bounded on the cell as I.9 describes: the
   difference of the step payoffs and each difference of probabilities
@@ -1984,7 +1984,7 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   combination, and, for `concept: every_reachable_state` with ε = 0,
   always.
   `games_eval.USE_ADVANTAGES = False` gives the maps of 0.3.26.
-  Since the version after 0.3.27, the coupled bounds of the advantages
+  From `cadl` 0.3.28, the coupled bounds of the advantages
   (I.9) are used as well, in a design whose probabilities are all
   multi-affine in the open parameters, for a player for whom E1, E2,
   PD+, N and PD− fail. When the gain of the player at the centre of
@@ -2008,7 +2008,7 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   the advantages of a cell; the distributions at the corners are
   computed once per cell. `games_eval.USE_COUPLING = False` gives the
   maps of 0.3.27.
-  Since the version after 0.3.28, the coupled bounds are also used in a
+  From `cadl` 0.3.29, the coupled bounds are also used in a
   design with a probability that is not multi-affine, over the lifted
   cell of I.9. A probability a + b · R is lifted with R normalised to
   first coefficient 1 (in the order of the exponents), so that
@@ -2130,7 +2130,7 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   is wide in a parameter on which the payoff depends strongly: in
   CENTRALIZED, cells near λ = 0 stay undecided at a width of 1/32 in
   p_fail and p_loss although R gains about 0.23 at their centres. With
-  PD+ and PD− (since the version after 0.3.26), CENTRALIZED reaches the
+  PD+ and PD− (from `cadl` 0.3.27), CENTRALIZED reaches the
   resolution 0.1 with 7 987 cells analysed (921 after joining; 0.849
   `equilibrium`, 0.051 `not_equilibrium`) and 0.05 with 27 031
   (3 037; 0.889 and 0.062), and DISTRIBUTED with 463 (39) and 2 271
@@ -2145,7 +2145,7 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   which drift apart with p_fail as the bounds of E1 do: on cells of
   width 1/8 in p_fail, the upper bound of the gain of D exceeds the
   largest gain at the corners by about 0.1 to 0.4. With the coupled
-  bounds of I.9 (since the version after 0.3.27), the second example
+  bounds of I.9 (from `cadl` 0.3.28), the second example
   reaches the resolution 0.1 with 13 853 cells analysed (208 after
   joining; 0.459 `equilibrium`, 0.441 `not_equilibrium`); the coupled
   bounds decide D on 3 049 of these cells (1 910 by PD+, 1 139 by PD−).
@@ -2172,7 +2172,7 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   fuzzing above, the games with three or four players, most of them
   with three open parameters, took about 0.9 s each (wall-clock, check,
   map with a budget of 24 cells, and oracle).
-- Verification of PD+ and PD− (version after 0.3.26), by the
+- Verification of PD+ and PD− (`cadl` 0.3.27), by the
   implementer, with the oracle above: 5 200 random games of
   `tests/games_fuzz.py` (2 600 of the kind of the first verification,
   800 that ask for `every_reachable_state`, 900 with three or four
@@ -2191,7 +2191,7 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   and probabilities taken at the centre of the cell only) are each
   detected by fuzzing and by the test suite; the earlier injected errors
   are run with PD+ and PD− switched off and are still detected.
-- Verification of the coupled bounds (version after 0.3.27), by the
+- Verification of the coupled bounds (`cadl` 0.3.28), by the
   implementer, with the oracle above: 5 200 random games of
   `tests/games_fuzz.py` of the same kinds as for PD+ and PD−, 3 455
   `equilibrium` and 4 913 `not_equilibrium` cells, 170 529 exact point
@@ -2210,7 +2210,7 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   are each detected by the claims of the maps in fuzzing, by the direct
   comparison, and on cells of the second example in
   `tests/test_games_coupling.py`.
-- Probabilities that are not multi-affine (version after 0.3.28),
+- Probabilities that are not multi-affine (`cadl` 0.3.29),
   measured on the three-parameter maps above with one factor of the
   probability of success replaced, with the default budget: in the
   second example, (1 − p_fail)² and 1 − 4 · p_fail · (1 − p_fail) in
@@ -2239,7 +2239,7 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   on its monomials is wide, and wider than 1 near p_fail = 1/2, where
   the design is then not shown to be well-defined on the cell; N, E1,
   E2, and the bounds l_p and u_p use that enclosure.
-- Verification of the lifting (version after 0.3.28), by the
+- Verification of the lifting (`cadl` 0.3.29), by the
   implementer, with the oracle above and the generator option
   `--mode nonaffine` of `tests/games_fuzz.py` (probabilities p², 1 − p²,
   4p(1 − p), pq(1 − q), q², p²q, (1 − p)², and 1/2 + pq(1 − q)/2, and in
@@ -2280,7 +2280,7 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   (`tests/test_games_coupling.py`); the first made no wrong claim of a
   map in 4 500 games, and none on that example, whose probability is
   monotone and convex in p_fail.
-- Since the version after 0.3.26, the export of I.11 is run through
+- From `cadl` 0.3.27, the export of I.11 is run through
   PRISM-games 3.2.4, the binary release of the PRISM-games project
   (prismmodelchecker.org/games, for macOS arm64 and Linux x86-64). The
   exported model file is passed unchanged, followed by a module that
