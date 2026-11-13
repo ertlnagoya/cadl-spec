@@ -1918,8 +1918,10 @@ are these.
   Unix sockets; other local processes can then connect to that port
   without the caps, and their calls are refused, `UNAVAILABLE`). With
   `localhost` the front listener listens on each of its addresses
-  (127.0.0.1 and ::1), as gRPC did. TLS and mutual TLS still end in gRPC: the front listener does
-  not take part in them, so certificates and identities are as above. It
+  (127.0.0.1 and ::1), as gRPC did; an address that cannot be bound
+  (::1 where IPv6 is off) is logged and left out. TLS and mutual TLS
+  still end in gRPC: the front listener does not take part in them, so
+  certificates and identities are as above. It
   keeps at most 4 open connections of one remote address (an IPv4
   address or an IPv6 /64; `--max-grpc-connections-per-address`), 16 of
   one IPv4 /24 or IPv6 /48 (`--max-grpc-connections-per-prefix`), and 64
@@ -1941,10 +1943,10 @@ are these.
   close also when the client reads nothing; it then closes the client's
   side after what was sent to it, or resets it after 5 seconds. When
   more waits for the client, or the gRPC server does not take the
-  client's bytes, and nothing goes out for 30 seconds, both sides are
-  reset and recorded (`read_timeout`, `grpc stalled`). A connection
-  counts against the caps until its sockets are closed. Each
-  connection to the gRPC server comes from an address of its own (a Unix
+  client's bytes, and that backlog does not drain within 30 seconds,
+  both sides are reset and recorded (`read_timeout`, `grpc stalled`).
+  A connection counts against the caps until its sockets are closed.
+  Each connection to the gRPC server comes from an address of its own (a Unix
   socket bound to a path of its own, or a port of its own), which gRPC
   gives as the peer of its calls; the gateway maps it back to the accepted
   connection. The caps on calls not yet authenticated therefore count the
