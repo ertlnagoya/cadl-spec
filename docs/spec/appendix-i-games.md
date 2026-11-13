@@ -2020,12 +2020,18 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   Bernstein coefficients of R on the cell (with x = lo + (hi − lo) · t,
   the polynomial is a combination of the Bernstein basis functions on
   [0, 1]ⁿ, which are not negative and sum to 1, so its values lie
-  between the least and the largest coefficient). The lifted cell has at
-  most 10 coordinates (open parameters and lifted functions); a design
-  that needs more does not use the coupled bounds. A corner is checked
-  against the intervals of the relaxation when a distribution is first
-  needed there, and a bound that needs a corner that fails the check is
-  not used. `games_eval.USE_LIFTING = False` gives the maps of 0.3.28,
+  between the least and the largest coefficient). The coefficients are
+  computed one parameter at a time, in O(N · Σ_k d_k) operations for N
+  coefficients and degrees d_k, and only when N is at most 4 096; above
+  that, the enclosure by interval arithmetic is used alone. The lifted
+  cell and its corners are computed on a cell only when a coupled bound
+  is first computed there. The lifted cell has at most 10 coordinates
+  (open parameters and lifted functions); a design that needs more
+  lifted functions does not use the coupled bounds, and a multi-affine
+  design needs none. A corner is checked against the intervals of the
+  relaxation when a distribution is first needed there, and a bound
+  that needs a corner that fails the check is not used.
+  `games_eval.USE_LIFTING = False` gives the maps of 0.3.28,
   and `games_eval.LIFT_BERNSTEIN = False` the lifting with the
   enclosures by interval arithmetic only.
 - `cadl model-export` writes the file of I.11 (`smg` and the `player`
@@ -2224,10 +2230,10 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   557 s (4 · p_fail · (1 − p_fail)), and 818 s and 846 s
   (p_fail · q_local · (1 − q_local), with 32 083 instead of 39 999
   cells); a cell costs more with the lifting, since the pairs choose
-  among the corners of up to 2⁴ = 16 lifted corners instead of 2³. The map of the first example is the
-  same with and without the lifting (0.231 undecided after 39 999
-  cells), as it is with and without the coupled bounds in the
-  multi-affine case. Most of the remaining undecided cells of the
+  among up to 2⁴ = 16 lifted corners instead of 2³ corners. The map of
+  the first example is the same with and without the lifting (0.231
+  undecided after 39 999 cells), as it is with and without the coupled
+  bounds in the multi-affine case. Most of the remaining undecided cells of the
   second example come from the relaxation itself: the enclosure of a
   probability such as 4 · p_fail · (1 − p_fail) by interval arithmetic
   on its monomials is wide, and wider than 1 near p_fail = 1/2, where
@@ -2251,8 +2257,17 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   compared with the advantage that the oracle computes at sample points:
   213 153 comparisons, 147 959 of them in games that are not
   multi-affine, none outside the bounds. A corner never failed the check
-  against the relaxation in these games. An earlier run without the
-  Bernstein enclosures (4 400 games, 99 569 point evaluations, 166 698
+  against the relaxation in these games, whose commands have at most one
+  lifted function each. An independent review added commands with
+  several lifted functions (so that one lifted polynomial is 1 minus the
+  others), λ in probabilities, and degrees up to 6, which
+  `--mode nonaffine` now also generates: 1 600 such games and 200 of the
+  review's generator gave 836 `equilibrium` and 1 030 `not_equilibrium`
+  cells, 29 326 exact point evaluations, and 40 048 direct comparisons
+  in games that are not multi-affine, with no wrong claim and no bound
+  outside; 685 commands had a replaced lifted polynomial, and in 115
+  cases a corner failed the check and the bound was not used. An
+  earlier run without the Bernstein enclosures (4 400 games, 99 569 point evaluations, 166 698
   comparisons in games that are not multi-affine) and the driver
   through the command line (300 games of `--mode nonaffine`, 7 638
   point evaluations) found no wrong claim either. Three injected errors
