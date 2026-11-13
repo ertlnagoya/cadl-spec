@@ -391,9 +391,12 @@ none).
    hold an observation of the run; a run of undefined values marks the
    candidates up to e. A candidate with t<sub>k</sub> + d &lt; τ that is
    not decided becomes undefined when marked, and false for `within`
-   (true for `throughout`) otherwise. This happens before each run, with
-   t<sub>s</sub> in place of τ, and after the last, so a mark reaches
-   only candidates whose window holds the undefined value.
+   (true for `throughout`) otherwise, after the runs of n are fed. A run
+   of undefined values starts at F(n − 1), and the candidates whose
+   window ended before t<sub>F(n − 1)</sub> were decided at n − 1, so a
+   mark reaches only candidates whose window holds an undefined value: a
+   candidate up to F(n − 1) has that observation in its window, a later
+   one is itself in the run.
 4. These are the values of F.5 at every observation. By 1 the values that
    F.5 reads in the window of candidate k at n are decided exactly when
    they are fed, so a decisive value decides k at the same observation.
@@ -409,8 +412,8 @@ none).
    at which F.5 does, from the same values, and so to the same value.
 
 An observation evaluates p′ once, makes one binary search over the
-times, feeds at most three runs, and decides window ends at most four
-times, each with a few binary searches and range updates of the tree,
+times, feeds at most three runs, and decides window ends once, each
+with a few binary searches and range updates of the tree,
 so its cost is bounded as above. Refused are `until` in a nesting, an
 operand of the outer operator that is more than the inner operator or
 its negation (`within(5s, throughout(2s, p) AND r)`), and three levels.
