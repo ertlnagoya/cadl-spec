@@ -34,20 +34,17 @@ A human, an LLM and a set of mechanical gates share the work:
 | LLM | Turns the KPI into measurable metrics and proposes amendments to rules, regulation and contracts toward it. When a question cannot clearly be settled, or when human stakeholders must agree, it does not decide: it asks the human and supplies what the decision needs |
 | Gates | Check, constitution, improvement measured on the same random seeds, and the companies' vote. The LLM's own account is never trusted; only measured values count |
 
-```
-kpi.md (written by a human in natural language; may change per period)
-   │  the LLM turns it into a measure; if it can be read several ways, the human picks  ← request K<k>
-   ▼
-measure robot_town.cadl (version k) in this period's environment
-   │  the LLM proposes amendments (rules, contract, regulation)
-   │  gates: check → constitution → improvement (same seeds) → vote
-   ▼
-does any proposal raise agreement, contract, regulation, safety, KPI conflict or uncertainty, or did the LLM ask?
-   ├ no  → adopt automatically the gate-passing proposal with the best KPI
-   └ yes → the LLM writes a decision request and the human answers                 ← request D<k>
-   ▼
-robot_town.cadl (version k+1) and the record of decisions (decisions.md, gsn.yaml)
-   │  next period, the LLM reads the human's decisions and reasons before proposing
+```mermaid
+flowchart TD
+  KPI["kpi.md<br/>written by a human in natural language; may change per period"]
+  KPI -->|"the LLM turns it into a measure;<br/>if it can be read several ways, the human picks (request K#lt;k#gt;)"| M["measure robot_town.cadl (version k)<br/>in this period's environment"]
+  M --> P["the LLM proposes amendments (rules, contract, regulation)<br/>gates: check → constitution → improvement (same seeds) → vote"]
+  P --> Q{"does any proposal raise agreement, contract, regulation,<br/>safety, KPI conflict or uncertainty, or did the LLM ask?"}
+  Q -->|no| AUTO["adopt automatically the gate-passing proposal<br/>with the best KPI"]
+  Q -->|yes| HUM["the LLM writes a decision request<br/>and the human answers (request D#lt;k#gt;)"]
+  AUTO --> NEXT["robot_town.cadl (version k+1)<br/>and the record of decisions (decisions.md, gsn.yaml)"]
+  HUM --> NEXT
+  NEXT -.->|"next period: the LLM reads the human's decisions<br/>and reasons before proposing"| M
 ```
 
 The exercise lives in the public repository

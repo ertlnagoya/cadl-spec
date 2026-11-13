@@ -29,25 +29,22 @@ generated **Unity C#**. This tutorial swaps both axes:
 
 The CADL/SoS-DSL syntax is unchanged — that is the whole point.
 
-```
-mobility_sos.cadl
-       │
-       ├─ cadl check                    ← type-check
-       ├─ cadl sim-ir   ─► IR JSON
-       │                       │
-       │                       ├─► cadl-explorer (Lifecycle View)
-       │                       │
-       │                       └─► cadl_to_sumo.py    ← ★ codegen
-       │                              ├─► SUMO sumocfg
-       │                              └─► contract constraints JSON
-       │
-       └─ (demand CSV) ─► generate_sumo_routes.py
-                                  ↓
-                          SUMO ─► tripinfo.xml
-                                  ↓
-                          analyze_results.py (guarantee check)
-                                  ↓
-                       Iterate: revise CADL guarantees / deadlines
+```mermaid
+flowchart TD
+  SRC["mobility_sos.cadl"]
+  SRC -->|cadl check| TC["Type check"]
+  SRC -->|cadl sim-ir| IR["IR JSON"]
+  IR --> EXP["cadl-explorer<br/>(Lifecycle View)"]
+  IR --> GEN["cadl_to_sumo.py<br/>(code generation)"]
+  GEN --> CFG["SUMO sumocfg"]
+  GEN --> CON["Contract constraints JSON"]
+  CSV["Demand CSV"] --> ROUTES["generate_sumo_routes.py"]
+  CFG --> SUMO["SUMO"]
+  ROUTES --> SUMO
+  SUMO --> TRIP["tripinfo.xml"]
+  TRIP --> AN["analyze_results.py<br/>(guarantee check)"]
+  AN --> REV["Revise the guarantees and deadlines in CADL"]
+  REV -.->|iterate| SRC
 ```
 
 The reference implementation lives in the `cadl-mobility-sos-exercise` repository.
@@ -405,12 +402,12 @@ you should consciously go back to the browser and see that **the same spec
 that drives the diagram also drives `analyze_results.py`'s verdict**. That single-source
 correspondence is the whole goal of this tutorial:
 
-```
-  CADL source (mobility_sos.cadl)
-        │
-        ├── Picture (cadl-explorer)        ← visual understanding
-        ├── Execution (SUMO)                ← dynamic behavior
-        └── Verdict (analyze_results.py)    ← guarantee check
+```mermaid
+flowchart LR
+  SRC["CADL source<br/>(mobility_sos.cadl)"]
+  SRC --> PIC["Picture (cadl-explorer)<br/>visual understanding"]
+  SRC --> EXE["Execution (SUMO)<br/>dynamic behavior"]
+  SRC --> VER["Verdict (analyze_results.py)<br/>guarantee check"]
 ```
 
 That round-trip is the **SoS-design feedback loop** CADL is meant to enable.

@@ -71,42 +71,39 @@ Below the diagram, the page lists the monitors of the contract:
 
 The sketch below reflects **(a), `my_delivery.cadl`** (4 transitions, 1 monitor). If you instead load **(b), the bundled example `sos_dsl_robot_delivery.cadl`**, you'll see 5 transitions (it adds `late_failure`) and 3 monitors (`battery_guard` / `collision_watch` / `deadline_watch`).
 
-The page is split into two columns. The sketch is schematic: on the real page the diagram runs left to right, each edge is labelled with its trigger (the `on:` text, such as `ROBOT[i] -> DISPATCHER : ack(accepted)`, then `Δ 5s` and any `[when]` condition) rather than the transition id, the metadata lists the state names, and the Monitors table also has a `rule` column.
+The page is split into two columns: the diagram on the left and the lifecycle metadata on the right, with the monitors below. The sketch is schematic: on the real page each edge is labelled with its trigger (the `on:` text, such as `ROBOT[i] -> DISPATCHER : ack(accepted)`, then `Δ 5s` and any `[when]` condition) rather than the transition id, the metadata lists the state names, and the Monitors table also has a `rule` column.
 
+```mermaid
+flowchart LR
+  P(((Proposed))) -->|assign| AS[Assigned]
+  AS -->|"accept Δ 5s"| AC[Accepted]
+  AC -->|start_delivery| DL[Delivering]
+  DL -->|complete| C[Completed]
+  AS -.->|"violation Major"| V[Violated]
+  T[Terminated]
+  classDef done fill:#d4edda,stroke:#2e7d32,stroke-dasharray:4 3,color:#000
+  classDef bad fill:#f8d7da,stroke:#c62828,stroke-dasharray:4 3,color:#000
+  classDef term fill:#e0e0e0,stroke:#616161,stroke-dasharray:4 3,color:#000
+  class C done
+  class V bad
+  class T term
+  linkStyle 4 stroke:#c62828,stroke-dasharray:5 4
 ```
-┌──────────────────────────────────┬──────────────────────────────┐
-│ Lifecycle — DELIVERY_SLA          │  Lifecycle metadata          │
-│                                   │                               │
-│   ┏━━━━━━━━━━┓                    │  states          : 7         │
-│   ┃ Proposed ┃ ←initial(double)   │  initial         : Proposed  │
-│   ┗━━━━┳━━━━━┛                    │  terminal        : 3         │
-│        │ assign                   │  transition_count: 4         │
-│        ▼                          │                               │
-│   ┌──Assigned──┐                  │                               │
-│   │            │ accept Δ 5s      │                               │
-│   │            ▼                  │                               │
-│   │       ┌Accepted┐              │                               │
-│   │       └────┬───┘              │                               │
-│   │ violation  │                  │                               │
-│   │  (red dash)│ start_delivery   │                               │
-│   ▼            ▼                  │                               │
-│ ╔Violated╗ ┌Delivering┐           │                               │
-│ ╚════════╝ └────┬─────┘           │                               │
-│ (red, dashed)   │ complete         │                               │
-│                 ▼                  │                               │
-│             ╔Completed╗            │                               │
-│             ╚═════════╝            │                               │
-│             (green, dashed)        │                               │
-└──────────────────────────────────┴──────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────────┐
-│ Monitors                                                          │
-├──────────────┬──────────────────────┬─────────────┬──────────────┤
-│ id           │ sampling             │ on_match    │ severity     │
-├──────────────┼──────────────────────┼─────────────┼──────────────┤
-│ battery_guard│ periodic(500ms)      │ Violated    │ Major        │
-└──────────────┴──────────────────────┴─────────────┴──────────────┘
-```
+Lifecycle metadata:
+
+| Item | Value |
+| --- | --- |
+| states | 7 |
+| initial | Proposed |
+| terminal | 3 |
+| transition_count | 4 |
+
+Monitors:
+
+| id | sampling | on_match | severity |
+| --- | --- | --- | --- |
+| battery_guard | periodic(500ms) | Violated | Major |
 
 Visual conventions:
 

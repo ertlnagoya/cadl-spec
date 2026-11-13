@@ -12,36 +12,13 @@ title: "第 2 章 — ツールチェインと準備"
 
 書くのは一番左のボックス（CADL ファイル）だけです。右側はすべて、ツールチェインのコマンドがこのファイルから生成します。
 
-```
-   ┌────────────────────────┐
-   │  CADL 仕様              │   ← 第 4・5 章で書く
-   │  my_delivery.cadl      │
-   └──────────┬─────────────┘
-              │
-              │  cadl check    →  タイポ / 型エラー検出
-              │  cadl sim-ir   →  JSON 中間表現 (IR) を出力
-              │
-              ▼
-   ┌────────────────────────┐
-   │  Sim-IR JSON           │
-   │  (cadl-spec App. E.7)  │
-   └─────┬──────────────┬───┘
-         │              │
-         │              └──────────────┐
-         │  cadl-explorer              │  cadl codegen --target unity-csharp
-         │  Lifecycle View             │
-         ▼                             ▼
-   ┌─────────────────┐       ┌─────────────────────────┐
-   │  状態機械の図    │       │  Unity C# ツリー         │
-   │                  │       │  Runtime/    Generated/ │
-   └─────────────────┘       └────────────┬────────────┘
-                                          │  Assets/ にコピー
-                                          ▼
-                             ┌──────────────────────────┐
-                             │  Unity シーン + arbitrator │
-                             │  → Console にライブで        │
-                             │     contract イベント       │
-                             └──────────────────────────┘
+```mermaid
+flowchart LR
+  SRC["CADL 仕様<br/>my_delivery.cadl<br/>（第 4・5 章で書く）"]
+  SRC -->|"cadl check<br/>cadl sim-ir"| IR["Sim-IR JSON<br/>（付録 E.7）"]
+  IR -->|cadl-explorer| SM["状態機械の図"]
+  IR -->|cadl codegen| CS["Unity C# のコード<br/>Runtime/, Generated/"]
+  CS -->|Assets/ にコピー| UNITY["Unity シーン + arbitrator<br/>契約イベントを<br/>Console に表示"]
 ```
 
 全体は、仕様を書く部分、仕様を実行する部分、その間でファイルを変換するコンパイラの 3 つに分かれます。
