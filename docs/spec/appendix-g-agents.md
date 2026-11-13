@@ -879,7 +879,7 @@ An agents-aware processor MUST, in addition to the checks of
   the contract instance is not. `to:` MUST NOT name a tool server and
   SHOULD NOT include the bearer. `max_depth:` MUST be an integer of at
   least 1. `until:` MUST satisfy the rules of Appendix F for the
-  `until:` of a norm (N-9, N-10).
+  `until:` of a norm (N-9, N-10, N-16).
 - **G-13.** `grant:` and `revoke:` MUST be identifiers and not reserved
   words. Within a contract, all `grant:` and `revoke:` names MUST
   differ from each other and from `approval` and `rejection`, and none

@@ -331,6 +331,15 @@ name that stands alone is a symbolic value. A symbolic value can only be
 compared with a text value, by `==`, `!=`, or `IN`; a predicate that
 uses it in another way is undefined.
 
+Arithmetic (`+`, `-`, `*`, `/`) is defined on numbers only. An operand
+that is a text, a truth value, or a symbolic value, and a division by
+zero, make the expression undefined at that observation. When the
+operand is a quantity, this is known only from its value, and a
+processor reports it as a warning of the evaluation. When it is a
+string or truth literal, or the divisor is the literal `0`, the
+expression never has a value; in a norm or a `counts_as:` rule that is
+an error (N-16).
+
 A number, in a predicate and in an observation, is the exact decimal
 number it is written as: `0.1` is one tenth, and the time stamp
 `1700000000.123` is that number of seconds. Arithmetic (`+`, `-`, `*`,
@@ -567,8 +576,11 @@ robots delivered at one observation of the interval (each robot within
 `for all j in ROBOT[*]: within(5s, ROBOT[j].status == Delivered)`).
 
 The references of a message event are matched as in F.3 and are not
-rewritten. A wildcard or range reference in the arguments of a message
-event is an error (N-16).
+rewritten. A wildcard or range reference in the arguments of the
+message of a `message_event` in a `trigger:`, an `until:`, or a
+`content:` of a norm, in the `when:` of a `counts_as:` rule, or in the
+`until:` of a delegation (Appendix G) is an error (N-16). Other message
+events, such as the `fallback:` of Appendix G, are outside this rule.
 
 Before this subsection, these references had no value in a predicate
 (Appendix A, A.10), and the components of the reference implementation
@@ -902,17 +914,27 @@ A norms-aware processor MUST, in addition to existing checks:
   (it is not evaluated; in a norm or a `counts_as:` rule it is an error
   of N-16). The warning SHOULD name the quantified form that the author
   probably meant.
-- **N-16.** The `trigger:`, `until:`, and `content:` of a norm and the
-  `when:` of a `counts_as:` rule that are neither a `message_event` nor
-  an institutional event, and the `if:` of a `counts_as:` rule, MUST be
-  predicates of [Appendix A.10](./appendix-a-syntax.md#a10-expressions)
-  (a `tpredicate` for `content:`) that F.5 evaluates. A function call in
+- **N-16.** The `trigger:`, `until:`, and `content:` of a norm, the
+  `when:` of a `counts_as:` rule, and the `until:` of a delegation
+  ([Appendix G](./appendix-g-agents.md), G-12) that are neither a
+  `message_event` nor an institutional event, and the `if:` of a
+  `counts_as:` rule, MUST be predicates of
+  [Appendix A.10](./appendix-a-syntax.md#a10-expressions) (a
+  `tpredicate` for `content:`) that F.5 evaluates. A function call in
   them MUST be a temporal operator of F.4, where N-10 allows one, or
   `sum`, `count`, `min`, `max`, or `avg` of a comprehension or of an
-  argument whose references form one group; the domain of a quantifier
-  or a comprehension MUST be one that F.5 names; a variable over a range
-  of integers MUST NOT be written as `x.q`; and a number MUST lie in the
-  range of exact numbers. The message of a `message_event` MUST be an
+  argument whose references form one group. The domain of a quantifier
+  or a comprehension MUST be one that F.5 names, and the set it names
+  MUST be declared as a set (`A[lo..hi]`); so MUST the set of a wildcard
+  or range reference, and an actor reference whose index uses the
+  variable of a quantifier or a comprehension (`Q[j]`). A name that is
+  not declared or a single actor has no members, so such a predicate
+  could never have a value. A variable over a range of integers MUST NOT
+  be written as `x.q`. `+`, `-`, `*`, and `/` MUST NOT have a string or
+  truth literal as an operand, and `/` MUST NOT have the literal `0` as
+  its divisor. A processor that refuses numbers outside the range of
+  exact numbers (F.5) MUST report such a literal in these predicates as
+  an error. The message of a `message_event` in these places MUST be an
   identifier or a call whose arguments are such expressions without
   wildcard or range references. A norm or rule that does not satisfy
   N-16 could never be evaluated, so it is an error and not a norm that
@@ -1166,15 +1188,19 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   `until(p, q, 2.5s)` or `x == 'k'`), was not evaluated either: the norm
   stayed `inactive` with a warning, and `cadl check` reported a text that
   is not a predicate only as a warning, and only when it had no temporal
-  operator. From `cadl` 0.3.30 these are errors of N-16, and `cadl
-  norms-eval`, the monitors of F.10 and Appendix D, `norms-check`, and
-  the runtime of Appendix G refuse such a norm or rule, and a norm with
-  a `deadline:` that is not a duration, in a file that was not checked.
-  Up to 0.3.29 they read such a deadline as no deadline. `cadl norms-diff` compares two
-  versions of a file and reports what F.6 does to the norms of each
-  contract, including every carried-over norm whose `content` or
-  `deadline:` changes and a `transform:` target that the new version
-  lacks.
+  operator. A quantifier, an aggregate, or a wildcard over a name that
+  is not a declared set passed `cadl check` and was always undefined,
+  and a malformed message event never occurred. From `cadl` 0.3.30
+  these are errors of N-16, and `cadl norms-eval`, the monitors of
+  F.10 and Appendix D, `norms-check`, and the runtime of Appendix G
+  refuse such a norm, rule, or delegation `until:`, and a norm with a
+  `deadline:` that is not a duration, in a file that was not checked.
+  Up to 0.3.29 they read such a deadline as no deadline, and the
+  runtime warned about such a delegation `until:` and never ended the
+  delegation. `cadl norms-diff` compares two versions of a file and
+  reports what F.6 does to the norms of each contract, including every
+  carried-over norm whose `content` or `deadline:` changes and a
+  `transform:` target that the new version lacks.
 - From `cadl` 0.3.27 the test suite compares `cadl norms-diff` with
   what `cadl norms-eval` does at an amendment. A pair of versions is
   made from a bundled example with norms: the old version gets random

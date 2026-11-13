@@ -74,7 +74,7 @@ literal         = string | int_literal | float_literal
                 | bool_literal | duration_lit ;
 ```
 
-`duration_lit` は整数とその単位である。`2.5s` は期間に当たらないので，同じ時間は `2500ms` と書く。
+`duration_lit` は，整数の後に単位を続けたものである。`2.5s` は期間に当たらないので，同じ時間は `2500ms` と書く。
 `string` を区切るのは二重引用符だけであり，`'k'` は文字列でない。
 
 `identifier` は，アクター，契約，プロトコル，運用モード（regime），メトリクスの名前に用いる。
