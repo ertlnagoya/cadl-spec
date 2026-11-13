@@ -1276,14 +1276,14 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   into a class of the model; the interpreter is in turn compared with
   paths of the PRISM simulator, and the answers of PRISM with explicit
   fixpoints over the reachable states.
-- After `cadl` 0.3.27 (under "Unreleased" in its CHANGELOG), `cadl
-  norms-check` lets the environment choose the start of each of several
-  instances (`--starts any`, the default; `--starts together` keeps the
-  earlier model), translates amendments together with several
-  instances, translates linear arithmetic, `sum`, and `avg` without
-  `--domain` by the faces of the linear arrangement, and assumes, and
-  reports, a domain inferred from the literals for other arithmetic
-  without `--domain`. Four or more quantities ordered against each other
+- From `cadl` 0.3.28, `cadl norms-check` lets the environment choose
+  the start of each of several instances (`--starts any`, the default;
+  `--starts together` keeps the earlier model), translates amendments
+  together with several instances, translates linear arithmetic, `sum`,
+  and `avg` without `--domain` by the faces of the linear arrangement,
+  with an exact finite decimal point of every face that holds one, and
+  assumes, and reports, a domain inferred from the literals for other
+  arithmetic without `--domain`, marking the findings that depend on it. Four or more quantities ordered against each other
   stay refused, for the reason that F.12 gives. Each part is compared
   with `cadl norms-eval` as above: instances with starts of their own on
   random paths and on every path of at most three observations over two
@@ -1292,11 +1292,16 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   instances that start after an amendment, and linear arithmetic on
   random paths, on values of a decimal grid, many of which lie on the
   hyperplanes, on every point of a grid of two quantities, and on points
-  of faces that few points reach. Errors injected into the translation
+  of faces that few points reach; random linear predicates with large
+  coefficients and coefficients with prime factors other than 2 and 5 are checked against finite decimal points
+  found by brute force. Errors injected into the translation
   were detected by these tests: 5 of 6 for the starts (the sixth lets an
   observation pass at which no instance runs, which changes no trace),
   6 of 6 for amendments with several instances, 2 of 2 for the refusal,
-  and 10 of 10 for arithmetic. The examples are
+  and 10 of 10 for arithmetic, and 3 of 3 bounds put back into the
+  search for a finite decimal point of a face. A review found that the
+  first version of this search gave up after a bound and dropped faces
+  that hold finite decimal points; the search is now exact. The examples are
   `norms_check_starts.cadl`, `norms_check_amend_v1.cadl` with
   `norms_check_amend_v2.cadl`, and `norms_check_linear.cadl`.
 - The other components read a wildcard reference outside a domain in
@@ -1394,7 +1399,9 @@ there, and the intervals of its `assume:` items begin there. The trace
 of an instance is the sequence of observations from its start to its
 end, at the times of the shared observations, with its bindings, and
 the model is exact for each of these traces as F.12 states for one
-instance. A conflict across instances may need different starts: a
+instance. The horizon is shared: an instance that starts at observation s has at
+most H − s + 1 observations, and the report says so; a larger horizon
+covers longer late instances. A conflict across instances may need different starts: a
 reparation of one instance in force when another instance starts with
 an obligation that the reparation forbids. A processor MAY offer to let
 all instances start at the first observation instead (`--starts
@@ -1585,13 +1592,30 @@ At each observation the environment chooses three things.
    and a point below, between, and above them. The order of the roots is
    the same over a cell of the projection, so the cells refine the faces
    and every face gets a point. A value of a trace is an integer or a
-   float, a finite decimal, and a face may hold none (`3 * x == 1`). The
-   affine hull of a face is given by the forms that are zero on it; when
-   it holds a finite decimal point, such points are dense in it, since
-   the hull is rational. The processor finds them by a congruence modulo
-   the part of the denominators that is prime to 10, takes one close
-   enough to the point of the face, and leaves out a face without one,
-   which no trace reaches. This is exact: the values of a trace lie in
+   float, a finite decimal, and a face may hold none (`3 * x == 1`). Let
+   D be the finite decimals, the integers with the powers of 10 inverted.
+   The affine hull H of a face is given by the forms that are zero on it.
+   The processor scales a maximal set of independent ones of them to
+   integer rows A x = b and brings A, by integer column operations of
+   determinant ±1 (extended Euclid), to A V = T, with T lower triangular
+   and nonzero on its diagonal in its first r columns and zero after
+   them. With x = V y, the points of H have y<sub>1</sub>, …,
+   y<sub>r</sub> fixed by T, and y<sub>r+1</sub>, … free. V and
+   V<sup>-1</sup> are integer matrices, so x is in D<sup>n</sup> exactly
+   when y is: H holds a point of D<sup>n</sup> exactly when the fixed
+   y<sub>i</sub> are in D, and its points in D<sup>n</sup> are then
+   x<sub>0</sub> + B t for t in D<sup>n-r</sup>, with x<sub>0</sub> in
+   D<sup>n</sup> and B the last n − r columns of V. When the fixed
+   y<sub>i</sub> are not all in D, no trace reaches the face, and it is
+   left out. Otherwise the face, open in H, holds its point p = x<sub>0</sub> +
+   B t<sup>\*</sup>. A form f that is not zero at p changes by at most
+   δ · Σ<sub>j</sub> |(f B)<sub>j</sub>| when every t<sub>j</sub> moves
+   by at most δ, and the forms that are zero at p stay zero on H. The
+   processor rounds t<sup>\*</sup> to k decimal places, with k the least
+   number for which 10<sup>-k</sup>/2 · Σ<sub>j</sub> |(f B)<sub>j</sub>|
+   < |f(p)| for every such f; the rounded point is in D<sup>n</sup> and
+   in the face. So a face is left out only when it holds no point of a
+   trace, and no bound of the search can drop one. This is exact: the values of a trace lie in
    one face, with the same values that are not numbers, and the point of
    that face gives every predicate the value they give it. A comparison
    with a literal or between two quantities is a form too, so in such a
@@ -1612,7 +1636,10 @@ At each observation the environment chooses three things.
    of the predicate (and 0), and the report states this domain as an
    assumption, with the predicate; the answers then hold only for such
    traces. A processor MUST NOT give an answer that holds only under an
-   assumed domain without stating the assumption.
+   assumed domain without stating the assumption. The reference
+   implementation marks every norm whose trigger, `until:`, or content,
+   or a counts-as rule, reparation, or power on which it depends, reads
+   such a quantity, and every finding about such a norm.
 3. **The end.** Whether the instance ends at this observation (step 6
    of F.5). This covers both the end signalled for an instance without
    `lifecycle:` and a terminal lifecycle state.
