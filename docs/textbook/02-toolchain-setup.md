@@ -12,36 +12,13 @@ This chapter explains the path by which diagrams, code and execution results are
 
 You only need to write the leftmost box (a CADL file). Everything to its right is generated from it by the toolchain commands.
 
-```
-   ┌────────────────────────┐
-   │  Your CADL source      │   ← You write this in Chapters 4 & 5
-   │  my_delivery.cadl      │
-   └──────────┬─────────────┘
-              │
-              │  cadl check    →  catch typos / type errors
-              │  cadl sim-ir   →  emit a JSON Intermediate Representation (IR)
-              │
-              ▼
-   ┌────────────────────────┐
-   │  Sim-IR JSON           │
-   │  (cadl-spec App. E.7)  │
-   └─────┬──────────────┬───┘
-         │              │
-         │              └──────────────┐
-         │  cadl-explorer              │  cadl codegen --target unity-csharp
-         │  Lifecycle View             │
-         ▼                             ▼
-   ┌─────────────────┐       ┌─────────────────────────┐
-   │  State machine  │       │  Unity C# tree          │
-   │  diagram        │       │  Runtime/    Generated/ │
-   └─────────────────┘       └────────────┬────────────┘
-                                          │  drop into
-                                          ▼
-                             ┌──────────────────────────┐
-                             │  Unity scene + arbitrator │
-                             │  → live contract events   │
-                             │  in the Console           │
-                             └──────────────────────────┘
+```mermaid
+flowchart LR
+  SRC["Your CADL source<br/>my_delivery.cadl<br/>(Chapters 4 and 5)"]
+  SRC -->|"cadl check<br/>cadl sim-ir"| IR["Sim-IR JSON<br/>(Appendix E.7)"]
+  IR -->|cadl-explorer| SM["State machine<br/>diagram"]
+  IR -->|cadl codegen| CS["Unity C# code<br/>Runtime/, Generated/"]
+  CS -->|drop into| UNITY["Unity scene + arbitrator<br/>contract events<br/>in the Console"]
 ```
 
 There are two worlds — the side where specifications are **written** and the side where they **run** — with a compiler connecting them.

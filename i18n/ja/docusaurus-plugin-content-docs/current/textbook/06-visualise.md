@@ -71,42 +71,39 @@ IR JSON を読み込む方法は 2 通りあります。
 
 以下の模式図は (a) の `my_delivery.cadl`（4 遷移・モニター 1 個）を読み込んだ場合です。(b) の同梱例 `sos_dsl_robot_delivery.cadl` を読み込むと遷移は 5（`late_failure` を追加）、モニターは 3 個（`battery_guard` / `collision_watch` / `deadline_watch`）になります。
 
-ページは 2 列に分かれます。下の図は模式図です。実際のページでは、図は左から右へ描かれ、各エッジには遷移の id ではなくトリガ（`on:` の文。たとえば `ROBOT[i] -> DISPATCHER : ack(accepted)`。続けて `Δ 5s` と、あれば `[when]` の条件）が書かれ、メタデータには状態の名前が並び、Monitors テーブルには `rule` の列もあります：
+ページは 2 列に分かれ、左に図、右にライフサイクルのメタデータ、その下にモニターの一覧が表示されます。下の図は模式図です。実際のページでは、各エッジには遷移の id ではなくトリガ（`on:` の文。たとえば `ROBOT[i] -> DISPATCHER : ack(accepted)`。続けて `Δ 5s` と、あれば `[when]` の条件）が書かれ、メタデータには状態の名前が並び、Monitors テーブルには `rule` の列もあります：
 
+```mermaid
+flowchart LR
+  P(((Proposed))) -->|assign| AS[Assigned]
+  AS -->|"accept Δ 5s"| AC[Accepted]
+  AC -->|start_delivery| DL[Delivering]
+  DL -->|complete| C[Completed]
+  AS -.->|"violation Major"| V[Violated]
+  T[Terminated]
+  classDef done fill:#d4edda,stroke:#2e7d32,stroke-dasharray:4 3,color:#000
+  classDef bad fill:#f8d7da,stroke:#c62828,stroke-dasharray:4 3,color:#000
+  classDef term fill:#e0e0e0,stroke:#616161,stroke-dasharray:4 3,color:#000
+  class C done
+  class V bad
+  class T term
+  linkStyle 4 stroke:#c62828,stroke-dasharray:5 4
 ```
-┌──────────────────────────────────┬──────────────────────────────┐
-│ Lifecycle — DELIVERY_SLA          │  Lifecycle metadata          │
-│                                   │                               │
-│   ┏━━━━━━━━━━┓                    │  states          : 7         │
-│   ┃ Proposed ┃ ←initial (二重円)  │  initial         : Proposed  │
-│   ┗━━━━┳━━━━━┛                    │  terminal        : 3         │
-│        │ assign                   │  transition_count: 4         │
-│        ▼                          │                               │
-│   ┌──Assigned──┐                  │                               │
-│   │            │ accept Δ 5s      │                               │
-│   │            ▼                  │                               │
-│   │       ┌Accepted┐              │                               │
-│   │       └────┬───┘              │                               │
-│   │ violation  │                  │                               │
-│   │ (赤・破線)  │ start_delivery   │                               │
-│   ▼            ▼                  │                               │
-│ ╔Violated╗ ┌Delivering┐           │                               │
-│ ╚════════╝ └────┬─────┘           │                               │
-│ (赤・破線)       │ complete         │                               │
-│                 ▼                  │                               │
-│             ╔Completed╗            │                               │
-│             ╚═════════╝            │                               │
-│             (緑・破線)              │                               │
-└──────────────────────────────────┴──────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────────┐
-│ Monitors                                                          │
-├──────────────┬──────────────────────┬─────────────┬──────────────┤
-│ id           │ sampling             │ on_match    │ severity     │
-├──────────────┼──────────────────────┼─────────────┼──────────────┤
-│ battery_guard│ periodic(500ms)      │ Violated    │ Major        │
-└──────────────┴──────────────────────┴─────────────┴──────────────┘
-```
+Lifecycle metadata：
+
+| 項目 | 値 |
+| --- | --- |
+| states | 7 |
+| initial | Proposed |
+| terminal | 3 |
+| transition_count | 4 |
+
+Monitors：
+
+| id | sampling | on_match | severity |
+| --- | --- | --- | --- |
+| battery_guard | periodic(500ms) | Violated | Major |
 
 図の表記：
 

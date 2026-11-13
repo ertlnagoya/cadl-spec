@@ -119,17 +119,11 @@ After the script has run, the generated files are in the Unity project. Open the
 
 The same IR drives both, in different ways. The Python reference runtime (`cadl/runtime/engine.py` in the simulator repository) is a hand-written **interpreter** that loads the IR JSON when it starts; the C# contract classes are **generated** from the IR by `cadl codegen`:
 
-```
-                             ┌──────────────────────┐
-                             │ multi_robot_demo.py  │ ← run today as Python
-                             │ (Python runtime)     │
-                             │                      │
-                  ┌──────────┘                      │
-   IR JSON ──────►│                                 │
-                  └──────────┐                      │
-                             │ DeliverySlaContract  │ ← run later in Unity
-                             │ (Unity / C#)         │
-                             └──────────────────────┘
+```mermaid
+flowchart LR
+  IR["IR JSON"]
+  IR -->|"read when it starts<br/>(interpreter)"| PY["multi_robot_demo.py<br/>(Python runtime)<br/>run today as Python"]
+  IR -->|"cadl codegen<br/>(generated)"| CS["DeliverySlaContract<br/>(Unity / C#)<br/>run later in Unity"]
 ```
 
 If both runtimes are correct, they must produce **the same trace** for the same inputs. We can sanity-check this without Unity:

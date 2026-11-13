@@ -119,17 +119,11 @@ output/sos_dsl_handson/unity-csharp/
 
 どちらのランタイムも同じ IR をもとに動きますが、IR の使い方が異なります。Python 参照ランタイム（シミュレータリポジトリの `cadl/runtime/engine.py`）は、起動時に IR JSON を読み込んで実行する、手書きのインタプリタです。一方、C# の契約クラスは、`cadl codegen` が IR から生成したコードです。
 
-```
-                             ┌──────────────────────┐
-                             │ multi_robot_demo.py  │ ← 今日 Python で実行
-                             │ (Python ランタイム)    │
-                             │                      │
-                  ┌──────────┘                      │
-   IR JSON ──────►│                                 │
-                  └──────────┐                      │
-                             │ DeliverySlaContract  │ ← 後で Unity で実行
-                             │ (Unity / C#)          │
-                             └──────────────────────┘
+```mermaid
+flowchart LR
+  IR["IR JSON"]
+  IR -->|"起動時に読み込む<br/>（インタプリタ）"| PY["multi_robot_demo.py<br/>（Python ランタイム）<br/>今日 Python で実行"]
+  IR -->|"cadl codegen<br/>（生成）"| CS["DeliverySlaContract<br/>(Unity / C#)<br/>後で Unity で実行"]
 ```
 
 両方のランタイムが正しいなら、同じ入力に対して同じトレースを生成するはずです。Python 側は Unity が無くても実行できます。

@@ -20,25 +20,22 @@ title: "コース B — 都市モビリティ (CADL × SUMO)"
 コース B では題材を都市モビリティ（タクシー）に、コード生成のターゲットを SUMO に差し替えます。
 CADL/SoS-DSL の文法はそのままです。
 
-```
-mobility_sos.cadl
-       │
-       ├─ cadl check                     ← 型検査
-       ├─ cadl sim-ir   ─► IR JSON
-       │                       │
-       │                       ├─► cadl-explorer (Lifecycle View)
-       │                       │
-       │                       └─► cadl_to_sumo.py    ← ★ コード生成
-       │                              ├─► SUMO sumocfg
-       │                              └─► 契約制約 JSON
-       │
-       └─ (需要データ CSV) ─► generate_sumo_routes.py
-                                    ↓
-                              SUMO 実行 ─► tripinfo.xml
-                                    ↓
-                            analyze_results.py（guarantee の判定）
-                                    ↓
-                       繰り返し：CADL の guarantee / deadline を改訂
+```mermaid
+flowchart TD
+  SRC["mobility_sos.cadl"]
+  SRC -->|cadl check| TC["型検査"]
+  SRC -->|cadl sim-ir| IR["IR JSON"]
+  IR --> EXP["cadl-explorer<br/>(Lifecycle View)"]
+  IR --> GEN["cadl_to_sumo.py<br/>（コード生成）"]
+  GEN --> CFG["SUMO sumocfg"]
+  GEN --> CON["契約制約 JSON"]
+  CSV["需要データ CSV"] --> ROUTES["generate_sumo_routes.py"]
+  CFG --> SUMO["SUMO 実行"]
+  ROUTES --> SUMO
+  SUMO --> TRIP["tripinfo.xml"]
+  TRIP --> AN["analyze_results.py<br/>（guarantee の判定）"]
+  AN --> REV["CADL の guarantee と deadline を改訂"]
+  REV -.->|繰り返す| SRC
 ```
 
 参照実装は `cadl-mobility-sos-exercise` リポジトリにあります。
@@ -376,12 +373,12 @@ OK: 分析完了。
 このチェックポイントでは、CADL を編集した直後にブラウザに戻り、図と判定が同じ CADL ソースから作られていることを確かめます。
 図、実行、判定は、次のように 1 つの CADL ソースに対応しています。
 
-```
-  CADL ソース (mobility_sos.cadl)
-        │
-        ├── 図 (cadl-explorer)        ← 仕様を見る
-        ├── 実行 (SUMO)                ← 動的な挙動
-        └── 判定 (analyze_results.py) ← guarantee の判定
+```mermaid
+flowchart LR
+  SRC["CADL ソース<br/>(mobility_sos.cadl)"]
+  SRC --> PIC["図 (cadl-explorer)<br/>仕様を見る"]
+  SRC --> EXE["実行 (SUMO)<br/>動的な挙動"]
+  SRC --> VER["判定 (analyze_results.py)<br/>guarantee の判定"]
 ```
 
 CADL を書き換え、図と判定で結果を確かめ、また書き換える、という繰り返しで SoS の設計を進めます。

@@ -63,32 +63,15 @@ log whose hash chain `cadl audit-verify` checks
 
 The pipeline below shows the stages as provided by `cadl` 0.3.
 
-```text
-Processing Pipeline:
-
-CADL Description (.cadl)
-  │
-  ▼
-┌─────────────────────┐
-│ Parser              │ ─── Syntax error report
-│ Type Checker        │ ─── Type error report
-└──────────┬──────────┘
-           │ AST
-           ▼
-┌─────────────────────┐
-│ Verification Engine │ ─── Verification result (OK / Counterexample)
-│  - SMT (Z3)         │
-│  - Deadlock check   │
-│  - Regime graph     │
-└──────────┬──────────┘
-           │ AST
-           ▼
-┌─────────────────────┐    ┌─────────────────────────┐
-│ Code Generator      │───▶│ Runtime                 │
-│  - Python           │    │ Monitor                 │
-│  - Solidity         │    │  - Contract Monitoring  │
-│  - OPA / Unity C#   │    │  - Transition Control   │
-└─────────────────────┘    └─────────────────────────┘
+```mermaid
+flowchart TD
+  SRC["CADL Description (.cadl)"]
+  SRC --> PARSE["Parser<br/>Type Checker"]
+  PARSE -.-> ERR["Syntax error report<br/>Type error report"]
+  PARSE -->|AST| VER["Verification Engine<br/>SMT (Z3)<br/>Deadlock check<br/>Regime graph"]
+  VER -.-> RES["Verification result<br/>(OK / Counterexample)"]
+  VER -->|AST| GEN["Code Generator<br/>Python<br/>Solidity<br/>OPA / Unity C#"]
+  GEN --> RT["Runtime Monitor<br/>Contract Monitoring<br/>Transition Control"]
 ```
 
 The figure shows the intended order of use. `cadl codegen` itself runs
