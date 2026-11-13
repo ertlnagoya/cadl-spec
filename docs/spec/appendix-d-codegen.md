@@ -453,8 +453,8 @@ content `throughout(1000s, …)`, 5.2 × 10<sup>5</sup> for
 (at most 2.6 × 10<sup>6</sup>; the factors over two operators are
 about 1.4 for three and 3.0 for four, from the five words of a node), and the nested
 contents `within(1000s, throughout(500s, …))` and
-`throughout(1000s, within(500s, …))` 5.0 × 10<sup>5</sup> and
-5.1 × 10<sup>5</sup>, and 5.1 × 10<sup>5</sup> and 6.6 × 10<sup>5</sup>
+`throughout(1000s, within(500s, …))` 4.9 × 10<sup>5</sup> and
+5.0 × 10<sup>5</sup>, and 5.1 × 10<sup>5</sup> and 6.5 × 10<sup>5</sup>
 (at most 8.3 × 10<sup>5</sup>; the inner values of the second are
 decided from the 501st observation on, and each then decides the
 candidates of its window); `cadl` 0.3.25 read every candidate at every
