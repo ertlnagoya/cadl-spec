@@ -1019,7 +1019,7 @@ process on pairs ends with probability 1. Its largest value from the
 first step (c and σ(s) in s) is therefore an upper bound a⁺_p(s, c),
 and its least value a lower bound a⁻_p(s, c), at every valuation of C.
 Together with the bounds above, the smaller upper and the larger lower
-bound may be used. The coupled bounds are tightest when the joint
+bound may be used. The coupled bounds tend to be narrower when the joint
 distribution keeps the two plays in the same state where it can, and
 otherwise in step: for two commands with the same probabilities at e,
 such as the attempts of the robot with and without monitoring in the
