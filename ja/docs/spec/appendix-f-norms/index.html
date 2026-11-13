@@ -1,4 +1,4 @@
-<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-f-norms" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録F. 規範拡張 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録F. 規範拡張 | CADL"/><meta data-rh=true name=description content="規範拡張（norms 0.1）を規定する。義務・許可・禁止・権能を契約の第一級の対象とし，counts-as規則，有界の時相演算子，4値の判定，改正時の規範の継続を定める。"/><meta data-rh=true property=og:description content="規範拡張（norms 0.1）を規定する。義務・許可・禁止・権能を契約の第一級の対象とし，counts-as規則，有界の時相演算子，4値の判定，改正時の規範の継続を定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms","name":"付録F. 規範拡張","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.aceecb03.css /><script src=/cadl-spec/ja/assets/js/runtime~main.334c800f.js defer></script><script src=/cadl-spec/ja/assets/js/main.0c5a27c4.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-f-norms" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録F. 規範拡張 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録F. 規範拡張 | CADL"/><meta data-rh=true name=description content="規範拡張（norms 0.1）を規定する。義務・許可・禁止・権能を契約の第一級の対象とし，counts-as規則，有界の時相演算子，4値の判定，改正時の規範の継続を定める。"/><meta data-rh=true property=og:description content="規範拡張（norms 0.1）を規定する。義務・許可・禁止・権能を契約の第一級の対象とし，counts-as規則，有界の時相演算子，4値の判定，改正時の規範の継続を定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-f-norms/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-f-norms","name":"付録F. 規範拡張","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.aceecb03.css /><script src=/cadl-spec/ja/assets/js/runtime~main.22744238.js defer></script><script src=/cadl-spec/ja/assets/js/main.0c5a27c4.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-bfa")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=メインコンテンツまでスキップ><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>メインコンテンツまでスキップ</a></div><nav aria-label=ナビゲーション class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label=ナビゲーションバーを開く aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/ja/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/quickstart/>クイックスタート</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/ja/docs/spec/intro/>仕様書</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/textbook/>テキストブック</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/handson/>ハンズオン</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>日本語</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-f-norms/ target=_self rel="noopener noreferrer" class=dropdown__link lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-f-norms/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title=システムモード aria-label=ダークモードを切り替える(現在はシステムモード)><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=検索 aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label=先頭へ戻る class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label=ドキュメントのサイドバー class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/intro/><span title="CADL仕様書 v0.3" class=linkLabel_E58b>CADL仕様書 v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/introduction/><span title="1. はじめに" class=linkLabel_E58b>1. はじめに</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/objectives/><span title="2. 言語の目的" class=linkLabel_E58b>2. 言語の目的</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/comparison/><span title="3. 既存言語との比較" class=linkLabel_E58b>3. 既存言語との比較</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/requirements/><span title="4. 要求仕様" class=linkLabel_E58b>4. 要求仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/language-spec/><span title="5. 言語仕様" class=linkLabel_E58b>5. 言語仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/design/><span title="6. 設計" class=linkLabel_E58b>6. 設計</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/examples/><span title="7. 用途別記述例" class=linkLabel_E58b>7. 用途別記述例</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/use-cases/><span title="8. 活用事例と新規性分析" class=linkLabel_E58b>8. 活用事例と新規性分析</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/research/><span title="9. 研究方向性と未解決課題" class=linkLabel_E58b>9. 研究方向性と未解決課題</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/roadmap/><span title="10. 実装ロードマップ" class=linkLabel_E58b>10. 実装ロードマップ</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-a-syntax/><span title="付録A. 構文リファレンス（EBNF）" class=linkLabel_E58b>付録A. 構文リファレンス（EBNF）</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-b-references/><span title="付録B. 参考文献" class=linkLabel_E58b>付録B. 参考文献</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-c-motivation/><span title="付録C. 動機拡張" class=linkLabel_E58b>付録C. 動機拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-d-codegen/><span title="付録D. コード生成ターゲット一覧" class=linkLabel_E58b>付録D. コード生成ターゲット一覧</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-e-sos-dsl/><span title="付録E. SoS-DSL拡張" class=linkLabel_E58b>付録E. SoS-DSL拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/ja/docs/spec/appendix-f-norms/><span title="付録F. 規範拡張" class=linkLabel_E58b>付録F. 規範拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-g-agents/><span title="付録G. エージェント統治拡張" class=linkLabel_E58b>付録G. エージェント統治拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-h-stochastic/><span title="付録H. 確率モデル拡張" class=linkLabel_E58b>付録H. 確率モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-i-games/><span title="付録I. 戦略モデル拡張" class=linkLabel_E58b>付録I. 戦略モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-j-grounding/><span title="付録J. 制度パラメータの根拠付け" class=linkLabel_E58b>付録J. 制度パラメータの根拠付け</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/glossary/><span title=用語集 class=linkLabel_E58b>用語集</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=パンくずリストのナビゲーション><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label=ホームページ class=breadcrumbs__link href=/cadl-spec/ja/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>付録F. 規範拡張</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">このページの見出し</button></div><div class="theme-doc-markdown markdown"><header><h1>付録F. 規範拡張（norms 0.1）</h1></header>
@@ -637,7 +637,11 @@ JSONオブジェクト）と変化を計算する。Solidityのモニターは�
 拒否する。また，時相演算子の中で読むアクターを付けない名前を最初の観測より後に既知にする観測を
 拒否する。<code>cadl</code> 0.3.26からは，時相演算子を1つ含む規範の内容をその演算子（<code>NOT</code> の下では双対の演算子）に
 帰着させ，1つの内容に含まれる2つの時相演算子，<code>NOT until(...)</code>，比較の中の時相演算子を拒否する。また，
-時相的な内容の候補をまとめて判定するので，観測のガスは区間の中の観測の数とともには増えない。Regoのモニターは，結果が十進数になるとは限らない <code>/</code> を拒否する。どちらも数と時刻を
+時相的な内容の候補をまとめて判定するので，観測のガスは区間の中の観測の数とともには増えない。
+<code>cadl</code> 0.3.28からは，<code>NOT</code> の下，比較の中，<code>IN</code> の中にある1つの時相演算子を含む内容も判定する
+（<code>NOT until(...)</code> はD.5のreleaseで判定する。未定義の値があっても <code>until</code> と双対になることをD.5で示す）。
+時相演算子を2つ含む内容は，その候補をセグメント木にして判定し，3つ以上含む内容は拒否する。
+このとき本体のコントラクトの実行時コードは，EIP-170の上限まで7 × 10<sup>3</sup>バイト以上の余裕を持つ。Regoのモニターは，結果が十進数になるとは限らない <code>/</code> を拒否する。どちらも数と時刻を
 F.5のとおり正確に計算し，制限を満たす入力では <code>cadl norms-eval</code> と一致する。制限はD.5に
 挙げる。<code>cadl</code> 0.3.26からは，<code>cadl norms-eval</code>，Pythonのモニター，<code>cadl agents-run</code>，Regoのモニターは
 F.5の範囲を超える数を拒否し（行番号を示すトレースの誤り），数で書いた <code>deadline:</code> を正確に扱う。リファレンス実装は，観測ごとに両方のモニターを <code>cadl norms-eval</code> と比べる。
@@ -661,6 +665,23 @@ PRISM 4.11（PATH上の <code>prism</code>。明示的エンジンで，
 改正では1個）のすべての経路である。比べるのは，各観測での各規範の状態である。また，すべてのJSONの型の
 ランダムな値が，モデルのいずれかのクラスに入ることを確かめている。解釈器はPRISMのシミュレータが生成した経路と比べ，
 PRISMの答えは到達可能な状態についての明示的な不動点計算と比べている。</li>
+<li class=""><code>cadl</code> 0.3.28からは，<code>cadl norms-check</code> は，複数のインスタンスの
+それぞれの開始を環境に選ばせる（既定は <code>--starts any</code>。<code>--starts together</code> はそれまでのモデルを使う）。
+また，複数のインスタンスと組み合わせた改正を変換し，<code>--domain</code> のない線形の算術，<code>sum</code>，<code>avg</code> を
+線形の配置の面によって，有限小数の点を持つ面のそれぞれから有限小数の点を厳密に1つ取って変換し，それ以外の算術で <code>--domain</code> がないときは，リテラルから求めた定義域を
+仮定して報告し，それに依存する指摘に印を付ける。互いに大小を比べる4個以上の量は，F.12が述べる理由により，引き続き拒否する。
+いずれも，上と同じく <code>cadl norms-eval</code> と照合している。それぞれの開始を持つインスタンスは，ランダムな
+経路と，選択が2つの場合に，観測が3個以下のすべての経路（開始と終了のすべての順序。長い実行では4個以下）で調べる。2つの
+インスタンスの改正は，バージョンが2個と3個の場合について，改正の後に始まるインスタンスを含む
+ランダムな経路で調べる。線形の算術は，ランダムな経路，多くが超平面の上にある有限小数の格子の値，
+2つの量の格子のすべての点，少数の点しか達しない面の点で調べる。大きい係数や，2と5以外の素因数を持つ
+係数を持つランダムな線形の述語は，総当たりで求めた有限小数の点と照合する。変換に意図的に誤りを入れると，これらの
+試験は次のように検出した。開始では6個のうち5個（残りの1個は，どのインスタンスも動かない観測を許す
+もので，どのトレースも変えない），複数のインスタンスの改正では6個のすべて，拒否では2個のすべて，
+算術では10個のすべて，面の有限小数の点の探索に上限を戻したものでは3個のすべてである。レビューにより，
+この探索の最初のバージョンが上限で探索をやめ，有限小数の点を持つ面を落としていたことがわかった。
+現在の探索は厳密である。例は <code>norms_check_starts.cadl</code>，<code>norms_check_amend_v1.cadl</code> と
+<code>norms_check_amend_v2.cadl</code>，<code>norms_check_linear.cadl</code> である。</li>
 <li class="">ほかの構成要素は，定義域の外のワイルドカード参照をそれぞれの方法で読み，<code>cadl</code> 0.3.24は
 それらを変えない。<code>cadl verify</code> は，<code>A[*].q</code> を，グループごとに1つの制約のない変数として読み，
 その変数を契約のすべての <code>assume:</code> と <code>guarantee:</code> の項目で共有する。したがって，これもメンバーを
@@ -701,21 +722,34 @@ nuXmvで検査する <a class="" href=/cadl-spec/ja/docs/spec/appendix-b-referen
 送らず，値も持たない。報告はそのことを示す。</p>
 <h3 class="anchor anchorTargetStickyNavbar_MWp5" id=複数の契約インスタンス>複数の契約インスタンス<a href=#複数の契約インスタンス class=hash-link aria-label="複数の契約インスタンス への直接リンク" title="複数の契約インスタンス への直接リンク" translate=no>​</a></h3>
 <p>モデルは，同じ契約の複数のインスタンスをそれぞれの束縛とともに持つこともできる（リファレンス実装では，
-繰り返し指定する <code>--instance</code>，または <code>--instances N</code>）。インスタンスは，観測（ステップと上限），環境の選択
-（すべてのインスタンスのメッセージ事象と，どのインスタンスでも同じ量）を共有し，最初の観測でともに始まる。
-各インスタンスは，それぞれの規範インスタンスとその状態，制度的事象，仮定とその破れ（したがって判定
-<code>excused</code> もインスタンスごと），終了を持つ。任意の終了の読み方では，各インスタンスはそれぞれの観測で
-終わり，上限まで続く読み方では，すべて上限で終わる。インスタンスの状態は，終了の後は変わらず，その後の
-観測はそのインスタンスに属さない（F.5）。インスタンスのトレースは，その終了までの観測をそのインスタンスの
-束縛とともに並べたものであり，モデルはこれらのトレースのそれぞれについて，1つのインスタンスについて
-F.12が述べるとおりに厳密である。問いは，すべてのインスタンスのすべての規範（インスタンスkの規範は
+繰り返し指定する <code>--instance</code>，または <code>--instances N</code>）。インスタンスは，観測（ステップと上限）と環境の選択
+（すべてのインスタンスのメッセージ事象と，どのインスタンスでも同じ量）を共有する。各インスタンスは，
+それぞれの規範インスタンスとその状態，制度的事象，仮定とその破れ（したがって判定 <code>excused</code> もインスタンス
+ごと），開始，終了を持つ。</p>
+<p>各インスタンスの開始は環境が選ぶ。各観測で，まだ始まっていないインスタンスは，順序によらず，その観測で
+始まってよい。上限までに始まらなかったインスタンスは上限で始まる。最初の観測ではいずれかのインスタンスが
+始まり，どの観測でも，始まっていて終わっていないインスタンスか，その観測で始まるインスタンスがある。
+どのインスタンスも動かない観測は何も変えないので除く。これで失われるトレースはない。任意の終了の
+読み方では，各インスタンスは開始以後のそれぞれの観測で終わり，上限まで続く読み方では，すべて上限で終わる。
+インスタンスの状態は，開始の前と終了の後には変わらず，それらの観測はそのインスタンスに属さない（F.5）。
+インスタンスの最初の観測は，F.5の意味でのインスタンスの開始である。発動条件がなく対象でもない規範はそこで
+発効し，立ち上がりを事象とする述語はそこでは前の値を持たず，<code>assume:</code> の項目の区間はそこで始まる。
+インスタンスのトレースは，開始から終了までの観測を，共有する観測の時刻とそのインスタンスの束縛とともに
+並べたものであり，モデルはこれらのトレースのそれぞれについて，1つのインスタンスについてF.12が述べる
+とおりに厳密である。上限は共有するので，観測sで始まるインスタンスの観測は高々H − s + 1個であり，報告はそのことを示す。
+より大きい上限は，遅く始まるより長いインスタンスを扱う。インスタンスをまたぐ衝突には，異なる開始を必要とするものがある。たとえば，ある
+インスタンスの修復が効力を持つ間に別のインスタンスが始まり，その修復が禁じることを義務づける場合である。
+処理系は，代わりにすべてのインスタンスを最初の観測で始める読み方を用意してもよい（リファレンス実装
+では <code>--starts together</code>）。この読み方はコマンドが少なくて済むが，異なる観測で始まるインスタンスの
+トレースを含まない。報告は，どちらの読み方を使ったかを示す。問いは，すべてのインスタンスのすべての規範（インスタンスkの規範は
 <code>id@k</code> と呼ぶ）について問い，衝突は，同じインスタンスまたは異なるインスタンスの義務と禁止のすべての組に
 ついて問う。たとえば，あるインスタンスの規範の担い手が，別のインスタンスの規範が禁じることを義務づけられる
 とき，インスタンスをまたぐ衝突が生じる。証拠は，同じ観測からなる，すべてのインスタンスのトレースを持ち，
-それぞれをそのインスタンスの束縛でF.5により評価する。バージョン0.1ではインスタンスは4個までであり，
-インスタンスの終了は，環境の選択の数をインスタンスごとに2倍にする。</p>
+それぞれをそのインスタンスの束縛でF.5により評価する。バージョン0.1ではインスタンスは4個までである。
+n個のインスタンスの1つの観測での開始と終了は，コマンドの数を高々4<sup>n</sup>倍にする（各インスタンスは，
+始まる，終わる，その両方，そのどちらでもない，のいずれかである）。ともに始まる読み方では2<sup>n</sup>倍である。</p>
 <h3 class="anchor anchorTargetStickyNavbar_MWp5" id=改正>改正<a href=#改正 class=hash-link aria-label="改正 への直接リンク" title="改正 への直接リンク" translate=no>​</a></h3>
-<p>1つのインスタンスのモデルは，ファイルの後のバージョンも持てる（リファレンス実装では，繰り返し指定する
+<p>モデルは，ファイルの後のバージョンも持てる（リファレンス実装では，繰り返し指定する
 <code>--version FILE</code>）。環境は，各観測で，契約を次のバージョンに改正するかどうかを選ぶ。改正はバージョンごとに
 高々1回，その順序で起こる。改正は，F.6の定めのとおり（norms-evalもそのように適用する），その観測の手順1の前に効力を持つ。
 最終状態の規範インスタンスは影響を受けない。<code>inactive</code> のものは新しいバージョンの定義を取り，新しい
@@ -732,9 +766,18 @@ F.12が述べるとおりに厳密である。問いは，すべてのインス�
 <code>amend</code> の行が与えたバージョンをその順序で名指すトレースについて，1つのバージョンについてF.12が
 述べるとおりに厳密である。次のものは理由とともに変換しない。アクターまたはライフサイクルが異なる
 バージョン，バージョンの間で種類が変わる規範（F.6はそれを解除する），変換しない規範またはcounts-as規則を
-持つバージョン，複数のインスタンスと組み合わせた改正。問いは，どのバージョンのすべての規範idについても
+持つバージョン。問いは，どのバージョンのすべての規範idについても
 問う。改正を必要とする証拠は，<code>amend</code> の行でバージョンのファイルを名指す。改正は環境の選択の数を2倍にし，
 コマンドの数をバージョンの数だけ掛ける。</p>
+<p>複数のインスタンスでは，効力を持つバージョンを共有する。1回の改正は，その観測で動くすべてのインスタンス
+（始まっていて終わっていないもの，またはその観測で始まるもの）で，同じ観測に効力を持つ。これは，それらの
+インスタンスのトレースがどれもその観測に <code>amend</code> の行を持ち，norms-evalがそれを適用するのと同じである。
+終わったインスタンスは改正しない。改正の後に始まるインスタンスは，その時点で効力を持つバージョンの
+インスタンスである。そのインスタンスは，開始の時点でそのバージョンの規範と <code>assume:</code> の項目を持ち，その
+トレースはそのバージョンのファイルで評価し，その <code>amend</code> の行はそれより後のバージョンだけを名指す。証拠は，
+そのようなインスタンスごとに，それがどのファイルのインスタンスであるかを示す。どのインスタンスも同じ
+バージョンの列を持ち，各バージョンはそのインスタンスの束縛で読む。モデルは，これらのトレースのそれぞれに
+ついて，上に述べたとおりに厳密である。</p>
 <h3 class="anchor anchorTargetStickyNavbar_MWp5" id=環境が選ぶもの>環境が選ぶもの<a href=#環境が選ぶもの class=hash-link aria-label="環境が選ぶもの への直接リンク" title="環境が選ぶもの への直接リンク" translate=no>​</a></h3>
 <p>環境は，各観測で次の3つを選ぶ。</p>
 <ol>
@@ -778,7 +821,12 @@ counts-as規則の <code>when:</code> に含まれるメッセージ事象が，
 要素が最初に異なる高々2つの位置で決まる。そのため，長さ2以下で，それらの位置での結果を実現する要素を
 持つリストで足りる。0，1，2，<code>"a"</code>，<code>"b"</code>，2つのオブジェクト，nullからなる長さ2以下のすべてのリストを
 列挙すると29通りの組合せが得られ，上の8個のリストはそのすべてを実現する。互いに大小を比べる量が4個
-以上あるまとまりは変換しない。このような順序の中で文字U+0000を含むテキストのリテラルは変換しない。
+以上あるまとまりは変換しない。その理由はリストによらない。k ≥ 4個の量からなるまとまりでは，どの量も，
+数とリストのほかに少なくとも15個のクラス（値なし，真，偽，テキストのリテラルの下と上の少なくとも
+2k = 8個のテキスト，k = 4個のオブジェクト）を持つ。そのため，4個のリストの組合せをどのリストで実現しても，
+まとまりのクラスの組合せは少なくとも15<sup>4</sup> = 50625個になり，制限の50000を超える（「制限」を参照）。
+したがって，4個の量のためのリストの集合は，バージョン0.1の制限の中では使われることがない。処理系は，
+拒否するときにクラスと組合せの数を示す。このような順序の中で文字U+0000を含むテキストのリテラルは変換しない。
 数は厳密に計算する。トレースの値は整数または浮動小数点数なので，区間の中の値は，その区間の内側にある
 整数または浮動小数点数とし，それがk個に満たない区間ではそのすべてを含める。</p>
 <p>この扱いは厳密である。トレースがまとまりの量に与える値v<sub>1</sub>, …, v<sub>k</sub>（すべて数とする）と，
@@ -790,11 +838,47 @@ v<sub>i</sub>はそのリテラルに移し，各区間の中の異なるv<sub>i
 まとまりのどの述語も，移した値で同じ値を取る。テキストについても同じ議論が成り立つ。リストとオブジェクトはリテラルと比べず，その2つの比較は
 対ごとの結果の組合せだけで決まり，クラスのリストとオブジェクトはその組合せを実現する。型の異なる値の比較は，
 型の中での値によらない（大小の比較は真と偽を1と0として扱い，これらはどのまとまりのリテラルにも含まれる）。</p>
-<p>算術（<code>+</code>，<code>-</code>，<code>*</code>，<code>/</code>），<code>sum</code>，<code>avg</code> は，有限の定義域を持つ量についてだけ変換する。CADLは規範の
-量の定義域を宣言しないので，定義域は量ごとの整数の範囲lo..hiとして処理系に与える（リファレンス実装では
+<p>算術（<code>+</code>，<code>-</code>，<code>*</code>，<code>/</code>），<code>sum</code>，<code>avg</code> は，どの積もリテラルの因数を持ち，どの除数もリテラルであるとき，
+線形であるという（<code>R.x * 0.5 - S.y / 4</code>，<code>sum(r.load for r in ROBOT) + 2 * D.r</code>）。線形の算術では，量に
+定義域はいらない。量を共有し，このような算術を含む述語のまとまりでは，定義域のない各量は，数（次に述べる
+線形の配置の変数）であるか，数でないクラスの1つを取る。定義域を持つ量は，そのクラスを取る。この選び方
+ごとに，ほかの値を固定すると，述語の中の比較と条件として使う数は，どれも変数の線形式の符号で決まる。
+比較では，両辺の差が線形式である。ただし，<code>min</code> と <code>max</code> は定義された要素ごとに，<code>count</code> は取りうる個数ごとに
+別の式を作る。<code>+</code>，<code>-</code>，リテラルの因数，<code>min</code>，<code>max</code> で作った値は，これらの式の値から最小と最大をとる
+操作だけで得られるので，その符号はそれらの式の符号で決まる。<code>count</code> の値は，その要素の式で決まる。したがって，どの
+述語も，超平面「式 = 0」の配置の各面の上で1つの値を取る。面とは，どの式も決まった符号（負，0，正）を
+取る点の集合である。そのため，面ごとに1つの点があればよい。点は柱状代数分解（cylindrical algebraic decomposition）で求める。最後の変数は，それを
+含まない式を残し，それを含む2つの式ごとに，その変数についての根の差を加えて消去する。この射影の各セルの
+点を，その点での式の根と，根の下，根の間，根の上の点によって，最後の変数の方向に延ばす。射影の1つのセル
+の上では根の順序が変わらないので，セルは面を細分し，どの面にも点が入る。トレースの値は整数または
+浮動小数点数，すなわち有限小数であり，有限小数の点を持たない面もある（<code>3 * x == 1</code>）。有限小数の全体を
+D（10のべきを逆元として加えた整数）とする。面のアフィン包Hは，面の上で0になる式で決まる。処理系は，
+それらのうち独立な式の極大な組を整数の行 A x = b に直し，行列式が±1の整数の列の操作（拡張ユークリッドの
+互除法）でAを A V = T に変形する。Tは最初のr列が下三角で対角成分が0でなく，それより後の列は0である。
+x = V y とすると，Hの点では y<sub>1</sub>, …, y<sub>r</sub> がTで決まり，y<sub>r+1</sub>, … は自由である。
+VとV<sup>-1</sup>は整数の行列なので，xがD<sup>n</sup>に属するのは，yがそうであるときに限る。したがって，
+HがD<sup>n</sup>の点を持つのは，決まったy<sub>i</sub>がすべてDに属するときに限り，そのときHのD<sup>n</sup>の
+点は，D<sup>n</sup>の点x<sub>0</sub>とVの後のn − r列からなるBにより，tをD<sup>n-r</sup>の上で動かした
+x<sub>0</sub> + B t である。決まったy<sub>i</sub>がDに属さないものを含むとき，どのトレースもその面に達しないので，
+その面は除く。そうでなければ，Hの中で開いた面は，その点 p = x<sub>0</sub> + B t<sup>*</sup> を含む。pで0でない
+式fは，各t<sub>j</sub>が高々δ動くとき，高々 δ · Σ<sub>j</sub> |(f B)<sub>j</sub>| しか変わらず，pで0の式は
+Hの上で0のままである。処理系は，そのようなどのfについても 10<sup>-k</sup>/2 · Σ<sub>j</sub> |(f B)<sub>j</sub>|
+&lt; |f(p)| となる最小のkを求め，t<sup>*</sup>を小数k桁に丸める。丸めた点はD<sup>n</sup>に属し，その面の中に
+ある。したがって，面を除くのは，その面がトレースの点を持たないときだけであり，探索の上限のために面を
+落とすことはない。非常に薄い面の点は，norms-evalがトレースの数に許す桁数（400）より多くの桁を必要とする
+ことがある。その場合，その点を使う証拠は確認されなかったものとして報告し（リファレンス実装では終了ステータス3），
+誤った答えを知らせずに与えることはない。この扱いは厳密である。トレースの値は，数でない値を同じにしたまま，ある1つの面の中にあり，その面の点はどの述語にも
+トレースの値と同じ値を与える。リテラルとの比較や2つの量の比較も線形式なので，このようなまとまりでは，
+リテラルの間の区間ごとに1つの点で足り，前述の区間ごとのk個の値は必要ない。報告は，数を配置から取る量を示す。</p>
+<p>線形でない算術（2つの量の積や商）は，有限の定義域を持つ量について変換する。CADLは規範の量の定義域を
+宣言しないので，定義域は量ごとの整数の範囲lo..hiとして処理系に与える（リファレンス実装では
 <code>--domain</code>）。そのような量は，定義域の整数と数でない値を取る。答えは，そのような量の数がすべて定義域の
-整数であるトレースについて成り立ち，報告はその量と定義域を示す。定義域のない量の算術を含む述語は
-変換しない。</p>
+整数であるトレースについて成り立ち，報告はその量と定義域を示す。定義域が与えられないときは，処理系は，
+述語の数のリテラル（と0）のうち最小のものより1小さい整数から，最大のものより1大きい整数までを定義域と
+仮定し，報告はこの定義域を仮定として述語とともに示す。答えは，そのようなトレースについてだけ成り立つ。
+処理系は，仮定した定義域のもとでだけ成り立つ答えを，その仮定を示さずに与えてはならない。リファレンス
+実装は，<code>trigger:</code>，<code>until:</code>，内容，またはそれが依存するcounts-as規則，修復，権能がそのような量を読む規範と，
+その規範についての指摘のすべてに印を付ける。</p>
 </li>
 <li class="">
 <p>終了。インスタンスがこの観測で終わるかどうか（F.5の手順6）。<code>lifecycle:</code> のない契約で通知される
@@ -837,11 +921,11 @@ H + 1個以下のインスタンスについてのものである。より大き
 述語。述語は，量（<code>A.q</code>，<code>A[k].q</code>，<code>i</code> を束縛した <code>A[i].q</code>，集合の上を動く変数 <code>r</code> についての <code>r.q</code>，
 限量子の変数 <code>j</code> についての <code>A[j+1].q</code>）とリテラルまたは内包表記の <code>count</code> との比較（<code>==</code>，<code>!=</code>，<code>&lt;</code>，
 <code>&lt;=</code>，<code>></code>，<code>>=</code>，<code>IN</code>），条件として使う量，<code>AND</code>，<code>OR</code>，<code>NOT</code>，限量子 <code>exists</code> と <code>for all</code>，集合または
-範囲の上の内包表記の集約 <code>count</code>，<code>min</code>，<code>max</code>，2つの量の比較，定義域を持つ量の算術，<code>sum</code>，<code>avg</code>，述語の中のワイルドカード参照と
+範囲の上の内包表記の集約 <code>count</code>，<code>min</code>，<code>max</code>，2つの量の比較，算術，<code>sum</code>，<code>avg</code>（線形のものはすべての値に
+ついて，それ以外は与えた定義域または仮定した定義域の上で），述語の中のワイルドカード参照と
 範囲参照（F.5はこれらを限量子または内包表記として読む）から組み立てる。さらに，そのような述語の上の
 有界の時相演算子1つからなる内容，期限，<code>until:</code>，<code>if:</code> を持つcounts-as規則，権能とその効果，修復，
-これらの形の <code>assume:</code> の項目（判定 <code>excused</code> のため）を変換する。定義域のない量の算術，<code>sum</code>，<code>avg</code>，
-<code>request</code> のフィールド，<code>now</code>，<code>state</code>，ほかの演算子と組み合わせた時相演算子，
+これらの形の <code>assume:</code> の項目（判定 <code>excused</code> のため）を変換する。<code>request</code> のフィールド，<code>now</code>，<code>state</code>，ほかの演算子と組み合わせた時相演算子，
 入れ子の時相演算子は変換しない。改正は前述のとおり変換する。そのような部分を持つ規範は，理由とともに「変換しない」と
 報告する。そのような規範に振る舞いが依存する規範も同じである。変換しない規範の修復，変換しない権能の
 効果の対象，変換しないcounts-as規則の事象を <code>trigger:</code>，内容，<code>until:</code> とする規範がこれに当たる。
@@ -887,10 +971,11 @@ F.10が判定しない（評価できない）規範は，トレースと同じ�
 環境の選択，および述語の1つのまとまりについて50000を超えるクラスの組合せを持つ量を拒否する。
 集合の要素についての述語は要素ごとに1つの量を読み，それらの量のクラスは掛け合わされる。量ごとのクラスがc，
 要素がm個，要素ごとに読む量がq個であれば，1つのまとまりの組合せは最大でc<sup>m q</sup>個になる。
-50000の制限はこの数を抑える。
+50000の制限はこの数を抑える。線形の算術を含むまとまりでは，組合せは，数でないクラスの選び方ごとの面の点の
+数の和であり，同じ制限を適用する。
 モデル検査器は到達可能な状態を明示的に調べる。遷移の数は，到達可能な状態の数と選択の数の積であり，
 メッセージ事象と値のクラスとともに増える。検査の時間は，モデルのコマンドの数（環境の選択ごとに4つ）と
 到達可能な状態の数とともに増える。メッセージ事象が12個（選択が4096，コマンドが16384）のインスタンスでは，
 10分を超えた。処理系は，モデル検査器の時間とモデルを作る時間を制限し，制限を超えたときはそれを報告することが望ましい。
-選択の数の制限は，複数のインスタンスの終了とバージョンを掛けた後のコマンドの数で調べる。モデルのコマンドは
+選択の数の制限は，複数のインスタンスの開始と終了，バージョンを掛けた後のコマンドの数で調べる。モデルのコマンドは
 32768個までである。クラスの組合せが多すぎるために拒否するときは，その原因となる述語と量を示す。</div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label=ドキュメントページ><a class="pagination-nav__link pagination-nav__link--prev" href=/cadl-spec/ja/docs/spec/appendix-e-sos-dsl/><div class=pagination-nav__sublabel>前へ</div><div class=pagination-nav__label>付録E. SoS-DSL拡張</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/cadl-spec/ja/docs/spec/appendix-g-agents/><div class=pagination-nav__sublabel>次へ</div><div class=pagination-nav__label>付録G. エージェント統治拡張</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_VuIf thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#f1-動機 class="table-of-contents__link toc-highlight">F.1 動機</a><li><a href=#f2-概念 class="table-of-contents__link toc-highlight">F.2 概念</a><li><a href=#f3-構文a4へのebnfの追加 class="table-of-contents__link toc-highlight">F.3 構文（A.4へのEBNFの追加）</a><li><a href=#f4-時相述語 class="table-of-contents__link toc-highlight">F.4 時相述語</a><li><a href=#f5-動的意味論 class="table-of-contents__link toc-highlight">F.5 動的意味論</a><ul><li><a href=#契約インスタンス class="table-of-contents__link toc-highlight">契約インスタンス</a><li><a href=#限量子と集約 class="table-of-contents__link toc-highlight">限量子と集約</a><li><a href=#ワイルドカード参照と範囲参照 class="table-of-contents__link toc-highlight">ワイルドカード参照と範囲参照</a><li><a href=#規範インスタンス class="table-of-contents__link toc-highlight">規範インスタンス</a><li><a href=#counts-as class="table-of-contents__link toc-highlight">Counts-as</a><li><a href=#1つの観測の中での順序 class="table-of-contents__link toc-highlight">1つの観測の中での順序</a><li><a href=#判定 class="table-of-contents__link toc-highlight">判定</a></ul><li><a href=#f6-改正 class="table-of-contents__link toc-highlight">F.6 改正</a><li><a href=#f7-static-semantics class="table-of-contents__link toc-highlight">F.7 静的意味論</a><ul><li><a href=#コアの検査との関係 class="table-of-contents__link toc-highlight">コアの検査との関係</a><li><a href=#制度パラメータとの関係参考 class="table-of-contents__link toc-highlight">制度パラメータとの関係（参考）</a></ul><li><a href=#f8-例 class="table-of-contents__link toc-highlight">F.8 例</a><li><a href=#f9-中間表現irへの追加 class="table-of-contents__link toc-highlight">F.9 中間表現（IR）への追加</a><li><a href=#f10-reference-implementation-status class="table-of-contents__link toc-highlight">F.10 リファレンス実装の状況</a><li><a href=#f11-後方互換性 class="table-of-contents__link toc-highlight">F.11 後方互換性</a><li><a href=#f12-design-time-checking class="table-of-contents__link toc-highlight">F.12 モデル検査器による設計時の検査</a><ul><li><a href=#契約インスタンス-1 class="table-of-contents__link toc-highlight">契約インスタンス</a><li><a href=#複数の契約インスタンス class="table-of-contents__link toc-highlight">複数の契約インスタンス</a><li><a href=#改正 class="table-of-contents__link toc-highlight">改正</a><li><a href=#環境が選ぶもの class="table-of-contents__link toc-highlight">環境が選ぶもの</a><li><a href=#時間 class="table-of-contents__link toc-highlight">時間</a><li><a href=#状態と遷移 class="table-of-contents__link toc-highlight">状態と遷移</a><li><a href=#変換するもの class="table-of-contents__link toc-highlight">変換するもの</a><li><a href=#問い class="table-of-contents__link toc-highlight">問い</a><li><a href=#証拠 class="table-of-contents__link toc-highlight">証拠</a><li><a href=#制限 class="table-of-contents__link toc-highlight">制限</a></ul></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class=footer__title>ドキュメント</div><ul class="footer__items clean-list"><li class=footer__item><a class=footer__link-item href=/cadl-spec/ja/docs/quickstart/>クイックスタート</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/ja/docs/spec/intro/>仕様書</a><li class=footer__item><a class=footer__link-item href=/cadl-spec/ja/docs/handson/>ハンズオン</a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>ツール</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class=footer__link-item>cadl（コンパイラ / CLI）<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://pypi.org/project/cadl-lang/ target=_blank rel="noopener noreferrer" class=footer__link-item>PyPI の cadl-lang<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class=footer__link-item>CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-raspimouse-simulator target=_blank rel="noopener noreferrer" class=footer__link-item>ハンズオン用シミュレータ<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>フィードバック</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ertlnagoya/cadl/issues target=_blank rel="noopener noreferrer" class=footer__link-item>ツールの問題を報告<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec/issues target=_blank rel="noopener noreferrer" class=footer__link-item>このサイトの問題を報告<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://github.com/ertlnagoya/cadl-spec target=_blank rel="noopener noreferrer" class=footer__link-item>このサイトのソース<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>組織</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://www.ertl.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>ERTL<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><li class=footer__item><a href=https://www.nagoya-u.ac.jp/ target=_blank rel="noopener noreferrer" class=footer__link-item>名古屋大学<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a></ul></div></div><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2026 ERTL, Graduate School of Informatics, Nagoya University. 文書は <a href=https://creativecommons.org/licenses/by/4.0/deed.ja>CC BY 4.0</a>，コード例とサイトのソースは <a href=https://www.apache.org/licenses/LICENSE-2.0>Apache License 2.0</a> で提供します。Built with Docusaurus.</div></div></div></footer></div></body>
