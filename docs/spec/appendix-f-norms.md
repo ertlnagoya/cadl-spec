@@ -1321,7 +1321,7 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   that hold finite decimal points; the search is now exact. The examples are
   `norms_check_starts.cadl`, `norms_check_amend_v1.cadl` with
   `norms_check_amend_v2.cadl`, and `norms_check_linear.cadl`.
-- In `cadl` after 0.3.28 (not yet released), `cadl norms-check`
+- In `cadl` 0.3.29, `cadl norms-check`
   translates a group of four quantities ordered against each other by
   types and patterns (F.12). Four such quantities without other
   literals have 26 035 valuations, built in about 2 seconds; a contract
