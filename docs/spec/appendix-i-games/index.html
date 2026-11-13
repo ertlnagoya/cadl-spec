@@ -1,4 +1,4 @@
-<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-i-games" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix I: Strategic Model Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix I: Strategic Model Extension | CADL"/><meta data-rh=true name=description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations or from every reachable state, with deviation gains, and equilibrium maps over institutional parameters with certified cells, also from the end points of a cell."/><meta data-rh=true property=og:description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations or from every reachable state, with deviation gains, and equilibrium maps over institutional parameters with certified cells, also from the end points of a cell."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games","name":"Appendix I: Strategic Model Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.1f864c76.js defer></script><script src=/cadl-spec/assets/js/main.bc1bb5fa.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-i-games" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix I: Strategic Model Extension | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix I: Strategic Model Extension | CADL"/><meta data-rh=true name=description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations or from every reachable state, with deviation gains, and equilibrium maps over institutional parameters with certified cells, also from the end points of a cell."/><meta data-rh=true property=og:description content="Strategic model extension (games 0.1): players and ownership of commands in the model of Appendix H, named memoryless deterministic profiles with a distinguished compliance profile, payoffs as weighted expected rewards, checks that a named profile is an equilibrium against unilateral deviations or from every reachable state, with deviation gains, and equilibrium maps over institutional parameters with certified cells, also from the end points of a cell."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games","name":"Appendix I: Strategic Model Extension","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.0fb3e265.js defer></script><script src=/cadl-spec/assets/js/main.60e54b48.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-689")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label="Skip to main content"><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/docs/quickstart/>Quick Start</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/docs/spec/intro/>Specification</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/textbook/>Textbook</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/handson/>Hands-on</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>English</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-i-games/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-i-games/ target=_self rel="noopener noreferrer" class=dropdown__link lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=Search aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/intro/><span title="CADL Specification v0.3" class=linkLabel_E58b>CADL Specification v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/introduction/><span title="1. Introduction" class=linkLabel_E58b>1. Introduction</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/objectives/><span title="2. Language Objectives" class=linkLabel_E58b>2. Language Objectives</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/comparison/><span title="3. Comparison with Existing Languages" class=linkLabel_E58b>3. Comparison with Existing Languages</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/requirements/><span title="4. Requirements Specification" class=linkLabel_E58b>4. Requirements Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/language-spec/><span title="5. Language Specification" class=linkLabel_E58b>5. Language Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/design/><span title="6. Design" class=linkLabel_E58b>6. Design</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/examples/><span title="7. Domain-Specific Description Examples" class=linkLabel_E58b>7. Domain-Specific Description Examples</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/use-cases/><span title="8. Use Cases and Novelty Analysis" class=linkLabel_E58b>8. Use Cases and Novelty Analysis</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/research/><span title="9. Research Directions and Open Challenges" class=linkLabel_E58b>9. Research Directions and Open Challenges</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/roadmap/><span title="10. Implementation Roadmap" class=linkLabel_E58b>10. Implementation Roadmap</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-a-syntax/><span title="Appendix A: Syntax Reference (EBNF)" class=linkLabel_E58b>Appendix A: Syntax Reference (EBNF)</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-b-references/><span title="Appendix B: References" class=linkLabel_E58b>Appendix B: References</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-c-motivation/><span title="Appendix C: Motivation Extension" class=linkLabel_E58b>Appendix C: Motivation Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-d-codegen/><span title="Appendix D: Codegen Target Catalog" class=linkLabel_E58b>Appendix D: Codegen Target Catalog</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><span title="Appendix E: SoS-DSL Extension" class=linkLabel_E58b>Appendix E: SoS-DSL Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-f-norms/><span title="Appendix F: Norms Extension" class=linkLabel_E58b>Appendix F: Norms Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-g-agents/><span title="Appendix G: Agent Governance Extension" class=linkLabel_E58b>Appendix G: Agent Governance Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-h-stochastic/><span title="Appendix H: Stochastic Model Extension" class=linkLabel_E58b>Appendix H: Stochastic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/docs/spec/appendix-i-games/><span title="Appendix I: Strategic Model Extension" class=linkLabel_E58b>Appendix I: Strategic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-j-grounding/><span title="Appendix J: Grounding of the Institutional Parameters" class=linkLabel_E58b>Appendix J: Grounding of the Institutional Parameters</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/glossary/><span title=Glossary class=linkLabel_E58b>Glossary</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/cadl-spec/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Appendix I: Strategic Model Extension</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Appendix I — Strategic Model Extension (games 0.1)</h1></header>
@@ -876,9 +876,43 @@ otherwise in step: for two commands with the same probabilities at e,
 such as the attempts of the robot with and without monitoring in the
 second example of I.12, the two plays then take corresponding updates
 together. Each step still chooses its corner, so the bounds are not
-exact. When a probability is not multi-affine, the vertices of the sets
-of distributions of H.14 are not mixtures with weights common to all
-commands, and the argument does not apply.</p>
+exact.</p>
+<p>When a probability is not multi-affine, the vertices of the sets of
+distributions of H.14 are not mixtures with weights common to all
+commands, and the argument does not apply as it stands. It applies to
+a lifted cell. Write each probability that is not multi-affine in the
+open parameters x as a + b · R(x), with numbers a and b and a
+polynomial R without constant term, normalised (for example, its first
+coefficient is 1) so that probabilities that differ only in a and b
+have the same R, and give each such R a new coordinate y_R with the
+interval [α_R, β_R] of an exact enclosure of R on C, for example the
+one that the relaxation of H.14 uses. Replacing R(x) by y_R turns every
+probability into a polynomial L in (x, y) that is multi-affine and
+satisfies L(x, R(x)) = P(x); in a command whose lifted polynomials do
+not sum to 1 identically, one of those that contain a y is replaced by
+1 minus the others, which still equals its probability at (x, R(x))
+because the probabilities sum to 1. Let B be the lifted cell, C times
+the intervals [α_R, β_R]. For v in C the point u(v) = (v, R(v)) lies in
+B, so the multilinear weights w_e(u(v)) of the corners e of B are not
+negative, sum to 1, and are the same for every command, and every
+lifted polynomial satisfies L(u(v)) = Σ_e w_e(u(v)) · L(e). The
+distribution of a command at v is therefore Σ_e w_e(u(v)) · D_e, where
+D_e lists the lifted polynomials of the command at e, for both plays
+with the same weights; a step payoff that is multi-affine in x is
+multi-affine in (x, y) and is a mixture with the same weights. A corner
+e is used for a command only when D_e is a distribution of the relaxed
+process above, that is, when each of its components lies in the
+interval that the relaxation gives that probability on C (they sum to 1
+by construction). With this check, each play alone again follows a
+mixture of the distributions of the relaxed process, every policy of
+the process on pairs ends with probability 1, and the argument above
+holds with the corners of B in place of those of C and w_e(u(v)) in
+place of w_e(v). The relation between y and x is given up, which makes
+the bounds wider; in exchange, two commands with the same probability
+get the same coordinate and so the same value at every corner of B, and
+the two plays again take corresponding updates together. When the check
+fails at a corner that a bound needs, that bound is not used, which is
+always sound. For a design whose probabilities are multi-affine, B is C.</p>
 <p><strong>Certification by the end points of a cell.</strong> When the only open
 parameter enters the game through weights only, a cell can be decided
 from two exact evaluations. A processor MAY decide a cell [a, b] of an
@@ -1471,7 +1505,33 @@ induction when the pairs reachable from the first step form an
 acyclic graph and by policy iteration otherwise, and are shared by
 the advantages of a cell; the distributions at the corners are
 computed once per cell. <code>games_eval.USE_COUPLING = False</code> gives the
-maps of 0.3.27.</li>
+maps of 0.3.27.
+Since the version after 0.3.28, the coupled bounds are also used in a
+design with a probability that is not multi-affine, over the lifted
+cell of I.9. A probability a + b · R is lifted with R normalised to
+first coefficient 1 (in the order of the exponents), so that
+probabilities that differ only in a and b share a coordinate; in a
+command whose lifted polynomials do not sum to 1 identically, the last
+one that contains a coordinate is replaced by 1 minus the others. The
+interval of a coordinate is the intersection of the enclosure by
+interval arithmetic that the relaxation uses and the enclosure by the
+Bernstein coefficients of R on the cell (with x = lo + (hi − lo) · t,
+the polynomial is a combination of the Bernstein basis functions on
+[0, 1]ⁿ, which are not negative and sum to 1, so its values lie
+between the least and the largest coefficient). The coefficients are
+computed one parameter at a time, in O(N · Σ_k d_k) operations for N
+coefficients and degrees d_k, and only when N is at most 4 096; above
+that, the enclosure by interval arithmetic is used alone. The lifted
+cell and its corners are computed on a cell only when a coupled bound
+is first computed there. The lifted cell has at most 10 coordinates
+(open parameters and lifted functions); a design that needs more
+lifted functions does not use the coupled bounds, and a multi-affine
+design needs none. A corner is checked against the intervals of the
+relaxation when a distribution is first needed there, and a bound
+that needs a corner that fails the check is not used.
+<code>games_eval.USE_LIFTING = False</code> gives the maps of 0.3.28,
+and <code>games_eval.LIFT_BERNSTEIN = False</code> the lifting with the
+enclosures by interval arithmetic only.</li>
 <li class=""><code>cadl model-export</code> writes the file of I.11 (<code>smg</code> and the <code>player</code>
 constructs, with the renaming of H.11 and of the keywords that I.11
 adds for a strategic model, and a check that two players do not
@@ -1604,9 +1664,9 @@ times as long; the joint distribution that keeps the plays in step,
 and the restrictions above on where coupled bounds are computed,
 make the difference. The coupled
 relaxation still lets every step choose its corner, so cells on which
-an advantage changes sign must be small; and it does not apply to
-probabilities that are not multi-affine, where bounds of differences
-of values remain an open item. In the
+an advantage changes sign must be small. Up to 0.3.28 it did not apply
+to probabilities that are not multi-affine; the lifting is measured
+below. In the
 fuzzing above, the games with three or four players, most of them
 with three open parameters, took about 0.9 s each (wall-clock, check,
 map with a budget of 24 cells, and oracle).</li>
@@ -1647,6 +1707,76 @@ first step left out, the step payoffs after the first step left out)
 are each detected by the claims of the maps in fuzzing, by the direct
 comparison, and on cells of the second example in
 <code>tests/test_games_coupling.py</code>.</li>
+<li class="">Probabilities that are not multi-affine (version after 0.3.28),
+measured on the three-parameter maps above with one factor of the
+probability of success replaced, with the default budget: in the
+second example, (1 − p_fail)² and 1 − 4 · p_fail · (1 − p_fail) in
+place of 1 − p_fail (λ, κ, p_fail as above), and
+1 − p_fail · q_local · (1 − q_local) with the map over λ ∈ [0, 0.4],
+p_fail ∈ [0, 0.5], and q_local ∈ [0, 1] (κ = 0.05); in the first
+example, (1 − p_fail)² (<code>three_10</code>, CENTRALIZED). Without the lifting
+(as in 0.3.28) the three maps of the second example exhaust the
+budget with 0.673, 0.891, and 0.180 undecided after 39 999 cells.
+With the lifting and the enclosures by interval arithmetic only, they
+leave 0.225, 0.594, and 0.105 undecided after 39 999 cells; with the
+Bernstein enclosures of the lifted coordinates, 0.174 and 0.431 after
+39 999 cells, and the third reaches the resolution 0.1 after 32 083
+cells (0.100 undecided). Measured two at a time on one laptop
+(wall-clock, without and with the lifting together), the maps of the
+second example took 161 s and 237 s ((1 − p_fail)²), 148 s and 237 s
+(4 · p_fail · (1 − p_fail)), and 142 s and 146 s
+(p_fail · q_local · (1 − q_local), with 32 083 instead of 39 999
+cells); a cell costs more with the lifting, since the pairs choose
+among up to 2⁴ = 16 lifted corners instead of 2³ corners. The map of
+the first example is the same with and without the lifting (0.231
+undecided after 39 999 cells, 122 s both), as it is with and without the coupled
+bounds in the multi-affine case. Most of the remaining undecided cells of the
+second example come from the relaxation itself: the enclosure of a
+probability such as 4 · p_fail · (1 − p_fail) by interval arithmetic
+on its monomials is wide, and wider than 1 near p_fail = 1/2, where
+the design is then not shown to be well-defined on the cell; N, E1,
+E2, and the bounds l_p and u_p use that enclosure.</li>
+<li class="">Verification of the lifting (version after 0.3.28), by the
+implementer, with the oracle above and the generator option
+<code>--mode nonaffine</code> of <code>tests/games_fuzz.py</code> (probabilities p², 1 − p²,
+4p(1 − p), pq(1 − q), q², p²q, (1 − p)², and 1/2 + pq(1 − q)/2, and in
+half of the states with several commands the probabilities of the
+first command with other successors). With the final code, 3 800
+games (2 700 of <code>--mode nonaffine</code>, 600 of them asking for
+<code>every_reachable_state</code>, 800 of the default kind, and 300 with three
+or four players and both concepts), 3 090 of them with a probability
+that is not multi-affine: 2 247 <code>equilibrium</code> and 2 792
+<code>not_equilibrium</code> cells, 90 372 exact point evaluations, no wrong
+claim, and the checks at the fixed values agreed with the oracle on
+every model. In 1 504 cases a player of a game that is not
+multi-affine was decided by PD+ or PD− with the coupled bounds. Every
+coupled bound on the whole region and on two random sub-boxes was
+compared with the advantage that the oracle computes at sample points:
+213 153 comparisons, 147 959 of them in games that are not
+multi-affine, none outside the bounds. A corner never failed the check
+against the relaxation in these games, whose commands have at most one
+lifted function each. An independent review added commands with
+several lifted functions (so that one lifted polynomial is 1 minus the
+others), λ in probabilities, and degrees up to 6, which
+<code>--mode nonaffine</code> now also generates: 1 600 such games and 200 of the
+review's generator gave 836 <code>equilibrium</code> and 1 030 <code>not_equilibrium</code>
+cells, 29 326 exact point evaluations, and 40 048 direct comparisons
+in games that are not multi-affine, with no wrong claim and no bound
+outside; 685 commands had a replaced lifted polynomial, and in 115
+cases a corner failed the check and the bound was not used. An
+earlier run without the Bernstein enclosures (4 400 games, 99 569 point evaluations, 166 698
+comparisons in games that are not multi-affine) and the driver
+through the command line (300 games of <code>--mode nonaffine</code>, 7 638
+point evaluations) found no wrong claim either. Three injected errors
+of the lifting are each detected by the direct comparison: the
+probabilities that are not multi-affine evaluated at the corners of
+the cell without lifting, and the interval of a lifted coordinate
+narrowed to the value at the centre or to the lower half of its
+enclosure. The last two also make wrong claims of maps in fuzzing and
+wrong bounds on cells of the second example with (1 − p_fail)²
+(<code>tests/test_games_coupling.py</code>); the first made no wrong claim of a
+map in 4 500 games, and none on that example, whose probability is
+monotone and convex in p_fail.</li>
 <li class="">Since the version after 0.3.26, the export of I.11 is run through
 PRISM-games 3.2.4, the binary release of the PRISM-games project
 (prismmodelchecker.org/games, for macOS arm64 and Linux x86-64). The

@@ -1,4 +1,4 @@
-<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-i-games" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録I. 戦略モデル拡張 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録I. 戦略モデル拡張 | CADL"/><meta data-rh=true name=description content="戦略モデル拡張（games 0.1）を規定する。付録Hのモデルにおけるプレイヤーとコマンドの所有，記憶なしで決定的な戦略の名前付きプロファイルと遵守プロファイル，重み付きの期待報酬としての利得，名前付きプロファイルが単独の逸脱に対して，または到達可能などの状態からも均衡であるかの検査と逸脱利得，制度パラメータの上の認証付きセルを持つ均衡マップとセルの端点による認証を定める。"/><meta data-rh=true property=og:description content="戦略モデル拡張（games 0.1）を規定する。付録Hのモデルにおけるプレイヤーとコマンドの所有，記憶なしで決定的な戦略の名前付きプロファイルと遵守プロファイル，重み付きの期待報酬としての利得，名前付きプロファイルが単独の逸脱に対して，または到達可能などの状態からも均衡であるかの検査と逸脱利得，制度パラメータの上の認証付きセルを持つ均衡マップとセルの端点による認証を定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games","name":"付録I. 戦略モデル拡張","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.aceecb03.css /><script src=/cadl-spec/ja/assets/js/runtime~main.62a64ee4.js defer></script><script src=/cadl-spec/ja/assets/js/main.0c5a27c4.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-i-games" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録I. 戦略モデル拡張 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録I. 戦略モデル拡張 | CADL"/><meta data-rh=true name=description content="戦略モデル拡張（games 0.1）を規定する。付録Hのモデルにおけるプレイヤーとコマンドの所有，記憶なしで決定的な戦略の名前付きプロファイルと遵守プロファイル，重み付きの期待報酬としての利得，名前付きプロファイルが単独の逸脱に対して，または到達可能などの状態からも均衡であるかの検査と逸脱利得，制度パラメータの上の認証付きセルを持つ均衡マップとセルの端点による認証を定める。"/><meta data-rh=true property=og:description content="戦略モデル拡張（games 0.1）を規定する。付録Hのモデルにおけるプレイヤーとコマンドの所有，記憶なしで決定的な戦略の名前付きプロファイルと遵守プロファイル，重み付きの期待報酬としての利得，名前付きプロファイルが単独の逸脱に対して，または到達可能などの状態からも均衡であるかの検査と逸脱利得，制度パラメータの上の認証付きセルを持つ均衡マップとセルの端点による認証を定める。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-i-games/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-i-games","name":"付録I. 戦略モデル拡張","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.aceecb03.css /><script src=/cadl-spec/ja/assets/js/runtime~main.1402f353.js defer></script><script src=/cadl-spec/ja/assets/js/main.0c5a27c4.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-bfa")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=メインコンテンツまでスキップ><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>メインコンテンツまでスキップ</a></div><nav aria-label=ナビゲーション class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label=ナビゲーションバーを開く aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/ja/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/quickstart/>クイックスタート</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/ja/docs/spec/intro/>仕様書</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/textbook/>テキストブック</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/handson/>ハンズオン</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>日本語</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-i-games/ target=_self rel="noopener noreferrer" class=dropdown__link lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-i-games/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title=システムモード aria-label=ダークモードを切り替える(現在はシステムモード)><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=検索 aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label=先頭へ戻る class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label=ドキュメントのサイドバー class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/intro/><span title="CADL仕様書 v0.3" class=linkLabel_E58b>CADL仕様書 v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/introduction/><span title="1. はじめに" class=linkLabel_E58b>1. はじめに</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/objectives/><span title="2. 言語の目的" class=linkLabel_E58b>2. 言語の目的</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/comparison/><span title="3. 既存言語との比較" class=linkLabel_E58b>3. 既存言語との比較</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/requirements/><span title="4. 要求仕様" class=linkLabel_E58b>4. 要求仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/language-spec/><span title="5. 言語仕様" class=linkLabel_E58b>5. 言語仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/design/><span title="6. 設計" class=linkLabel_E58b>6. 設計</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/examples/><span title="7. 用途別記述例" class=linkLabel_E58b>7. 用途別記述例</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/use-cases/><span title="8. 活用事例と新規性分析" class=linkLabel_E58b>8. 活用事例と新規性分析</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/research/><span title="9. 研究方向性と未解決課題" class=linkLabel_E58b>9. 研究方向性と未解決課題</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/roadmap/><span title="10. 実装ロードマップ" class=linkLabel_E58b>10. 実装ロードマップ</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-a-syntax/><span title="付録A. 構文リファレンス（EBNF）" class=linkLabel_E58b>付録A. 構文リファレンス（EBNF）</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-b-references/><span title="付録B. 参考文献" class=linkLabel_E58b>付録B. 参考文献</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-c-motivation/><span title="付録C. 動機拡張" class=linkLabel_E58b>付録C. 動機拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-d-codegen/><span title="付録D. コード生成ターゲット一覧" class=linkLabel_E58b>付録D. コード生成ターゲット一覧</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-e-sos-dsl/><span title="付録E. SoS-DSL拡張" class=linkLabel_E58b>付録E. SoS-DSL拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-f-norms/><span title="付録F. 規範拡張" class=linkLabel_E58b>付録F. 規範拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-g-agents/><span title="付録G. エージェント統治拡張" class=linkLabel_E58b>付録G. エージェント統治拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-h-stochastic/><span title="付録H. 確率モデル拡張" class=linkLabel_E58b>付録H. 確率モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/ja/docs/spec/appendix-i-games/><span title="付録I. 戦略モデル拡張" class=linkLabel_E58b>付録I. 戦略モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-j-grounding/><span title="付録J. 制度パラメータの根拠付け" class=linkLabel_E58b>付録J. 制度パラメータの根拠付け</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/glossary/><span title=用語集 class=linkLabel_E58b>用語集</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=パンくずリストのナビゲーション><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label=ホームページ class=breadcrumbs__link href=/cadl-spec/ja/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>付録I. 戦略モデル拡張</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">このページの見出し</button></div><div class="theme-doc-markdown markdown"><header><h1>付録I. 戦略モデル拡張（games 0.1）</h1></header>
@@ -589,8 +589,28 @@ C のどの付値でも成り立つ。上の界と合わせて，小さいほう
 界は，同時分布が，できるところでは2つの道を同じ状態に保ち，そうでないところでは対応する更新を
 一緒に取らせるときに，狭くなりやすい。e での確率が同じ2つのコマンド，たとえばI.12の2つ目の例で
 監視がある場合とない場合のロボットの試行では，2つの道は対応する更新を一緒に取る。各ステップがなお
-頂点を選ぶので，この界は厳密ではない。確率が多重アフィンでないときは，H.14の分布の集合の頂点は，
-すべてのコマンドに共通の重みによる混合ではないので，この議論は当てはまらない。</p>
+頂点を選ぶので，この界は厳密ではない。</p>
+<p>確率が多重アフィンでないときは，H.14の分布の集合の頂点は，すべてのコマンドに共通の重みによる混合では
+ないので，この議論はそのままでは当てはまらない。持ち上げたセルの上では当てはまる。開いているパラメータ x
+について多重アフィンでない確率のそれぞれを，数 a，b と定数項のない多項式 R により a + b · R(x) と書く。
+R は，a と b だけが異なる確率が同じ R を持つように正規化しておく（たとえば最初の係数を1とする）。そのような
+R のそれぞれに新しい座標 y_R を設け，その区間 [α_R, β_R] を，C の上での R の厳密な囲み（たとえばH.14の
+緩和が用いるもの）とする。R(x) を y_R で置き換えると，どの確率も (x, y) の多重アフィンな多項式 L になり，
+L(x, R(x)) = P(x) を満たす。あるコマンドの持ち上げた多項式の和が恒等的に1にならないときは，y を含む
+もののうち1つを，1から他のものを引いたもので置き換える。確率の和は1なので，置き換えたものも
+(x, R(x)) ではその確率に等しい。C と区間 [α_R, β_R] の直積を，持ち上げたセル B とする。C の v について，
+点 u(v) = (v, R(v)) は B に属するので，B の頂点 e に関する多重線形の重み w_e(u(v)) は負でなく，和は1で
+あり，どのコマンドにも共通である。持ち上げたどの多項式も L(u(v)) = Σ_e w_e(u(v)) · L(e) を満たす。
+したがって，v でのコマンドの分布は Σ_e w_e(u(v)) · D_e である。ここで D_e は e でのそのコマンドの
+持ち上げた多項式の値を並べたものであり，2つの道で重みは同じである。x について多重アフィンなステップ
+利得は (x, y) についても多重アフィンであり，同じ重みによる混合である。頂点 e をあるコマンドに用いるのは，
+D_e が上の緩和した過程の分布であるとき，すなわち，その各成分が，緩和がその確率に C の上で与える区間に
+属するときだけである（成分の和は作り方から1である）。この確認のもとでは，それぞれの道は，単独では
+やはり緩和した過程の分布の混合に従い，状態の組についての過程のどの方策も確率1で終わる。C の頂点を B の
+頂点に，w_e(v) を w_e(u(v)) に置き換えて，上の議論が成り立つ。y と x の関係を捨てるので，界は広くなる。
+一方で，同じ確率を持つ2つのコマンドは同じ座標を持ち，B のどの頂点でも同じ値を取るので，2つの道は
+やはり対応する更新を一緒に取る。ある界が必要とする頂点で確認が成り立たないときは，その界を用いない。
+これは常に健全である。確率が多重アフィンである設計では，B は C である。</p>
 <p><strong>セルの端点による認証。</strong> 開いているパラメータが1つだけで，それが重みを通してだけゲームに入るとき，
 セルは2回の厳密な評価で決定できる。処理系は，均衡マップのセル [a, b] をその端点から決定してよい。
 ただし，条件Aが成り立たない限り，そうしてはならない。</p>
@@ -1003,7 +1023,21 @@ E2がともに成り立たないプレイヤーについて，I.9に述べると
 計算しない。条件を再び試すのは，ある界が狭くなったときだけである。各ステップの同時分布は，組 (s′, s′) に min(P₁(s′), P₂(s′)) を置き，残りを2つのコマンドの更新の順に
 対応させる（北西隅の規則）。状態の組についての過程の値は，最初のステップから到達可能な組が非巡回のグラフをなす
 ときは後ろ向きの帰納で，そうでないときは方策反復で計算し，1つのセルの優位の間で共有する。頂点での
-分布はセルごとに1回だけ計算する。<code>games_eval.USE_COUPLING = False</code> とすると，0.3.27のマップを得る。</li>
+分布はセルごとに1回だけ計算する。<code>games_eval.USE_COUPLING = False</code> とすると，0.3.27のマップを得る。
+0.3.28の次のバージョンからは，多重アフィンでない確率を持つ設計でも，I.9の持ち上げたセルの上で結合した
+界を用いる。確率 a + b · R の持ち上げでは，R の最初の係数（指数の順で最初のもの）を1に正規化する。
+これにより，a と b だけが異なる確率は座標を共有する。持ち上げた多項式の和が恒等的に1にならない
+コマンドでは，座標を含む最後のものを，1から他のものを引いたもので置き換える。座標の区間は，緩和が
+用いる区間演算による囲みと，セルの上での R のベルンシュタイン係数による囲みとの共通部分である
+（x = lo + (hi − lo) · t と置くと，多項式は [0, 1]ⁿ 上のベルンシュタイン基底関数の結合になる。基底関数は
+負でなく，和は1なので，多項式の値は最小の係数と最大の係数の間にある）。係数はパラメータごとに計算し，
+係数が N 個で次数が d_k のとき O(N · Σ_k d_k) 回の演算で済む。N が4 096を超えるときは，区間演算による
+囲みだけを用いる。持ち上げたセルとその頂点は，セルで結合した界を初めて計算するときに求める。持ち
+上げたセルの座標（開いているパラメータと持ち上げた関数）は10個までとし，それより多くの持ち上げた関数を
+要する設計では結合した界を用いない。多重アフィンな設計は，持ち上げた関数を要しない。
+頂点は，そこでの分布が初めて必要になったときに緩和の区間と照合し，照合に失敗した頂点を要する界は
+用いない。<code>games_eval.USE_LIFTING = False</code> とすると0.3.28のマップを，
+<code>games_eval.LIFT_BERNSTEIN = False</code> とすると区間演算による囲みだけを用いた持ち上げを得る。</li>
 <li class=""><code>cadl model-export</code> は，I.11のファイル（<code>smg</code> と <code>player</code> の構成。H.11の改名と，I.11が戦略モデルの
 ために加えるキーワードの改名を伴い，2人のプレイヤーが衝突しないことを検査する）を書き出す。
 0.3.26までは，設計のコマンドを1つも所有しないプレイヤーを書かなかった。</li>
@@ -1083,8 +1117,8 @@ D の逸脱利得の上界は，頂点での逸脱利得の最大値を約0.1か
 ために試したカップリングによる緩和は，2つの道を等しい状態でだけ合わせ，他の条件が決めなかったすべての
 セルで用いたもので，39 999個のセルの後で未決定は0.129であり，約4倍の時間がかかった。2つの道の更新を
 そろえる同時分布と，上に述べた，結合した界を計算する場所の制限によって，この差が生じた。結合した緩和でも
-各ステップが頂点を選ぶので，優位の符号が変わるセルは小さくなければならない。また，多重アフィンでない
-確率には当てはまらず，そこでの値の差の界は，未解決の項目として残る。上のファジングでは，プレイヤーが3人または4人で，多くは開いている
+各ステップが頂点を選ぶので，優位の符号が変わるセルは小さくなければならない。0.3.28までは，多重
+アフィンでない確率には用いなかった。持ち上げの測定は下に述べる。上のファジングでは，プレイヤーが3人または4人で，多くは開いている
 パラメータが3つのゲームが，1個あたり約0.9秒であった（実時間。検査，予算24個のセルのマップ，
 オラクルを含む）。</li>
 <li class="">PD+とPD−の，実装者による検証（0.3.26の次のバージョン）。上のオラクルを用いた。<code>tests/games_fuzz.py</code>
@@ -1109,6 +1143,53 @@ grounding のない端点のゲームが700個，grounding のあるものが200
 結合した界に故意に入れた3つの誤り（最大値と最小値を入れ替えること，最初のステップのステップ利得の差を
 除くこと，最初のステップより後のステップ利得を除くこと）は，それぞれ，ファジングでのマップの主張，
 直接の比較，<code>tests/test_games_coupling.py</code> の2つ目の例のセルで検出される。</li>
+<li class="">多重アフィンでない確率（0.3.28の次のバージョン）。上の3パラメータのマップで，成功確率の因子の1つを
+置き換えたものを，既定の予算で測った。2つ目の例では，1 − p_fail の代わりに (1 − p_fail)² と
+1 − 4 · p_fail · (1 − p_fail) を用いたもの（λ，κ，p_fail は上と同じ）と，
+1 − p_fail · q_local · (1 − q_local) を用いて λ ∈ [0, 0.4]，
+p_fail ∈ [0, 0.5]，q_local ∈ [0, 1] の上で
+マップを求めたもの（κ = 0.05）である。1つ目の例では，(1 − p_fail)² を用いたもの（<code>three_10</code>，
+CENTRALIZED）である。持ち上げを用いないと（0.3.28と同じ），2つ目の例の3つのマップはどれも予算を
+使い切り，39 999個のセルの後で未決定はそれぞれ0.673，0.891，0.180である。区間演算による囲みだけで
+持ち上げると，39 999個のセルの後で0.225，0.594，0.105である。持ち上げた座標にベルンシュタイン係数による
+囲みを用いると，最初の2つは39 999個のセルの後で0.174と0.431であり，3つ目は32 083個のセルで分解能0.1に
+達する（未決定は0.100）。1台のラップトップで，持ち上げの有無の2つを同時に実行して測ると（実時間），2つ目の
+例のマップは，(1 − p_fail)² で161秒と237秒，4 · p_fail · (1 − p_fail) で148秒と237秒，
+p_fail · q_local · (1 − q_local) で142秒と146秒（セルは39 999個に対して32 083個）であった。持ち上げると，
+組は2³個の頂点に代えて最大2⁴ = 16個の持ち上げた頂点から選ぶので，1つのセルの計算が重くなる。
+1つ目の例のマップは，持ち上げの有無で変わらない（39 999個のセルの後で未決定は0.231。どちらも122秒）。
+多重アフィンな場合に，結合した界の有無で変わらなかったのと同じである。2つ目の例に
+残る未決定のセルの多くは，緩和そのものから生じる。4 · p_fail · (1 − p_fail) のような確率を単項式ごとの
+区間演算で囲むと幅が広く，p_fail = 1/2 の近くでは1を超えるので，そのセルでは設計が良定義であることを
+示せない。N，E1，E2 と界 l_p，u_p は，この囲みを用いる。</li>
+<li class="">持ち上げの，実装者による検証（0.3.28の次のバージョン）。上のオラクルと，<code>tests/games_fuzz.py</code> の生成
+オプション <code>--mode nonaffine</code> を用いた。このオプションは，確率 p²，1 − p²，
+4p(1 − p)，pq(1 − q)，q²，
+p²q，(1 − p)²，1/2 + pq(1 − q)/2 を用い，コマンドが複数ある状態の半分では，最初のコマンドの確率を
+別の後続状態とともに用いる。最終のコードで，ゲーム3 800個を調べた（<code>--mode nonaffine</code> のものが2 700個で，
+そのうち600個は <code>every_reachable_state</code> を問う。既定の種類のものが800個，プレイヤーが3人または4人で
+両方の概念を問うものが300個）。そのうち3 090個は多重アフィンでない確率を持つ。<code>equilibrium</code> のセルが
+2 247個，<code>not_equilibrium</code> のセルが2 792個，厳密な点評価は90 372回であり，誤った主張はなかった。
+固定値での検査は，どのモデルでもオラクルと一致した。多重アフィンでないゲームのプレイヤーが，結合した
+界によるPD+またはPD−で決定されたのは1 504回である。領域全体と無作為な2つの部分の箱の上の結合した
+界をすべて，オラクルが標本点で計算する優位と比べた。比較は213 153回で，そのうち147 959回は多重
+アフィンでないゲームのものであり，界の外に出たものはなかった。これらのゲームでは，頂点が緩和との
+照合に失敗したことはなかった。これらのゲームでは，コマンドごとの持ち上げた関数は1つまでである。独立した
+レビューは，1つのコマンドに持ち上げた関数が複数あるもの（持ち上げた多項式の1つが，1から他のものを
+引いたものになる），確率の中の λ，6次までの次数を加えた。これらは <code>--mode nonaffine</code> でも生成するように
+した。そのようなゲーム1 600個と，レビューの生成器によるゲーム200個では，<code>equilibrium</code> のセルが836個，
+<code>not_equilibrium</code> のセルが1 030個，厳密な点評価は29 326回，多重アフィンでないゲームでの直接の比較は
+40 048回であり，誤った主張も界の外に出たものもなかった。持ち上げた多項式を置き換えたコマンドは685個，
+頂点が照合に失敗してその界を用いなかったのは115回である。ベルンシュタイン係数による囲みを用いない
+以前の実行（ゲーム4 400個，
+点評価99 569回，多重アフィンでないゲームでの比較166 698回）と，コマンドラインを通すドライバ
+（<code>--mode nonaffine</code> のゲーム300個，点評価7 638回）でも，誤った主張はなかった。持ち上げに故意に入れた
+3つの誤りは，それぞれ直接の比較で検出される。多重アフィンでない確率を持ち上げずにセルの頂点で評価
+すること，持ち上げた座標の区間を中心での値に縮めること，囲みの下半分に縮めることである。後の2つは，
+ファジングでのマップの誤った主張と，(1 − p_fail)² を用いた2つ目の例のセルでの誤った界も生む
+（<code>tests/test_games_coupling.py</code>）。最初のものは，
+ゲーム4 500個でマップの誤った主張を生まず，その例でも
+誤った界を生まなかった。その例の確率は p_fail について単調で凸だからである。</li>
 <li class="">0.3.26の次のバージョンからは，I.11のエクスポートを，PRISM-gamesプロジェクトが配布するバイナリ
 （prismmodelchecker.org/games。macOS arm64用とLinux x86-64用）のPRISM-games 3.2.4で実行する。
 エクスポートしたモデルファイルをそのまま渡し，その後に，プレイヤーのアクションラベルで同期し，
