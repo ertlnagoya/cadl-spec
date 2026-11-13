@@ -1025,9 +1025,44 @@ otherwise in step: for two commands with the same probabilities at e,
 such as the attempts of the robot with and without monitoring in the
 second example of I.12, the two plays then take corresponding updates
 together. Each step still chooses its corner, so the bounds are not
-exact. When a probability is not multi-affine, the vertices of the sets
-of distributions of H.14 are not mixtures with weights common to all
-commands, and the argument does not apply.
+exact.
+
+When a probability is not multi-affine, the vertices of the sets of
+distributions of H.14 are not mixtures with weights common to all
+commands, and the argument does not apply as it stands. It applies to
+a lifted cell. Write each probability that is not multi-affine in the
+open parameters x as a + b · R(x), with numbers a and b and a
+polynomial R without constant term, normalised (for example, its first
+coefficient is 1) so that probabilities that differ only in a and b
+have the same R, and give each such R a new coordinate y_R with the
+interval [α_R, β_R] of an exact enclosure of R on C, for example the
+one that the relaxation of H.14 uses. Replacing R(x) by y_R turns every
+probability into a polynomial L in (x, y) that is multi-affine and
+satisfies L(x, R(x)) = P(x); in a command whose lifted polynomials do
+not sum to 1 identically, one of those that contain a y is replaced by
+1 minus the others, which still equals its probability at (x, R(x))
+because the probabilities sum to 1. Let B be the lifted cell, C times
+the intervals [α_R, β_R]. For v in C the point u(v) = (v, R(v)) lies in
+B, so the multilinear weights w_e(u(v)) of the corners e of B are not
+negative, sum to 1, and are the same for every command, and every
+lifted polynomial satisfies L(u(v)) = Σ_e w_e(u(v)) · L(e). The
+distribution of a command at v is therefore Σ_e w_e(u(v)) · D_e, where
+D_e lists the lifted polynomials of the command at e, for both plays
+with the same weights; a step payoff that is multi-affine in x is
+multi-affine in (x, y) and is a mixture with the same weights. A corner
+e is used for a command only when D_e is a distribution of the relaxed
+process above, that is, when each of its components lies in the
+interval that the relaxation gives that probability on C (they sum to 1
+by construction). With this check, each play alone again follows a
+mixture of the distributions of the relaxed process, every policy of
+the process on pairs ends with probability 1, and the argument above
+holds with the corners of B in place of those of C and w_e(u(v)) in
+place of w_e(v). The relation between y and x is given up, which makes
+the bounds wider; in exchange, two commands with the same probability
+get the same coordinate and so the same value at every corner of B, and
+the two plays again take corresponding updates together. When the check
+fails at a corner that a bound needs, that bound is not used, which is
+always sound. For a design whose probabilities are multi-affine, B is C.
 
 **Certification by the end points of a cell.** When the only open
 parameter enters the game through weights only, a cell can be decided
@@ -1973,6 +2008,32 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   the advantages of a cell; the distributions at the corners are
   computed once per cell. `games_eval.USE_COUPLING = False` gives the
   maps of 0.3.27.
+  Since the version after 0.3.28, the coupled bounds are also used in a
+  design with a probability that is not multi-affine, over the lifted
+  cell of I.9. A probability a + b · R is lifted with R normalised to
+  first coefficient 1 (in the order of the exponents), so that
+  probabilities that differ only in a and b share a coordinate; in a
+  command whose lifted polynomials do not sum to 1 identically, the last
+  one that contains a coordinate is replaced by 1 minus the others. The
+  interval of a coordinate is the intersection of the enclosure by
+  interval arithmetic that the relaxation uses and the enclosure by the
+  Bernstein coefficients of R on the cell (with x = lo + (hi − lo) · t,
+  the polynomial is a combination of the Bernstein basis functions on
+  [0, 1]ⁿ, which are not negative and sum to 1, so its values lie
+  between the least and the largest coefficient). The coefficients are
+  computed one parameter at a time, in O(N · Σ_k d_k) operations for N
+  coefficients and degrees d_k, and only when N is at most 4 096; above
+  that, the enclosure by interval arithmetic is used alone. The lifted
+  cell and its corners are computed on a cell only when a coupled bound
+  is first computed there. The lifted cell has at most 10 coordinates
+  (open parameters and lifted functions); a design that needs more
+  lifted functions does not use the coupled bounds, and a multi-affine
+  design needs none. A corner is checked against the intervals of the
+  relaxation when a distribution is first needed there, and a bound
+  that needs a corner that fails the check is not used.
+  `games_eval.USE_LIFTING = False` gives the maps of 0.3.28,
+  and `games_eval.LIFT_BERNSTEIN = False` the lifting with the
+  enclosures by interval arithmetic only.
 - `cadl model-export` writes the file of I.11 (`smg` and the `player`
   constructs, with the renaming of H.11 and of the keywords that I.11
   adds for a strategic model, and a check that two players do not
@@ -2105,9 +2166,9 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   and the restrictions above on where coupled bounds are computed,
   make the difference. The coupled
   relaxation still lets every step choose its corner, so cells on which
-  an advantage changes sign must be small; and it does not apply to
-  probabilities that are not multi-affine, where bounds of differences
-  of values remain an open item. In the
+  an advantage changes sign must be small. Up to 0.3.28 it did not apply
+  to probabilities that are not multi-affine; the lifting is measured
+  below. In the
   fuzzing above, the games with three or four players, most of them
   with three open parameters, took about 0.9 s each (wall-clock, check,
   map with a budget of 24 cells, and oracle).
@@ -2149,6 +2210,76 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   are each detected by the claims of the maps in fuzzing, by the direct
   comparison, and on cells of the second example in
   `tests/test_games_coupling.py`.
+- Probabilities that are not multi-affine (version after 0.3.28),
+  measured on the three-parameter maps above with one factor of the
+  probability of success replaced, with the default budget: in the
+  second example, (1 − p_fail)² and 1 − 4 · p_fail · (1 − p_fail) in
+  place of 1 − p_fail (λ, κ, p_fail as above), and
+  1 − p_fail · q_local · (1 − q_local) with the map over λ ∈ [0, 0.4],
+  p_fail ∈ [0, 0.5], and q_local ∈ [0, 1] (κ = 0.05); in the first
+  example, (1 − p_fail)² (`three_10`, CENTRALIZED). Without the lifting
+  (as in 0.3.28) the three maps of the second example exhaust the
+  budget with 0.673, 0.891, and 0.180 undecided after 39 999 cells.
+  With the lifting and the enclosures by interval arithmetic only, they
+  leave 0.225, 0.594, and 0.105 undecided after 39 999 cells; with the
+  Bernstein enclosures of the lifted coordinates, 0.174 and 0.431 after
+  39 999 cells, and the third reaches the resolution 0.1 after 32 083
+  cells (0.100 undecided). Measured two at a time on one laptop
+  (wall-clock, without and with the lifting together), the maps of the
+  second example took 161 s and 237 s ((1 − p_fail)²), 148 s and 237 s
+  (4 · p_fail · (1 − p_fail)), and 142 s and 146 s
+  (p_fail · q_local · (1 − q_local), with 32 083 instead of 39 999
+  cells); a cell costs more with the lifting, since the pairs choose
+  among up to 2⁴ = 16 lifted corners instead of 2³ corners. The map of
+  the first example is the same with and without the lifting (0.231
+  undecided after 39 999 cells, 122 s both), as it is with and without the coupled
+  bounds in the multi-affine case. Most of the remaining undecided cells of the
+  second example come from the relaxation itself: the enclosure of a
+  probability such as 4 · p_fail · (1 − p_fail) by interval arithmetic
+  on its monomials is wide, and wider than 1 near p_fail = 1/2, where
+  the design is then not shown to be well-defined on the cell; N, E1,
+  E2, and the bounds l_p and u_p use that enclosure.
+- Verification of the lifting (version after 0.3.28), by the
+  implementer, with the oracle above and the generator option
+  `--mode nonaffine` of `tests/games_fuzz.py` (probabilities p², 1 − p²,
+  4p(1 − p), pq(1 − q), q², p²q, (1 − p)², and 1/2 + pq(1 − q)/2, and in
+  half of the states with several commands the probabilities of the
+  first command with other successors). With the final code, 3 800
+  games (2 700 of `--mode nonaffine`, 600 of them asking for
+  `every_reachable_state`, 800 of the default kind, and 300 with three
+  or four players and both concepts), 3 090 of them with a probability
+  that is not multi-affine: 2 247 `equilibrium` and 2 792
+  `not_equilibrium` cells, 90 372 exact point evaluations, no wrong
+  claim, and the checks at the fixed values agreed with the oracle on
+  every model. In 1 504 cases a player of a game that is not
+  multi-affine was decided by PD+ or PD− with the coupled bounds. Every
+  coupled bound on the whole region and on two random sub-boxes was
+  compared with the advantage that the oracle computes at sample points:
+  213 153 comparisons, 147 959 of them in games that are not
+  multi-affine, none outside the bounds. A corner never failed the check
+  against the relaxation in these games, whose commands have at most one
+  lifted function each. An independent review added commands with
+  several lifted functions (so that one lifted polynomial is 1 minus the
+  others), λ in probabilities, and degrees up to 6, which
+  `--mode nonaffine` now also generates: 1 600 such games and 200 of the
+  review's generator gave 836 `equilibrium` and 1 030 `not_equilibrium`
+  cells, 29 326 exact point evaluations, and 40 048 direct comparisons
+  in games that are not multi-affine, with no wrong claim and no bound
+  outside; 685 commands had a replaced lifted polynomial, and in 115
+  cases a corner failed the check and the bound was not used. An
+  earlier run without the Bernstein enclosures (4 400 games, 99 569 point evaluations, 166 698
+  comparisons in games that are not multi-affine) and the driver
+  through the command line (300 games of `--mode nonaffine`, 7 638
+  point evaluations) found no wrong claim either. Three injected errors
+  of the lifting are each detected by the direct comparison: the
+  probabilities that are not multi-affine evaluated at the corners of
+  the cell without lifting, and the interval of a lifted coordinate
+  narrowed to the value at the centre or to the lower half of its
+  enclosure. The last two also make wrong claims of maps in fuzzing and
+  wrong bounds on cells of the second example with (1 − p_fail)²
+  (`tests/test_games_coupling.py`); the first made no wrong claim of a
+  map in 4 500 games, and none on that example, whose probability is
+  monotone and convex in p_fail.
 - Since the version after 0.3.26, the export of I.11 is run through
   PRISM-games 3.2.4, the binary release of the PRISM-games project
   (prismmodelchecker.org/games, for macOS arm64 and Linux x86-64). The
