@@ -1238,7 +1238,14 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   `NOT until(...)`, and a temporal operator inside a comparison, and
   decides the candidates of a temporal content together, so that the
   gas of an observation does not grow with the observations inside a
-  window. The Rego monitor refuses `/`, whose result is not always
+  window. From `cadl` 0.3.28 it also decides a content with one
+  temporal operator under `NOT`, inside a comparison, or in `IN`
+  (`NOT until(...)` through the release of D.5, whose duality with
+  `until` D.5 proves for undefined values), and a content with two
+  temporal operators, whose candidates form a segment tree; it refuses
+  three or more temporal operators in one content. Its main contract
+  then leaves more than 7 × 10<sup>3</sup> bytes below the limit of
+  EIP-170. The Rego monitor refuses `/`, whose result is not always
   a decimal number. Both compute numbers and times exactly, as F.5 says,
   and agree with `cadl norms-eval` on the inputs that meet their
   limits; D.5 lists them. From `cadl` 0.3.26, `cadl norms-eval`, the
