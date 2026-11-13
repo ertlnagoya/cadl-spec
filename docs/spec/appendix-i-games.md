@@ -1025,9 +1025,44 @@ otherwise in step: for two commands with the same probabilities at e,
 such as the attempts of the robot with and without monitoring in the
 second example of I.12, the two plays then take corresponding updates
 together. Each step still chooses its corner, so the bounds are not
-exact. When a probability is not multi-affine, the vertices of the sets
-of distributions of H.14 are not mixtures with weights common to all
-commands, and the argument does not apply.
+exact.
+
+When a probability is not multi-affine, the vertices of the sets of
+distributions of H.14 are not mixtures with weights common to all
+commands, and the argument does not apply as it stands. It applies to
+a lifted cell. Write each probability that is not multi-affine in the
+open parameters x as a + b · R(x), with numbers a and b and a
+polynomial R without constant term, normalised (for example, its first
+coefficient is 1) so that probabilities that differ only in a and b
+have the same R, and give each such R a new coordinate y_R with the
+interval [α_R, β_R] of an exact enclosure of R on C, for example the
+one that the relaxation of H.14 uses. Replacing R(x) by y_R turns every
+probability into a polynomial L in (x, y) that is multi-affine and
+satisfies L(x, R(x)) = P(x); in a command whose lifted polynomials do
+not sum to 1 identically, one of those that contain a y is replaced by
+1 minus the others, which still equals its probability at (x, R(x))
+because the probabilities sum to 1. Let B be the lifted cell, C times
+the intervals [α_R, β_R]. For v in C the point u(v) = (v, R(v)) lies in
+B, so the multilinear weights w_e(u(v)) of the corners e of B are not
+negative, sum to 1, and are the same for every command, and every
+lifted polynomial satisfies L(u(v)) = Σ_e w_e(u(v)) · L(e). The
+distribution of a command at v is therefore Σ_e w_e(u(v)) · D_e, where
+D_e lists the lifted polynomials of the command at e, for both plays
+with the same weights; a step payoff that is multi-affine in x is
+multi-affine in (x, y) and is a mixture with the same weights. A corner
+e is used for a command only when D_e is a distribution of the relaxed
+process above, that is, when each of its components lies in the
+interval that the relaxation gives that probability on C (they sum to 1
+by construction). With this check, each play alone again follows a
+mixture of the distributions of the relaxed process, every policy of
+the process on pairs ends with probability 1, and the argument above
+holds with the corners of B in place of those of C and w_e(u(v)) in
+place of w_e(v). The relation between y and x is given up, which makes
+the bounds wider; in exchange, two commands with the same probability
+get the same coordinate and so the same value at every corner of B, and
+the two plays again take corresponding updates together. When the check
+fails at a corner that a bound needs, that bound is not used, which is
+always sound. For a design whose probabilities are multi-affine, B is C.
 
 **Certification by the end points of a cell.** When the only open
 parameter enters the game through weights only, a cell can be decided
