@@ -980,6 +980,55 @@ and g⁻_p(τ, s) the minimal value from s with the commands of p fixed by
 τ and the step reward a⁻_p; they are bounds for the same reason as b_p
 and d_p(τ).
 
+**Coupled bounds of the advantages (informative).** The bounds above
+take V_p(s′, v) between l_p(s′) and u_p(s′) for each successor
+separately. When the advantage is the difference of the values of two
+different successors whose values change together with v, the
+difference of their bounds can be much wider than the range of the
+advantage on C. When the probabilities of every command of the design
+are multi-affine in the open parameters, the advantage can be bounded
+by running the two plays together. For a valuation v of C, let w_e(v)
+be the multilinear weights of v with respect to the corners e of C:
+they are not negative, their sum is 1, and f(v) = Σ_e w_e(v) · f(e) for
+every function f that is multi-affine in the open parameters. Consider
+two plays from s, one that takes c in s and one that takes σ(s), both
+following the profile afterwards. In each step, a corner e is drawn
+with probability w_e(v), and the pair of current states (x, y) moves by
+a joint distribution whose marginals are the distributions of the two
+commands at e. Any such joint distribution may be chosen as a fixed
+function of (x, y) and e; when x = y it must keep the two states equal,
+and a play in which φ_p holds stays where it is. Each play alone is
+then the Markov chain at v: given the past, its next state has the
+distribution Σ_e w_e(v) · P(x, ·, e) = P(x, ·, v). The expected step
+payoff of each play in each step is also that at v, so, since both
+plays reach φ_p after a finite expected number of steps, the expected
+difference of their accumulated payoffs is Q_p(s, c, v) − Q_p(s, σ(s), v)
+= A_p(s, c, v). A pair of equal states, and a pair of two states in
+which φ_p holds, adds 0 from then on.
+
+Drawing the corner at random is a randomised policy of the following
+process on pairs: in each pair (x, y) of different states that do not
+both satisfy φ_p, a corner e is chosen, the step reward is
+ρ_p(x, e) − ρ_p(y, e), and the pair moves by the joint distribution at
+e; a step payoff that is not multi-affine in the open parameters is
+replaced by its bound on C in the direction of the bound sought. Each
+play alone follows a policy of the relaxed process above, which reaches
+φ_p with probability 1 under every policy when the profile is
+admissible on the cell as established there, so every policy of the
+process on pairs ends with probability 1. Its largest value from the
+first step (c and σ(s) in s) is therefore an upper bound a⁺_p(s, c),
+and its least value a lower bound a⁻_p(s, c), at every valuation of C.
+Together with the bounds above, the smaller upper and the larger lower
+bound may be used. The coupled bounds tend to be narrower when the joint
+distribution keeps the two plays in the same state where it can, and
+otherwise in step: for two commands with the same probabilities at e,
+such as the attempts of the robot with and without monitoring in the
+second example of I.12, the two plays then take corresponding updates
+together. Each step still chooses its corner, so the bounds are not
+exact. When a probability is not multi-affine, the vertices of the sets
+of distributions of H.14 are not mixtures with weights common to all
+commands, and the argument does not apply.
+
 **Certification by the end points of a cell.** When the only open
 parameter enters the game through weights only, a cell can be decided
 from two exact evaluations. A processor MAY decide a cell [a, b] of an
@@ -1900,6 +1949,30 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   combination, and, for `concept: every_reachable_state` with ε = 0,
   always.
   `games_eval.USE_ADVANTAGES = False` gives the maps of 0.3.26.
+  Since the version after 0.3.27, the coupled bounds of the advantages
+  (I.9) are used as well, in a design whose probabilities are all
+  multi-affine in the open parameters, for a player for whom E1, E2,
+  PD+, N and PD− fail. When the gain of the player at the centre of
+  the cell (for `every_reachable_state`, the largest gain from a state
+  of Reach_p) is at most ε, PD+ is tried again, with each
+  upper bound of an advantage that is positive replaced by the smaller
+  of it and the coupled upper bound; otherwise PD− (and N_s) is tried
+  again, with the lower bounds of the commands of τ replaced in the
+  same way. The other condition cannot hold, since the coupled bounds
+  hold at the centre. A coupled bound is not computed when, for every
+  successor x of c and every different successor y of σ(s) in the
+  relaxed process, x or y has l_p = u_p on the cell (its value does not
+  depend on the valuation); the coupled bound is then not expected to be
+  narrower. A condition is tried again only when some bound became
+  narrower. The joint distribution of a step puts
+  min(P₁(s′), P₂(s′)) on the pair (s′, s′) and matches the rest in the
+  order of the updates of the two commands (the north-west corner
+  rule). The values of the process on pairs are computed by backward
+  induction when the pairs reachable from the first step form an
+  acyclic graph and by policy iteration otherwise, and are shared by
+  the advantages of a cell; the distributions at the corners are
+  computed once per cell. `games_eval.USE_COUPLING = False` gives the
+  maps of 0.3.27.
 - `cadl model-export` writes the file of I.11 (`smg` and the `player`
   constructs, with the renaming of H.11 and of the keywords that I.11
   adds for a strategic model, and a check that two players do not
@@ -2002,19 +2075,39 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   (3 037; 0.889 and 0.062), and DISTRIBUTED with 463 (39) and 2 271
   (154). Both designs take 18 s (resolution 0.1) and 64 s (0.05);
   `concept: every_reachable_state` gives the same cells as `nash`, with
-  and without PD+ and PD−. The second example still exhausts the
-  budget, with 0.200 undecided after 39 999 cells (290 after joining;
-  0.410 `equilibrium`, 0.390 `not_equilibrium`; 92 s). There the
-  advantage of `trust` for the dispatcher in the initial state is the
-  difference of the values of two different successors, watched and not
-  watched, and PD+ bounds it with l_p and u_p of the two states, which
-  drift apart with p_fail as the bounds of E1 do: on cells of width 1/8
-  in p_fail, the upper bound of the gain of D exceeds the largest gain
-  at the corners by about 0.1 to 0.4. A coupled relaxation, in which the
-  plays from the two successors take the same corner in each step,
-  decided more of this map in an experiment (0.129 undecided after
-  39 999 cells) but took about four times as long, and is not used;
-  bounds of such differences of values remain an open item. In the
+  and without PD+ and PD−. Up to 0.3.27 the second example exhausted
+  the budget, with 0.200 undecided after 39 999 cells (290 after
+  joining; 0.410 `equilibrium`, 0.390 `not_equilibrium`; 92 s). There
+  the advantage of `trust` for the dispatcher in the initial state is
+  the difference of the values of two different successors, watched and
+  not watched, and PD+ bounds it with l_p and u_p of the two states,
+  which drift apart with p_fail as the bounds of E1 do: on cells of
+  width 1/8 in p_fail, the upper bound of the gain of D exceeds the
+  largest gain at the corners by about 0.1 to 0.4. With the coupled
+  bounds of I.9 (since the version after 0.3.27), the second example
+  reaches the resolution 0.1 with 13 853 cells analysed (208 after
+  joining; 0.459 `equilibrium`, 0.441 `not_equilibrium`); the coupled
+  bounds decide D on 3 049 of these cells (1 910 by PD+, 1 139 by PD−).
+  On the cell λ ∈ [0, 0.1], κ ∈ [0.1, 0.2], p_fail ∈ [0, 1/8], the
+  bounds of the advantage of `trust` are [−0.150, 0.203] from l_p and
+  u_p and [−0.080, 0.122] from the coupled relaxation, and the exact
+  advantage at 125 points of a grid on the cell lies in
+  [−0.059, 0.112]. Measured together on one machine, the map took 52 s
+  with the coupled bounds and 127 s without them (as in 0.3.27). The
+  coupled bounds do not change the maps of the first example (the same
+  cells at both resolutions, about 2 % more time for 0.1 and 9 % for
+  0.05), whose advantages of R compare a state whose value does not
+  depend on the valuation with one that does, nor the maps of I.12. A
+  coupled relaxation tried for 0.3.27, which met the two plays only in
+  equal states and was used on every cell that the other conditions
+  left open, left 0.129 undecided after 39 999 cells and took about four
+  times as long; the joint distribution that keeps the plays in step,
+  and the restrictions above on where coupled bounds are computed,
+  make the difference. The coupled
+  relaxation still lets every step choose its corner, so cells on which
+  an advantage changes sign must be small; and it does not apply to
+  probabilities that are not multi-affine, where bounds of differences
+  of values remain an open item. In the
   fuzzing above, the games with three or four players, most of them
   with three open parameters, took about 0.9 s each (wall-clock, check,
   map with a budget of 24 cells, and oracle).
@@ -2037,6 +2130,25 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   and probabilities taken at the centre of the cell only) are each
   detected by fuzzing and by the test suite; the earlier injected errors
   are run with PD+ and PD− switched off and are still detected.
+- Verification of the coupled bounds (version after 0.3.27), by the
+  implementer, with the oracle above: 5 200 random games of
+  `tests/games_fuzz.py` of the same kinds as for PD+ and PD−, 3 455
+  `equilibrium` and 4 913 `not_equilibrium` cells, 170 529 exact point
+  evaluations, no wrong claim; in 1 188 cases a player was decided by
+  PD+ or PD− with the coupled bounds. In the multi-affine games, every
+  coupled bound on the whole region and on two random sub-boxes was
+  also compared directly with the advantage that the oracle computes at
+  sample points: 251 933 comparisons, none outside the bounds. The
+  drivers of the earlier independent reviews were not available; a
+  driver through the command line (`cadl game-check --certify --format
+  json` on 860 generated games of four kinds, the decided cells checked
+  with the oracle) made 25 530 exact point evaluations without a wrong
+  claim. Three injected errors of the coupled bounds (the largest and
+  the least value exchanged, the difference of the step payoffs of the
+  first step left out, the step payoffs after the first step left out)
+  are each detected by the claims of the maps in fuzzing, by the direct
+  comparison, and on cells of the second example in
+  `tests/test_games_coupling.py`.
 - Since the version after 0.3.26, the export of I.11 is run through
   PRISM-games 3.2.4, the binary release of the PRISM-games project
   (prismmodelchecker.org/games, for macOS arm64 and Linux x86-64). The
