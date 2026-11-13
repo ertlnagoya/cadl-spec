@@ -2226,13 +2226,13 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   39 999 cells, and the third reaches the resolution 0.1 after 32 083
   cells (0.100 undecided). Measured two at a time on one laptop
   (wall-clock, without and with the lifting together), the maps of the
-  second example took 770 s and 1 124 s ((1 − p_fail)²), 258 s and
-  557 s (4 · p_fail · (1 − p_fail)), and 818 s and 846 s
+  second example took 161 s and 237 s ((1 − p_fail)²), 148 s and 237 s
+  (4 · p_fail · (1 − p_fail)), and 142 s and 146 s
   (p_fail · q_local · (1 − q_local), with 32 083 instead of 39 999
   cells); a cell costs more with the lifting, since the pairs choose
   among up to 2⁴ = 16 lifted corners instead of 2³ corners. The map of
   the first example is the same with and without the lifting (0.231
-  undecided after 39 999 cells), as it is with and without the coupled
+  undecided after 39 999 cells, 122 s both), as it is with and without the coupled
   bounds in the multi-affine case. Most of the remaining undecided cells of the
   second example come from the relaxation itself: the enclosure of a
   probability such as 4 · p_fail · (1 − p_fail) by interval arithmetic
