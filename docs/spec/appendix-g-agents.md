@@ -1831,7 +1831,10 @@ are these.
   the gateway claims for the client before it binds the configuration.
   Until then a notification of that configuration is dropped, and a
   notification never makes the client the owner of a task or a context;
-  so an agent that sends notifications before its answer loses them.
+  so an agent that sends notifications before its answer loses them. A
+  configuration whose request got no answer, an error, or an answer that
+  names no task is removed, recorded as `push_dropped` with the reason
+  `no_task`, since it could never be bound, listed, or deleted.
   Then the gateway
   sends it to the client's URL with the client's token and credentials
   (A2A 4.3.3) and records `push_sent` or `push_failed`; anything else is
@@ -1843,7 +1846,8 @@ are these.
   host, or an IP address or network, which allows the addresses that a
   matching host resolves to and, for a single address, that address as a
   host, but no host name by itself); its path has no `.` or `..` segment,
-  no backslash, and no percent-encoded dot, slash, or backslash, so that
+  no backslash, and no percent-encoded dot, slash, backslash, or percent
+  sign (so also no `%252e`, which decodes twice to a dot), so that
   the path that is compared is the path that the server reads; it is
   `https` unless its host is a
   loopback address or `localhost`; and every address that its host
@@ -1903,7 +1907,12 @@ are these.
   message is at most 1 MiB. What remains is the same as at the HTTP
   listener: whoever knows the name of an actor with a key can forge a
   header of the right form, and such calls of one address or network can
-  hold its places until the read deadline.
+  hold its places until the read deadline. In addition, the gRPC listener
+  does not cap the HTTP/2 connections of one address: `grpcio` offers no
+  point at which a server can count or refuse a connection before its
+  calls (an interceptor sees calls, not connections), so one host can open
+  many connections, each closed after 2 minutes without calls; where this
+  matters, a proxy or a firewall limits the connections.
 - A request is read with one `Content-Length` of at most 1 MiB and
   without `Transfer-Encoding`, one request per connection; the body is
   parsed as strictly as a line of the MCP gateway and passed on
@@ -2090,7 +2099,7 @@ of its own, that an index variable as receiver of an approval rule was
 not resolved with the bindings of the hold, and that a header line with
 whitespace before its colon hid the headers after it.
 Each is corrected and has a test.
-From 0.3.28, 24 more tests (`tests/test_a2a_bindings.py`) cover mutual
+From 0.3.28, 25 more tests (`tests/test_a2a_bindings.py`) cover mutual
 TLS (a certificate and a header of different actors, no certificate, one
 of another CA, one of no actor, one with two common names, a replayed
 nonce, peers that never end their handshake and take no reader, the cap
