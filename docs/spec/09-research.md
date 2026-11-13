@@ -277,8 +277,8 @@ generated Rego, as a step function that is given the stored state,
 and Solidity, for the contracts they support
 ([F.10](./appendix-f-norms.md#f10-reference-implementation-status)),
 and the norms of a contract can be checked at design time, in one contract
-instance, also across amendments, or in up to four instances of the contract
-together:
+instance or in up to four instances of the contract together, also across
+amendments:
 [F.12](./appendix-f-norms.md#f12-design-time-checking) translates them,
 with discrete time and classes of values, into an MDP for PRISM
 [[Kwiatkowska+, CAV 2011]](./appendix-b-references.md) and asks whether
@@ -297,11 +297,11 @@ gives sanctions a numeric magnitude that λ scales; the same indices
 are also computed over all contracts of an SoS. The indices are
 counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
-design-time checking that F.12 does not cover (arithmetic over a quantity
-without a given domain, instances of different contracts together,
-amendments together with several contract instances,
-more than four instances, sets of actors whose size is not fixed, continuous
-time, and which party can avoid a violation),
+design-time checking that F.12 does not cover (arithmetic that is not
+linear outside a given or assumed integer domain, four or more quantities
+ordered against each other, instances of different contracts together, more than four
+instances, sets of actors whose size is not fixed, continuous time, and
+which party can avoid a violation),
 monitoring in the Unity C#
 runtime, monitoring in the generated Rego and Solidity of what they
 refuse (quantifiers, aggregates, wildcard and range references in
