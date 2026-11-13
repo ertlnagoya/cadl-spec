@@ -1581,8 +1581,8 @@ At each observation the environment chooses three things.
    When the classes of the quantities of a component of predicates have
    more than 50 000 combinations, or the component has a group of four
    or more quantities ordered against each other, every group of the
-   component whose quantities have the same classes (none has a domain)
-   takes its valuations by **types and patterns** instead of the
+   component whose quantities have the same classes apart from lists
+   (none has a domain) takes its valuations by **types and patterns** instead of the
    product of the classes. By the last remark, a valuation of the group is decided by
    a type for each quantity (no value, true, false, number, text,
    object, list) and, for each type, a pattern of the quantities of
