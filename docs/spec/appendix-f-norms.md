@@ -1317,15 +1317,23 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   literals have 26 035 valuations, built in about 2 seconds; a contract
   with four predicates over them has 68 choices, 272 commands, and
   1 626 reachable states, and its check with PRISM takes about 20
-  seconds. Five or more are refused, with the numbers of patterns per
-  type and of valuations. The patterns of lists are compared with every
+  seconds. A group of five or more quantities compared with each
+  other, ordered or only tested for equality, is refused, with the
+  numbers of patterns per type and of valuations; the numbers are
+  computed before any valuation is built, so the refusal takes less
+  than a second. The patterns of lists are compared with every
   consistent pattern of four lists (331 of the 355 are series-parallel)
   and with random nested lists of four and five; the valuations with
-  random JSON values of every type, with nested lists and objects; the
-  model with `cadl norms-eval` on random paths and by the witnesses;
-  and the valuations by types and patterns with the product of the
-  classes for groups of two and three quantities. Errors injected into
-  the construction were detected by these tests: 8 of 8.
+  random JSON values of every type, with nested lists and objects, and,
+  for four quantities with number and text literals, with every
+  4-tuple of dense numbers (four in one gap), texts, objects, and lists
+  and of a small pool of every type; the model with `cadl norms-eval`
+  on random paths and by the witnesses; and the valuations by types and
+  patterns with the product of the classes for groups of two and three
+  quantities. Of 14 errors injected into the construction, these tests
+  detected 13. The 14th, at most two different objects, gives the same
+  choices, because lists that are pairwise not comparable behave as
+  different objects do.
 - The other components read a wildcard reference outside a domain in
   their own way, and `cadl` 0.3.24 does not change them. `cadl verify`
   reads `A[*].q` as one unconstrained variable per group, shared by
@@ -1582,7 +1590,7 @@ At each observation the environment chooses three things.
    more than 50 000 combinations, or the component has a group of four
    or more quantities ordered against each other, every group of the
    component whose quantities have the same classes apart from lists
-   (none has a domain) takes its valuations by **types and patterns** instead of the
+   (none has a domain, given or assumed) takes its valuations by **types and patterns** instead of the
    product of the classes. By the last remark, a valuation of the group is decided by
    a type for each quantity (no value, true, false, number, text,
    object, list) and, for each type, a pattern of the quantities of
@@ -1609,8 +1617,9 @@ At each observation the environment chooses three things.
    of the first elements is a disjoint union of chains and of orders of
    lists. Series-parallel orders are closed under disjoint union, under
    putting one order below another, and under replacing each element of
-   an order by an order, so by induction on the length the order of the
-   lists is series-parallel. Every such pattern is realised: a pattern
+   an order by an order, so by induction on the size of the lists (the
+   number of their elements, counted at every depth of nesting) the
+   order of the lists is series-parallel. Every such pattern is realised: a pattern
    of two classes or more is the series composition (every list of one
    part below every list of the other) or the parallel composition (no
    two comparable) of two smaller patterns, and the lists that realise
@@ -1619,15 +1628,19 @@ At each observation the environment chooses three things.
    have 1, 4, 29, 331, and 5 262 patterns; the 29 of three lists are
    those of the eight lists above. The number of valuations of a group
    is the sum, over the types of its quantities, of the products of the
-   numbers of patterns of each type. Four quantities with only the
-   literals 0 and 1 (which every group has) have 26 035 valuations,
+   numbers of patterns of each type; the processor computes it from
+   the sizes of the gaps (the weak orders with at most as many classes
+   as the gap has values) before it builds any valuation. Four
+   quantities with only the literals 0 and 1 (which every group has)
+   have 26 035 valuations,
    where the product of their classes has more than
    29<sup>4</sup> = 707 281 combinations (each has 29 classes that are
-   not lists), and 46 285 with one more numeric literal. Five
-   quantities ordered against each other have at least 424 213
-   valuations, more than the limit of 50 000 (Limits), and are not
-   translated; neither are four or more of them whose quantities do not
-   have the same classes, or that are in a component with linear
+   not lists), and 46 285 with one more numeric literal. A group of
+   five or more quantities with the same classes compared with each
+   other, ordered or only tested for equality, has at least 424 213
+   valuations, more than the limit of 50 000 (Limits), and is not
+   translated. Neither are four or more quantities ordered against each
+   other whose classes differ, or that are in a component with linear
    arithmetic below. The processor names the numbers of patterns per
    type and of valuations in its refusal.
 
@@ -1888,8 +1901,9 @@ with each other that takes its valuations by types and patterns, the
 limit bounds the number of these valuations, times the classes of the
 other quantities of the component: the reference implementation
 builds the 26 035 valuations of four ordered quantities without other
-literals in about 2 seconds, and the 424 213 of five, which it refuses,
-would take about 30 seconds. In a component with linear
+literals in about 2 seconds. It refuses five, which have 424 213, from
+the counts in less than a second; building them would take about 30
+seconds. In a component with linear
 arithmetic, the combinations are the points of the faces, summed over
 the choices of classes that are not numbers, and the same limit
 applies. The model checker explores the
