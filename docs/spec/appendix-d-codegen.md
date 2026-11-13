@@ -229,7 +229,10 @@ with two to four or with one inside another, the items, and the events,
 messages, counts-as rules and powers, so that each runtime code stays within the size limit of
 EIP-170. From `cadl` 0.3.28 the runtime code of the contract is
 estimated at 16 840 bytes, which leaves more than
-7 × 10<sup>3</sup> bytes below that limit (24 410 in 0.3.27). The cost of an
+7 × 10<sup>3</sup> bytes below that limit (24 410 in 0.3.27). From `cadl` 0.3.29 the
+libraries `CadlNormsMulti` and `CadlNormsEval` are estimated at 7 490 and
+10 410 bytes (4 430 and 10 310 in 0.3.28), and the size of the code does
+not depend on the number of temporal operators. The cost of an
 observation does not grow with the number of earlier observations: the
 window of a temporal operator is scanned once (each observation adds
 its own value to the scans that are open), a value is found by binary
@@ -440,7 +443,18 @@ content `throughout(1000s, …)`, 5.2 × 10<sup>5</sup> for
 `NOT until(…, 1000s)`, 5.1 × 10<sup>5</sup> for
 `throughout(1000s, …) == true`, and 5.9 × 10<sup>5</sup> for
 `within(1000s, …) OR throughout(1000s, …)` (at most
-8.0 × 10<sup>5</sup>); `cadl` 0.3.25 read every candidate at every
+8.0 × 10<sup>5</sup>); from `cadl` 0.3.29 the last content costs
+6.1 × 10<sup>5</sup> and 6.2 × 10<sup>5</sup>, with a third operator
+(`… OR within(1000s, …)`) 8.4 × 10<sup>5</sup> and 8.5 × 10<sup>5</sup>
+(at most 1.1 × 10<sup>6</sup>), with a fourth 1.8 × 10<sup>6</sup> and 1.9 × 10<sup>6</sup>
+(at most 2.6 × 10<sup>6</sup>; the factors over two operators are
+about 1.4 for three and 3.0 for four, from the five words of a node), and the nested
+contents `within(1000s, throughout(500s, …))` and
+`throughout(1000s, within(500s, …))` 5.0 × 10<sup>5</sup> and
+5.1 × 10<sup>5</sup>, and 5.1 × 10<sup>5</sup> and 6.6 × 10<sup>5</sup>
+(at most 8.3 × 10<sup>5</sup>; the inner values of the second are
+decided from the 501st observation on, and each then decides the
+candidates of its window); `cadl` 0.3.25 read every candidate at every
 observation and used 1.3 × 10<sup>7</sup> gas at the 320th. A monitor whose observation would exceed the block gas limit cannot record it and does
 not recover, so the bound matters. The generated file is to be compiled with solc
 0.8.24 to 0.8.37 (checked; its pragma is `>=0.8.24 <=0.8.37`) and
