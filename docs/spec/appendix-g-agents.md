@@ -1907,12 +1907,66 @@ are these.
   message is at most 1 MiB. What remains is the same as at the HTTP
   listener: whoever knows the name of an actor with a key can forge a
   header of the right form, and such calls of one address or network can
-  hold its places until the read deadline. In addition, the gRPC listener
-  does not cap the HTTP/2 connections of one address: `grpcio` offers no
-  point at which a server can count or refuse a connection before its
-  calls (an interceptor sees calls, not connections), so one host can open
-  many connections, each closed after 2 minutes without calls; where this
-  matters, a proxy or a firewall limits the connections.
+  hold its places until the read deadline.
+  `grpcio` offers no point at which a server can count or refuse a
+  connection before its calls (an interceptor sees calls, not
+  connections). The gateway therefore accepts the connections of
+  `--grpc-listen` itself, in a front listener (one thread, standard
+  library only), and passes the bytes of each one unchanged to the gRPC
+  server, which listens on a Unix socket in a directory that only the
+  user that runs the gateway can open (on 127.0.0.1 where there are no
+  Unix sockets; other local processes can then connect to that port
+  without the caps, and their calls are refused, `UNAVAILABLE`). With
+  `localhost` the front listener listens on each of its addresses
+  (127.0.0.1 and ::1), as gRPC did; an address that cannot be bound
+  (::1 where IPv6 is off) is logged and left out. TLS and mutual TLS
+  still end in gRPC: the front listener does not take part in them, so
+  certificates and identities are as above. It
+  keeps at most 4 open connections of one remote address (an IPv4
+  address or an IPv6 /64; `--max-grpc-connections-per-address`), 16 of
+  one IPv4 /24 or IPv6 /48 (`--max-grpc-connections-per-prefix`), and 64
+  in all (`--max-grpc-connections`); a connection beyond them is reset at
+  once and recorded at the capped rate (`overloaded`, `connections`). A
+  connection on which no call has reached the gateway within the read
+  deadline (`--read-timeout`, counted from its accept) is reset and
+  recorded (`read_timeout`, `grpc handshake`): one that sends nothing,
+  never starts or never ends TLS, sends its handshake a byte at a time,
+  or is half-open. A call that gRPC refuses before the gateway sees it
+  (an unknown method, or one beyond the workers) does not count, since
+  `grpcio` offers no hook for it, and a client that opens its channel
+  before its first call and waits longer than the deadline is also
+  reset; such clients connect again. After its first call, the gRPC
+  server closes a connection that has had no call for 2 minutes, and one
+  with a call open whose peer does not answer a ping (sent after 60
+  seconds without data) within 20 seconds. The front listener reads the
+  gRPC server on while up to 256 KiB wait for the client, so it sees that
+  close also when the client reads nothing; it then closes the client's
+  side after what was sent to it, or resets it after 5 seconds. When
+  more waits for the client, or the gRPC server does not take the
+  client's bytes, and that backlog does not drain within 30 seconds,
+  both sides are reset and recorded (`read_timeout`, `grpc stalled`).
+  A connection counts against the caps until its sockets are closed.
+  Each connection to the gRPC server comes from an address of its own (a Unix
+  socket bound to a path of its own, or a port of its own), which gRPC
+  gives as the peer of its calls; the gateway maps it back to the accepted
+  connection. The caps on calls not yet authenticated therefore count the
+  real address of the client, as before, and a call that does not come
+  through the front listener is refused (`UNAVAILABLE`). What is bounded:
+  one remote address has at most 4 connections and so at most 64
+  concurrent calls (16 streams each), of which at most 4 wait for their
+  message; one /24 or /48 has at most 16 connections and 256 calls; all
+  clients together have at most 64 connections, and the workers bound the
+  calls in all. What remains: any call, even one refused for its header,
+  keeps its connection past the deadline. Without mutual TLS, hosts with
+  at least 16 addresses in at least 4 networks can therefore hold the 64
+  connections, each until it has had no call for 2 minutes and 5 seconds
+  more (30 seconds when more than 256 KiB wait for a client that does not
+  read; a client that keeps reading slowly can add the time it takes to
+  read what already waits), and the gateway refuses new gRPC connections
+  meanwhile; with mutual TLS only
+  holders of a client certificate of the CA get as far as a call. Behind
+  a proxy every client has the address of the proxy, so the caps per
+  address and per prefix are raised there.
 - A request is read with one `Content-Length` of at most 1 MiB and
   without `Transfer-Encoding`, one request per connection; the body is
   parsed as strictly as a line of the MCP gateway and passed on
@@ -2114,7 +2168,13 @@ loopback, a held request with `returnImmediately`, the agent's
 certificate), the checks of addresses with a resolver of the test, and
 the gRPC binding (allow, deny, a hold, streams, errors, failed
 authentication, unknown fields, mutual TLS, push notifications, calls
-that never send their message). In each,
+that never send their message) and its front listener (floods of
+connections from one address and from one network, connections that
+send nothing, never start TLS or send their handshake a byte at a time,
+half-closed and half-open connections, a client that stops reading
+after its call, the real address of the client
+behind the splice, and an authenticated call of another address served
+while one address holds all its connections, over mutual TLS). In each,
 the agent receives nothing that was not allowed or released, no
 notification reaches a client that did not register it, and
 `cadl agents-run` writes the same audit log. An independent review of
