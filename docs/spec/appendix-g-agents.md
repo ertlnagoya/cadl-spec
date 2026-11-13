@@ -718,8 +718,15 @@ that names a task or a context of another client (`task_refused`), a
 request that was sent but got no valid response (`invalid_response`), a
 cancellation of a task that is passed on or withdraws a hold
 (`task_cancel`), a request beyond a limit of the gateway on the
-requests handled at the same time (`overloaded`), and a request that was
-not read within its deadline (`read_timeout`). These records change no decision,
+requests handled at the same time (`overloaded`), a request that was
+not read within its deadline (`read_timeout`), and, from `cadl` 0.3.28, a
+TLS handshake that failed or a client certificate that names no client
+(`handshake_failed`), a push notification configuration that the gateway
+gives to the agent or deletes (`push_config`), one that it refuses
+(`push_refused`), a notification that it relays to the client
+(`push_sent`) or cannot relay (`push_failed`), and a notification that it
+does not relay because it is not authenticated or not of the task of its
+configuration (`push_dropped`). These records change no decision,
 and they are only as trustworthy as the host that writes them: a log
 replayed from a trace that anyone could write proves nothing about
 them.
@@ -1134,8 +1141,9 @@ Context Protocol, revision 2026-07-28
 Agent2Agent protocol, version 1.0.0
 [[A2A Specification 1.0.0]](./appendix-b-references.md). The reference
 implementation has a gateway for MCP and, from `cadl` 0.3.25, one for the
-JSON-RPC binding of A2A (G.13). Nothing normative depends on this
-section.
+JSON-RPC binding of A2A, from 0.3.28 also for its HTTP+JSON binding and,
+as an optional extra, its gRPC binding (G.13). Nothing normative depends
+on this section.
 
 | CADL (agents 0.1) | MCP 2026-07-28 | A2A 1.0.0 |
 | --- | --- | --- |
@@ -1220,13 +1228,15 @@ of agent *X* to agent *Y* carries a `Message` with `role`, `parts`,
 A2A (JSON-RPC, gRPC, HTTP and JSON), maps such a request to the message
 `X -> Y : e` as follows. A `SendStreamingMessage` is the same message,
 decided before any event of the stream is passed on. From `cadl` 0.3.25
-the reference implementation does so for the JSON-RPC binding, and
-from 0.3.26 also for its streams; G.13 gives its readings.
+the reference implementation does so for the JSON-RPC binding, from
+0.3.26 also for its streams, and from 0.3.28 for the HTTP+JSON and the
+gRPC bindings; G.13 gives its readings.
 
 - *X* is the authenticated client of the request: A2A authenticates
-  the client by the security schemes of the agent card of *Y*, and the
-  gateway maps the identity to an actor of the file. Without an
-  authenticated identity there is no sender, and the message is denied.
+  the client by the security schemes of the agent card of *Y*, one of
+  which is mutual TLS, and the gateway maps the identity to an actor of
+  the file. Without an authenticated identity there is no sender, and
+  the message is denied.
 - A2A messages have no name of an operation. The name *e* and its
   arguments, such as the hold id of an approval, come from an
   extension: the message lists the extension's URI in `extensions` and
@@ -1249,6 +1259,14 @@ from 0.3.26 also for its streams; G.13 gives its readings.
   only the hold, so it has to be bound to the held message and its
   arguments as an approval through another channel is (above); the
   reference gateway does not accept approvals as A2A messages (G.13).
+- Push notifications carry no message between actors: the agent sends
+  the events of a task to a URL that the client registered. A gateway
+  that relays them sends requests to addresses that its clients choose,
+  from inside the network it protects, which is server-side request
+  forgery unless the URLs are restricted; A2A asks the caller of a
+  webhook to validate its URL and suggests allowlists (A2A 13.2). A
+  gateway passes a notification only for a task of the client that
+  registered it, as it passes `GetTask`.
 
 ## G.12 Example
 
@@ -1627,7 +1645,10 @@ OUT.jsonl` is the A2A gateway of G.11 for the JSON-RPC binding of A2A
 (`kind: llm_agent`, `protocol: a2a`), which passes requests on to the
 agent at URL. It shares the enforcement point, the trace, the log, the
 holds, and the inbox with the MCP gateway, and `cadl agents-run` on its
-trace writes the same audit log, byte for byte. Where G.11 leaves a
+trace writes the same audit log, byte for byte. From 0.3.28 it also
+serves the HTTP+JSON binding and, as an optional extra, the gRPC
+binding, can require client certificates, and relays push notifications
+under an allowlist. Where G.11 leaves a
 choice, the gateway takes the one that lets less through. Its readings
 are these.
 
@@ -1644,6 +1665,11 @@ are these.
   lowercase hexadecimal. The field `scheme` separates this MAC from the
   MAC of an inbox file, also when an actor uses one key for both. The
   headers `A2A-Version` and `Content-Type` are not covered by the MAC.
+  For the HTTP+JSON binding (from 0.3.28) `method` and `path` are the
+  HTTP method and the whole request target, path and query, as sent; for
+  the gRPC binding they are `POST` and the path of the RPC, such as
+  `/lf.a2a.v1.A2AService/SendMessage`, and `D` is the SHA-256 of the
+  serialized request message as it arrived.
   A nonce is accepted once in a run. The gateway keeps the nonces of
   each actor in memory, so memory grows with the authenticated requests
   of a run; after 1 000 000 requests of one actor it refuses the further
@@ -1697,8 +1723,8 @@ are these.
   refused (-32602), because tasks are kept by their id.
   `ListTasks` and
   `GetExtendedAgentCard` are refused with `UnsupportedOperationError`
-  (-32004), the methods of push notifications and a `SendMessage` with a
-  push notification configuration with
+  (-32004), without `--push-allow` the methods of push notifications and
+  a `SendMessage` with a push notification configuration with
   `PushNotificationNotSupportedError` (-32003), and any other method
   with -32601; all are recorded as `method_refused`. The header
   `A2A-Version` has to be `1.0` or `1.0.N`, with surrounding spaces
@@ -1751,13 +1777,142 @@ are these.
   agent to a streamed request is read as any other answer: at most
   16 MiB, strict UTF-8. Errors found before the stream begins are
   answered as plain JSON-RPC errors, as A2A allows.
-- Push notifications and the gRPC binding stay refused. A push
-  notification configuration names a URL of the client to which the
-  agent, or a gateway that relays, sends requests: the gateway would
-  call addresses that its clients choose, from inside the network it
-  protects, which is server-side request forgery. The gRPC binding needs
-  HTTP/2 and Protocol Buffers, which the standard library does not
-  provide, and the reference implementation adds no runtime dependency.
+- Mutual TLS (from `cadl` 0.3.28). With `--client-ca` a client presents
+  a certificate of that CA whose subject has exactly one common name,
+  which is a concrete actor of the keys of the gateway. The handshake
+  ends before the connection takes one of the readers below; a failed
+  handshake, and a certificate that names no such actor, close the
+  connection and are recorded as `handshake_failed`. The certificate
+  does not replace the header `CADL-HMAC`: the header has to name the
+  same actor, otherwise the request gets HTTP 401 and
+  `unauthenticated_request` with the reason `certificate_mismatch`. A
+  TLS session authenticates a connection, not a request: it does not bind
+  a request to its body, to the run of the gateway, or to one use, which
+  the MAC, the run id, and the nonce do. With push notifications the
+  agent's actor may present a certificate too, which only delivers
+  notifications.
+- The HTTP+JSON binding (from 0.3.28). The gateway serves the routes of
+  A2A 11.3 on the port of the JSON-RPC binding: `POST /message:send`,
+  `POST /message:stream`, `GET /tasks/{id}` with the query parameter
+  `historyLength`, `POST /tasks/{id}:cancel`, the subscription
+  `/tasks/{id}:subscribe` with `POST`, as 11.3.2 gives it, and with `GET`,
+  as the `a2a.proto` of A2A gives it, and the routes of
+  `/tasks/{id}/pushNotificationConfigs`. A request is authenticated as
+  above and then turned into the JSON-RPC request with the same `params`
+  (11.4): the body, and the parameters of the path and of the query; it is
+  decided, held, recorded, and passed on as that request, so the trace is
+  the same as for JSON-RPC. A body is `application/json` or
+  `application/a2a+json`; `GET` and `DELETE` have no body. A route that
+  11.3 does not have, a route with a tenant before it, a query parameter
+  other than those named, and a body whose `id` or `taskId` differs from
+  the path are refused; `GET /tasks` and `GET /extendedAgentCard` are
+  refused as their methods are. An error is a `google.rpc.Status` with
+  the HTTP status of 5.4 and an `ErrorInfo` whose reason is that of 11.6
+  and whose domain is `a2a-protocol.org`; HTTP 401 and 503 of the gateway
+  carry no `ErrorInfo`. A stream has the result of each JSON-RPC response
+  as `data` (a `StreamResponse`, 11.7), and an error as an `error` event.
+  With `--upstream-binding rest` the gateway speaks this binding to the
+  agent: the answers are checked as strictly as those of JSON-RPC, and an
+  error answer without an `ErrorInfo` of the domain of A2A and a known
+  reason is `invalid_response`.
+- Push notifications (from 0.3.28). Without `--push-allow` they stay
+  refused, as above. With it, a client may give a configuration with
+  `SendMessage` or create one for its own task (A2A 3.1.7 to 3.1.10). The
+  agent never gets the client's URL: it gets a configuration of the
+  gateway, whose URL is that of the gateway with a path of its own and
+  whose token and credentials are random values of the gateway. The
+  gateway takes a notification there only with these values and, with
+  mutual TLS, from the agent's certificate; it has to be one
+  `StreamResponse` of the task of the configuration, and the gateway has
+  to have recorded the client of the configuration as the owner of that
+  task and of its context. A configuration given with `SendMessage` is
+  bound to the task that the agent's answer names: the result of an
+  allowed or released request, or the first event of its stream, which
+  the gateway claims for the client before it binds the configuration.
+  Until then a notification of that configuration is dropped, and a
+  notification never makes the client the owner of a task or a context;
+  so an agent that sends notifications before its answer loses them. A
+  configuration whose request got no answer, an error, or an answer that
+  names no task is removed, recorded as `push_dropped` with the reason
+  `no_task`, since it could never be bound, listed, or deleted.
+  Then the gateway
+  sends it to the client's URL with the client's token and credentials
+  (A2A 4.3.3) and records `push_sent` or `push_failed`; anything else is
+  `push_dropped`. The client's URL is checked when the configuration is
+  given, and again at every notification, since a name can resolve to
+  other addresses later: it matches an entry of `--push-allow` (a URL,
+  whose path is a prefix when it ends with `/`, a host with an optional
+  port, which without a port allows every port and every path of that
+  host, or an IP address or network, which allows the addresses that a
+  matching host resolves to and, for a single address, that address as a
+  host, but no host name by itself); its path has no `.` or `..` segment,
+  no backslash, and no percent-encoded dot, slash, backslash, or percent
+  sign (so also no `%252e`, which decodes twice to a dot), so that
+  the path that is compared is the path that the server reads; it is
+  `https` unless its host is a
+  loopback address or `localhost`; and every address that its host
+  resolves to is a global unicast address, or lies in an address or a
+  network of the allowlist. Private, loopback, link-local, shared,
+  reserved, and multicast addresses are refused, also when they are
+  embedded in an IPv4-mapped, NAT64, 6to4, or Teredo address, and an
+  address of a metadata service of a cloud is allowed only when the
+  allowlist names that address itself, not by a network that contains
+  it. The request goes to an address that was checked, without a second
+  lookup; a redirect is not followed and is a failure; the exchange
+  ends within `--push-timeout` (10 seconds) from the connection to the
+  answer, and at most 64 KiB of the answer are read. A notification is
+  at most 1 MiB, as any request. A configuration given to the agent, or
+  deleted, is recorded as `push_config` before the agent gets it, and a
+  refused one as `push_refused`. The token and the credentials of a
+  configuration in a `SendMessage` are not shown in its published hold.
+  `GetTaskPushNotificationConfig` and `ListTaskPushNotificationConfigs`
+  are answered by the gateway; `DeleteTaskPushNotificationConfig` stops
+  the relay at once and is passed on. A client has at most 64
+  configurations, and the gateway relays at most 16 notifications at the
+  same time; a configuration that waits with a held request, or for
+  the agent's answer, counts against the 64, and the count and the
+  addition are one step. Not covered: a configuration created with
+  `CreateTaskPushNotificationConfig` for a held task of the gateway (it
+  is given with the `SendMessage`), and retries of a failed notification.
+- The gRPC binding (from 0.3.28), as the optional extra `cadl-lang[grpc]`.
+  It installs the official `a2a-sdk` with gRPC, whose module
+  `a2a.types.a2a_pb2` is generated from the normative `a2a.proto` of A2A
+  (10.1; package `lf.a2a.v1`, service `A2AService`); cadl adds no
+  definitions of its own and no dependency that is not optional.
+  `--grpc-listen` serves the service, with TLS and mutual TLS as above;
+  an address other than loopback needs TLS. The metadata `authorization`
+  carries `CADL-HMAC` and `a2a-version` the version (10.2). A request
+  message with a field that `a2a.proto` does not define is refused
+  (-32602, `INVALID_ARGUMENT`); otherwise its JSON (ProtoJSON, the
+  `params` of JSON-RPC) is decided as above, and the answer is parsed into
+  the response message, strictly: an answer of the agent that does not
+  fit is `invalid_response`. An error is a gRPC status of 5.4 with a
+  `google.rpc.Status` whose details hold the `ErrorInfo`, in the trailing
+  metadata `grpc-status-details-bin` (10.6). The gateway receives the
+  request message itself (its handlers take the request as a stream),
+  because gRPC hands a unary call to a worker before its message has
+  arrived. A call is refused at once, before its message is awaited,
+  unless its metadata has a header that could authenticate: one header of
+  the form above that names an actor with a key and, with mutual TLS, the
+  actor of the certificate. Then, until its message has arrived, the call
+  takes one of the places of calls not yet authenticated, with the caps of
+  the HTTP listener (4 per remote address, 16 per IPv4 /24 or IPv6 /48,
+  64 in all; beyond them `RESOURCE_EXHAUSTED` and `overloaded`), and it is
+  cancelled at the read deadline (`read_timeout`). The service has
+  workers for these 64 calls next to `--max-handlers` plus 16 handled
+  ones, so calls that wait for their message cannot take the workers of
+  authenticated calls. HTTP/2 is limited to 16 concurrent streams per
+  connection, 16 KiB of metadata, pings no more often than every 10
+  seconds without data, and 2 minutes of an idle connection; a request
+  message is at most 1 MiB. What remains is the same as at the HTTP
+  listener: whoever knows the name of an actor with a key can forge a
+  header of the right form, and such calls of one address or network can
+  hold its places until the read deadline. In addition, the gRPC listener
+  does not cap the HTTP/2 connections of one address: `grpcio` offers no
+  point at which a server can count or refuse a connection before its
+  calls (an interceptor sees calls, not connections), so one host can open
+  many connections, each closed after 2 minutes without calls; where this
+  matters, a proxy or a firewall limits the connections.
 - A request is read with one `Content-Length` of at most 1 MiB and
   without `Transfer-Encoding`, one request per connection; the body is
   parsed as strictly as a line of the MCP gateway and passed on
@@ -1807,7 +1962,20 @@ are these.
   and make the gateway refuse every new connection for as long as they
   go on; one /24 or /48 alone cannot. A process cannot tell such hosts from
   clients before they authenticate, so where this matters the gateway
-  belongs behind a proxy or a firewall that limits connections. Behind a proxy every client has the address
+  belongs behind a proxy or a firewall that limits connections. With
+  `--client-ca` (from 0.3.28) a connection takes one of the readers only
+  after its handshake has ended with a certificate of a client, so peers
+  without one cannot hold the readers. What remains then is a handshake
+  that is slow but valid. Before the handshake has ended, the gateway
+  does not know who the peer is: under TLS 1.3 the client sends its
+  certificate at the end of the handshake. A peer whose handshake is slow
+  therefore holds a thread and one of at most 256 places for handshakes
+  (`--max-handshakes`) until the read deadline, within the caps of 4 per
+  address and 16 per /24 or /48. Hosts in at least 16 such networks can
+  keep all 256 places busy for as long as they go on; meanwhile a new
+  connection waits up to one second for a place and is then closed
+  without an answer (`overloaded`, `handshakes`), since nothing can be
+  answered before a handshake. Behind a proxy every client has the address
   of the proxy, so `--max-readers-per-address` has to be raised there,
   or the proxy has to buffer the requests before it passes them on.
 
@@ -1862,7 +2030,21 @@ writes the same audit log. These tests found no incompatibility of the
 non-streaming paths. The one incompatibility was the refusal of
 streaming: the SDK client streams by default when the agent card says
 `streaming: true`, and the gateway answered -32004; 0.3.26 implements
-the streams. The tests are skipped where the SDKs are not installed, and
+the streams. From 0.3.28 the same client is also tested over mutual TLS,
+with a client certificate given to its `httpx` client; over the
+HTTP+JSON binding, with the agent spoken to over JSON-RPC and over the
+HTTP+JSON binding; with push notifications, which the push sender of the
+SDK agent sends to the gateway and the gateway relays to a webhook of
+the test; and over gRPC, with interceptors of `grpc.aio` that add the
+header over the serialized request. These found no incompatibility. They
+showed two readings that the gateway has to make. The routes of 11.3.2
+subscribe with `POST`, and the `a2a.proto` with `GET`; the SDK server
+takes both, and so does the gateway. The table of 5.4 on the published
+page of A2A 1.0.0 gives 400 for `TaskNotCancelableError` and 500 for
+`InvalidAgentResponseError`, as the SDK does, where
+`docs/specification.md` at the tag `v1.0.0` of the repository of A2A
+gives 409 and 502; the gateway follows
+the published page. The tests are skipped where the SDKs are not installed, and
 a job of the continuous integration installs them on Python 3.12; they
 are not dependencies of `cadl`.
 
@@ -1917,6 +2099,36 @@ of its own, that an index variable as receiver of an approval rule was
 not resolved with the bindings of the hold, and that a header line with
 whitespace before its colon hid the headers after it.
 Each is corrected and has a test.
+From 0.3.28, 25 more tests (`tests/test_a2a_bindings.py`) cover mutual
+TLS (a certificate and a header of different actors, no certificate, one
+of another CA, one of no actor, one with two common names, a replayed
+nonce, peers that never end their handshake and take no reader, the cap
+on handshakes), the HTTP+JSON binding (allow, deny, holds, streams,
+subscriptions with `POST` and `GET`, refused routes, parameters, bodies,
+and authentications, and an agent of
+that binding), push notifications (a configuration with `SendMessage`
+and one created, Get, List, Delete, a notification for a task of another
+client, forged credentials, an unknown configuration, refused URLs, a
+redirect, a slow and a failing webhook, a host name that resolves to
+loopback, a held request with `returnImmediately`, the agent's
+certificate), the checks of addresses with a resolver of the test, and
+the gRPC binding (allow, deny, a hold, streams, errors, failed
+authentication, unknown fields, mutual TLS, push notifications, calls
+that never send their message). In each,
+the agent receives nothing that was not allowed or released, no
+notification reaches a client that did not register it, and
+`cadl agents-run` writes the same audit log. An independent review of
+these bindings found no request that reached the agent without a
+decision, no way around the authentication or the checks of addresses,
+and no replay. It found that a configuration given with `SendMessage` was
+not bound to its task, so that its client could not list or delete it
+and the first notification bound it to any task it named; that calls of
+the gRPC listener that never sent their message held its workers without
+a deadline; that gRPC with mutual TLS accepted a certificate with two
+common names; and that dot segments, also percent-encoded, let a callback
+URL leave the path prefix of its entry. Each is corrected and has a
+test. The new tests ran five times in a row and three runs at the same
+time without a failure.
 None of the reviews found a request that reached the agent without a
 decision; the first checked
 this also in a run of 12 threads whose log of 280 records
@@ -1989,13 +2201,13 @@ Known limits. Without a key, the chain of the log does not detect a
 log that is rewritten from a changed line on; keeping the last digest
 elsewhere (`--anchor`), or a key, does; the `hash` field of the header
 is not authenticated, so the verifier has to know whether a log is
-keyed. The MCP gateway over stdio and the A2A gateway over JSON-RPC
-have been tested with fake servers, agents, and clients, and from
+keyed. The MCP gateway over stdio and the A2A gateway over JSON-RPC,
+HTTP+JSON, and gRPC have been tested with fake servers, agents, and clients, and from
 0.3.26 with the official SDKs named above, not with other
 implementations. The A2A gateway needs a client that computes
-the header `CADL-HMAC`, keeps the owners of tasks only for one run, and
-does not support push notifications, `ListTasks`, tenants, or the gRPC
-and the HTTP and JSON bindings. A gateway
+the header `CADL-HMAC`, keeps the owners of tasks and the push
+notification configurations only for one run, and does not support
+`ListTasks`, `GetExtendedAgentCard`, or tenants. A gateway
 observes messages and time, not `values`: a norm that reads a
 quantity sees missing data (G.5). It does not create or end
 host-created contract instances after its first line. The approver's
