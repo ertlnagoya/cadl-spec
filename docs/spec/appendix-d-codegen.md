@@ -144,10 +144,13 @@ out of the monitor with a warning. Both compute exactly (F.5): the Rego
 monitor with decimal numbers, so it refuses `/`, whose result is not
 always one. The Solidity monitor uses
 fixed-point numbers with six decimals and therefore also refuses `*`,
-`/`, and literals with more than six decimals; it scans the window of a
-temporal operator once, as the observations arrive, and therefore also
-refuses a temporal operator inside another one and a content of a norm
-with three or more temporal operators (see below); and it refuses a contract whose
+`/`, and literals with more than six decimals; outside the content of a
+norm it scans the window of a temporal operator once, as the
+observations arrive, and therefore refuses there a temporal operator
+inside another one; in the content of a norm it refuses five or more
+temporal operators and the temporal operators inside another one whose
+values are not decided in the order of the observations (see below);
+and it refuses a contract whose
 creation code would exceed the 49152 bytes of EIP-3860 or whose runtime
 code would exceed the 24576 bytes of EIP-170 (`cadl codegen` estimates
 both sizes from above). In
@@ -222,11 +225,14 @@ filled in by its constructor, and interprets it. The model and the
 state are one struct in storage, which six libraries read and change:
 they hold the evaluation of predicates, the functions without state,
 the judgement of contents with one temporal operator, that of contents
-with two, the items, and the events, messages, counts-as rules and
-powers, so that each runtime code stays within the size limit of
+with two to four or with one inside another, the items, and the events,
+messages, counts-as rules and powers, so that each runtime code stays within the size limit of
 EIP-170. From `cadl` 0.3.28 the runtime code of the contract is
 estimated at 16 840 bytes, which leaves more than
-7 × 10<sup>3</sup> bytes below that limit (24 410 in 0.3.27). The cost of an
+7 × 10<sup>3</sup> bytes below that limit (24 410 in 0.3.27). From `cadl` 0.3.29 the
+libraries `CadlNormsMulti` and `CadlNormsEval` are estimated at 7 490 and
+10 410 bytes (4 430 and 10 310 in 0.3.28), and the size of the code does
+not depend on the number of temporal operators. The cost of an
 observation does not grow with the number of earlier observations: the
 window of a temporal operator is scanned once (each observation adds
 its own value to the scans that are open), a value is found by binary
@@ -306,33 +312,125 @@ the candidate), and those whose window is over; a candidate that has
 seen `q` not false is kept, undecided, until it is decided in one of
 these ways.
 
-*Two temporal operators.* For a content with two temporal operators
-the monitor reads the content once at the observation of a candidate
-and obtains its value for each of the 16 pairs of values of the
-operators (undecided, true, false, undefined); this covers a
-comparison of the two (`within(…) == throughout(…)`). An observation
-decides an operator for a range of candidates at a time: the
-candidates whose window is over become false (`throughout`: true), or
-undefined when an operand was undefined in the window; an operand true
-for `within`, false for `throughout`, or `p` false for `until` decides
-every open window; `q` true for `until` decides the candidates with
-`p` true since them. Binary searches over the candidates find these
-ranges. The candidates are the leaves of a segment tree in storage. A
-node records, for each pair of a set of operators still undecided for a
-candidate and of values that the operators can still take, whether a
-candidate below holds in that future and whether one is undecided in
-it (49 such pairs, in one 256-bit word). Deciding an operator for a range maps
-these pairs by shifts and masks and is propagated lazily, so an
-observation changes a few ranges in steps that grow with the logarithm
-of the number of candidates, and the root says whether a candidate
-holds and whether one is undecided. Three or more temporal operators
-in one content are refused. A candidate then depends on several
-operators decided at different observations: for m operators `within`
-joined by `AND`, finding a candidate that holds is a query over the
-other m − 1 operators of the candidates that one operator decides,
-and the pairs that a node records grow as 7<sup>m</sup> (343 for three
-operators), so the monitor keeps the cost of an observation bounded for
-at most two. The tree is not pruned: each activation of such a norm
+*Several temporal operators.* For a content with m temporal operators,
+2 ≤ m ≤ 4, the monitor reads the content once at the observation of a
+candidate and obtains its value for each of the 4<sup>m</sup>
+combinations of values of the operators (undecided, true, false,
+undefined), as bits of one 256-bit word; this covers a comparison of two
+operators (`within(…) == throughout(…)`). An observation decides an
+operator for a range of candidates at a time: the candidates whose
+window is over become false (`throughout`: true), or undefined when an
+operand was undefined in the window; an operand true for `within`,
+false for `throughout`, or `p` false for `until` decides every open
+window; `q` true for `until` decides the candidates with `p` true since
+them. Binary searches over the candidates find these ranges. The
+candidates are the leaves of a segment tree in storage. A node gives
+each operator a state: decided, or undecided and taking one of the four
+values in the future considered. For each of the 5<sup>m</sup>
+combinations of states it records whether a candidate below holds in
+that future and whether one is undecided in it. A decided operator
+leaves no value in the node: its value is already part of the values of
+the content that the candidate keeps for the other operators. The
+2 × 5<sup>m</sup> bits fit in one word for m ≤ 3 (250 bits, with 6 bits
+for the tags of the lazy propagation) and in five words for m = 4 (the
+state of the fourth operator selects the word). Deciding operator i to
+the value v moves the combinations in which i is undecided and takes v
+to those in which it is decided, and drops the other combinations in
+which it is undecided: for the first three operators a shift and a mask
+of each word, for the fourth an OR of words. This is propagated lazily,
+so an observation changes a few ranges per operator, each in steps that
+grow with the logarithm of the number of candidates, and the root says
+whether a candidate holds and whether one is undecided. The cost of an
+observation therefore does not grow with the number of observations for
+any m ≤ 4, and it grows with m by a factor measured below. Five or more
+temporal operators in one content are refused: the 4<sup>5</sup> values
+of the content do not fit in one word, and a node would have 25 words.
+(Up to `cadl` 0.3.28 a node kept the values of the decided operators
+too, 7<sup>m</sup> pairs, which allowed two operators in one word.)
+
+*A temporal operator inside another one.* In the content of a norm, the
+operand of `within(d, …)` or `throughout(d, …)` may be another
+`within(e, p)` or `throughout(e, p)`, or its negation, where p has no
+temporal operator (`within(5s, throughout(2s, p))`,
+`throughout(3s, NOT within(1s, p))`). The value of the inner operator at
+an observation j is known only later; the outer operator reads the
+sequence of these values, each with the time t<sub>j</sub> of its
+observation. The monitor decides the inner operator for every
+observation from the first candidate of the activation on, with a
+summary of its own, and feeds the decided values to the outer operator
+in the order of the observations; the outer operator is one operator of
+the segment tree above. `within(e, p)` is `NOT throughout(e, NOT p)`
+(negation in Kleene's logic keeps undecided and undefined values and
+exchanges true and false, so both are decided at the same observations
+to opposite values), so let the inner operator be X<sub>j</sub> =
+`throughout(e, p′)` and the operand of the outer one Y<sub>j</sub> =
+X<sub>j</sub> or NOT X<sub>j</sub>. Let F(n) be the first observation
+whose inner value is not decided at observation n (n + 1 when there is
+none).
+
+1. The inner values decided at n are those of the observations before
+   F(n). Let X<sub>j</sub> be decided at n and i &lt; j. If X<sub>j</sub>
+   is false by a false p′ at an observation x of its window, either x is
+   in the window of i, which makes X<sub>i</sub> false, or the window of
+   i ended before t<sub>x</sub> ≤ t<sub>n</sub>, which decides
+   X<sub>i</sub>. If the window of j is over at n, so is the window of
+   i, which ends no later.
+2. An observation n decides at most three runs of inner values, in this
+   order. The observations from F(n − 1) up to the first observation b
+   with t<sub>b</sub> + e ≥ t<sub>n</sub> (a binary search over the
+   times) have windows that end at n − 1: they were open at n − 1 and
+   are over at n. Those up to the last observation u with p′ undefined
+   are undefined, the others true (none of them has seen p′ false, or it
+   would be decided already). When p′ is false at n, the observations
+   from b to n are false. F(n) is n + 1 when p′ is false at n and b
+   otherwise; the summary keeps F and u only.
+3. Let τ be t<sub>F(n)</sub> when F(n) ≤ n and t<sub>n</sub> otherwise.
+   A run of fed values Y<sub>s</sub>, …, Y<sub>e</sub> with the decisive
+   value (true for `within`, false for `throughout`) decides the
+   candidates k ≤ e with t<sub>k</sub> + d ≥ t<sub>s</sub>, whose windows
+   hold an observation of the run; a run of undefined values marks the
+   candidates up to e. A candidate with t<sub>k</sub> + d &lt; τ that is
+   not decided becomes undefined when marked, and false for `within`
+   (true for `throughout`) otherwise, after the runs of n are fed. A
+   mark reaches only candidates whose window holds an undefined value. A
+   run of undefined values starts at F(n − 1). When F(n − 1) ≤ n − 1, τ
+   was t<sub>F(n − 1)</sub> at n − 1, so the candidates whose window ended
+   before t<sub>F(n − 1)</sub> were decided at n − 1; a candidate up to
+   F(n − 1) that is still undecided has that observation in its window,
+   and a later one is itself in the run. When F(n − 1) = n, every value
+   before n is decided, b = n, and n decides at most the run of false
+   values from n, so there is no run of undefined values to mark.
+4. These are the values of F.5 at every observation. By 1 the values that
+   F.5 reads in the window of candidate k at n are decided exactly when
+   they are fed, so a decisive value decides k at the same observation.
+   Without one, F.5 gives undecided while the window is not over or holds
+   an undecided value. If F(n) ≤ n, X<sub>F(n)</sub> is undecided: when
+   k ≤ F(n) and t<sub>F(n)</sub> ≤ t<sub>k</sub> + d it is in the window
+   of k; when t<sub>F(n)</sub> > t<sub>k</sub> + d every value of the
+   window is fed and the window is over, since t<sub>n</sub> ≥
+   t<sub>F(n)</sub>; when k > F(n), X<sub>k</sub> is undecided by 1 and k
+   is in its own window, while t<sub>F(n)</sub> ≤ t<sub>k</sub> leaves
+   the window of k open in 3. If F(n) = n + 1, every value is fed and τ
+   = t<sub>n</sub>. In each case the monitor decides k at the observation
+   at which F.5 does, from the same values, and so to the same value.
+
+An observation evaluates p′ once, makes one binary search over the
+times, feeds at most three runs, and decides window ends once, each
+with a few binary searches and range updates of the tree,
+so its cost is bounded as above. Refused are `until` in a nesting, an
+operand of the outer operator that is more than the inner operator or
+its negation (`within(5s, throughout(2s, p) AND r)`), and three levels.
+In them a value of the operand can be decided before that of an earlier
+observation, and feeding the values in order would decide later than
+F.5. In `within(5s, until(p, q, 3s))`, with p undefined and q false at
+t = 0 and p and q true at t = 1, the inner value at t = 1 is true at
+once, so the outer operator at t = 0 is true at t = 1 in F.5, while the
+inner value at t = 0 stays undecided until its window ends after t = 3.
+In `within(d, throughout(e, p) AND r)` a false r decides the operand at
+once. Whether these contents can be monitored with bounded gas in some
+other way is left open.
+
+The tree is not pruned: each activation of such a norm
 adds at least three storage slots per candidate (its observation, its
 time, its leaf, and the inner nodes above it), which stay in storage;
 the gas of an observation does not grow with them. Every monitor also
@@ -351,7 +449,18 @@ content `throughout(1000s, …)`, 5.2 × 10<sup>5</sup> for
 `NOT until(…, 1000s)`, 5.1 × 10<sup>5</sup> for
 `throughout(1000s, …) == true`, and 5.9 × 10<sup>5</sup> for
 `within(1000s, …) OR throughout(1000s, …)` (at most
-8.0 × 10<sup>5</sup>); `cadl` 0.3.25 read every candidate at every
+8.0 × 10<sup>5</sup>); from `cadl` 0.3.29 the last content costs
+6.1 × 10<sup>5</sup> and 6.2 × 10<sup>5</sup>, with a third operator
+(`… OR within(1000s, …)`) 8.4 × 10<sup>5</sup> and 8.5 × 10<sup>5</sup>
+(at most 1.1 × 10<sup>6</sup>), with a fourth 1.8 × 10<sup>6</sup> and 1.9 × 10<sup>6</sup>
+(at most 2.6 × 10<sup>6</sup>; the factors over two operators are
+about 1.4 for three and 3.0 for four, from the five words of a node), and the nested
+contents `within(1000s, throughout(500s, …))` and
+`throughout(1000s, within(10s, …))` 4.9 × 10<sup>5</sup> and
+5.0 × 10<sup>5</sup>, and 6.0 × 10<sup>5</sup> and 6.3 × 10<sup>5</sup>
+(at most 8.3 × 10<sup>5</sup>; the inner values of the second are
+decided from the eleventh second on, and each then decides the
+candidates of its window false); `cadl` 0.3.25 read every candidate at every
 observation and used 1.3 × 10<sup>7</sup> gas at the 320th. A monitor whose observation would exceed the block gas limit cannot record it and does
 not recover, so the bound matters. The generated file is to be compiled with solc
 0.8.24 to 0.8.37 (checked; its pragma is `>=0.8.24 <=0.8.37`) and

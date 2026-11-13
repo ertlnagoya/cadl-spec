@@ -308,8 +308,13 @@ monitoring in the Unity C#
 runtime, monitoring in the generated Rego and Solidity of what they
 refuse (quantifiers, aggregates, wildcard and range references in
 predicates, index expressions, and amendments; in Rego also `/`; in Solidity also `*`,
-`/`, literals with more than six decimals, nested temporal operators,
-three or more temporal operators in the content of a norm,
+`/`, literals with more than six decimals, five or more temporal
+operators in the content of a norm, temporal operators inside another
+one other than a `within` or `throughout` whose operand is another
+`within` or `throughout`, or its negation, over an operand without a
+temporal operator (for `until` in a nesting no construction with bounded
+gas is known), temporal operators inside another one outside the
+content of a norm,
 and contracts whose creation code exceeds the limit of EIP-3860),
 weighted indices, norms per regime, and the derivation of model
 probabilities from norms remain open. We found no work that handles first-class norm
