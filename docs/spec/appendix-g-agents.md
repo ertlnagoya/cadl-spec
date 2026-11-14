@@ -1974,7 +1974,13 @@ are these.
   ended, at the read deadline + 1.1 × age + 20 + the read deadline + 10
   seconds after the end of its wait (`read_timeout`, `grpc age`); this
   also ends a client that keeps the answers of the gRPC server pending
-  by reading slowly. With `--grpc-max-connection-age-grace` the gRPC
+  by reading slowly. One case is not covered: when the first
+  authenticated call of a connection starts between the first and the
+  final GOAWAY (its earlier calls had no key or were refused), its
+  handler starts more than 10 seconds after the call reached the gRPC
+  server (for example behind a backlog of calls without a key), and the
+  call lasts long, the connection can be reset before it is marked,
+  which cuts that call. With `--grpc-max-connection-age-grace` the gRPC
   server closes every connection at most that many seconds after the
   final GOAWAY, and the front listener resets one still open at the read
   deadline + 1.1 × age + 20 + grace + 10 seconds after the end of its
@@ -2001,9 +2007,10 @@ are these.
   not authenticate), so with the defaults the gRPC server closes a
   connection without an authenticated call at most 1.1 × 300 + 20 + 10 =
   360 seconds after its handshake, the client's side is closed within
-  365 seconds, and the front listener resets it at the latest 10 + 330 +
-  20 + 10 + 10 = 380 seconds after the end of its wait, 390 seconds after
-  its accept. What remains: any call, even one
+  365 seconds when the client reads, and the front listener resets it at
+  the latest 10 + 330 + 20 + 10 + 10 = 380 seconds after the end of its
+  wait, 390 seconds after its accept, which also ends a client that does
+  not read. What remains: any call, even one
   refused for its header, keeps its connection past the deadline.
   Without mutual TLS, hosts with at least 16 addresses in at least 4
   networks can therefore hold the 64 connections, each up to that
