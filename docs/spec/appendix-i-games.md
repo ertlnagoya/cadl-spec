@@ -980,6 +980,44 @@ and g⁻_p(τ, s) the minimal value from s with the commands of p fixed by
 τ and the step reward a⁻_p; they are bounds for the same reason as b_p
 and d_p(τ).
 
+**Bounds of the advantages through the Bellman equations
+(informative).** Bounding V_p(s′, v) by l_p(s′) and u_p(s′) gives up
+the dependence of the value on v, which the difference of the
+probabilities shares. When the values of the successors depend on v,
+the value of a successor can be replaced by its Bellman equation under
+the profile at v: V_p(s′, v) = 0 when φ_p holds in s′, and otherwise
+
+```text
+V_p(s′, v)  =  ρ_p(s′, σ(s′)) + Σ_s″ P(s′, σ(s′), s″) · V_p(s″, v)
+```
+
+with ρ_p and P at v. Starting from the expression of A_p(s, c, v)
+above with m = 0 and repeating the replacement any number of times
+gives, at every v in C,
+
+```text
+A_p(s, c, v)  =  K(v) + Σ_x Q_x(v) · V_p(x, v)
+```
+
+where K and the Q_x are polynomials in the open parameters (sums of
+products of step payoffs and probabilities along the replaced states).
+A state x whose coefficient Q_x(v) is not zero is reached from s at v
+with positive probability under c or σ(s), and then the profile, so it
+is in Reach_p at v when s is; with numbers m_x,
+
+```text
+A_p(s, c, v)  ∈  range(K + Σ_x m_x · Q_x) + Σ_x range(Q_x) · [l_p(x) − m_x, u_p(x) − m_x]
+```
+
+with each range taken on C and the products and sums by interval
+arithmetic. A state whose value is known exactly on the cell
+(l_p(x) = u_p(x)) adds no interval. In an acyclic game, the replacement
+can be repeated until no state with l_p(x) < u_p(x) is left, and the
+bound is then the range of the polynomial A_p(s, c, ·) on C. These
+bounds may be used together with the bounds above and with the coupled
+bounds below, each time with the smaller upper and the larger lower
+bound.
+
 **Coupled bounds of the advantages (informative).** The bounds above
 take V_p(s′, v) between l_p(s′) and u_p(s′) for each successor
 separately. When the advantage is the difference of the values of two
@@ -2034,6 +2072,43 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   `games_eval.USE_LIFTING = False` gives the maps of 0.3.28,
   and `games_eval.LIFT_BERNSTEIN = False` the lifting with the
   enclosures by interval arithmetic only.
+  From `cadl` 0.3.31, a polynomial that is not multi-affine in the
+  open parameters (a probability, a step payoff, a difference of them,
+  or a lifted function) is bounded on a cell by its range, computed
+  exactly with rational numbers: each end is searched on boxes of the
+  cell, a box is first reduced to a face along every parameter in which
+  the polynomial is monotone on the box (the enclosure of the partial
+  derivative does not change sign), the values at the corners of the
+  reduced boxes give the inner bound, the intersection of interval
+  arithmetic and the Bernstein coefficients gives the outer bound on a
+  box, and the box with the largest outer bound is bisected, at the
+  zero of the partial derivative when it is affine in that parameter
+  alone, until the two bounds meet or after 16 bisections. Only
+  the enclosure is refined; the cell is not. The relaxation (the
+  intervals of the probabilities, the check that the design is
+  well-defined on the cell, and the probabilities that are positive on
+  the whole cell), the step payoffs, the bounds of the advantages, and
+  the intervals of the lifted coordinates use it. A probability
+  a + b · R gets a + b times the range of R, so the corners of the
+  lifted cell stay within the intervals of the relaxation, except where
+  a lifted polynomial was replaced by 1 minus the others (such a corner
+  is not used, as in 0.3.29). The range is exact unless the search is
+  cut off. Interval arithmetic on the monomials puts 4 · p · (1 − p)
+  above 1 near p = 1/2, and
+  (1 − p)² = 1 − 2p + p² above 1 near p = 0, however small the cell;
+  such cells were `not_well_defined` up to 0.3.30. PD+ and PD− are
+  then tried again with the advantages bounded through the Bellman
+  equations of I.9 before the coupled bounds: the values of the
+  successors whose bounds l_p and u_p differ are replaced by their
+  equations in the order in which they appear, at most 16 times and
+  while a polynomial has at most 64 monomials and degree at most 6 in
+  each parameter; the remaining range is searched with 4 bisections, only
+  for the end that the condition needs, and only for the upper bounds
+  that are positive (PD+) or the lower bounds of the commands of τ
+  (PD−). `games_eval.TIGHT_RANGES = False` gives the enclosures by
+  interval arithmetic of 0.3.30, also in the Bellman expansion,
+  `games_eval.UNROLL_ADVANTAGES = False` the maps without the Bellman
+  expansion, and both together the maps of 0.3.30.
 - `cadl model-export` writes the file of I.11 (`smg` and the `player`
   constructs, with the renaming of H.11 and of the keywords that I.11
   adds for a strategic model, and a check that two players do not
@@ -2049,10 +2124,13 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   κ\* through the gains, and the table of λ\* by `--set`; statuses,
   deviators, and `from_every_state`. The maps of the first example
   have 3 cells per design after joining for `comply_by_lambda` (11
-  cells analysed, about 0.4 s for both designs), and 105 and 13 cells
-  after joining (567 and 115 analysed, about 1.5 s) for
-  `comply_by_lambda_and_failure` (CENTRALIZED: 0.811768 `equilibrium`,
-  0.138672 `not_equilibrium`, 203/4096 undecided). Without PD+ and PD−,
+  cells analysed, about 0.4 s for both designs), and 46 and 13 cells
+  after joining (125 and 87 analysed, about 1 s) for
+  `comply_by_lambda_and_failure` (CENTRALIZED: 0.8125 `equilibrium`,
+  0.137695 `not_equilibrium`, 51/1024 undecided). Without the Bellman
+  expansion of the advantages, as up to 0.3.30, they are 105 and 13
+  cells after joining (567 and 115 analysed, about 1.5 s; CENTRALIZED:
+  0.811768, 0.138672, 203/4096). Without PD+ and PD−,
   as up to 0.3.26, they are 257 and 17 cells after joining (3 849 and 271
   analysed, about 6.3 s; CENTRALIZED: 0.808838, 0.141235, 409/8192).
   For `watched_map` a bisection gives 5 cells
@@ -2280,6 +2358,66 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   (`tests/test_games_coupling.py`); the first made no wrong claim of a
   map in 4 500 games, and none on that example, whose probability is
   monotone and convex in p_fail.
+- Exact ranges and the Bellman expansion (`cadl` 0.3.31). The undecided
+  cells were first classified: on uniform partitions (32 intervals for
+  one parameter, 12 per parameter for two, 5 for three) of the maps of
+  the bundled examples, of the second example with three parameters and
+  with (1 − p_fail)², and of 45 games of `tests/games_fuzz.py`, the
+  exact claim was taken at the corners, the face centres, the centre
+  and 4 random points of each undecided cell. Cells on which it
+  changes (2.96 in units of a region) cannot be decided by any
+  sufficient condition. Of the others (6.72), 4.87 were
+  `not_well_defined` from the enclosures by interval arithmetic, and
+  most of the rest came from bounds of advantages that take the value
+  of a successor between l_p and u_p; a corner of a lifted cell never
+  failed the check against the relaxation there, and no design needed
+  more than 10 lifted coordinates. With the changes above the others
+  fall to 0.67, all in four fuzz games with lifted functions (0.62 in
+  two of them) whose coupled bounds stay too wide, and the cells on
+  which the claim changes to 2.90; uniform partitions take about twice
+  as long (19 s instead of 10 s for all of them). With bisection and
+  the default budget (processor time, the maps before and after run
+  together on one machine), the map `comply_by_lambda_and_failure`
+  of the first example reaches the resolution with 125 cells analysed
+  instead of 567. The three-parameter maps above reach the resolution
+  0.1 with 363 and 291 cells instead of 7 987 and 463 (first example,
+  6 s instead of 32 s) and with 4 059 instead of 13 853 (second
+  example, 31 s instead of 84 s). With probabilities that are not
+  multi-affine, the second example reaches it after 5 311 cells (61 s)
+  with (1 − p_fail)², where 0.174 was undecided after 39 999 (291 s),
+  after 11 103 (111 s) with 1 − 4 · p_fail · (1 − p_fail) (0.431 after
+  39 999, 284 s), and after 349 (6 s) with
+  1 − p_fail · q_local · (1 − q_local) (32 083, 199 s); the first
+  example with (1 − p_fail)² reaches it after 2 551 cells (33 s), where
+  0.231 was undecided after 39 999 (152 s). Over the 56 maps of the
+  classification, with a budget of 200 cells for the test and fuzz
+  maps, the mean undecided fraction falls from 0.112 to 0.049. A
+  decided cell never changed its claim: the decided cells of the maps
+  before and after overlap only with the same status (465
+  overlapping pairs on the maps above and on 80 fuzz games), and at the
+  centres of 145 cells decided only after, the equilibrium check of `cadl`
+  gave the claim of the cell and agreed with PRISM-games 3.2.4
+  as described below (509 verdicts and 42 128 state values, no
+  difference).
+- Verification of the exact ranges and the Bellman expansion (`cadl`
+  0.3.31), by the implementer, with the oracle above, which now also
+  compares the bounds of the advantages from l_p and u_p and from the
+  Bellman expansion directly with the advantages at sample points:
+  1 800 games (700 of the default kind and 700 of `--mode nonaffine`,
+  300 of each asking for `every_reachable_state`, 200 with three or
+  four players and both concepts, and 200 of `--mode endpoints`; 1 133
+  with a probability that is not multi-affine) gave 1 297
+  `equilibrium` and 1 690 `not_equilibrium` cells, 59 875 exact point
+  evaluations and 583 214 direct comparisons (417 596 in games that
+  are not multi-affine), with no wrong claim and no bound outside. In
+  2 361 cases a player was decided by PD+ or PD− with the Bellman
+  expansion, and no cell was `not_well_defined`. Two injected errors
+  are each detected by the direct comparison and by wrong claims of
+  maps: the range of a polynomial taken from its values at the corners
+  of the cell, and the values left after the expansion taken as exact
+  at the middle of their bounds. The injected errors of the end points
+  and of N, E1, E2 and N_s are run with the enclosures by interval
+  arithmetic, so that the cells reach the condition they concern.
 - From `cadl` 0.3.27, the export of I.11 is run through
   PRISM-games 3.2.4, the binary release of the PRISM-games project
   (prismmodelchecker.org/games, for macOS arm64 and Linux x86-64). The
