@@ -83,6 +83,10 @@ literal         = string | int_literal | float_literal
                 | bool_literal | duration_lit ;
 ```
 
+A `duration_lit` is an integer followed by its unit: `2.5s` is not a
+duration, and the same time is written `2500ms`. A `string` is delimited
+by double quotes only: `'k'` is not a string.
+
 `identifier` names actors, contracts, protocols, regimes, and metrics.
 `hyphen_name` is used only for extension names and codegen target names
 (for example `sos-dsl`, `unity-csharp`). Numeric literals are unsigned.
@@ -475,9 +479,9 @@ predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
 monitor `rule:`, lifecycle `when:`, and an `on:` that is not a message
 event are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. `cadl` 0.3
-deviates from this appendix as follows (checked against `cadl` 0.3.29).
+deviates from this appendix as follows (checked against `cadl` 0.3.30).
 
-- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.23; no
+- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.30; no
   deviation is known. Up to `cadl` 0.3.17 the unary `-` of `factor` was
   not accepted: an item that used it was kept as an opaque predicate,
   and for a lifecycle `on:` or `when:` or a monitor `rule:`, `cadl check`
