@@ -996,17 +996,17 @@ above with m = 0 and repeating the replacement any number of times
 gives, at every v in C,
 
 ```text
-A_p(s, c, v)  =  C(v) + Σ_x Q_x(v) · V_p(x, v)
+A_p(s, c, v)  =  K(v) + Σ_x Q_x(v) · V_p(x, v)
 ```
 
-where C and the Q_x are polynomials in the open parameters (sums of
+where K and the Q_x are polynomials in the open parameters (sums of
 products of step payoffs and probabilities along the replaced states).
 A state x whose coefficient Q_x(v) is not zero is reached from s at v
-with positive probability under c and then the profile, so it is in
-Reach_p at v when s is; with numbers m_x,
+with positive probability under c or σ(s), and then the profile, so it
+is in Reach_p at v when s is; with numbers m_x,
 
 ```text
-A_p(s, c, v)  ∈  range(C + Σ_x m_x · Q_x) + Σ_x range(Q_x) · [l_p(x) − m_x, u_p(x) − m_x]
+A_p(s, c, v)  ∈  range(K + Σ_x m_x · Q_x) + Σ_x range(Q_x) · [l_p(x) − m_x, u_p(x) − m_x]
 ```
 
 with each range taken on C and the products and sums by interval
@@ -2083,15 +2083,18 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   arithmetic and the Bernstein coefficients gives the outer bound on a
   box, and the box with the largest outer bound is bisected, at the
   zero of the partial derivative when it is affine in that parameter
-  alone, until the two bounds meet or 32 boxes have been bounded. Only
+  alone, until the two bounds meet or after 16 bisections. Only
   the enclosure is refined; the cell is not. The relaxation (the
   intervals of the probabilities, the check that the design is
   well-defined on the cell, and the probabilities that are positive on
   the whole cell), the step payoffs, the bounds of the advantages, and
   the intervals of the lifted coordinates use it. A probability
   a + b · R gets a + b times the range of R, so the corners of the
-  lifted cell stay within the intervals of the relaxation. Interval
-  arithmetic on the monomials puts 4 · p · (1 − p) above 1, and
+  lifted cell stay within the intervals of the relaxation, except where
+  a lifted polynomial was replaced by 1 minus the others (such a corner
+  is not used, as in 0.3.29). The range is exact unless the search is
+  cut off. Interval arithmetic on the monomials puts 4 · p · (1 − p)
+  above 1 near p = 1/2, and
   (1 − p)² = 1 − 2p + p² above 1 near p = 0, however small the cell;
   such cells were `not_well_defined` up to 0.3.30. PD+ and PD− are
   then tried again with the advantages bounded through the Bellman
@@ -2099,12 +2102,13 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   successors whose bounds l_p and u_p differ are replaced by their
   equations in the order in which they appear, at most 16 times and
   while a polynomial has at most 64 monomials and degree at most 6 in
-  each parameter; the remaining range is searched with 8 boxes, only
+  each parameter; the remaining range is searched with 4 bisections, only
   for the end that the condition needs, and only for the upper bounds
   that are positive (PD+) or the lower bounds of the commands of τ
-  (PD−). `games_eval.TIGHT_RANGES = False` gives the enclosures of
-  0.3.30, and `games_eval.UNROLL_ADVANTAGES = False` the maps without
-  the Bellman expansion.
+  (PD−). `games_eval.TIGHT_RANGES = False` gives the enclosures by
+  interval arithmetic of 0.3.30, also in the Bellman expansion,
+  `games_eval.UNROLL_ADVANTAGES = False` the maps without the Bellman
+  expansion, and both together the maps of 0.3.30.
 - `cadl model-export` writes the file of I.11 (`smg` and the `player`
   constructs, with the renaming of H.11 and of the keywords that I.11
   adds for a strategic model, and a check that two players do not
@@ -2387,8 +2391,9 @@ as follows. Up to 0.3.22, `cadl check` reported the extension name
   example with (1 − p_fail)² reaches it after 2 551 cells (33 s), where
   0.231 was undecided after 39 999 (152 s). Over the 56 maps of the
   classification, with a budget of 200 cells for the test and fuzz
-  maps, the mean undecided fraction falls from 0.112 to 0.049. A decided cell never changed its claim: the decided cells of
-  the maps before and after overlap only with the same status (465
+  maps, the mean undecided fraction falls from 0.112 to 0.049. A
+  decided cell never changed its claim: the decided cells of the maps
+  before and after overlap only with the same status (465
   overlapping pairs on the maps above and on 80 fuzz games), and at the
   centres of 145 cells decided only after, the equilibrium check of `cadl`
   gave the claim of the cell and agreed with PRISM-games 3.2.4
