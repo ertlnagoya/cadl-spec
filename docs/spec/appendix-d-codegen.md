@@ -229,7 +229,10 @@ with two to four or with one inside another, the items, and the events,
 messages, counts-as rules and powers, so that each runtime code stays within the size limit of
 EIP-170. From `cadl` 0.3.28 the runtime code of the contract is
 estimated at 16 840 bytes, which leaves more than
-7 × 10<sup>3</sup> bytes below that limit (24 410 in 0.3.27). From `cadl` 0.3.29 the
+7 × 10<sup>3</sup> bytes below that limit (24 410 in 0.3.27); from `cadl`
+0.3.30, without the `frozen` flag of a norm, which the engine no longer
+needs (F.7, N-16), it is estimated at 16 670 bytes, and `CadlNormsActs`
+at 12 080 bytes (12 170 before). From `cadl` 0.3.29 the
 libraries `CadlNormsMulti` and `CadlNormsEval` are estimated at 7 490 and
 10 410 bytes (4 430 and 10 310 in 0.3.28), and the size of the code does
 not depend on the number of temporal operators. The cost of an
