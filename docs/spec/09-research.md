@@ -300,9 +300,10 @@ counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
 design-time checking that F.12 does not cover (nonlinear arithmetic
 over a quantity without a given domain, which is checked only under a
-domain assumed from the literals of the predicate, groups of five or
-more quantities compared with each other, and of four whose valuations
-exceed the limit, instances of different contracts
+domain assumed from the literals of the predicate, groups of compared
+quantities whose elimination exceeds the limit, such as a leaf that
+reads many of them at once or all pairs of six or more members compared
+asymmetrically, instances of different contracts
 together, more than four instances, sets of actors whose size is not fixed, continuous
 time, and which party can avoid a violation),
 monitoring in the Unity C#
