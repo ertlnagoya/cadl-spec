@@ -108,6 +108,14 @@ sos:
 
 コース A のロボット配送と同じ Acknowledged 型 SoS です。
 
+```mermaid
+flowchart TD
+  PA["PASSENGER[1..M]<br/>autonomy: medium<br/>乗車を要求する"] -->|乗車要求| PF["PLATFORM<br/>autonomy: low<br/>マッチング"]
+  PF -->|match_assignment| TX["TAXI[1..N]<br/>autonomy: high<br/>自己利益で動く"]
+  TX -->|"ack(accepted)"| PF
+  TX -->|乗せて運ぶ| PA
+```
+
 :::tip[可視化チェックポイント 0 — 構造だけの仕様で何が得られるか]
 ここまでで読んだのは CADL の構造（actors）だけです。
 ファイルを検査し、契約の規範部分が IR にどれだけ入っているかを表示してみます。
@@ -319,6 +327,20 @@ python scripts/analyze_results.py
 - `deadlines`（matching/accept）は SUMO 上に対応するイベントがないので未評価。
 - `monitors` は、乗客ごとの `waiting_time`（`Matched` の間）、`battery`、`route_deviation_ratio` を見ており、いずれも SUMO の標準出力にない属性なので未評価。
 
+```mermaid
+flowchart LR
+  subgraph K["cadl_constraints.json（契約から）"]
+    G["guarantee 2 件<br/>waiting_time、ride_time"]
+    D["deadline 2 件<br/>match、accept"]
+    M["monitor 3 件"]
+  end
+  T["tripinfo.xml<br/>waitingTime、duration"]
+  G --> E["評価する<br/>[OK] または [VIOLATED]"]
+  T --> E
+  D --> S1["[SKIP]<br/>SUMO に対応するイベントがない"]
+  M --> S2["[SKIP]<br/>SUMO が観測量を出力しない"]
+```
+
 :::tip[可視化チェックポイント 3 — 仕様と実装の対応を確認]
 `analyze_results.py` の `[OK]` / `[SKIP]` の各行と cadl-explorer の図は、同じ CADL から作られたものです。
 ブラウザで cadl-explorer を開き、次の対応を確かめてください。
@@ -340,6 +362,15 @@ python scripts/analyze_results.py
 ## 8. 感度解析：契約条件を変えて再評価する（10 分）
 
 このコースで最も重要な章です。CADL の guarantee を書き換えるだけで、SUMO を再実行しなくても違反件数が変わることを確かめます。
+
+```mermaid
+flowchart TD
+  E["mobility_sos.cadl を編集<br/>ride_time #lt;= 100s"] -->|cadl sim-ir| IR["IR JSON"]
+  IR -->|cadl_to_sumo.py| C["cadl_constraints.json"]
+  C --> AN["analyze_results.py"]
+  R["results/tripinfo.xml<br/>前回の SUMO の実行結果<br/>（SUMO は再実行しない）"] --> AN
+  AN --> O["[VIOLATED (12)] ride_time"]
+```
 
 ```bash
 # ride_time を 1800s → 100s に書き換え (試験用)

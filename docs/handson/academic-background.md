@@ -39,6 +39,17 @@ It emerges from independent actors each pursuing their own interests.
 That **is** a System of Systems — multiple independent systems, cooperating or competing,
 together forming a larger whole.
 
+The arrows below are the exchanges between the actors. None of them employs another.
+
+```mermaid
+flowchart TD
+  CU["Customer"] -->|order, payment| PF["Platform (app company)<br/>matches orders and couriers"]
+  PF -->|order| RE["Restaurant<br/>sets its own hours and prices"]
+  PF -->|delivery request| CO["Courier (gig worker)<br/>sets their own hours"]
+  RE -->|meal| CO
+  CO -->|delivery| CU
+```
+
 ### Maier's five criteria — the SoS litmus test
 
 Academically, Maier (1998) defines an SoS by five criteria. At minimum (1) and (2) must hold.
@@ -64,6 +75,12 @@ Academically, Maier (1998) defines an SoS by five criteria. At minimum (1) and (
 
 > The SoS type is not fixed in time. A disaster typically *starts* Virtual; once a municipal emergency operations centre stands up, coordination becomes Collaborative; once a legally designated incident commander takes over, it shifts toward Acknowledged. SoS classifications describe a slice in time, not a permanent label.
 
+```mermaid
+flowchart TD
+  V["Virtual<br/>first hours after a disaster"] -->|"an emergency operations<br/>centre starts working"| C["Collaborative"]
+  C -->|"a commander is<br/>designated by law"| A["toward Acknowledged"]
+```
+
 ### Four taxonomic types — by strength of central authority
 
 Even within the umbrella term "SoS", systems differ by how strong the central authority is.
@@ -74,6 +91,16 @@ Even within the umbrella term "SoS", systems differ by how strong the central au
 | **Acknowledged** | SoS-level authority recognised, but components keep ownership | International space missions, **Course A's robot delivery** (as modelled in its CADL files; see the note above), **Course B's taxi dispatch** |
 | **Collaborative** | No single authority; participants cooperate via shared agreements (protocols, conventions) | The Internet, peer-to-peer-leaning food-delivery cooperatives, **Course D's robot town** (three companies agree on the town's rules) |
 | **Virtual** | No central management, no agreed common goal; coordination is emergent | The World Wide Web; the first hours of a major disaster, before any incident command has formed |
+
+```mermaid
+flowchart TD
+  subgraph AX["central authority: strong → weak"]
+    direction TB
+    DI["Directed<br/>top-down command"] --> AC["Acknowledged<br/>SoS-level authority;<br/>components keep ownership<br/>(Courses A, B)"]
+    AC --> CO["Collaborative<br/>shared agreements,<br/>voluntary cooperation<br/>(Course D)"]
+    CO --> VI["Virtual<br/>no central management,<br/>no agreed goal"]
+  end
+```
 
 > 💡 **Course A and B are both declared `type: Acknowledged`; only the domain changes.**
 > Course D's town is declared `type: Collaborative`. Course C asks you to pick your own domain and classify it yourself.
@@ -93,6 +120,25 @@ We've seen that an SoS is "many independent actors". Try writing the rules in pl
 
 In short: ordinary languages can't naturally express both
 "actors are independent" *and* "the whole still has to obey collective rules".
+
+```mermaid
+flowchart TB
+  subgraph P["Plain language only"]
+    direction TB
+    R1["Rule<br/>(comment, verbal agreement)"]
+    R1 -.->|copied by hand| U1["Unity code<br/>if statement"]
+    R1 -.->|copied by hand| S1["SUMO code<br/>if statement"]
+    R1 -.->|copied by hand| T1["Robot code<br/>if statement"]
+  end
+  subgraph Q["With CADL"]
+    direction TB
+    R2["CADL file<br/>the rule in one place"]
+    R2 -->|generated| U2["Unity"]
+    R2 -->|generated| S2["SUMO"]
+    R2 -->|interpreted| T2["reference runtime"]
+  end
+  P ~~~ Q
+```
 
 ---
 
@@ -116,6 +162,17 @@ All of this lives in **one YAML file**. From there:
 - **Result check** (the `analyze_results.py` script of Course B) — check simulation outputs against the contract's `guarantee` clauses
 
 are all **derived from the same CADL source** — the contract becomes the **single source of truth**.
+
+```mermaid
+flowchart TD
+  F["CADL file (YAML)<br/>actors / contracts /<br/>lifecycle / monitors"]
+  F -->|cadl codegen| U["Unity C#"]
+  F -->|cadl sim-ir| IR["IR (JSON)"]
+  IR --> V["cadl-explorer<br/>state-machine view"]
+  IR --> PY["Python reference runtime<br/>(interprets the IR)"]
+  IR -->|cadl_to_sumo.py| SU["SUMO configuration<br/>and contract constraints"]
+  SU --> AN["analyze_results.py<br/>checks the guarantees"]
+```
 
 ### What is the SoS-DSL extension?
 

@@ -16,6 +16,16 @@ Pick a domain other than robot delivery — recommended: **food delivery (modell
 4. Exercise the specification with a runtime of your choice. The suggested default is a lightweight Python discrete-event harness (for example SimPy) that replays the lifecycle from the IR JSON (`cadl sim-ir --format json`); Unity is not required. No harness is provided — writing it is part of the task.
 5. Sweep parameters and write a comparison report (the 3-page format of Exercise 9.4 in [Chapter 9 of the textbook](../textbook/09-improve.md) works well).
 
+```mermaid
+flowchart TD
+  S1["1. Identify actors and contracts"] --> S2["2. Classify the SoS type<br/>and declare type:"]
+  S2 --> S3["3. Write lifecycle: and monitors:<br/>cadl check, cadl-explorer"]
+  S3 -->|"cadl sim-ir --format json"| IR["IR JSON"]
+  IR --> S4["4. Run it on a runtime you choose<br/>(e.g. a SimPy harness you write)"]
+  S4 --> S5["5. Parameter sweep<br/>and comparison report"]
+  S5 -.->|revise the specification| S3
+```
+
 Course C needs only the public repositories (`cadl`, `cadl-explorer`).
 
 For the academic positioning of this course (Maier criteria, ISO standards, taxonomy), see [`academic-background.md`](academic-background.md).

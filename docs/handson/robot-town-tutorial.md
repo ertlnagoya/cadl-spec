@@ -142,6 +142,37 @@ Open `cadl/robot_town.cadl`. The town has two contracts.
 
 (Excerpt, simplified.)
 
+The two lifecycles, as state machines:
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "DELIVERY_SLA (one per order)" as SLA {
+    [*] --> Assigned
+    Assigned --> PickedUp: pickup within 120 s
+    PickedUp --> Delivered: dropoff within 120 s
+    Assigned --> Late: pickup deadline missed (Major)
+    PickedUp --> Late: dropoff deadline missed (Major)
+    Delivered --> [*]
+    Late --> [*]
+  }
+```
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "ROAD_USE (one per stop on the road)" as RU {
+    [*] --> Holding
+    Holding --> Released: release within 60 s
+    Holding --> Overstay: 60 s passed (Minor)
+    Overstay --> Released: release
+    Holding --> Evicted: blocking_guard, 3 or more robots blocked (Major)
+    Overstay --> Evicted: blocking_guard (Major)
+    Released --> [*]
+    Evicted --> [*]
+  }
+```
+
 A line tagged `# @amend:<name>` holds a parameter that may be amended. When several lines carry
 the same name (the pickup guarantee and the pickup deadline), they must all hold the same value.
 Which **layer** a parameter belongs to and how far it may move is set by `constitution.yaml`:
@@ -178,6 +209,12 @@ garage; **B** waits on the road for its next order but leaves 5 s before `hold_l
 wait on the road at all if a single waiting robot triggers eviction (`block_k` of 1); **C** waits
 until an order comes or it is evicted, unless `sanction_lambda` reaches 1.5, when it behaves like
 B. A robot stopped at an intersection blocks everyone who wants to pass through it.
+
+The road network has 11 nodes and 17 roads (`town/world.py`). The garages of A, B and C are
+nodes 10, 9 and 4 (yellow). A robot that waits on the road waits at the central intersection 8
+(purple), the most convenient place to wait.
+
+![Road network of the robot town: the outer ring of nodes 0 to 7, the central intersection 8, and the garages 10 (A), 9 (B) and 4 (C)](/img/handson/robot-town-roads.svg)
 
 ### Exercise 2-1
 
@@ -330,6 +367,17 @@ The loop does not decide when a proposal raises any of the following (`triage()`
 | Uncertain | it passes every gate but improves on fewer than 4 of the 5 seeds |
 | LLM | the LLM itself said a human should decide (only for proposals that keep the constitution's invariants) |
 
+Each proposal passes through the gates in this order before the triage:
+
+```mermaid
+flowchart TD
+  P["LLM's proposals"] --> G["gates, in order<br/>1. check (cadl)<br/>2. constitution: range, step, invariants<br/>3. improvement on the same seeds,<br/>KPI conditions<br/>4. company vote"]
+  G -->|"fails 1 or 2"| X["dropped"]
+  G --> T["triage()<br/>does a proposal raise agreement, contract,<br/>regulation, safety, KPI conflict, uncertain, LLM?"]
+  T -->|no| AUTO["adopt the passing proposal<br/>with the best KPI automatically<br/>(or keep the rules)"]
+  T -->|yes| REQ["decision request D#lt;k#gt;<br/>the human chooses<br/>and writes the reason"]
+```
+
 Here proposal 1 raises *agreement* and R1 raises *regulation*. The LLM writes decision request D1,
 saved as `runs/try-d-en/p1-request.md`:
 
@@ -384,6 +432,20 @@ Each decision goes into two files in `runs/<name>/`:
 | Context | the measure of the KPI; the period's environment |
 | Assumption | assumptions written by the human |
 | Justification | the human's reason (or, for an automatic decision, its condition) |
+
+The tree in `gsn.md` has this shape. Solid arrows are *supported by*; dotted arrows are *in context of*.
+
+```mermaid
+flowchart TD
+  G0["Goal<br/>the town keeps meeting the KPIs set by the human"] --> S0[/"Strategy<br/>argue per version of the KPI"/]
+  S0 --> G1["Goal<br/>KPI from period k"]
+  G1 -.-> C1("Context<br/>measure of the KPI")
+  G1 -.-> J1(["Justification / Assumption<br/>the human's answer to K#lt;k#gt;"])
+  G1 --> S1[/"Strategy<br/>period k: the decision"/]
+  S1 --> SN(("Solution<br/>p#lt;k#gt;-evidence.md"))
+  S1 -.-> C2("Context<br/>environment of period k")
+  S1 -.-> J2(["Justification / Assumption<br/>the human's answer to D#lt;k#gt;"])
+```
 
 Reasons may be written in prose or as GSN elements; in the `--answers` YAML, list elements (each
 with `type:` and `text:`) under `gsn:`. For example (the recorded answer to D2 gives its reason in
@@ -453,6 +515,14 @@ some). The current rules are re-measured in each period's environment before bei
 | 4 (busy + rush) | none (the LLM proposes nothing) | — | — | v2 (automatic) |
 | 5 (quiet) | see §7 | 1 | `hold_limit 60s → 70s` | v3 |
 | 6 (quiet) | KPI conflict (`hold_limit 70s → 80s` widens the spread of on-time rates from 0.02 to 0.05) | keep | keep | v3 |
+
+```mermaid
+flowchart TD
+  V1["v1<br/>block_k 3<br/>hold_limit 60s"] -->|"period 1 (D1)<br/>block_k 3 → 2"| V2["v2<br/>block_k 2<br/>hold_limit 60s"]
+  V2 -->|"periods 2–4<br/>no change"| V2
+  V2 -->|"period 5 (D5, new KPI)<br/>hold_limit 60s → 70s"| V3["v3<br/>block_k 2<br/>hold_limit 70s"]
+  V3 -->|"period 6<br/>no change"| V3
+```
 
 The Japanese record (`examples/steward-d/`) ends with the same six outcomes, because the human
 answered the same way; the LLM's proposals and recommendations differ in places (see §10).
@@ -652,6 +722,13 @@ The switching conditions are written in the CADL file and evaluated every 5 minu
       to: DISTRIBUTED
       condition: "orders_in_window >= 26"     # @amend:to_distributed
       protocol: SWITCH
+```
+
+```mermaid
+flowchart TD
+  D["DISTRIBUTED"] -->|"fewer than 22 orders<br/>in the last 5 min"| SW["switching<br/>wait until no robot waits on the road;<br/>after 60 s the steward evicts the rest"]
+  SW -->|"no robot on the road;<br/>safety_invariant is checked"| C["CENTRALIZED"]
+  C -->|"26 or more orders<br/>in the last 5 min"| D
 ```
 
 A switch to centralized takes effect only once no robot is waiting on the road (C stalls for 30 s;
