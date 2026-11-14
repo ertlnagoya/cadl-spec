@@ -1312,10 +1312,14 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   negation, over an operand without a temporal operator: it decides the
   inner operator per observation and feeds the decided values to the
   outer one in the order of the observations, which D.5 proves equal to
-  F.5. It refuses five or more temporal operators in one content,
-  `until` in a nesting, other operands with a temporal operator inside,
-  three levels, and a temporal operator inside another one outside the
-  content of a norm. Its main contract
+  F.5. From `cadl` 0.3.31 it decides five temporal operators in one
+  content (nodes of 25 words) and any number of levels of such nesting
+  (`within(5s, throughout(3s, NOT within(1s, p)))`): each level feeds
+  its decided values to the level above in the order of the
+  observations, in runs of equal values. It refuses six or more temporal
+  operators in one content, `until` in a nesting, other operands with a
+  temporal operator inside, and a temporal operator inside another one
+  outside the content of a norm. Its main contract
   then leaves more than 7 × 10<sup>3</sup> bytes below the limit of
   EIP-170. The Rego monitor refuses `/`, whose result is not always
   a decimal number. Both compute numbers and times exactly, as F.5 says,
