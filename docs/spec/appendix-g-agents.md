@@ -1925,17 +1925,31 @@ are these.
   keeps at most 4 open connections of one remote address (an IPv4
   address or an IPv6 /64; `--max-grpc-connections-per-address`), 16 of
   one IPv4 /24 or IPv6 /48 (`--max-grpc-connections-per-prefix`), and 64
-  in all (`--max-grpc-connections`); a connection beyond them is reset at
-  once and recorded at the capped rate (`overloaded`, `connections`). A
+  in all (`--max-grpc-connections`); a connection beyond the cap of its
+  address or prefix is reset at once and recorded at the capped rate
+  (`overloaded`, `connections`). From `cadl` 0.3.31, a connection that
+  finds only the cap in all reached waits for a place up to
+  `--grpc-connection-wait` (10 seconds; 0 resets it at once): at most 64
+  connections wait, a waiting connection counts against the caps of its
+  address and prefix, and a place that comes back goes, before any new
+  connection, to the waiting connection whose address, then whose /24
+  or /48, holds the fewest connections (then to the one that came
+  first); one that gets no place is reset and recorded as above. A
   connection on which no call has reached the gateway within the read
-  deadline (`--read-timeout`, counted from its accept) is reset and
-  recorded (`read_timeout`, `grpc handshake`): one that sends nothing,
-  never starts or never ends TLS, sends its handshake a byte at a time,
-  or is half-open. A call that gRPC refuses before the gateway sees it
-  (an unknown method, or one beyond the workers) does not count, since
-  `grpcio` offers no hook for it, and a client that opens its channel
-  before its first call and waits longer than the deadline is also
-  reset; such clients connect again. After its first call, the gRPC
+  deadline (`--read-timeout`, counted from its accept or from the end
+  of its wait) is reset and recorded (`read_timeout`, `grpc handshake`):
+  one that sends nothing, never starts or never ends TLS, sends its
+  handshake a byte at a time, or is half-open. From `cadl` 0.3.31 a
+  call that gRPC refuses itself before a handler runs (an unknown
+  method, `UNIMPLEMENTED`, or one beyond the workers,
+  `RESOURCE_EXHAUSTED`) counts as a call of its connection, with TLS as
+  without. `grpcio` offers no public hook for it, so the gateway wraps
+  the internal function of `grpcio` that refuses such a call
+  (`grpc._server._reject_rpc`, only when it has the expected
+  parameters) and looks up the peer of the call; with a `grpcio`
+  without it these calls do not count, as in 0.3.30. A client that
+  opens its channel before its first call and waits longer than the
+  deadline is still reset, and connects again. After its first call, the gRPC
   server closes a connection that has had no call for 2 minutes, and one
   with a call open whose peer does not answer a ping (sent after 60
   seconds without data) within 20 seconds. The front listener reads the
@@ -1945,6 +1959,17 @@ are these.
   more waits for the client, or the gRPC server does not take the
   client's bytes, and that backlog does not drain within 30 seconds,
   both sides are reset and recorded (`read_timeout`, `grpc stalled`).
+  From `cadl` 0.3.31 every connection ends: the gRPC server sends
+  GOAWAY at `--grpc-max-connection-age` (300 seconds, with a jitter of
+  10 %) and closes the connection at most
+  `--grpc-max-connection-age-grace` (60 seconds) later, and the front
+  listener resets a connection still open at the read deadline + 1.1 ×
+  age + grace + 10 seconds after its accept (`read_timeout`, `grpc age`).
+  An honest client that keeps its channel open sees the GOAWAY: its
+  calls under way go on, its channel opens a new connection for its next
+  calls (which may wait for a place), and a stream still open at the end
+  of the grace (`SendStreamingMessage`, `SubscribeToTask`) ends with
+  `UNAVAILABLE`, after which the client subscribes to the task again.
   A connection counts against the caps until its sockets are closed.
   Each connection to the gRPC server comes from an address of its own (a Unix
   socket bound to a path of its own, or a port of its own), which gRPC
@@ -1956,14 +1981,21 @@ are these.
   concurrent calls (16 streams each), of which at most 4 wait for their
   message; one /24 or /48 has at most 16 connections and 256 calls; all
   clients together have at most 64 connections, and the workers bound the
-  calls in all. What remains: any call, even one refused for its header,
+  calls in all, and each connection lasts at most 1.1 × 300 + 60 + 5 =
+  395 seconds after its handshake (the age, the grace and the close by
+  the front listener) and 410 seconds after its accept, with the
+  defaults. What remains: any call, even one refused for its header,
   keeps its connection past the deadline. Without mutual TLS, hosts with
   at least 16 addresses in at least 4 networks can therefore hold the 64
-  connections, each until it has had no call for 2 minutes and 5 seconds
-  more (30 seconds when more than 256 KiB wait for a client that does not
-  read; a client that keeps reading slowly can add the time it takes to
-  read what already waits), and the gateway refuses new gRPC connections
-  meanwhile; with mutual TLS only
+  connections, each up to that bound, and connect again as soon as one
+  ends. A client that waits for a place when one comes back gets it
+  before them if its address and its /24 or /48 hold fewer connections
+  than those of the other waiting connections; a client that is not
+  waiting at that moment (it waited 10 seconds in vain, and its channel
+  backs off before it tries again) can be kept out for as long as they
+  connect again at once, and hosts with 16 more addresses in 4 more
+  networks can also fill the 64 places to wait and come before it when
+  they came first. With mutual TLS only
   holders of a client certificate of the CA get as far as a call. Behind
   a proxy every client has the address of the proxy, so the caps per
   address and per prefix are raised there.
@@ -2173,8 +2205,13 @@ connections from one address and from one network, connections that
 send nothing, never start TLS or send their handshake a byte at a time,
 half-closed and half-open connections, a client that stops reading
 after its call, the real address of the client
-behind the splice, and an authenticated call of another address served
-while one address holds all its connections, over mutual TLS). In each,
+behind the splice, an authenticated call of another address served
+while one address holds all its connections, over mutual TLS, and from
+`cadl` 0.3.31 calls refused by gRPC itself (an unknown method, over
+mutual TLS, and no free worker) that keep their connection, the end of
+a connection at its age with a stream under way, the reset of a
+connection that gRPC keeps past its age, and the order in which waiting
+connections get a place). In each,
 the agent receives nothing that was not allowed or released, no
 notification reaches a client that did not register it, and
 `cadl agents-run` writes the same audit log. An independent review of
