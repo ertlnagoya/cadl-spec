@@ -326,7 +326,9 @@ at the observation of a candidate and obtains its value for each of the
 4<sup>m</sup> combinations of values of the operators (undecided, true,
 false, undefined), as bits of one 256-bit word for m ≤ 4 and of four
 words for m = 5 (combination c is bit c mod 256 of word ⌊c / 256⌋); this
-covers a comparison of two operators (`within(…) == throughout(…)`). An observation decides an
+covers a comparison of two operators (`within(…) == throughout(…)`).
+An `IN` with temporal operators in its operands is read once for each
+combination, at most 4<sup>5</sup> = 1024 times, a bounded cost. An observation decides an
 operator for a range of candidates at a time: the candidates whose
 window is over become false (`throughout`: true), or undefined when an
 operand was undefined in the window; an operand true for `within`,
@@ -414,13 +416,19 @@ n.
    in [a, e] for a run [s, e] of undefined values. By 1 the decided
    observations are those before the largest of F, the first observation
    with t<sub>j</sub> + e ≥ τ, and e + 1 for the runs of decisive values.
-   The value changes only at some a, e + 1, or u + 1, so r runs fed to a
-   level give at most 2r + 2 runs of its own values; the summary keeps F
-   and u only. The first level receives one run, the value of p at n,
-   and gives at most three: undefined up to u, final, and decisive from a
-   when p is decisive at n; a chain of k
-   levels feeds at most 3, 8, 18, … runs (2r + 2 per level) to the outer
-   operator.
+   The value changes only at some a, e + 1, or u + 1; the summary keeps
+   F and u only. At every observation the runs fed to a level, and to the
+   outer operator, have all their undefined runs before every true or
+   false run: the window of an observation not decided at n − 1 reaches
+   G<sub>n−1</sub> − 1, and if j<sub>1</sub> &lt; j<sub>2</sub> are
+   decided at n with j<sub>1</sub> true or false and j<sub>2</sub>
+   undefined, the value that decides j<sub>1</sub> lies in the window of
+   j<sub>2</sub> too (by induction over the levels, starting from the one
+   run of p). Hence a level gives at most three runs: undefined, final,
+   and decisive, in this order, at any depth, and the gas per level does
+   not depend on the depth. The first level receives one run, the value
+   of p at n, and gives undefined up to u, final, and decisive from a
+   when p is decisive at n.
 3. The outer operator (duration d) treats its candidates in the same
    way. A run [s, e] of decisive values decides the candidates k ≤ e with
    t<sub>k</sub> + d ≥ t<sub>s</sub>. Then, with τ as in 2 for the last
@@ -459,15 +467,17 @@ p and q true at t = 1, the inner value at t = 1 is true at once, so the
 outer operator at t = 0 is true at t = 1 in F.5, while the inner value at
 t = 0 stays undecided until its window ends after t = 3. In
 `within(d, throughout(e, p) AND r)` a false r decides the operand at
-once. Deciding the values out of order would not keep the cost bounded:
+once. For such an operand, deciding the values out of order would not
+keep the cost bounded:
 after a gap in the times, one observation decides the inner values of
 all observations of a long stretch at once, and the operand is then true
 exactly at those with r true, so the candidates whose window holds such
 an observation become true and the others stay as they were, which can
 alternate from one candidate to the next as often as there are
 candidates; one observation would change that many ranges of the tree.
-Whether these contents can be monitored with bounded gas in some other
-way is left open.
+For `until` in a nesting no construction with bounded gas is known
+either. Whether these contents can be monitored with bounded gas in some
+other way is left open.
 
 The tree is not pruned: each activation of such a norm
 adds at least three storage slots per candidate (its observation, its
