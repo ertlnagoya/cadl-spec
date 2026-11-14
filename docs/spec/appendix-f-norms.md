@@ -332,8 +332,9 @@ compared with a text value, by `==`, `!=`, or `IN`; a predicate that
 uses it in another way is undefined.
 
 Arithmetic (`+`, `-`, `*`, `/`) is defined on numbers only. An operand
-that is a text, a truth value, or a symbolic value, and a division by
-zero, make the expression undefined at that observation. When the
+that is a text, a truth value, a list, an object, or a symbolic value,
+and a division by zero, make the expression undefined at that
+observation. When the
 operand is a quantity, this is known only from its value, and a
 processor reports it as a warning of the evaluation. When it is a
 string or truth literal, or the divisor is the literal `0`, the
@@ -1311,10 +1312,14 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   negation, over an operand without a temporal operator: it decides the
   inner operator per observation and feeds the decided values to the
   outer one in the order of the observations, which D.5 proves equal to
-  F.5. It refuses five or more temporal operators in one content,
-  `until` in a nesting, other operands with a temporal operator inside,
-  three levels, and a temporal operator inside another one outside the
-  content of a norm. Its main contract
+  F.5. From `cadl` 0.3.31 it decides five temporal operators in one
+  content (nodes of 25 words) and any number of levels of such nesting
+  (`within(5s, throughout(3s, NOT within(1s, p)))`): each level feeds
+  its decided values to the level above in the order of the
+  observations, in runs of equal values. It refuses six or more temporal
+  operators in one content, `until` in a nesting, other operands with a
+  temporal operator inside, and a temporal operator inside another one
+  outside the content of a norm. Its main contract
   then leaves more than 7 × 10<sup>3</sup> bytes below the limit of
   EIP-170. The Rego monitor refuses `/`, whose result is not always
   a decimal number. Both compute numbers and times exactly, as F.5 says,
@@ -1405,6 +1410,29 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   detected 13. The 14th, at most two different objects, gives the same
   choices, because lists that are pairwise not comparable behave as
   different objects do.
+- From `cadl` 0.3.31, arithmetic with a list or an object operand is
+  undefined in `cadl norms-eval`, the Python monitor, and the agents
+  runtime, as above; up to 0.3.30 they applied Python's operators
+  (`[1] + [1]` was `[1, 1]`, `2 * [0]` was `[0, 0]`).
+- From `cadl` 0.3.31, `cadl norms-check` translates by elimination
+  (F.12) the components that 0.3.30 refused: five or more quantities
+  compared with each other, four or more ordered quantities with a
+  domain, given or assumed, and four or more ordered quantities with
+  linear arithmetic, within the limit on face points. The components that 0.3.30 translated keep their
+  valuations and models. Measured on a loaded machine: chains of 5, 6,
+  8, and 12 ordered quantities in less than a second; a contract with
+  four predicates over a chain of 8 has 66 choices and is checked with
+  PRISM in about 12 seconds, with every witness confirmed;
+  `exists j in R: exists k in R: R[j].load < R[k].load` over 6 members
+  in about 1 second and over 8 in about 12; five ordered quantities
+  with linear arithmetic in about 4 seconds; `max(r.load for r in R) >
+  D.load` over 5 members in about 40 seconds, and over 6 it is refused.
+  The elimination is compared with the classes, the valuations by types
+  and patterns, and the points of the arrangement on every component of
+  the test contracts and examples, also when it keeps the lists; with
+  random JSON values of every type for 5 to 12 quantities and for six
+  members; with itself without the symmetry; and, in the long tests,
+  with all valuations by types and patterns of five ordered quantities.
 - The other components read a wildcard reference outside a domain in
   their own way, and `cadl` 0.3.24 does not change them. `cadl verify`
   reads `A[*].q` as one unconstrained variable per group, shared by
@@ -1709,11 +1737,10 @@ At each observation the environment chooses three things.
    not lists), and 46 285 with one more numeric literal. A group of
    five or more quantities with the same classes compared with each
    other, ordered or only tested for equality, has at least 424 213
-   valuations, more than the limit of 50 000 (Limits), and is not
-   translated. Neither are four or more quantities ordered against each
-   other whose classes differ, or that are in a component with linear
-   arithmetic below. The processor names the numbers of patterns per
-   type and of valuations in its refusal.
+   valuations, more than the limit of 50 000 (Limits). Such a component
+   is translated by elimination, below, and so are four or more
+   quantities ordered against each other whose classes differ, or that
+   are in a component with linear arithmetic below.
 
    Arithmetic (`+`, `-`, `*`, `/`), `sum`, and `avg` are **linear** when
    every product has a literal factor and every divisor is a literal
@@ -1795,6 +1822,81 @@ At each observation the environment chooses three things.
    implementation marks every norm whose trigger, `until:`, or content,
    or a counts-as rule, reparation, or power on which it depends, reads
    such a quantity, and every finding about such a norm.
+
+   **Elimination.** When the valuations by types and patterns of a
+   component exceed 50 000, when a group of four or more quantities
+   ordered against each other cannot take them because its quantities
+   do not have the same classes (one has a domain, given or assumed,
+   keeps only the classes that its comparisons tell apart, or has other
+   literals), and, in a component with linear arithmetic, when it has
+   four or more ordered quantities or its classes and points of faces
+   exceed 50 000, the processor finds the
+   combinations of predicate values without building every valuation.
+   The model needs only these combinations: two valuations that give
+   every predicate the same value are one choice, and the 26 035
+   valuations of four ordered quantities without other literals give a
+   contract with four predicates over them 34 combinations. Each
+   predicate is built from **leaves** (comparisons, quantities used as
+   conditions, `IN`, and aggregates) by Kleene's `AND`, `OR`, and `NOT`
+   and by `exists` and `for all`, which are a disjunction and a
+   conjunction over the members of their domain (with the value
+   undefined added for an open domain). A leaf reads a few quantities,
+   and by the arguments above its value depends only on the **pattern**
+   of these quantities: the type of each one, the literal that it
+   equals or the gap that it lies in, and, for two quantities of one
+   group with values of the same kind, their relation (the order of two
+   numbers or two texts in one gap, the equality of two objects, the
+   outcome of two lists; only the equality when no comparison of the
+   group orders its quantities). The quantities are added one at a time,
+   in an order that keeps few of them pending. A state is what remains
+   of each predicate when the leaves whose quantities have all been
+   added are replaced by their values and the rules of Kleene's logic
+   are applied, together with the pattern of the added quantities that
+   a remaining leaf still reads. States with the same remainder and the
+   same pattern are merged, since every continuation gives them the same
+   values. Every pattern of all the quantities passes through one state
+   at every step, so every combination that a trace gives is found. This
+   rests on two facts: the value of a leaf is decided by the pattern of
+   the quantities that it reads, because comparisons of values of
+   different types are decided by the types, except that an ordering
+   compares true as 1 and false as 0, which the classes include, and
+   arithmetic has a value only on numbers (above); and the members of the domain of a
+   quantifier or aggregate do not depend on the values of the
+   quantities. Each
+   state also keeps one pattern of all the quantities added so far that
+   leads to it, in which a new quantity is placed against the others as
+   the state says and in any consistent way against the rest. Values of
+   the classes realise this pattern, and the evaluator of the predicates
+   confirms the combination on them, so every combination found is one
+   that a trace gives. Patterns of numbers, texts, and objects always
+   combine in this way, and patterns of lists do not: the lists
+   p < q < r with s above p and not comparable with q and r, and a new
+   list x below r and not comparable with p and q, are each
+   series-parallel, but no outcome of s and x makes the five lists
+   series-parallel. When a kept pattern cannot be extended, the
+   processor adds the quantities again and keeps in the states every
+   added list of a group until all quantities of the group are added.
+   When the component reads one field of the members of a set, every
+   member with the same kinds, classes, and group, and every predicate
+   uses the members only through variables of quantifiers and
+   aggregates over the whole set (`R` or `R[*]`), compared with each
+   other only by `==` and `!=` and not used as the index of another set,
+   every predicate has the same value for every permutation of the
+   members, and only the valuations in which the members, in the order
+   in which they are added, are sorted are added: by kind, ascending
+   within an order, equal ones next to each other, and lists in an order
+   in which none is below an earlier one. Every valuation is a
+   permutation of such a valuation. In a component with linear
+   arithmetic, a quantity without a domain may be a number of the
+   arrangement above; the leaves that read such numbers are evaluated at
+   the end, at one point of every face of the arrangement of their
+   forms, with the other values fixed by the state. The processor
+   refuses a component when one step needs more than 50 000 states, or
+   the leaves that read numbers need more than 50 000 points of faces in
+   all (Limits), and says which. This happens when one leaf reads many quantities, such as
+   `max(r.load for r in R) > D.load` over six or more members, or when
+   every pair of six or more members is ordered in a way that depends
+   on their indices.
 3. **The end.** Whether the instance ends at this observation (step 6
    of F.5). This covers both the end signalled for an instance without
    `lifecycle:` and a terminal lifecycle state.
@@ -1973,12 +2075,17 @@ with each other that takes its valuations by types and patterns, the
 limit bounds the number of these valuations, times the classes of the
 other quantities of the component: the reference implementation
 builds the 26 035 valuations of four ordered quantities without other
-literals in about 2 seconds. It refuses five, which have 424 213, from
-the counts in less than a second; building them would take about 30
-seconds. In a component with linear
+literals in about 2 seconds. Beyond the limit (five such quantities
+have 424 213 valuations) the combinations are found by elimination,
+and the limit bounds the states of one step: the reference
+implementation adds a chain of 5 to 12 ordered quantities in less than
+a second, and every pair of 8 members of a set that the predicates
+treat alike in about 12 seconds; a leaf that reads 6 or more members at
+once, or every pair of 6 or more members ordered by their indices,
+exceeds the limit. In a component with linear
 arithmetic, the combinations are the points of the faces, summed over
-the choices of classes that are not numbers, and the same limit
-applies. The model checker explores the
+the choices of classes that are not numbers (with elimination, over
+the final states), and the same limit applies. The model checker explores the
 reachable states explicitly; the number of transitions is the number of
 reachable states times the number of choices, which grows with the
 message events and the classes of values. The time of a check grows

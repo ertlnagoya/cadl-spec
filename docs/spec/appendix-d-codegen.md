@@ -147,9 +147,10 @@ fixed-point numbers with six decimals and therefore also refuses `*`,
 `/`, and literals with more than six decimals; outside the content of a
 norm it scans the window of a temporal operator once, as the
 observations arrive, and therefore refuses there a temporal operator
-inside another one; in the content of a norm it refuses five or more
-temporal operators and the temporal operators inside another one whose
-values are not decided in the order of the observations (see below);
+inside another one; in the content of a norm it refuses six or more
+temporal operators (five or more before `cadl` 0.3.31) and the temporal
+operators inside another one whose values are not decided in the order
+of the observations (see below);
 and it refuses a contract whose
 creation code would exceed the 49152 bytes of EIP-3860 or whose runtime
 code would exceed the 24576 bytes of EIP-170 (`cadl codegen` estimates
@@ -225,7 +226,7 @@ filled in by its constructor, and interprets it. The model and the
 state are one struct in storage, which six libraries read and change:
 they hold the evaluation of predicates, the functions without state,
 the judgement of contents with one temporal operator, that of contents
-with two to four or with one inside another, the items, and the events,
+with two to five or with one inside another, the items, and the events,
 messages, counts-as rules and powers, so that each runtime code stays within the size limit of
 EIP-170. From `cadl` 0.3.28 the runtime code of the contract is
 estimated at 16 840 bytes, which leaves more than
@@ -234,8 +235,12 @@ estimated at 16 840 bytes, which leaves more than
 needs (F.7, N-16), it is estimated at 16 670 bytes, and `CadlNormsActs`
 at 12 080 bytes (12 170 before). From `cadl` 0.3.29 the
 libraries `CadlNormsMulti` and `CadlNormsEval` are estimated at 7 490 and
-10 410 bytes (4 430 and 10 310 in 0.3.28), and the size of the code does
-not depend on the number of temporal operators. The cost of an
+10 410 bytes (4 430 and 10 310 in 0.3.28). From `cadl` 0.3.31, which
+keeps the values of a content with five temporal operators in four words
+and treats a nested operator as a chain of levels, `CadlNormsMulti`,
+`CadlNormsEval` and `CadlNormsWindows` are estimated at 10 120, 11 440 and
+5 490 bytes (7 490, 10 410 and 5 230 in 0.3.30). The size of the code does
+not depend on the number of temporal operators or of levels. The cost of an
 observation does not grow with the number of earlier observations: the
 window of a temporal operator is scanned once (each observation adds
 its own value to the scans that are open), a value is found by binary
@@ -316,11 +321,14 @@ seen `q` not false is kept, undecided, until it is decided in one of
 these ways.
 
 *Several temporal operators.* For a content with m temporal operators,
-2 ≤ m ≤ 4, the monitor reads the content once at the observation of a
-candidate and obtains its value for each of the 4<sup>m</sup>
-combinations of values of the operators (undecided, true, false,
-undefined), as bits of one 256-bit word; this covers a comparison of two
-operators (`within(…) == throughout(…)`). An observation decides an
+2 ≤ m ≤ 5 (m ≤ 4 before `cadl` 0.3.31), the monitor reads the content once
+at the observation of a candidate and obtains its value for each of the
+4<sup>m</sup> combinations of values of the operators (undecided, true,
+false, undefined), as bits of one 256-bit word for m ≤ 4 and of four
+words for m = 5 (combination c is bit c mod 256 of word ⌊c / 256⌋); this
+covers a comparison of two operators (`within(…) == throughout(…)`).
+An `IN` with temporal operators in its operands is read once for each
+combination, at most 4<sup>5</sup> = 1024 times, a bounded cost. An observation decides an
 operator for a range of candidates at a time: the candidates whose
 window is over become false (`throughout`: true), or undefined when an
 operand was undefined in the window; an operand true for `within`,
@@ -335,102 +343,140 @@ that future and whether one is undecided in it. A decided operator
 leaves no value in the node: its value is already part of the values of
 the content that the candidate keeps for the other operators. The
 2 × 5<sup>m</sup> bits fit in one word for m ≤ 3 (250 bits, with 6 bits
-for the tags of the lazy propagation) and in five words for m = 4 (the
-state of the fourth operator selects the word). Deciding operator i to
+for the tags of the lazy propagation), in five words for m = 4 and in 25
+for m = 5 (the states of the fourth and fifth operators select the
+word). Deciding operator i to
 the value v moves the combinations in which i is undecided and takes v
 to those in which it is decided, and drops the other combinations in
 which it is undecided: for the first three operators a shift and a mask
-of each word, for the fourth an OR of words. This is propagated lazily,
+of each word, for the fourth and fifth an OR of words. This is propagated lazily,
 so an observation changes a few ranges per operator, each in steps that
 grow with the logarithm of the number of candidates, and the root says
 whether a candidate holds and whether one is undecided. The cost of an
 observation therefore does not grow with the number of observations for
-any m ≤ 4, and it grows with m by a factor measured below. Five or more
-temporal operators in one content are refused: the 4<sup>5</sup> values
-of the content do not fit in one word, and a node would have 25 words.
-(Up to `cadl` 0.3.28 a node kept the values of the decided operators
-too, 7<sup>m</sup> pairs, which allowed two operators in one word.)
+any m ≤ 5, and it grows with m by a factor measured below. Six or more
+temporal operators in one content are refused: a node would have 125
+words, and an observation, which costs up to 1.0 × 10<sup>7</sup> gas with
+five operators in the measurements below, would cost about five times as
+much, of the order of the gas limit of a block. (Up to `cadl` 0.3.28 a
+node kept the values of the decided operators too, 7<sup>m</sup> pairs,
+which allowed two operators in one word; up to 0.3.30 five operators
+were refused, since their 4<sup>5</sup> values do not fit in one word.)
 
 *A temporal operator inside another one.* In the content of a norm, the
 operand of `within(d, …)` or `throughout(d, …)` may be another
-`within(e, p)` or `throughout(e, p)`, or its negation, where p has no
-temporal operator (`within(5s, throughout(2s, p))`,
-`throughout(3s, NOT within(1s, p))`). The value of the inner operator at
-an observation j is known only later; the outer operator reads the
+`within(e, …)` or `throughout(e, …)`, or its negation, whose operand is
+either without a temporal operator (`within(5s, throughout(2s, p))`,
+`throughout(3s, NOT within(1s, p))`) or, from `cadl` 0.3.31, again such
+an operator (`within(5s, throughout(3s, NOT within(1s, p)))`, with any
+number of levels). Call the operators below the outer one the levels of
+the chain: the first level reads p, each further level reads the values
+of the level below it (negated when `NOT` stands between them), and the
+outer operator reads the values of the last level. The value of a level
+at an observation j is known only later; the level above reads the
 sequence of these values, each with the time t<sub>j</sub> of its
-observation. The monitor decides the inner operator for every
-observation from the first candidate of the activation on, with a
-summary of its own, and feeds the decided values to the outer operator
-in the order of the observations; the outer operator is one operator of
-the segment tree above. `within(e, p)` is `NOT throughout(e, NOT p)`
-(negation in Kleene's logic keeps undecided and undefined values and
-exchanges true and false, so both are decided at the same observations
-to opposite values), so let the inner operator be X<sub>j</sub> =
-`throughout(e, p′)` and the operand of the outer one Y<sub>j</sub> =
-X<sub>j</sub> or NOT X<sub>j</sub>. Let F(n) be the first observation
-whose inner value is not decided at observation n (n + 1 when there is
-none).
+observation. The monitor decides every level for every observation from
+the first candidate of the activation on, with a summary per level,
+and feeds the decided values of each level to the level above, and those
+of the last level to the outer operator, in the order of the
+observations and in runs of equal values; the outer operator is one
+operator of the segment tree above. For a level with operator O and
+duration e, call O's decisive value (true for `within`, false for
+`throughout`) decisive and the other truth value final; for one
+observation n, let G be the first observation whose value below is not
+fed after n (n + 1 for the first level, which reads p at every
+observation), F the first observation whose own value was not decided
+at n − 1, and u the last observation with an undefined value fed before
+n.
 
-1. The inner values decided at n are those of the observations before
-   F(n). Let X<sub>j</sub> be decided at n and i &lt; j. If X<sub>j</sub>
-   is false by a false p′ at an observation x of its window, either x is
-   in the window of i, which makes X<sub>i</sub> false, or the window of
-   i ended before t<sub>x</sub> ≤ t<sub>n</sub>, which decides
-   X<sub>i</sub>. If the window of j is over at n, so is the window of
-   i, which ends no later.
-2. An observation n decides at most three runs of inner values, in this
-   order. The observations from F(n − 1) up to the first observation b
-   with t<sub>b</sub> + e ≥ t<sub>n</sub> (a binary search over the
-   times) have windows that end at n − 1: they were open at n − 1 and
-   are over at n. Those up to the last observation u with p′ undefined
-   are undefined, the others true (none of them has seen p′ false, or it
-   would be decided already). When p′ is false at n, the observations
-   from b to n are false. F(n) is n + 1 when p′ is false at n and b
-   otherwise; the summary keeps F and u only.
-3. Let τ be t<sub>F(n)</sub> when F(n) ≤ n and t<sub>n</sub> otherwise.
-   A run of fed values Y<sub>s</sub>, …, Y<sub>e</sub> with the decisive
-   value (true for `within`, false for `throughout`) decides the
-   candidates k ≤ e with t<sub>k</sub> + d ≥ t<sub>s</sub>, whose windows
-   hold an observation of the run; a run of undefined values marks the
-   candidates up to e. A candidate with t<sub>k</sub> + d &lt; τ that is
-   not decided becomes undefined when marked, and false for `within`
-   (true for `throughout`) otherwise, after the runs of n are fed. A
-   mark reaches only candidates whose window holds an undefined value. A
-   run of undefined values starts at F(n − 1). When F(n − 1) ≤ n − 1, τ
-   was t<sub>F(n − 1)</sub> at n − 1, so the candidates whose window ended
-   before t<sub>F(n − 1)</sub> were decided at n − 1; a candidate up to
-   F(n − 1) that is still undecided has that observation in its window,
-   and a later one is itself in the run. When F(n − 1) = n, every value
-   before n is decided, b = n, and n decides at most the run of false
-   values from n, so there is no run of undefined values to mark.
+1. If the values fed to a level are decided for a prefix of the
+   observations at every n, so are its own values. Let the value of
+   observation j be decided at n and i &lt; j. If it is decisive by a
+   decisive value at an observation x of the window of j, either x is in
+   the window of i, which decides i, or the window of i ended before
+   t<sub>x</sub> ≤ t<sub>n</sub>, and every value of it is fed since x is,
+   which decides i. If it is decided because the window of j is over and
+   every value in it is fed, the same holds for the window of i, which
+   ends no later. p is decided at every observation, so by induction the
+   decided values of every level are those of the first observations.
+2. Let the runs fed at n cover the observations up to G − 1, with their
+   own values. Let τ be t<sub>G</sub> when G ≤ n and t<sub>n</sub>
+   otherwise. An observation j ≥ F is decided at n exactly when a
+   decisive value fed at n is in its window, that is j is in [a, e] for a
+   run [s, e] of decisive values, with a the first observation at or after
+   t<sub>s</sub> − e (a binary search over the times), or when
+   t<sub>j</sub> + e &lt; τ: then every value of its window is fed and
+   the window is over. No decisive value fed before n is in the window of
+   such a j, as it would have decided j then. A decided value is decisive
+   when a decisive value is in its window; otherwise it is undefined when
+   an undefined value is in its window, and final otherwise. An undefined
+   value fed before n is in the window of j ≥ F exactly when j ≤ u, since
+   the window of an observation not decided at n − 1 reaches at least
+   G<sub>n−1</sub> − 1 ≥ u, and one fed at n is in it exactly when j is
+   in [a, e] for a run [s, e] of undefined values. By 1 the decided
+   observations are those before the largest of F, the first observation
+   with t<sub>j</sub> + e ≥ τ, and e + 1 for the runs of decisive values.
+   The value changes only at some a, e + 1, or u + 1; the summary keeps
+   F and u only. At every observation the runs fed to a level, and to the
+   outer operator, have all their undefined runs before every true or
+   false run: the window of an observation not decided at n − 1 reaches
+   G<sub>n−1</sub> − 1, and if j<sub>1</sub> &lt; j<sub>2</sub> are
+   decided at n with j<sub>1</sub> true or false and j<sub>2</sub>
+   undefined, the value that decides j<sub>1</sub> lies in the window of
+   j<sub>2</sub> too (by induction over the levels, starting from the one
+   run of p). Hence a level gives at most three runs: undefined, final,
+   and decisive, in this order, at any depth, and the gas per level does
+   not depend on the depth. The first level receives one run, the value
+   of p at n, and gives undefined up to u, final, and decisive from a
+   when p is decisive at n.
+3. The outer operator (duration d) treats its candidates in the same
+   way. A run [s, e] of decisive values decides the candidates k ≤ e with
+   t<sub>k</sub> + d ≥ t<sub>s</sub>. Then, with τ as in 2 for the last
+   level, a candidate with t<sub>k</sub> + d &lt; τ that is not decided
+   becomes undefined when it is at or before u or in such a range of a
+   run of undefined values, and final otherwise. The decisive runs are
+   applied first, so a candidate whose window has a decisive and an
+   undefined value is decisive. The candidates whose window holds an
+   undefined value and is not over keep the mark u.
 4. These are the values of F.5 at every observation. By 1 the values that
    F.5 reads in the window of candidate k at n are decided exactly when
-   they are fed, so a decisive value decides k at the same observation.
-   Without one, F.5 gives undecided while the window is not over or holds
-   an undecided value. If F(n) ≤ n, X<sub>F(n)</sub> is undecided: when
-   k ≤ F(n) and t<sub>F(n)</sub> ≤ t<sub>k</sub> + d it is in the window
-   of k; when t<sub>F(n)</sub> > t<sub>k</sub> + d every value of the
-   window is fed and the window is over, since t<sub>n</sub> ≥
-   t<sub>F(n)</sub>; when k > F(n), X<sub>k</sub> is undecided by 1 and k
-   is in its own window, while t<sub>F(n)</sub> ≤ t<sub>k</sub> leaves
-   the window of k open in 3. If F(n) = n + 1, every value is fed and τ
-   = t<sub>n</sub>. In each case the monitor decides k at the observation
-   at which F.5 does, from the same values, and so to the same value.
+   they are fed, so a decisive value decides k at the same observation,
+   and to the same value. Without one, F.5 gives undecided while the
+   window is not over or holds an undecided value. If G ≤ n, the value
+   at G is undecided: when k ≤ G and t<sub>G</sub> ≤ t<sub>k</sub> + d
+   it is in the window of k; when t<sub>G</sub> > t<sub>k</sub> + d every
+   value of the window is fed and the window is over, since t<sub>n</sub>
+   ≥ t<sub>G</sub>; when k > G, the value at k is undecided by 1 and k is
+   in its own window, while t<sub>G</sub> ≤ t<sub>k</sub> leaves the
+   window of k open in 3. If G = n + 1, every value is fed and τ =
+   t<sub>n</sub>. In each case the monitor decides k at the observation at
+   which F.5 does, from the same values, and so to the same value; the
+   same argument with 2 in place of 3 shows it for each level.
 
-An observation evaluates p′ once, makes one binary search over the
-times, feeds at most three runs, and decides window ends once, each
-with a few binary searches and range updates of the tree,
-so its cost is bounded as above. Refused are `until` in a nesting, an
-operand of the outer operator that is more than the inner operator or
-its negation (`within(5s, throughout(2s, p) AND r)`), and three levels.
-In them a value of the operand can be decided before that of an earlier
-observation, and feeding the values in order would decide later than
-F.5. In `within(5s, until(p, q, 3s))`, with p undefined and q false at
-t = 0 and p and q true at t = 1, the inner value at t = 1 is true at
-once, so the outer operator at t = 0 is true at t = 1 in F.5, while the
-inner value at t = 0 stays undecided until its window ends after t = 3.
-In `within(d, throughout(e, p) AND r)` a false r decides the operand at
-once. Whether these contents can be monitored with bounded gas in some
+An observation evaluates p once and, per level, makes one binary search
+over the times and one per run fed, and feeds a bounded number of runs
+to the outer operator, each with a few binary searches and range updates
+of the tree, so its cost is bounded as above for any fixed chain.
+Refused are `until` in a nesting and an operand of a level or of the
+outer operator that is more than another level or its negation
+(`within(5s, throughout(2s, p) AND r)`). In them a value of the operand
+can be decided before that of an earlier observation, and feeding the
+values in order would decide later than F.5. In
+`within(5s, until(p, q, 3s))`, with p undefined and q false at t = 0 and
+p and q true at t = 1, the inner value at t = 1 is true at once, so the
+outer operator at t = 0 is true at t = 1 in F.5, while the inner value at
+t = 0 stays undecided until its window ends after t = 3. In
+`within(d, throughout(e, p) AND r)` a false r decides the operand at
+once. For such an operand, deciding the values out of order would not
+keep the cost bounded:
+after a gap in the times, one observation decides the inner values of
+all observations of a long stretch at once, and the operand is then true
+exactly at those with r true, so the candidates whose window holds such
+an observation become true and the others stay as they were, which can
+alternate from one candidate to the next as often as there are
+candidates; one observation would change that many ranges of the tree.
+For `until` in a nesting no construction with bounded gas is known
+either. Whether these contents can be monitored with bounded gas in some
 other way is left open.
 
 The tree is not pruned: each activation of such a norm
@@ -463,7 +509,16 @@ contents `within(1000s, throughout(500s, …))` and
 5.0 × 10<sup>5</sup>, and 6.0 × 10<sup>5</sup> and 6.3 × 10<sup>5</sup>
 (at most 8.3 × 10<sup>5</sup>; the inner values of the second are
 decided from the eleventh second on, and each then decides the
-candidates of its window false); `cadl` 0.3.25 read every candidate at every
+candidates of its window false). From `cadl` 0.3.31, with the levels,
+these two nested contents cost 5.1 × 10<sup>5</sup> and 5.2 × 10<sup>5</sup>,
+and 6.2 × 10<sup>5</sup> and 6.5 × 10<sup>5</sup> (at most
+8.5 × 10<sup>5</sup>), three levels
+(`within(1000s, throughout(500s, within(10s, …)))`) 5.5 × 10<sup>5</sup>
+and 5.6 × 10<sup>5</sup> (at most 7.6 × 10<sup>5</sup>), four operators
+1.9 × 10<sup>6</sup> and 2.0 × 10<sup>6</sup> (at most 2.8 × 10<sup>6</sup>),
+and five operators (`… OR within(1000s, …)`) 6.7 × 10<sup>6</sup> and
+6.9 × 10<sup>6</sup> (at most 1.0 × 10<sup>7</sup>; the factor over four
+is about 3.5, from the 25 words of a node). `cadl` 0.3.25 read every candidate at every
 observation and used 1.3 × 10<sup>7</sup> gas at the 320th. A monitor whose observation would exceed the block gas limit cannot record it and does
 not recover, so the bound matters. The generated file is to be compiled with solc
 0.8.24 to 0.8.37 (checked; its pragma is `>=0.8.24 <=0.8.37`) and
