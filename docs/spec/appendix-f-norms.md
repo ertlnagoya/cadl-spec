@@ -332,8 +332,9 @@ compared with a text value, by `==`, `!=`, or `IN`; a predicate that
 uses it in another way is undefined.
 
 Arithmetic (`+`, `-`, `*`, `/`) is defined on numbers only. An operand
-that is a text, a truth value, or a symbolic value, and a division by
-zero, make the expression undefined at that observation. When the
+that is a text, a truth value, a list, an object, or a symbolic value,
+and a division by zero, make the expression undefined at that
+observation. When the
 operand is a quantity, this is known only from its value, and a
 processor reports it as a warning of the evaluation. When it is a
 string or truth literal, or the divisor is the literal `0`, the
@@ -1405,6 +1406,10 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   detected 13. The 14th, at most two different objects, gives the same
   choices, because lists that are pairwise not comparable behave as
   different objects do.
+- From `cadl` 0.3.31, arithmetic with a list or an object operand is
+  undefined in `cadl norms-eval`, the Python monitor, and the agents
+  runtime, as above; up to 0.3.30 they applied Python's operators
+  (`[1] + [1]` was `[1, 1]`, `2 * [0]` was `[0, 0]`).
 - From `cadl` 0.3.31, `cadl norms-check` translates by elimination
   (F.12) the components that 0.3.30 refused: five or more quantities
   compared with each other, four or more ordered quantities with a
@@ -1815,10 +1820,13 @@ At each observation the environment chooses three things.
    such a quantity, and every finding about such a norm.
 
    **Elimination.** When the valuations by types and patterns of a
-   component exceed 50 000, when four or more quantities ordered against
-   each other do not all have the same classes (one has a domain, given
-   or assumed), and when four or more ordered quantities are in a
-   component with linear arithmetic, the processor finds the
+   component exceed 50 000, when a group of four or more quantities
+   ordered against each other cannot take them because its quantities
+   do not have the same classes (one has a domain, given or assumed,
+   keeps only the classes that its comparisons tell apart, or has other
+   literals), and, in a component with linear arithmetic, when it has
+   four or more ordered quantities or its classes and points of faces
+   exceed 50 000, the processor finds the
    combinations of predicate values without building every valuation.
    The model needs only these combinations: two valuations that give
    every predicate the same value are one choice, and the 26 035
@@ -1843,7 +1851,13 @@ At each observation the environment chooses three things.
    a remaining leaf still reads. States with the same remainder and the
    same pattern are merged, since every continuation gives them the same
    values. Every pattern of all the quantities passes through one state
-   at every step, so every combination that a trace gives is found. Each
+   at every step, so every combination that a trace gives is found. This
+   rests on two facts: the value of a leaf is decided by the pattern of
+   the quantities that it reads, because comparisons of values of
+   different types are decided by the types and arithmetic has a value
+   only on numbers (above); and the members of the domain of a
+   quantifier or aggregate do not depend on the values of the
+   quantities. Each
    state also keeps one pattern of all the quantities added so far that
    leads to it, in which a new quantity is placed against the others as
    the state says and in any consistent way against the rest. Values of
@@ -1851,14 +1865,17 @@ At each observation the environment chooses three things.
    confirms the combination on them, so every combination found is one
    that a trace gives. Patterns of numbers, texts, and objects always
    combine in this way, and patterns of lists do not: the lists
-   0 < 1 < 2 with 3 above 0 and not comparable with 1 and 2, and a new
-   list x below 2 and not comparable with 0 and 1, are each
-   series-parallel, but no outcome of 3 and x makes the five lists
+   p < q < r with s above p and not comparable with q and r, and a new
+   list x below r and not comparable with p and q, are each
+   series-parallel, but no outcome of s and x makes the five lists
    series-parallel. When a kept pattern cannot be extended, the
    processor adds the quantities again and keeps in the states every
    added list of a group until all quantities of the group are added.
-   When every predicate uses the members of a set only through variables
-   over the whole set, compared with each other only by `==` and `!=`,
+   When the component reads one field of the members of a set, every
+   member with the same kinds, classes, and group, and every predicate
+   uses the members only through variables of quantifiers and
+   aggregates over the whole set (`R` or `R[*]`), compared with each
+   other only by `==` and `!=` and not used as the index of another set,
    every predicate has the same value for every permutation of the
    members, and only the valuations in which the members, in the order
    in which they are added, are sorted are added: by kind, ascending
@@ -1869,8 +1886,9 @@ At each observation the environment chooses three things.
    arrangement above; the leaves that read such numbers are evaluated at
    the end, at one point of every face of the arrangement of their
    forms, with the other values fixed by the state. The processor
-   refuses a component when one step needs more than 50 000 states
-   (Limits). This happens when one leaf reads many quantities, such as
+   refuses a component when one step needs more than 50 000 states, or
+   the leaves that read numbers need more than 50 000 points of faces in
+   all (Limits), and says which. This happens when one leaf reads many quantities, such as
    `max(r.load for r in R) > D.load` over six or more members, or when
    every pair of six or more members is ordered in a way that depends
    on their indices.
