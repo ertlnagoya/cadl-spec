@@ -37,6 +37,17 @@ title: "なぜ SoS-DSL なのか？ — 学習者のための背景"
 
 独立に動くシステムが集まって、より大きな仕組みを成しているこの状態を **System of Systems (SoS)** と呼びます。
 
+主体どうしのやり取りを図にすると次のようになります。矢印はやり取りを表し、どの主体もほかの主体に雇われていません。
+
+```mermaid
+flowchart TD
+  CU["顧客"] -->|注文・支払い| PF["プラットフォーム（アプリ会社）<br/>注文と配達員をマッチング"]
+  PF -->|注文| RE["レストラン<br/>営業時間と価格を自分で決める"]
+  PF -->|配達の依頼| CO["配達員（ギグワーカー）<br/>働く時間を自分で決める"]
+  RE -->|料理| CO
+  CO -->|配達| CU
+```
+
 ### Maier の 5 条件
 
 ある対象を SoS と呼べるかどうかは、Maier (1998) の 5 条件で判定します。
@@ -62,6 +73,12 @@ title: "なぜ SoS-DSL なのか？ — 学習者のための背景"
 > SoS の類型は、時間とともに移ることが珍しくありません。
 > 災害の直後は Virtual に始まり、自治体の災害対策本部が動き始めると Collaborative になり、指揮権限が法的に定まれば Acknowledged に近づく、というように変わっていきます。
 
+```mermaid
+flowchart TD
+  V["Virtual<br/>災害の直後"] -->|"災害対策本部が<br/>動き始める"| C["Collaborative"]
+  C -->|"指揮権限が<br/>法的に定まる"| A["Acknowledged に近づく"]
+```
+
 ### 4 類型 — 中央の指揮権の強さで分かれる
 
 同じ SoS でも、中央の指揮権の強さによって性質が変わります。
@@ -72,6 +89,16 @@ title: "なぜ SoS-DSL なのか？ — 学習者のための背景"
 | Acknowledged（認知型） | SoS 全体の指揮権が定まっていて、各構成システムは所有権を保つ | 国際宇宙ミッション、コース A のロボット配送（CADL ファイル上のモデル化として。上の説明を参照）、コース B のタクシー配車 |
 | Collaborative（協調型） | 単一の指揮権はなく、共通の取り決め（プロトコル・規約）を介して自発的に協力 | インターネット、食事配達のような peer-to-peer 寄りの合意、コース D のロボットの街（3 社が街の規則を取り決める） |
 | Virtual（仮想型） | 中央管理も合意された目的もなく、調整は自然発生的に成立 | World Wide Web、災害発生直後の避難所群（指揮系統が立ち上がる前） |
+
+```mermaid
+flowchart TD
+  subgraph AX["中央の指揮権：強い → 弱い"]
+    direction TB
+    DI["Directed<br/>トップダウンで管理"] --> AC["Acknowledged<br/>SoS 全体の指揮権がある<br/>所有権は各システム<br/>（コース A・B）"]
+    AC --> CO["Collaborative<br/>共通の取り決めで<br/>自発的に協力<br/>（コース D）"]
+    CO --> VI["Virtual<br/>中央管理も<br/>合意された目的もない"]
+  end
+```
 
 コース A と B はどちらも `type: Acknowledged` と宣言しており、違うのはドメインだけです。コース D の街は `type: Collaborative` です。
 コース C は、自分で題材を選び、その類型を判定するところから始めます。
@@ -90,6 +117,25 @@ title: "なぜ SoS-DSL なのか？ — 学習者のための背景"
 | 同じルールを Unity と SUMO の両方のランタイムで検査したい | 言語ごとに別実装 | どちらかが古くなる |
 
 主体は独立に動き、それでも全体としては一定のルールを守らせたい、という 2 つを両立させる書き方を、普通の言語は用意していません。
+
+```mermaid
+flowchart TB
+  subgraph P["普通の言語だけで書く場合"]
+    direction TB
+    R1["規則<br/>（コメント、口頭の合意）"]
+    R1 -.->|人が書き写す| U1["Unity の実装<br/>if 文"]
+    R1 -.->|人が書き写す| S1["SUMO の実装<br/>if 文"]
+    R1 -.->|人が書き写す| T1["ロボットの実装<br/>if 文"]
+  end
+  subgraph Q["CADL を使う場合"]
+    direction TB
+    R2["CADL ファイル<br/>規則を 1 か所に書く"]
+    R2 -->|生成| U2["Unity"]
+    R2 -->|生成| S2["SUMO"]
+    R2 -->|解釈| T2["参照ランタイム"]
+  end
+  P ~~~ Q
+```
 
 ---
 
@@ -112,6 +158,17 @@ CADL では、これらを一つの YAML ファイルにまとめて書きます
 - 結果の判定（コース B の `analyze_results.py` スクリプト）：シミュレーション結果を契約の `guarantee` 節に照らしてチェック
 
 どれも同じ CADL ファイルをもとにするので、契約を書く場所は一箇所で済みます。
+
+```mermaid
+flowchart TD
+  F["CADL ファイル（YAML）<br/>actors / contracts /<br/>lifecycle / monitors"]
+  F -->|cadl codegen| U["Unity C#"]
+  F -->|cadl sim-ir| IR["IR（JSON）"]
+  IR --> V["cadl-explorer<br/>状態機械の図"]
+  IR --> PY["Python 参照ランタイム<br/>（IR を解釈して実行）"]
+  IR -->|cadl_to_sumo.py| SU["SUMO の設定と<br/>契約制約 JSON"]
+  SU --> AN["analyze_results.py<br/>guarantee を判定"]
+```
 
 ### SoS-DSL 拡張とは？
 

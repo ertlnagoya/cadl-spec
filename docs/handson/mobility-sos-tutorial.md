@@ -117,6 +117,14 @@ the taxis are self-interested agents with high autonomy; passengers issue reques
 
 The same **Acknowledged** SoS type as the robot-delivery example.
 
+```mermaid
+flowchart TD
+  PA["PASSENGER[1..M]<br/>autonomy: medium<br/>requests a ride"] -->|ride request| PF["PLATFORM<br/>autonomy: low<br/>matches rides"]
+  PF -->|match_assignment| TX["TAXI[1..N]<br/>autonomy: high<br/>self-interested"]
+  TX -->|"ack(accepted)"| PF
+  TX -->|pickup and ride| PA
+```
+
 :::tip[🔍 Visualization Checkpoint 0 — What a structure-only spec gives you]
 So far you have read only the **structure** (the actors). Check the file, and print how much of the
 contract's normative part the IR carries:
@@ -342,6 +350,20 @@ What is actually checked here is the two `guarantee` clauses only; the deadlines
 - **Deadlines** for matching/accept events are not modeled in SUMO yet — flagged SKIP.
 - **Monitors** observe per-passenger `waiting_time` while `Matched`, `battery`, and `route_deviation_ratio`, none of which SUMO exports — flagged SKIP.
 
+```mermaid
+flowchart LR
+  subgraph K["cadl_constraints.json (from the contract)"]
+    G["guarantees (2)<br/>waiting_time, ride_time"]
+    D["deadlines (2)<br/>match, accept"]
+    M["monitors (3)"]
+  end
+  T["tripinfo.xml<br/>waitingTime, duration"]
+  G --> E["evaluated<br/>[OK] or [VIOLATED]"]
+  T --> E
+  D --> S1["[SKIP]<br/>no such event in SUMO"]
+  M --> S2["[SKIP]<br/>SUMO does not export<br/>the observed attribute"]
+```
+
 :::tip[🔍 Visualization Checkpoint 3 — Post-simulation (spec ↔ outcomes)]
 Each line of `analyze_results.py`'s output traces back to something in cadl-explorer's diagram.
 With the explorer open beside the terminal, walk through the correspondence:
@@ -364,6 +386,15 @@ A stretch goal in §9 walks through closing one of these gaps via TraCI.
 
 This is the punchline. Edit a CADL guarantee, regenerate the IR, and the
 existing simulation result is re-evaluated against the new contract — **without re-running SUMO**.
+
+```mermaid
+flowchart TD
+  E["edit mobility_sos.cadl<br/>ride_time #lt;= 100s"] -->|cadl sim-ir| IR["IR JSON"]
+  IR -->|cadl_to_sumo.py| C["cadl_constraints.json"]
+  C --> AN["analyze_results.py"]
+  R["results/tripinfo.xml<br/>from the earlier SUMO run<br/>(SUMO is not re-run)"] --> AN
+  AN --> O["[VIOLATED (12)] ride_time"]
+```
 
 ```bash
 # Rewrite ride_time 1800s → 100s (for the experiment)

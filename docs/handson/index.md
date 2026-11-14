@@ -38,6 +38,17 @@ All courses share the **same CADL/SoS-DSL syntax**; only the domain and target r
 Start with A. B and D are independent applied courses that both build on A; take either or both.
 Finish with C.
 
+```mermaid
+flowchart TD
+  BG["Why SoS-DSL?<br/>(background)"] --> A["Course A<br/>Textbook: robot delivery"]
+  A --> B["Course B<br/>urban mobility (SUMO)"]
+  A --> D["Course D<br/>robot town"]
+  B --> C["Course C<br/>your own SoS"]
+  D --> C
+```
+
+B and D are independent of each other; Course C needs A and at least one of them.
+
 ### Before you start: Why SoS-DSL?
 
 A short, plain-language intro to **what an SoS is**, **why ordinary programming languages

@@ -128,6 +128,37 @@ pip install anthropic
 
 （抜粋して簡略化したものです。）
 
+2 つのライフサイクルを状態機械で表すと次のようになります。
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "DELIVERY_SLA（注文 1 件ごと）" as SLA {
+    [*] --> Assigned
+    Assigned --> PickedUp: pickup（120 秒以内）
+    PickedUp --> Delivered: dropoff（120 秒以内）
+    Assigned --> Late: 集荷の期限切れ（Major）
+    PickedUp --> Late: 配達の期限切れ（Major）
+    Delivered --> [*]
+    Late --> [*]
+  }
+```
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "ROAD_USE（道路上に止まるたびに 1 つ）" as RU {
+    [*] --> Holding
+    Holding --> Released: release（60 秒以内）
+    Holding --> Overstay: 60 秒を過ぎた（Minor）
+    Overstay --> Released: release
+    Holding --> Evicted: blocking_guard、3 台以上をふさいだ（Major）
+    Overstay --> Evicted: blocking_guard（Major）
+    Released --> [*]
+    Evicted --> [*]
+  }
+```
+
 `# @amend:<名前>` が付いた行の数値が、改正できるパラメータです。
 同じ名前の行が複数あるとき（集荷の約束の guarantee と deadline）は、すべて同じ値にしなければなりません。
 各パラメータがどの層に属し、どこまで動かしてよいかは `constitution.yaml`（憲法）が決めます。
@@ -162,6 +193,10 @@ regulation:
 3 社の振る舞いは違います（`town/policies.py`）。
 **A 社**は仕事がなければ必ず車庫に戻ります。**B 社**は道路上で次の注文を待ちますが、`hold_limit` の 5 秒前には離れます。1 台待たせただけで退去させられる規則（`block_k` が 1）なら、道路上では待ちません。**C 社**は、注文が来るか退去させられるまで待ち続けます。ただし `sanction_lambda` が 1.5 以上になると、B 社と同じ振る舞いに変わります。
 交差点に止まっているロボットは、そこを通りたい他のロボットをすべてふさぎます。
+
+道路網は 11 のノードと 17 本の道路からなります（`town/world.py`）。A・B・C 社の車庫はノード 10・9・4（黄色）です。道路上で待つロボットは、最も便利な中央の交差点 8（紫）で待ちます。
+
+![ロボットの街の道路網：外周のノード 0〜7、中央の交差点 8、車庫 10（A 社）・9（B 社）・4（C 社）](/img/handson/robot-town-roads.svg)
 
 ### 演習 2-1
 
@@ -297,6 +332,17 @@ LLM は契約を緩める案を出しませんでした。K1 で、約束の時�
 | 不確か | 判定はすべて通るが、改善したシードが 5 つのうち 4 つに満たない |
 | LLM | LLM 自身が、人間の判断が要ると書いた（憲法の不変条件を守る案に限る） |
 
+各案は、次の順に判定を受けてから、判断を求めるかどうかを決められます。
+
+```mermaid
+flowchart TD
+  P["LLM の改正案"] --> G["判定（この順）<br/>1. 検査（cadl）<br/>2. 憲法：範囲・刻み・不変条件<br/>3. 同じシードで測った改善、<br/>KPI の条件<br/>4. 各社の投票"]
+  G -->|"1 か 2 で ×"| X["除外"]
+  G --> T["triage()<br/>合意・契約・規制・安全・KPI の衝突・<br/>不確か・LLM のどれかに当たる案があるか"]
+  T -->|当たる案がない| AUTO["判定を通った案のうち<br/>KPI が最もよいものを自動で採択<br/>（なければ変えない）"]
+  T -->|当たる案がある| REQ["判断要求 D#lt;k#gt;<br/>人間が選び、理由を書く"]
+```
+
 この期は、1 が「合意」に当たります。LLM は判断要求 D1 を書き、`runs/try-d/p1-request.md` に残します。
 
 ```text
@@ -343,6 +389,20 @@ LLM は判断の材料をそろえ、どちらにも理由があることを示�
 | Context | KPI の評価方法、その期の環境 |
 | Assumption | 人間が書いた前提 |
 | Justification | 人間が書いた理由（自動で決まったときは、その条件） |
+
+`gsn.md` の木は次の形です。実線の矢印は supported by、点線の矢印は in context of を表します。
+
+```mermaid
+flowchart TD
+  G0["Goal<br/>街の運用が、人間の定めた KPI を満たし続ける"] --> S0[/"Strategy<br/>KPI のバージョンごとに論じる"/]
+  S0 --> G1["Goal<br/>第 k 期からの KPI"]
+  G1 -.-> C1("Context<br/>KPI の評価方法")
+  G1 -.-> J1(["Justification / Assumption<br/>K#lt;k#gt; への人間の答え"])
+  G1 --> S1[/"Strategy<br/>第 k 期の判断"/]
+  S1 --> SN(("Solution<br/>p#lt;k#gt;-evidence.md"))
+  S1 -.-> C2("Context<br/>第 k 期の環境")
+  S1 -.-> J2(["Justification / Assumption<br/>D#lt;k#gt; への人間の答え"])
+```
 
 理由は自然言語で書いても、GSN の要素で書いてもかまいません。`--answers` の YAML には、`gsn:` に要素（`type:` と `text:`）を並べられます。次は書き方の例です（記録の答えは、D2 の理由を自然言語で書いています）。
 
@@ -406,6 +466,14 @@ python -m town.steward --mode DISTRIBUTED --rounds 6 --name steward-d \
 | 4（繁忙期＋ラッシュ） | なし（LLM が案を出さない） | — | — | v2（自動） |
 | 5（閑散期） | §7 で見る | 2 | `hold_limit 60s → 70s` | v3 |
 | 6（閑散期） | KPI の衝突（`hold_limit 70s → 80s` で各社の定時率の差が 0.02 から 0.05 に広がる） | keep | 変えない | v3 |
+
+```mermaid
+flowchart TD
+  V1["v1<br/>block_k 3<br/>hold_limit 60s"] -->|"第 1 期（D1）<br/>block_k 3 → 2"| V2["v2<br/>block_k 2<br/>hold_limit 60s"]
+  V2 -->|"第 2〜4 期<br/>変えない"| V2
+  V2 -->|"第 5 期（D5、KPI が変わる）<br/>hold_limit 60s → 70s"| V3["v3<br/>block_k 2<br/>hold_limit 70s"]
+  V3 -->|"第 6 期<br/>変えない"| V3
+```
 
 各期について補足します。
 
@@ -567,6 +635,13 @@ python -m town.compare runs/goodhart-d/v1.cadl runs/goodhart-d/v5.cadl runs/seas
       to: DISTRIBUTED
       condition: "orders_in_window >= 26"     # @amend:to_distributed
       protocol: SWITCH
+```
+
+```mermaid
+flowchart TD
+  D["DISTRIBUTED（分散）"] -->|"直前 5 分の注文が<br/>22 件未満"| SW["切替中<br/>道路上で待つロボットがいなくなるのを待つ。<br/>60 秒たっても残っていれば管理者が退去させる"]
+  SW -->|"道路上のロボットが 0 台になる。<br/>safety_invariant を判定する"| C["CENTRALIZED（集中）"]
+  C -->|"直前 5 分の注文が<br/>26 件以上"| D
 ```
 
 集中への切替は、道路上で待っているロボットが 1 台もいなくなってから有効になります（C 社は 30 秒渋り、60 秒たっても残っていれば管理者が退去させます）。有効になった時点で `safety_invariant` を判定します。

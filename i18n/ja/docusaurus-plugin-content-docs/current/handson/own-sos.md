@@ -16,6 +16,16 @@ title: "コース C — 新しい SoS の end-to-end モデリング"
 4. 自分で選んだランタイムで仕様を動かす。標準の選択肢は、IR JSON（`cadl sim-ir --format json`）からライフサイクルを再生する軽量な Python の離散事象ハーネス（例：SimPy）で、Unity は不要です。ハーネスは提供されないので、自分で書きます。
 5. パラメータスイープを行い、比較レポートを書く（[テキストブック第 9 章](../textbook/09-improve.md)の演習 9.4 の 3 ページ形式がそのまま使えます）。
 
+```mermaid
+flowchart TD
+  S1["1. アクターと契約を同定する"] --> S2["2. SoS の類型を判定し<br/>type: を宣言する"]
+  S2 --> S3["3. lifecycle: と monitors: を書く<br/>cadl check、cadl-explorer"]
+  S3 -->|"cadl sim-ir --format json"| IR["IR JSON"]
+  IR --> S4["4. 自分で選んだランタイムで動かす<br/>（例：自分で書く SimPy のハーネス）"]
+  S4 --> S5["5. パラメータスイープと<br/>比較レポート"]
+  S5 -.->|仕様を改訂する| S3
+```
+
 コース C に必要なのは公開リポジトリ（`cadl`、`cadl-explorer`）だけです。
 
 このコースの学術的な位置付け（Maier の条件、ISO 規格、分類体系）は「[なぜ SoS-DSL なのか？](academic-background.md)」を参照してください。

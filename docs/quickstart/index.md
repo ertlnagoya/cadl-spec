@@ -48,6 +48,25 @@ baseline) and **B** (the design under study), and shows the whole
 **CADL → IR → Config → Result** chain for both. There is no run button: the
 page recalculates whenever you change a setting.
 
+The page builds the same chain for both designs and shows how their results differ:
+
+```mermaid
+flowchart TD
+  SET["Sidebar settings<br/>template, motivation profile, ρ"]
+  subgraph DA["A — baseline"]
+    direction TB
+    A1[CADL] --> A2[IR] --> A3[Config] --> A4[Result]
+  end
+  subgraph DB["B — design under study"]
+    direction TB
+    B1[CADL] --> B2[IR] --> B3[Config] --> B4[Result]
+  end
+  SET --> A1
+  SET --> B1
+  A4 --> OUT["1. Outcome<br/>A, B and the difference"]
+  B4 --> OUT
+```
+
 ### A-2. Pick a governance template
 
 Under **B — design under study** in the sidebar, choose one of:
@@ -148,6 +167,16 @@ lifecycles, monitors), use the **Designer** page.
 The reference implementation is the `cadl` command-line tool, distributed
 on PyPI as `cadl-lang`. The output below is from cadl 0.3.29.
 
+The commands of this path build on one another: `cadl verify` runs the
+type check of `cadl check` and adds the consistency checks.
+
+```mermaid
+flowchart TD
+  F[".cadl file"] --> C["cadl check<br/>parse and type check"]
+  C --> V["cadl verify<br/>type check, plus<br/>assumptions vs guarantees (SMT)<br/>reachability of regimes<br/>protocol deadlock"]
+  V --> G["cadl codegen / cadl sim-gen<br/>code and simulator configs"]
+```
+
 ### B-1. Install
 
 ```bash
@@ -236,6 +265,17 @@ cadl verify my_delivery.cadl
   [FAIL] Contract 'DELIVERY_SLA' assumptions: Assumptions contradict each other; the contract can never apply
 
 Verification FAILED: 7/9 checks passed
+```
+
+The SMT solver looks for a value of `network_latency` that satisfies every
+assumption at once. There is none:
+
+```mermaid
+flowchart TD
+  A1["assume<br/>network_latency #lt;= 200ms"] --> S{"Is there a value that<br/>satisfies both?<br/>(SMT solver)"}
+  A2["assume<br/>network_latency #gt; 500ms"] --> S
+  S -->|no| F["[FAIL] consistency<br/>[FAIL] assumptions<br/>the contract never applies"]
+  S -->|yes| P["[PASS]"]
 ```
 
 The file still passes `cadl check`: it is well formed, but the contract

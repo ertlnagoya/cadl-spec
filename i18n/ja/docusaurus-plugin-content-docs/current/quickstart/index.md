@@ -45,6 +45,25 @@ streamlit run app.py
 **CADL → IR → Config → Result** の連鎖を表示します。実行ボタンはなく，
 設定を変えるたびに結果が再計算されます。
 
+2つの設計それぞれについて同じ連鎖を作り，結果の差を表示します。
+
+```mermaid
+flowchart TD
+  SET["サイドバーの設定<br/>テンプレート，モチベーションプロファイル，ρ"]
+  subgraph DA["A — ベースライン"]
+    direction TB
+    A1[CADL] --> A2[IR] --> A3[Config] --> A4[Result]
+  end
+  subgraph DB["B — 検討する設計"]
+    direction TB
+    B1[CADL] --> B2[IR] --> B3[Config] --> B4[Result]
+  end
+  SET --> A1
+  SET --> B1
+  A4 --> OUT["1. Outcome<br/>A と B の結果と差"]
+  B4 --> OUT
+```
+
 ### A-2. ガバナンステンプレートを選ぶ
 
 サイドバーの **B — design under study** で，以下のいずれかを選びます。
@@ -138,6 +157,15 @@ motivation:
 
 リファレンス実装はコマンドラインツール `cadl` で，PyPI では `cadl-lang` という名前で配布しています。以下の出力は cadl 0.3.29 のものです。
 
+この経路で使うコマンドの関係は次のとおりです。`cadl verify` は `cadl check` の型検査を行ったうえで，整合性の検査を加えます。
+
+```mermaid
+flowchart TD
+  F[".cadl ファイル"] --> C["cadl check<br/>構文解析と型検査"]
+  C --> V["cadl verify<br/>型検査に加えて<br/>前提と保証の整合性（SMT）<br/>運用モードへの到達<br/>プロトコルのデッドロック"]
+  V --> G["cadl codegen / cadl sim-gen<br/>コードとシミュレータ設定の生成"]
+```
+
 ### B-1. インストール
 
 ```bash
@@ -221,6 +249,16 @@ cadl verify my_delivery.cadl
   [FAIL] Contract 'DELIVERY_SLA' assumptions: Assumptions contradict each other; the contract can never apply
 
 Verification FAILED: 7/9 checks passed
+```
+
+SMT ソルバは，すべての前提を同時に満たす `network_latency` の値を探します。この例では，そのような値はありません。
+
+```mermaid
+flowchart TD
+  A1["assume<br/>network_latency #lt;= 200ms"] --> S{"両方を満たす値があるか<br/>（SMT ソルバ）"}
+  A2["assume<br/>network_latency #gt; 500ms"] --> S
+  S -->|ない| F["[FAIL] consistency<br/>[FAIL] assumptions<br/>契約が適用される場合がない"]
+  S -->|ある| P["[PASS]"]
 ```
 
 このファイルは `cadl check` には通ります。書式としては正しいものの，契約が決して適用されないからです。検査の合計が 8 件から 9 件に増えているのは，entailment の行が `[INFO]` から `[PASS]` に変わるためです。矛盾した前提からは何でも導けるので，この `[PASS]` に意味はありません。こうした矛盾を運用前に見つけるのが検証器の役割です。追加した行を消すと，再び検証に通ります。
