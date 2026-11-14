@@ -13,7 +13,7 @@ tool already solves part of a problem, we say which part CADL would hand
 to that tool and which question the tool cannot answer.
 
 The starting point is this specification (Version 0.3) and the reference
-implementation `cadl` 0.3.30. It checks the satisfiability of contracts
+implementation `cadl` 0.3.31. It checks the satisfiability of contracts
 with Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), detects
 protocol deadlocks by structural analysis, supports the SoS-DSL extension
 ([Appendix E](./appendix-e-sos-dsl.md): `lifecycle:`, `monitors:`,
@@ -300,21 +300,23 @@ counts and are evidence about a contract, not the meaning of the
 parameters. The formal meaning of α, β, and λ in terms of norms,
 design-time checking that F.12 does not cover (nonlinear arithmetic
 over a quantity without a given domain, which is checked only under a
-domain assumed from the literals of the predicate, groups of five or
-more quantities compared with each other, and of four whose valuations
-exceed the limit, instances of different contracts
+domain assumed from the literals of the predicate, groups of compared
+quantities whose elimination exceeds the limit, such as a leaf that
+reads many of them at once or all pairs of six or more members compared
+asymmetrically, instances of different contracts
 together, more than four instances, sets of actors whose size is not fixed, continuous
 time, and which party can avoid a violation),
 monitoring in the Unity C#
 runtime, monitoring in the generated Rego and Solidity of what they
 refuse (quantifiers, aggregates, wildcard and range references in
 predicates, index expressions, and amendments; in Rego also `/`; in Solidity also `*`,
-`/`, literals with more than six decimals, five or more temporal
+`/`, literals with more than six decimals, six or more temporal
 operators in the content of a norm, temporal operators inside another
 one other than a `within` or `throughout` whose operand is another
 `within` or `throughout`, or its negation, over an operand without a
-temporal operator (for `until` in a nesting no construction with bounded
-gas is known), temporal operators inside another one outside the
+temporal operator or over such a nesting (for `until` in a nesting and
+for an operand that combines a nested operator with other parts no
+construction with bounded gas is known), temporal operators inside another one outside the
 content of a norm,
 and contracts whose creation code exceeds the limit of EIP-3860),
 weighted indices, norms per regime, and the derivation of model
@@ -449,7 +451,7 @@ such as voting and dissent (RD-8.4) and plan-level verification
 ## 9.9 Research Roadmap
 We organize the above research directions along a time axis and present
 a short-, medium-, and long-term research roadmap. The order follows the
-current implementation: items that extend what `cadl` 0.3.30 already
+current implementation: items that extend what `cadl` 0.3.31 already
 provides come first.
 
 | **Period** | **Key Challenges** | **Content** |
