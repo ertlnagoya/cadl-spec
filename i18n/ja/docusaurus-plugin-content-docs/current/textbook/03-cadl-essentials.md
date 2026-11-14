@@ -193,7 +193,7 @@ protocols:
 
 ## 3.9 cadl check と cadl verify が検査すること
 
-`cadl check` は、構文と型に加えて、規範の層について次のような誤りを**エラー**として報告します。エラーが 1 つでもあると、`Type check failed` と表示されます。
+`cadl check` は、構文と型に加えて、規範の層について次のような誤りをエラーとして報告します。エラーが 1 つでもあると、`Type check failed` と表示されます。
 
 | 誤り | 例 |
 | --- | --- |
@@ -205,14 +205,14 @@ protocols:
 | `on:` のメッセージに、宣言していないアクターが出てくる | `"ROBOT[i] -> HUB : ack"` で `HUB` が未宣言 |
 | `observe:` が、宣言したアクターの属性でもメッセージの名前でもない | `DRONE.battery` で `DRONE` が未宣言 |
 
-たとえば、`on_violation` の `transition:` に遷移の `id` を書くと、`cadl` 0.3.29 は次のように報告します。
+たとえば、`on_violation` の `transition:` に遷移の `id` を書くと、`cadl` 0.3.31 は次のように報告します。
 
 ```text
   [ERROR]: on_violation.transition 'accept' of the lifecycle transition 'accept' of contract 'DELIVERY_SLA' is not a state listed in states (L-5); it names the target state, not a transition id
 Type check failed: 1 error(s), 0 warning(s)
 ```
 
-`deadline:` を書いたのに `on_violation:` がない遷移は、**警告**になります。警告だけならファイルは有効で、`Type check passed` と表示されます。
+`deadline:` を書いたのに `on_violation:` がない遷移は、警告になります。警告だけならファイルは有効で、`Type check passed` と表示されます。
 
 `cadl verify` は、`cadl check` に加えて、SMT ソルバ（Z3 [[8]](appendix-d-references.md)）で契約の前提と保証を調べます。たとえば、前提に `ROBOT[i].battery > 20` と `ROBOT[i].battery < 10` を並べると、2 つが同時に成り立つことはないので、「この契約はどんな場合にも適用されない」と報告します。
 
