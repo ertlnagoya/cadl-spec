@@ -1414,7 +1414,7 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   (F.12) the components that 0.3.30 refused: five or more quantities
   compared with each other, four or more ordered quantities with a
   domain, given or assumed, and four or more ordered quantities with
-  linear arithmetic. The components that 0.3.30 translated keep their
+  linear arithmetic, within the limit on face points. The components that 0.3.30 translated keep their
   valuations and models. Measured on a loaded machine: chains of 5, 6,
   8, and 12 ordered quantities in less than a second; a contract with
   four predicates over a chain of 8 has 66 choices and is checked with
@@ -1854,8 +1854,9 @@ At each observation the environment chooses three things.
    at every step, so every combination that a trace gives is found. This
    rests on two facts: the value of a leaf is decided by the pattern of
    the quantities that it reads, because comparisons of values of
-   different types are decided by the types and arithmetic has a value
-   only on numbers (above); and the members of the domain of a
+   different types are decided by the types, except that an ordering
+   compares true as 1 and false as 0, which the classes include, and
+   arithmetic has a value only on numbers (above); and the members of the domain of a
    quantifier or aggregate do not depend on the values of the
    quantities. Each
    state also keeps one pattern of all the quantities added so far that
