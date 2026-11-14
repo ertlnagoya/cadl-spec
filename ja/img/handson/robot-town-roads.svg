@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" font-family="Helvetica, Arial, sans-serif">
+  <title>Road network of the robot town: 11 nodes and 17 roads</title>
+  <g stroke="#8a8f98" stroke-width="4" stroke-linecap="round">
+    <!-- outer ring 0-1-2-3-4-5-6-7-0 -->
+    <line x1="150" y1="40" x2="330" y2="40"/>
+    <line x1="330" y1="40" x2="430" y2="120"/>
+    <line x1="430" y1="120" x2="430" y2="240"/>
+    <line x1="430" y1="240" x2="330" y2="320"/>
+    <line x1="330" y1="320" x2="150" y2="320"/>
+    <line x1="150" y1="320" x2="50" y2="240"/>
+    <line x1="50" y1="240" x2="50" y2="120"/>
+    <line x1="50" y1="120" x2="150" y2="40"/>
+    <!-- node 8 -->
+    <line x1="190" y1="125" x2="50" y2="120"/>
+    <line x1="190" y1="125" x2="150" y2="40"/>
+    <line x1="190" y1="125" x2="330" y2="40"/>
+    <line x1="190" y1="125" x2="150" y2="245"/>
+    <!-- node 9 -->
+    <line x1="150" y1="245" x2="50" y2="240"/>
+    <line x1="150" y1="245" x2="150" y2="320"/>
+    <!-- node 10 -->
+    <line x1="340" y1="180" x2="330" y2="320"/>
+    <line x1="340" y1="180" x2="430" y2="240"/>
+    <line x1="340" y1="180" x2="430" y2="120"/>
+  </g>
+  <g stroke="#4a5568" stroke-width="2" fill="#ffffff">
+    <circle cx="150" cy="40" r="15"/>
+    <circle cx="330" cy="40" r="15"/>
+    <circle cx="430" cy="120" r="15"/>
+    <circle cx="430" cy="240" r="15"/>
+    <circle cx="150" cy="320" r="15"/>
+    <circle cx="50" cy="240" r="15"/>
+    <circle cx="50" cy="120" r="15"/>
+  </g>
+  <!-- central intersection 8 -->
+  <circle cx="190" cy="125" r="20" fill="#e9d8fd" stroke="#6b46c1" stroke-width="2.5"/>
+  <!-- garages: 10 (A), 9 (B), 4 (C) -->
+  <g fill="#fefcbf" stroke="#b7791f" stroke-width="2.5">
+    <circle cx="340" cy="180" r="15"/>
+    <circle cx="150" cy="245" r="15"/>
+    <circle cx="330" cy="320" r="15"/>
+  </g>
+  <g font-size="15" text-anchor="middle" dominant-baseline="central" fill="#1a202c">
+    <text x="150" y="40">0</text>
+    <text x="330" y="40">1</text>
+    <text x="430" y="120">2</text>
+    <text x="430" y="240">3</text>
+    <text x="330" y="320">4</text>
+    <text x="150" y="320">5</text>
+    <text x="50" y="240">6</text>
+    <text x="50" y="120">7</text>
+    <text x="190" y="125" font-weight="bold">8</text>
+    <text x="150" y="245">9</text>
+    <text x="340" y="180">10</text>
+  </g>
+  <g font-size="16" font-weight="bold" text-anchor="middle" dominant-baseline="central" fill="#b7791f">
+    <text x="372" y="180">A</text>
+    <text x="182" y="262">B</text>
+    <text x="330" y="348">C</text>
+  </g>
+</svg>
