@@ -1961,17 +1961,24 @@ are these.
   both sides are reset and recorded (`read_timeout`, `grpc stalled`).
   From `cadl` 0.3.31 the gRPC server sends GOAWAY to each connection at
   `--grpc-max-connection-age` (300 seconds, at least 1, with a jitter of
-  10 %): the connection takes no new call, and the client's channel
-  opens a new connection for its next calls (which may wait for a
-  place). By default the calls under way on the old connection go on to
-  their end, and the gRPC server closes it when the last one has ended;
-  the front listener then closes the client's side within 5 seconds (30
-  when more than 256 KiB wait for a client that does not read). With
-  `--grpc-max-connection-age-grace` the gRPC server closes the
-  connection at most that many seconds after the GOAWAY, and the front
-  listener resets a connection still open at the read deadline + 1.1 ×
-  age + grace + 10 seconds after the end of its wait (`read_timeout`,
-  `grpc age`). That gives every connection a hard bound, at a cost: a
+  10 %). The GOAWAY is staged: a first GOAWAY and a PING, and the final
+  GOAWAY when the PING is answered or at the ping timeout (20 seconds);
+  from then on the connection takes no new call, and the client's
+  channel opens a new connection for its next calls (which may wait for
+  a place). By default the calls under way on the old connection go on
+  to their end, and the gRPC server closes it when the last one has
+  ended; the front listener then closes the client's side within 5
+  seconds. A connection on which no authenticated call has run (the
+  gateway marks the connection of each call that authenticates) is
+  reset by the front listener when its calls without a key must have
+  ended, at the read deadline + 1.1 × age + 20 + the read deadline + 10
+  seconds after the end of its wait (`read_timeout`, `grpc age`); this
+  also ends a client that keeps the answers of the gRPC server pending
+  by reading slowly. With `--grpc-max-connection-age-grace` the gRPC
+  server closes every connection at most that many seconds after the
+  final GOAWAY, and the front listener resets one still open at the read
+  deadline + 1.1 × age + 20 + grace + 10 seconds after the end of its
+  wait. That gives every connection a hard bound, at a cost: a
   call still under way at the end of the grace is cut with
   `UNAVAILABLE`, so a blocking `SendMessage` held for approval (G.6) is
   withdrawn, a unary call that the agent has already processed gets no
@@ -1991,11 +1998,12 @@ are these.
   clients together have at most 64 connections, and the workers bound the
   calls in all. A call without a key ends within the read deadline (it
   waits at most that long for its message and is refused when it does
-  not authenticate), so with the defaults a client without a key keeps
-  a connection at most 1.1 × 300 + 10 + 5 = 345 seconds after its
-  handshake (375 when it does not read and more than 256 KiB wait for
-  it), and 20 seconds more after its accept (the wait for a place and
-  the deadline of the handshake). What remains: any call, even one
+  not authenticate), so with the defaults the gRPC server closes a
+  connection without an authenticated call at most 1.1 × 300 + 20 + 10 =
+  360 seconds after its handshake, the client's side is closed within
+  365 seconds, and the front listener resets it at the latest 10 + 330 +
+  20 + 10 + 10 = 380 seconds after the end of its wait, 390 seconds after
+  its accept. What remains: any call, even one
   refused for its header, keeps its connection past the deadline.
   Without mutual TLS, hosts with at least 16 addresses in at least 4
   networks can therefore hold the 64 connections, each up to that
@@ -2004,8 +2012,9 @@ are these.
   under way: a blocking `SendMessage` held for approval until the
   decision, a call whose agent answers within `--upstream-timeout` (300
   seconds), or a stream until its task ends. Operators who want a hard
-  bound give a finite grace; with 60 seconds every connection ends at
-  most 10 + 10 + 330 + 60 + 10 = 420 seconds after its accept. A client that waits for a place when one comes back gets it
+  bound for these too give a finite grace; with 60 seconds every
+  connection ends at most 10 + 10 + 330 + 20 + 60 + 10 = 440 seconds
+  after its accept. A client that waits for a place when one comes back gets it
   before them if its address and its /24 or /48 hold fewer connections
   than those of the other waiting connections; a client that is not
   waiting at that moment (it waited 10 seconds in vain, and its channel
@@ -2227,7 +2236,9 @@ while one address holds all its connections, over mutual TLS, and from
 `cadl` 0.3.31 calls refused by gRPC itself (an unknown method, over
 mutual TLS, and no free worker) that keep their connection, the end of
 a connection at its age with a stream under way that goes on without a
-grace and is cut with one, the reset of a
+grace and is cut with one, the reset without a grace of a connection
+without an authenticated call while one with such a call is kept, the
+reset of a
 connection that gRPC keeps past its age, and the order in which waiting
 connections get a place). In each,
 the agent receives nothing that was not allowed or released, no
