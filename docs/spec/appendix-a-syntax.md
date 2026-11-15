@@ -346,7 +346,7 @@ contract is in force in `R` when `R` gives `active:` and lists it, when
 A regime without an entry keeps every declared value and has every
 contract in force; a file without `regimes:` behaves as one in which no
 regime has an entry. A file without regimes (without `transitions:`)
-has every contract in force at all times, also when it has an empty
+has every contract in force at all times, even when it has an empty
 `regimes:` block. The declared values themselves are not changed: the
 contract keeps the number written in it. A transition from `R` to `R'`
 replaces the bindings of `R` by those of `R'`; this appendix does not
@@ -642,18 +642,20 @@ deviates from this appendix as follows (checked against `cadl` 0.3.31).
   contracts: `cadl sim-ir` writes them (A.7.1) and `cadl sim-gen` passes
   them to the `python` and `go` configurations (`regimes`) and to the
   `unity` configuration (`regimeBindings`). `cadl verify` checks every
-  two contracts that share a party; when no regime has both in force
+  pair of contracts that share a party. When no regime has both in force
   under the regime bindings of A.7.1, a conflict is reported as a
-  warning (`WARN`) that names the regimes of each, since A.7.1 leaves
-  open at which step of a transition the bindings switch and both may be
-  in force then, and a consistent pair gets an `info` line. A file
-  without regimes has every contract in force, so every pair is judged
-  as before, also with an empty `regimes:` block. The `python` target of
-  `cadl codegen` gives the regime controller the methods `parameters()`,
-  `contract_active()`, and `apply_bindings()`, exposes the values of the
-  current regime in `ctx.parameters`, which the generated monitors do
-  not read, and runs the monitor of a contract only in the regimes in
-  which it is in force. The generated
+  warning (`WARN`) that names the regimes of each: A.7.1 leaves open at
+  which step of a transition the bindings switch, so both may be in
+  force then (when one of the two is in force in no regime, the warning
+  says so instead). Such a pair gets an `info` line when it is
+  consistent and stays `unknown` when the solver does not decide it. A
+  file without regimes has every contract in force, so every pair is
+  judged as before, even with an empty `regimes:` block. The `python`
+  target of `cadl codegen` gives the regime controller the methods
+  `parameters()`, `contract_active()`, and `apply_bindings()`, exposes
+  the values of the current regime in `ctx.parameters`, which the
+  generated monitors do not read, and runs the monitor of a contract
+  only in the regimes in which it is in force. The generated
   `unity-csharp`, `solidity`, and `opa` code, the online monitor of the
   norms, and `cadl regime-map` do not use the bindings. The
   `safety_invariant` of a transition is in the IR and the simulator
