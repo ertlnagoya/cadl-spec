@@ -97,6 +97,7 @@ sos_body    = "name:" , text ,
               [ "protocols:"    , { "-" , protocol_def } ] ,
               [ "algorithms:"   , { algorithm_def } ] ,
               [ "transitions:"  , { "-" , transition_def } ] ,
+              [ "regimes:"      , regimes_block ] ,       (* A.7.1 *)
               [ "metrics:"      , { "-" , metric_def } ] ,
               [ "verification:" , { "-" , verify_def } ] ,
               [ "codegen:"      , { "-" , codegen_def } ] ,
@@ -271,6 +272,97 @@ transition_def = "from:" , identifier ,
 別個の宣言はない。`protocol:` は `protocols:` で宣言したプロトコルを
 指すことが望ましい。
 
+### A.7.1 モードへの束縛 {/* #a71-regime-bindings */}
+
+`cadl` 0.3.32から，ブロック `regimes:` で，運用モードごとに，宣言されたパラメータの値と
+有効な契約を指定できる。
+
+```ebnf
+regimes_block   = { identifier , ":" , regime_binding } ;
+regime_binding  = [ "parameters:" , { param_ref , ":" , scalar } ] ,
+                  [ "contracts:"  , contracts_in_force ] ;
+param_ref       = identifier , "." , ( "alpha" | "beta" | "lambda" )
+                | "environment" , "." , identifier ;
+contracts_in_force = "active:"    , { "-" , identifier }
+                   | "suspended:" , { "-" , identifier } ;
+```
+
+```yaml
+  transitions:
+    - { from: DISTRIBUTED, to: CENTRALIZED, condition: "orders_in_window < 22",
+        safety_invariant: "robots_on_road == 0" }
+    - { from: CENTRALIZED, to: DISTRIBUTED, condition: "orders_in_window >= 26" }
+
+  regimes:
+    DISTRIBUTED:
+      contracts: { suspended: [BAY_ASSIGNMENT] }
+    CENTRALIZED:
+      parameters:
+        ROUTING.beta: 0.9           # 契約 ROUTING の authority.beta
+        environment.bays: 3         # context.environment のエントリ bays
+      contracts: { active: [ROUTING, BAY_ASSIGNMENT] }
+```
+
+`param_ref` は，ファイルが宣言している値を指す。`C.alpha`，`C.beta`，`C.lambda` は，
+`id: C` の契約の `information.alpha`，`authority.beta`，`incentives.lambda` であり，
+`environment.X` は `context.environment` のエントリ `X` である。これらは，確率モデル拡張の
+パラメータのソースと同じである（[付録HのH.3節](./appendix-h-stochastic.md)）。
+
+**意味。** モード `R` でのパラメータの値は，`R` がそれに束縛する値があればその値，なければ
+宣言された値である。契約がモード `R` で有効であるのは，`R` が `active:` を与えてその契約を挙げて
+いる場合，`R` が `suspended:` を与えてその契約を挙げていない場合，`R` がどちらも与えていない場合
+である。エントリのないモードでは，宣言された値がすべてそのまま使われ，すべての契約が有効である。
+`regimes:` のないファイルは，どのモードもエントリを持たないファイルと同じに扱う。宣言された値
+そのものは変わらず，契約はそこに書かれた数を保持する。モード `R` から `R'` への遷移は，`R` の
+束縛を `R'` の束縛に置き換える。遷移の `protocol:` のどのステップで置き換わるか，また，
+システムがどのモードで始まるかは，本付録では定めない。
+
+**静的規則。** 処理系は，次の違反をエラーとして報告しなければならない。
+
+- **R-1** `regimes:` のキーは，ファイルのモード，すなわち `transitions:` の `from:` または
+  `to:` で用いる名前である。`transitions:` のないファイルはモードを持たないので，エントリも
+  持てない。YAML 1.1 が真偽値またはnullとして読むモード名（`yes`，`ON`，`null`）は，
+  引用符で囲まなければならない。
+- **R-2** エントリは，`parameters:` と `contracts:` 以外のキーを持たない。
+- **R-3** `param_ref` は，宣言された契約のうちその値を書いているものの `alpha`，`beta`，
+  `lambda`，または `context.environment` のエントリを指す。
+- **R-4** `C.alpha`，`C.beta`，`C.lambda` の値は `[0, 1]` の数である。`environment.X` の
+  値はエントリと同じ型を持つ。真偽値には真偽値，整数には整数，数には整数または数，文字列には
+  文字列である。スカラーでないエントリは束縛できない。
+- **R-5** `contracts:` は `active:` と `suspended:` のちょうど一方を持ち，その列は宣言された
+  契約を，それぞれ高々1回挙げる。
+- **R-6** 1つのモードは，同じパラメータを高々1回束縛する（`ROUTING.beta` と
+  `"ROUTING . beta"` は同じパラメータである）。また，そのモードで有効でない契約の `alpha`，
+  `beta`，`lambda` を束縛しない。
+- **R-7** `stochastic: 0.1` を宣言したファイルでは，モードがソースに束縛した値は，その
+  `from:` を持つすべてのモデルパラメータの，そのモードの設計での値である。`model.regimes:` は，
+  同じモードでそのパラメータに同じ値を与えてもよいが，別の値を与えてはならない（H.6）。
+  R-1からR-6に違反する `regimes:` ブロックがあると，モデルの設計は定まらない。
+
+**IR。** `cadl sim-ir` は，3層IR（モジュール `cadl.sim.ir`）に次の2つを加える。
+
+- `transitions` の各要素は，遷移が `safety_invariant` を持つとき，その述語を書かれたとおりに
+  持つ（`condition` と同じ扱い）。持たないときは，キーそのものがない。
+- `regimes:` を持つファイルでは，トップレベルのキー `regimes` が加わる。これは，`transitions:`
+  に最初に現れる順に，モードごとに1つの要素を持つ列である。
+
+```json
+"regimes": [
+  { "name": "DISTRIBUTED", "parameters": {},
+    "active_contracts": ["ROUTING", "FREE_PASSAGE"],
+    "suspended_contracts": ["BAY_ASSIGNMENT"] },
+  { "name": "CENTRALIZED",
+    "parameters": { "ROUTING.beta": 0.9, "environment.bays": 3 },
+    "active_contracts": ["ROUTING", "BAY_ASSIGNMENT"],
+    "suspended_contracts": ["FREE_PASSAGE"] }
+]
+```
+
+`parameters` は，モードが束縛する値を，空白を除いた `param_ref` をキーとして持つ。そこにない
+パラメータは宣言された値を持ち，その値はIRの契約（`governance`）または `environment` にある。
+2つの契約の列は，すべての契約を宣言の順に挙げる。ブロックが規則に違反するとき `regimes` は
+`null` である。ブロックのないファイルにはこのキーがなく，そのIRは `cadl` 0.3.31と同じである。
+
 ## A.8 検証ブロック {/* #a8-verification-block */}
 
 ```ebnf
@@ -381,7 +473,7 @@ AND    OR    NOT    true    false    for all    exists    in
 | ブロック | キー |
 |---|---|
 | ファイル | `sos` |
-| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `metrics` `verification` `codegen` `motivation` `model` |
+| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `regimes` `metrics` `verification` `codegen` `motivation` `model` |
 | `context` | `environment` `assumptions` |
 | アクター | `id` `role` `autonomy` `capabilities` `interface`（`input` `output`） |
 | 契約 | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` `norms` `counts_as` `enforcement` `delegations` `grounding` |
@@ -399,6 +491,7 @@ AND    OR    NOT    true    false    for all    exists    in
 | ステップ | `if` `else` `parallel` `barrier` |
 | アルゴリズム | `central` `local` |
 | 遷移 | `from` `to` `condition` `protocol` `safety_invariant` |
+| モードへの束縛（A.7.1） | `parameters` `contracts`（`active` `suspended`） |
 | メトリクス | `id` `formula` `target` |
 | 検証 | `id` `type` `target` `property` `method` `expr` `bound` |
 | コード生成 | `target` `output` `mappings` |
@@ -456,6 +549,17 @@ AND    OR    NOT    true    false    for all    exists    in
   先頭の名前だけが保持される。この形式は本付録の一部ではない。
   `cadl` 0.3.10からは，`low`，`medium`，`high` 以外の `autonomy:` の値は，`cadl check` で
   エラーとなる。それより前のリリースは，診断なしに `medium` として読んでいた。
+- **モード。** `cadl` 0.3.32からは，`cadl check` はA.7.1のR-1からR-7を適用する。束縛は，
+  各ツールがパラメータと契約を読むところで使われる。`cadl sim-ir` はそれを書き出し（A.7.1），
+  `cadl sim-gen` は `python` と `go` の設定（`regimes`）と `unity` の設定
+  （`regimeBindings`）に渡す。`cadl verify` は，当事者を共有する2つの契約を，両方が有効な
+  モードがある場合にだけ検査し，それ以外の組を `info` として報告する。`cadl codegen` の
+  `python` ターゲットは，モードの制御クラスにメソッド `parameters()`，`contract_active()`，
+  `apply_bindings()` を与え，現在のモードの値を `ctx.parameters` に置き，契約のモニターを
+  その契約が有効なモードでだけ実行する。生成される `unity-csharp`，`solidity`，`opa` の
+  コード，規範のオンラインモニター，`cadl regime-map` は束縛を使わない。遷移の
+  `safety_invariant` は，`cadl` 0.3.32からIRとシミュレータの設定に含まれる。0.3.31までは
+  `cadl check` が検査していたが，`cadl sim-ir` は出力しなかった。
 - **検証。** `method:`，`expr:`，`bound:` は読み込まれる。`smt` 以外の手法は
   `not_supported` として報告され（テキスト出力では `[SKIP]` と表示される），未知の手法は
   エラーとなる。宣言されたものを何も指さない `target:` は，どの手法についてもエラーとなる。

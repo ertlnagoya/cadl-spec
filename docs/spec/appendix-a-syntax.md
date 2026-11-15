@@ -111,6 +111,7 @@ sos_body    = "name:" , text ,
               [ "protocols:"    , { "-" , protocol_def } ] ,
               [ "algorithms:"   , { algorithm_def } ] ,
               [ "transitions:"  , { "-" , transition_def } ] ,
+              [ "regimes:"      , regimes_block ] ,       (* A.7.1 *)
               [ "metrics:"      , { "-" , metric_def } ] ,
               [ "verification:" , { "-" , verify_def } ] ,
               [ "codegen:"      , { "-" , codegen_def } ] ,
@@ -300,6 +301,111 @@ transition_def = "from:" , identifier ,
 transition; there is no separate declaration. `protocol:` SHOULD name a
 protocol declared in `protocols:`.
 
+### A.7.1 Regime bindings {/* #a71-regime-bindings */}
+
+From `cadl` 0.3.32 the block `regimes:` binds, per regime, values of
+declared parameters and the contracts in force.
+
+```ebnf
+regimes_block   = { identifier , ":" , regime_binding } ;
+regime_binding  = [ "parameters:" , { param_ref , ":" , scalar } ] ,
+                  [ "contracts:"  , contracts_in_force ] ;
+param_ref       = identifier , "." , ( "alpha" | "beta" | "lambda" )
+                | "environment" , "." , identifier ;
+contracts_in_force = "active:"    , { "-" , identifier }
+                   | "suspended:" , { "-" , identifier } ;
+```
+
+```yaml
+  transitions:
+    - { from: DISTRIBUTED, to: CENTRALIZED, condition: "orders_in_window < 22",
+        safety_invariant: "robots_on_road == 0" }
+    - { from: CENTRALIZED, to: DISTRIBUTED, condition: "orders_in_window >= 26" }
+
+  regimes:
+    DISTRIBUTED:
+      contracts: { suspended: [BAY_ASSIGNMENT] }
+    CENTRALIZED:
+      parameters:
+        ROUTING.beta: 0.9           # authority.beta of the contract ROUTING
+        environment.bays: 3         # the entry bays of context.environment
+      contracts: { active: [ROUTING, BAY_ASSIGNMENT] }
+```
+
+A `param_ref` names a value that the file declares: `C.alpha`,
+`C.beta`, and `C.lambda` are `information.alpha`, `authority.beta`, and
+`incentives.lambda` of the contract with `id: C`, and `environment.X` is
+the entry `X` of `context.environment`. These are the sources of a
+parameter of the stochastic model extension
+([Appendix H, H.3](./appendix-h-stochastic.md)).
+
+**Semantics.** In a regime `R`, the value of a parameter is the value
+that `R` binds to it, if any, and otherwise its declared value. A
+contract is in force in `R` when `R` gives `active:` and lists it, when
+`R` gives `suspended:` and does not list it, or when `R` gives neither.
+A regime without an entry keeps every declared value and has every
+contract in force; a file without `regimes:` behaves as one in which no
+regime has an entry. The declared values themselves are not changed: the
+contract keeps the number written in it. A transition from `R` to `R'`
+replaces the bindings of `R` by those of `R'`; this appendix does not
+say at which step of the transition's `protocol:` that happens, nor in
+which regime the system starts.
+
+**Static rules.** A processor MUST report the following as errors.
+
+- **R-1** A key of `regimes:` is a regime of the file, a name used in
+  `from:` or `to:` of `transitions:`. A file without `transitions:` has
+  no regimes and therefore no entries. A regime name that YAML 1.1 reads
+  as a boolean or null (`yes`, `ON`, `null`) MUST be quoted.
+- **R-2** An entry has no keys other than `parameters:` and
+  `contracts:`.
+- **R-3** A `param_ref` names `alpha`, `beta`, or `lambda` of a declared
+  contract that writes that value, or an entry of `context.environment`.
+- **R-4** The value of `C.alpha`, `C.beta`, or `C.lambda` is a number in
+  `[0, 1]`. The value of `environment.X` has the type of the entry: a
+  boolean for a boolean, an integer for an integer, an integer or a
+  number for a number, a string for a string; an entry that is not a
+  scalar cannot be bound.
+- **R-5** `contracts:` has exactly one of `active:` and `suspended:`,
+  and its list names declared contracts, each at most once.
+- **R-6** A regime binds a parameter at most once (`ROUTING.beta` and
+  `"ROUTING . beta"` are the same parameter), and it does not bind
+  `alpha`, `beta`, or `lambda` of a contract that is not in force in it.
+- **R-7** In a file that declares `stochastic: 0.1`, the value that a
+  regime binds to a source is the value, under the design of that regime,
+  of every model parameter with that `from:`. `model.regimes:` MAY give
+  such a parameter the same value in the same regime and MUST NOT give it
+  another one (H.6). A `regimes:` block that breaks R-1 to R-6 leaves the
+  designs of the model undefined.
+
+**IR.** `cadl sim-ir` writes two additions to the three-layer IR
+(module `cadl.sim.ir`):
+
+- each entry of `transitions` carries `safety_invariant`, the predicate
+  as written (like `condition`), when the transition has one; the key is
+  absent otherwise;
+- a file with `regimes:` gets the top-level key `regimes`, a list with
+  one entry per regime in order of first appearance in `transitions:`:
+
+```json
+"regimes": [
+  { "name": "DISTRIBUTED", "parameters": {},
+    "active_contracts": ["ROUTING", "FREE_PASSAGE"],
+    "suspended_contracts": ["BAY_ASSIGNMENT"] },
+  { "name": "CENTRALIZED",
+    "parameters": { "ROUTING.beta": 0.9, "environment.bays": 3 },
+    "active_contracts": ["ROUTING", "BAY_ASSIGNMENT"],
+    "suspended_contracts": ["FREE_PASSAGE"] }
+]
+```
+
+`parameters` holds the values the regime binds, keyed by the
+`param_ref` without spaces; a parameter that is absent has its declared
+value, which the IR keeps in the contract (`governance`) or in
+`environment`. The two contract lists are complete and in declaration
+order. `regimes` is `null` when the block breaks a rule, and absent
+for a file without the block, whose IR is the same as in `cadl` 0.3.31.
+
 ## A.8 Verification block
 
 ```ebnf
@@ -423,7 +529,7 @@ Keys of the structure, by the block in which they are recognised.
 | Block | Keys |
 |---|---|
 | file | `sos` |
-| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `metrics` `verification` `codegen` `motivation` `model` |
+| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `regimes` `metrics` `verification` `codegen` `motivation` `model` |
 | `context` | `environment` `assumptions` |
 | actor | `id` `role` `autonomy` `capabilities` `interface` (`input` `output`) |
 | contract | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` `norms` `counts_as` `enforcement` `delegations` `grounding` |
@@ -441,6 +547,7 @@ Keys of the structure, by the block in which they are recognised.
 | step | `if` `else` `parallel` `barrier` |
 | algorithm | `central` `local` |
 | transition | `from` `to` `condition` `protocol` `safety_invariant` |
+| regime binding (A.7.1) | `parameters` `contracts` (`active` `suspended`) |
 | metric | `id` `formula` `target` |
 | verification | `id` `type` `target` `property` `method` `expr` `bound` |
 | codegen | `target` `output` `mappings` |
@@ -525,6 +632,22 @@ deviates from this appendix as follows (checked against `cadl` 0.3.31).
   part of this appendix. From `cadl` 0.3.10 an `autonomy:` value other
   than `low`, `medium`, or `high` is an error in `cadl check`; earlier
   releases read it as `medium` without a diagnostic.
+- **Regimes.** From `cadl` 0.3.32 `cadl check` applies R-1 to R-7 of
+  A.7.1, and the bindings are used where the tools read parameters and
+  contracts: `cadl sim-ir` writes them (A.7.1) and `cadl sim-gen` passes
+  them to the `python` and `go` configurations (`regimes`) and to the
+  `unity` configuration (`regimeBindings`); `cadl verify` checks two
+  contracts that share a party only when some regime has both in force,
+  and reports the other pairs as `info`; the `python` target of
+  `cadl codegen` gives the regime controller the methods `parameters()`,
+  `contract_active()`, and `apply_bindings()`, publishes the values of
+  the current regime in `ctx.parameters`, and runs the monitor of a
+  contract only in the regimes in which it is in force. The generated
+  `unity-csharp`, `solidity`, and `opa` code, the online monitor of the
+  norms, and `cadl regime-map` do not use the bindings. The
+  `safety_invariant` of a transition is in the IR and the simulator
+  configurations from `cadl` 0.3.32; up to 0.3.31 `cadl check` checked it
+  but `cadl sim-ir` left it out.
 - **Verification.** `method:`, `expr:`, and `bound:` are read. Methods
   other than `smt` are reported as `not_supported` (shown as `[SKIP]`
   in text output), and an unknown method is an error. A `target:` that

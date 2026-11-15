@@ -55,6 +55,11 @@ sos:
       protocol: <遷移プロトコルID>
       safety_invariant: <安全条件>
 
+  regimes:                      # モードごとのパラメータ値と契約
+    <モードID>:
+      parameters: { <C.beta | environment.X>: <値>, ... }
+      contracts: { suspended: [ ... ] }   # または active: [ ... ]
+
   metrics:                      # 評価指標定義
     - id: <識別子>
       formula: <式>
@@ -63,7 +68,7 @@ sos:
 
 この構造の例は主要なブロックだけを示しており，`description`，`verification`，`codegen`，`extensions`，`motivation` は省略している。キーの完全な一覧は[付録AのA.11節](./appendix-a-syntax.md#a11-reserved-keywords)にある。
 
-v0.3では，運用モード（regime）は名前である。`transitions:` の `from:` / `to:` に現れることで導入され，別個の宣言はない。また，契約やパラメータ値をモードに結び付ける構文はコア言語にない。確率モデル拡張は，確率モデルの中でモードごとにパラメータの値を割り当てる（[付録HのH.6節](./appendix-h-stochastic.md)）。
+v0.3では，運用モード（regime）は名前である。`transitions:` の `from:` / `to:` に現れることで導入され，別個の宣言はない。`cadl` 0.3.32から，省略可能なブロック `regimes:` で，パラメータの値と有効な契約をモードに結び付けられる。モードごとに，契約の `alpha`，`beta`，`lambda` と `context.environment` のエントリの値，およびそのモードで有効（`active`）または停止（`suspended`）する契約を書く。エントリのないモードでは，宣言された値がすべてそのまま使われ，すべての契約が有効である（[付録AのA.7.1節](./appendix-a-syntax.md#a71-regime-bindings)）。確率モデル拡張は，これらの値をそのモードの設計のパラメータ値とし，確率モデルの中でほかのパラメータに値を割り当ててもよい（[付録HのH.6節](./appendix-h-stochastic.md)）。
 
 ### 5.1.1 段階的記述レベル
 
@@ -358,6 +363,7 @@ sos_definition = "name:" , text ,
     [ "protocols:" , { "-" , protocol_def } ] ,
     [ "algorithms:" , { algorithm_def } ] ,
     [ "transitions:" , { "-" , transition_def } ] ,
+    [ "regimes:" , regimes_block ] ,
     [ "metrics:" , { "-" , metric_def } ] ,
     [ "verification:" , { "-" , verify_def } ] ,
     [ "codegen:" , { "-" , codegen_def } ] ;

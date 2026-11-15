@@ -959,13 +959,21 @@ LLM cost about US$1.3 per run in the §10 records (Claude Opus 5.5).
 
 Building this exercise exposed these gaps in CADL 0.3. They are still there in `cadl` 0.3.31:
 
-- `cadl sim-ir` does not emit `sos.transitions[*].safety_invariant` into the IR (`cadl check` does
-  check it as an expression). The exercise reads it from the checked source file.
-- An operating mode (regime) is only a name; there is no syntax to bind parameter values or
-  contracts to it. What changes in centralized mode (bays, exclusive edges) is decided by the
-  simulator. The stochastic model extension assigns parameter values per regime with
-  `model.regimes:` ([Appendix H, H.6](../spec/appendix-h-stochastic.md)), but only inside its
-  probabilistic model; the simulation and the generated code do not use them.
+- Up to `cadl` 0.3.31, `cadl sim-ir` did not emit `sos.transitions[*].safety_invariant` into the
+  IR (`cadl check` did check it as an expression), so the exercise reads it from the checked source
+  file. From `cadl` 0.3.32 the IR carries it as written in `transitions[*].safety_invariant`
+  ([Appendix A, A.7.1](../spec/appendix-a-syntax.md#a71-regime-bindings)).
+- Up to `cadl` 0.3.31 an operating mode (regime) was only a name, with no syntax to bind parameter
+  values or contracts to it. From `cadl` 0.3.32 the block `regimes:` binds, per regime, values of
+  `alpha`, `beta` and `lambda` of a contract and of entries of `context.environment`, and the
+  contracts that are active or suspended
+  ([Appendix A, A.7.1](../spec/appendix-a-syntax.md#a71-regime-bindings)). `cadl sim-ir` writes
+  the bindings of every regime, `cadl verify` checks two contracts against each other only when some
+  regime has both in force, the generated Python code monitors a contract only in the regimes in
+  which it is in force, and the stochastic model extension takes the bound values as the parameter
+  values of its designs ([Appendix H, H.6](../spec/appendix-h-stochastic.md)). CADL can now say
+  that centralized mode has bays (for example `environment.bays: 3`) and which contracts hold in it;
+  how robots use the bays and the exclusive edges is still decided by the simulator.
 - Which layer (rule or contract) a parameter belongs to, and who decides its amendment, is written
   in `constitution.yaml` and in `# @amend:` comments, not in CADL.
 - When a new version of the rules takes effect, there is no syntax for which version applies to

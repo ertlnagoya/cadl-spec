@@ -54,6 +54,11 @@ sos:
       protocol: <transition_protocol_id>
       safety_invariant: <safety_condition>
 
+  regimes:                      # Per-regime parameter values and contracts
+    <regime_id>:
+      parameters: { <C.beta | environment.X>: <value>, ... }
+      contracts: { suspended: [ ... ] }   # or active: [ ... ]
+
   metrics:                      # Evaluation metric definitions
     - id: <identifier>
       formula: <expression>
@@ -65,10 +70,18 @@ The skeleton shows the main blocks only; `description`, `verification`,
 of keys is in [Appendix A, §A.11](./appendix-a-syntax.md#a11-reserved-keywords).
 
 In v0.3 a regime is a name. It is introduced by appearing in `from:` /
-`to:` of `transitions:`; there is no separate declaration, and the
-core language has no syntax that attaches contracts or parameter values to a
-regime. The stochastic model extension assigns parameter values per regime
-inside its probabilistic model ([Appendix H, H.6](./appendix-h-stochastic.md)).
+`to:` of `transitions:`; there is no separate declaration. From `cadl`
+0.3.32 the optional block `regimes:` binds parameter values and the
+contracts in force to a regime: per regime it gives values of
+`alpha`, `beta`, and `lambda` of a contract and of entries of
+`context.environment`, and the contracts that are `active` or
+`suspended` in it. A regime without an entry keeps every declared value
+and has every contract in force
+([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings)). The
+stochastic model extension takes these values as the parameter values
+of the design of the regime and may assign values to further parameters
+inside its probabilistic model
+([Appendix H, H.6](./appendix-h-stochastic.md)).
 
 ### 5.1.1 Graduated Description Levels
 
@@ -437,6 +450,7 @@ sos_definition = "name:" , text ,
     [ "protocols:" , { "-" , protocol_def } ] ,
     [ "algorithms:" , { algorithm_def } ] ,
     [ "transitions:" , { "-" , transition_def } ] ,
+    [ "regimes:" , regimes_block ] ,
     [ "metrics:" , { "-" , metric_def } ] ,
     [ "verification:" , { "-" , verify_def } ] ,
     [ "codegen:" , { "-" , codegen_def } ] ;

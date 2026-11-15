@@ -355,6 +355,21 @@ gives the value of the design as declared, and a regime that assigns
 it describes the operating mode in which it has another value. A
 regime without an entry assigns nothing.
 
+From `cadl` 0.3.32 the block `regimes:` of the core language
+([A.7.1](./appendix-a-syntax.md#a71-regime-bindings)) also binds values
+per regime, to the sources `C.alpha`, `C.beta`, `C.lambda`, and
+`environment.X`. When a regime binds the source of a bound parameter
+there, that value is the parameter's value under the design of the
+regime, as if `model.regimes:` assigned it: `model.regimes:` MAY repeat
+the value in that regime and MUST NOT give another one (R-7), the value
+MUST lie in the declared range (S-4), and the parameter counts as
+assigned for S-14 and I-9, so that a regime map or an equilibrium map
+cannot open it. A parameter that `regimes:` does not bind in the regime,
+in particular every free parameter, is assigned by `model.regimes:` as
+before; such a value holds only inside the probabilistic model, while
+the IR, the simulator configurations, and the generated code use the
+value of `regimes:` or the declared value.
+
 A **design** is a regime together with its parameter assignment and
 the set of commands that exist in it; "the model under regime `R`",
 "the design `R`", and "the institution `R`" all mean this. A file with
