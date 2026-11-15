@@ -147,10 +147,11 @@ fixed-point numbers with six decimals and therefore also refuses `*`,
 `/`, and literals with more than six decimals; outside the content of a
 norm it scans the window of a temporal operator once, as the
 observations arrive, and therefore refuses there a temporal operator
-inside another one; in the content of a norm it refuses six or more
-temporal operators (five or more before `cadl` 0.3.31) and the temporal
-operators inside another one whose values are not decided in the order
-of the observations (see below);
+inside another one; in the content of a norm it refused, before `cadl`
+0.3.32, six or more temporal operators (five or more before 0.3.31) and
+the temporal operators inside another one whose values are not decided
+in the order of the observations, which from 0.3.32 it decides per
+observation (see below);
 and it refuses a contract whose
 creation code would exceed the 49152 bytes of EIP-3860 or whose runtime
 code would exceed the 24576 bytes of EIP-170 (`cadl codegen` estimates
@@ -226,7 +227,8 @@ filled in by its constructor, and interprets it. The model and the
 state are one struct in storage, which six libraries read and change:
 they hold the evaluation of predicates, the functions without state,
 the judgement of contents with one temporal operator, that of contents
-with two to five or with one inside another, the items, and the events,
+with two to five or with one inside another (and, from `cadl` 0.3.32, of
+the contents decided per observation), the items, and the events,
 messages, counts-as rules and powers, so that each runtime code stays within the size limit of
 EIP-170. From `cadl` 0.3.28 the runtime code of the contract is
 estimated at 16 840 bytes, which leaves more than
@@ -239,7 +241,11 @@ libraries `CadlNormsMulti` and `CadlNormsEval` are estimated at 7 490 and
 keeps the values of a content with five temporal operators in four words
 and treats a nested operator as a chain of levels, `CadlNormsMulti`,
 `CadlNormsEval` and `CadlNormsWindows` are estimated at 10 120, 11 440 and
-5 490 bytes (7 490, 10 410 and 5 230 in 0.3.30). The size of the code does
+5 490 bytes (7 490, 10 410 and 5 230 in 0.3.30). From `cadl` 0.3.32, which
+adds the contents decided per observation to `CadlNormsMulti`, it,
+`CadlNormsEval`, `CadlNormsActs` and the contract are estimated at
+15 830, 11 540, 12 190 and 17 180 bytes (10 120, 11 440, 12 080 and 16 670
+in 0.3.31). The size of the code does
 not depend on the number of temporal operators or of levels. The cost of an
 observation does not grow with the number of earlier observations: the
 window of a temporal operator is scanned once (each observation adds
@@ -354,11 +360,13 @@ so an observation changes a few ranges per operator, each in steps that
 grow with the logarithm of the number of candidates, and the root says
 whether a candidate holds and whether one is undecided. The cost of an
 observation therefore does not grow with the number of observations for
-any m ≤ 5, and it grows with m by a factor measured below. Six or more
-temporal operators in one content are refused: a node would have 125
-words, and an observation, which costs up to 1.0 × 10<sup>7</sup> gas with
-five operators in the measurements below, would cost about five times as
-much, of the order of the gas limit of a block. (Up to `cadl` 0.3.28 a
+any m ≤ 5, and it grows with m by a factor measured below. The tree does
+not take six or more temporal operators in one content: a node would have
+125 words, and an observation, which costs up to 1.0 × 10<sup>7</sup> gas
+with five operators in the measurements below, would cost about five
+times as much, of the order of the gas limit of a block. Up to `cadl`
+0.3.31 such a content was refused; from 0.3.32 it is decided per
+observation (below). (Up to `cadl` 0.3.28 a
 node kept the values of the decided operators too, 7<sup>m</sup> pairs,
 which allowed two operators in one word; up to 0.3.30 five operators
 were refused, since their 4<sup>5</sup> values do not fit in one word.)
@@ -457,8 +465,8 @@ An observation evaluates p once and, per level, makes one binary search
 over the times and one per run fed, and feeds a bounded number of runs
 to the outer operator, each with a few binary searches and range updates
 of the tree, so its cost is bounded as above for any fixed chain.
-Refused are `until` in a nesting and an operand of a level or of the
-outer operator that is more than another level or its negation
+The tree does not take `until` in a nesting, nor an operand of a level
+or of the outer operator that is more than another level or its negation
 (`within(5s, throughout(2s, p) AND r)`). In them a value of the operand
 can be decided before that of an earlier observation, and feeding the
 values in order would decide later than F.5. In
@@ -468,16 +476,99 @@ outer operator at t = 0 is true at t = 1 in F.5, while the inner value at
 t = 0 stays undecided until its window ends after t = 3. In
 `within(d, throughout(e, p) AND r)` a false r decides the operand at
 once. For such an operand, deciding the values out of order would not
-keep the cost bounded:
+keep the cost of the tree bounded:
 after a gap in the times, one observation decides the inner values of
 all observations of a long stretch at once, and the operand is then true
 exactly at those with r true, so the candidates whose window holds such
 an observation become true and the others stay as they were, which can
 alternate from one candidate to the next as often as there are
 candidates; one observation would change that many ranges of the tree.
-For `until` in a nesting no construction with bounded gas is known
-either. Whether these contents can be monitored with bounded gas in some
-other way is left open.
+Up to `cadl` 0.3.31 these contents were refused; from 0.3.32 they are
+decided per observation (below).
+
+*Contents decided per observation.* From `cadl` 0.3.32 the Solidity
+monitor decides the contents that the tree does not take: six or more
+temporal operators in one content, `until` in a nesting (inside `within`
+or `throughout`, or with a temporal operator in an operand of `until`,
+`until(p, within(2s, q), 3s)`), and an operand of `within` or
+`throughout` that combines a nested operator with other parts. From the
+first candidate of an activation on, each temporal operator of such a
+content keeps, for every observation y, the value of F.5 (undecided,
+true, false, undefined) of each of its operands at y and its own value
+at y, two bits each, 128 to a storage word; an observation treats the
+operators directly inside an operand before the operator. A value once
+decided is kept, as in F.5, where it does not change with later
+observations. The operand of an operator at y is read with the values at
+y of the operators directly inside it. Let W = [y, e] be the window of
+y among the observations up to n (those from y on with a time at most
+t<sub>y</sub> + d), and call it over when an observation up to n has a
+later time. The value of `within(d, p)` at y is then true when p is true
+at an observation of W; otherwise undecided when W is not over or p is
+undecided at an observation of W; otherwise undefined when p is undefined
+at one, and false otherwise (`throughout` exchanges true and false). For
+`until(p, q, d)`, let b be the first observation of W at which p is
+false, R = [y, b] (R = W without one), and g the first observation of R
+at which p is undecided or undefined. The value is true when q is true at
+an observation of [y, g] (of R without g); otherwise undecided when there
+is no b and W is not over; otherwise undecided when q is undecided at an
+observation of R, or true or undefined at one after an observation of R
+at which p is undecided; otherwise undefined when q is undefined at an
+observation of R, or true at one after an observation at which p is
+undefined; and false otherwise. These are the results of the scan of F.4
+over W, which `cadl norms-eval` performs, and each condition is a search
+for the first observation with given values over the words of W.
+
+The value at y depends only on the operand values in W and on whether W
+is over. An observation n therefore reads again: the operands at n and at
+the observations at which it decided a value of an operator directly
+inside them; the windows that n ends, a range of observations found by
+binary search; and, of the windows that hold an operand value decided at
+n, those that this value can decide. For `within` and `throughout`, a
+decisive operand value at x decides
+every undecided window that holds it (y ≤ x with t<sub>y</sub> ≥
+t<sub>x</sub> − d). Another value cannot decide a window that is not
+over, which stays undecided until a decisive value or its end. A window
+that is over and stays undecided waits for its last undecided operand
+value: it is read again when that value is decided, and then waits for
+the next one if another remains. For `until`, the operand values at n
+decide a window that holds n only when p is false at n, after which no
+term of the window can be true, or q is true at n, which makes the
+windows with p true since them true; an operand value decided after its
+own observation makes every window that holds it read again. The content is read again at the
+candidates at which an operator of the content was decided; a true
+candidate decides the norm, and one that is undecided keeps it pending,
+as with the tree. Each read gives the value of F.5 by the conditions
+above, and every event that can change the value at y (a new operand
+value in W, the end of W) leads to a read of y, so the monitor decides
+every value at the observation at which F.5 decides it, and to the same
+value.
+
+Every value is decided once, and besides binary searches over the times
+an observation reads only observations from the oldest undecided window
+or candidate on, so its gas does not grow with the number of earlier
+observations, except for the logarithm in these searches. It grows linearly
+with the number of temporal operators (no node of 5<sup>m</sup>
+combinations), and it can grow with the number of observations inside a
+window: after a gap in the times one observation can decide the values
+of a whole window, and for `until` an operand value decided after its
+observation makes every window that holds it read again. Whether these
+contents can be monitored with a gas that does not grow with the number
+of observations inside a window is left open. The values are not
+deleted: two bits per operand and per operator for each observation from
+the first candidate of an activation on, and two storage slots for each
+window that waits; the values of the quantities that the operands read
+are kept from the first observation whose operand or candidate is
+undecided. The code does not depend on the content; what limits the
+size of a content is the creation of the monitor. Its constructor stores
+the model, about 5.5 × 10<sup>5</sup> gas per operator of the form
+`within(1s, A.x > k)`: 7.4 × 10<sup>6</sup> gas for 6 such operators,
+1.7 × 10<sup>7</sup> for 24, and 3.1 × 10<sup>7</sup> for 48, above the
+gas limit of a block in the tests (3 × 10<sup>7</sup>); the creation code
+then has 21 646, 30 688, and 42 760 bytes, and `cadl codegen` refuses a
+monitor whose estimated creation code exceeds the limit of EIP-3860, as
+for every content. The contents that the tree takes are decided by the
+tree as before, whose gas does not grow with the observations inside a
+window.
 
 The tree is not pruned: each activation of such a norm
 adds at least three storage slots per candidate (its observation, its
@@ -518,7 +609,19 @@ and 5.6 × 10<sup>5</sup> (at most 7.6 × 10<sup>5</sup>), four operators
 1.9 × 10<sup>6</sup> and 2.0 × 10<sup>6</sup> (at most 2.8 × 10<sup>6</sup>),
 and five operators (`… OR within(1000s, …)`) 6.7 × 10<sup>6</sup> and
 6.9 × 10<sup>6</sup> (at most 1.0 × 10<sup>7</sup>; the factor over four
-is about 3.5, from the 25 words of a node). `cadl` 0.3.25 read every candidate at every
+is about 3.5, from the 25 words of a node). From `cadl` 0.3.32 the contents decided per observation cost, at the
+320th and at the 1000th observation, 5.4 × 10<sup>5</sup> and
+6.4 × 10<sup>5</sup> gas for `within(1000s, throughout(500s, …) AND …)`
+(with an operand that stays false), 5.3 × 10<sup>5</sup> and
+6.8 × 10<sup>5</sup> for `within(1000s, until(…, …, 500s))` (both rise
+once, when the inner windows end from the 500th second on, and then stay
+there), and 9.8 × 10<sup>5</sup> and 9.9 × 10<sup>5</sup> for six
+operators (at most 1.3 × 10<sup>6</sup>; five operators in the tree cost
+6.7 × 10<sup>6</sup>); twelve operators cost 1.6 × 10<sup>6</sup> at the
+120th observation. For `within(100s, NOT throughout(50s, …) OR …)`, whose
+windows end before the values inside them are decided and then wait, an
+observation costs 5.4 × 10<sup>5</sup> gas before the 100th second and
+7.4 × 10<sup>5</sup> from the 150th on. `cadl` 0.3.25 read every candidate at every
 observation and used 1.3 × 10<sup>7</sup> gas at the 320th. A monitor whose observation would exceed the block gas limit cannot record it and does
 not recover, so the bound matters. The generated file is to be compiled with solc
 0.8.24 to 0.8.37 (checked; its pragma is `>=0.8.24 <=0.8.37`) and
