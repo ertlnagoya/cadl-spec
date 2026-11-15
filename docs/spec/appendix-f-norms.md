@@ -1890,13 +1890,44 @@ At each observation the environment chooses three things.
    arithmetic, a quantity without a domain may be a number of the
    arrangement above; the leaves that read such numbers are evaluated at
    the end, at one point of every face of the arrangement of their
-   forms, with the other values fixed by the state. The processor
-   refuses a component when one step needs more than 50 000 states, or
-   the leaves that read numbers need more than 50 000 points of faces in
-   all (Limits), and says which. This happens when one leaf reads many quantities, such as
-   `max(r.load for r in R) > D.load` over six or more members, or when
-   every pair of six or more members is ordered in a way that depends
-   on their indices.
+   forms, with the other values fixed by the state. A processor MAY keep
+   fewer states when the combinations found stay the same. From `cadl`
+   0.3.32 the reference implementation does so in three ways, outside
+   components with linear arithmetic. First, a permutation of the
+   members of a set maps a leaf that uses the members only through
+   variables (those of its quantifiers and aggregates and those bound by
+   an enclosing quantifier) to the leaf with the members of its bindings
+   permuted, which has the same value on the permuted values; two states
+   of one step that such a permutation maps to each other give the same
+   combinations, when it moves only members whose quantities have all
+   been added, maps the quantities of the pattern to quantities of the
+   pattern with the same kinds, and keeps the remainders up to the order
+   of the operands of `AND` and `OR`, and one of them is kept. This
+   covers predicates that order every pair of members by their indices.
+   Second, before the steps, a number of runs add the quantities along
+   one extension at a time and keep the combination of each run with its
+   valuation; a state is not kept when every combination that its
+   remainders can still give has been found. The values that a remainder
+   can give are bounded by Kleene's tables from those of its operands,
+   and a part that reads at most two quantities takes the values that it
+   has over every pattern of them. Third, a leaf that reads the members
+   of a set only through `min` and `max` of one field over the whole set
+   has, by F.5, a value decided by which sorts of element occur (a
+   number, a value of a wrong kind, a value that is missing) and by the
+   smallest and the largest number; instead of every added member, a
+   state keeps one member of each sort that occurs and the members with
+   the smallest and the largest number, names a member that only this
+   leaf reads by its role, and the leaf is evaluated with every member
+   given the value of one of these. The processor refuses a component
+   when one step needs more states than the limit, or the leaves that
+   read numbers need more points of faces in all than the limit
+   (Limits), and says which limit was exceeded and how far it may be
+   raised. The reference implementation still refuses, with the default
+   limit, a leaf that reads many quantities through `count` when one of
+   its values never occurs (`count(r.load > D.load for r in R) >= 0` over
+   six members), linear arithmetic over many ordered quantities, and
+   predicates that read the same six or more members both through `max`
+   and by their indices.
 3. **The end.** Whether the instance ends at this observation (step 6
    of F.5). This covers both the end signalled for an instance without
    `lifecycle:` and a terminal lifecycle state.
@@ -2077,12 +2108,16 @@ other quantities of the component: the reference implementation
 builds the 26 035 valuations of four ordered quantities without other
 literals in about 2 seconds. Beyond the limit (five such quantities
 have 424 213 valuations) the combinations are found by elimination,
-and the limit bounds the states of one step: the reference
-implementation adds a chain of 5 to 12 ordered quantities in less than
-a second, and every pair of 8 members of a set that the predicates
-treat alike in about 12 seconds; a leaf that reads 6 or more members at
-once, or every pair of 6 or more members ordered by their indices,
-exceeds the limit. In a component with linear
+and the limit bounds the states of one step. The limit of the states
+and of the points of faces is 50 000 unless the user raises it; the
+reference implementation takes it from `--max-states` (from `cadl`
+0.3.32, at most 1 000 000). The reference implementation adds a chain
+of 5 to 12 ordered quantities in less than a second, and every pair of
+8 members of a set that the predicates treat alike in about 12 seconds;
+from `cadl` 0.3.32 every pair of 6, 7, or 8 members ordered by their
+indices and `max(r.load for r in R) > D.load` over 8 members in less
+than a second each (`cadl` 0.3.31 refused both from 6 members).
+In a component with linear
 arithmetic, the combinations are the points of the faces, summed over
 the choices of classes that are not numbers (with elimination, over
 the final states), and the same limit applies. The model checker explores the

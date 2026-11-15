@@ -301,9 +301,10 @@ parameters. The formal meaning of α, β, and λ in terms of norms,
 design-time checking that F.12 does not cover (nonlinear arithmetic
 over a quantity without a given domain, which is checked only under a
 domain assumed from the literals of the predicate, groups of compared
-quantities whose elimination exceeds the limit, such as a leaf that
-reads many of them at once or all pairs of six or more members compared
-asymmetrically, instances of different contracts
+quantities whose elimination exceeds the limit, such as, from `cadl`
+0.3.32, a leaf that reads many of them through `count` when one of its
+values never occurs, linear arithmetic over many ordered quantities, or
+members read both through `max` and by their indices, instances of different contracts
 together, more than four instances, sets of actors whose size is not fixed, continuous
 time, and which party can avoid a violation),
 monitoring in the Unity C#
