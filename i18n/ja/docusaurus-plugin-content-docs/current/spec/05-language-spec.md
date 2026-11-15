@@ -446,6 +446,7 @@ CADLの契約は，Benvenisteらの契約ベース設計理論およびSaoudら�
 - 5.2節で詳しく扱っていないブロック（`context`，`algorithms`，`transitions`，`metrics`，`verification`，`codegen`）: [付録A](./appendix-a-syntax.md)のA.3節とA.6〜A.9節で規定する。
 - 契約のライフサイクルとモニター（`lifecycle:`，`monitors:`）: [付録E](./appendix-e-sos-dsl.md)。
 - 動機拡張: [付録C](./appendix-c-motivation.md)。
+- どの値を誰が改正できるか，モデルのバージョンと，バージョンが効力を持つときに動いている契約インスタンスの扱い，時間とともに変わるメトリクスの目標，人間の判断の記録への参照: [付録K](./appendix-k-amendment.md)。
 - コード生成ターゲット: [付録D](./appendix-d-codegen.md)。
 - ファイルの検査: `cadl parse`，`cadl check`，`cadl verify`（インストール方法は[仕様書イントロダクション](./intro.md)に示す）。
 - 実行できる例: cadlリポジトリの[`examples/` ディレクトリ](https://github.com/ertlnagoya/cadl/tree/master/examples)。

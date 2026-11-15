@@ -574,6 +574,10 @@ analysis ([Section 6.3](./06-design.md)).
 - Contract lifecycle and monitors (`lifecycle:`, `monitors:`):
   [Appendix E](./appendix-e-sos-dsl.md).
 - Motivation extension: [Appendix C](./appendix-c-motivation.md).
+- Which values may be amended and by whom, versions of a model and the
+  rule for contract instances running when a version takes effect,
+  metric targets that change over time, and references to records of
+  human decisions: [Appendix K](./appendix-k-amendment.md).
 - Code generation targets: [Appendix D](./appendix-d-codegen.md).
 - Checking a file: `cadl parse`, `cadl check`, and `cadl verify`
   (installation is described in the

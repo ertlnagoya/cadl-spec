@@ -116,7 +116,8 @@ sos_body    = "name:" , text ,
               [ "verification:" , { "-" , verify_def } ] ,
               [ "codegen:"      , { "-" , codegen_def } ] ,
               [ "motivation:"   , motivation_block ] ,
-              [ "model:"        , model_block ] ;          (* Appendix H *)
+              [ "model:"        , model_block ] ,          (* Appendix H *)
+              [ "amendment:"    , amendment_block ] ;      (* Appendix K *)
 sos_type    = "Directed" | "Acknowledged" | "Collaborative" | "Virtual" ;
 extension_decl = hyphen_name , ":" , scalar ;
 ```
@@ -126,7 +127,7 @@ semantic version string such as `"1.0.0"`.
 
 **Extension points.** `extensions:` declares the language extensions a
 file relies on, each as a name and a version (for example
-`- sos-dsl: 0.1`). Seven extensions are defined; all but the last have a
+`- sos-dsl: 0.1`). Eight extensions are defined; all but the last have a
 name that can be declared:
 
 - the SoS-DSL extension ([Appendix E](./appendix-e-sos-dsl.md)),
@@ -155,6 +156,12 @@ name that can be declared:
   `on_fulfilment:` to a norm and `magnitude:` to its `on_violation:`,
   and, with `games`, the keys `sanction_of:` and `reward_of:` to a
   payoff term;
+- the amendment extension
+  ([Appendix K](./appendix-k-amendment.md)), declared as `amendment`
+  with version `0.1`, which adds the key `amendment:` to `sos_body`
+  (amendable parameters, the version and its transitional provisions,
+  decision records) and the keys `schedule:` and `measure:` to
+  `metric_def` (A.3);
 - the motivation extension ([Appendix C](./appendix-c-motivation.md)),
   which defines `motivation_block`. It has no `extensions:` name in
   v0.3 and is used simply by writing a `motivation:` block.
@@ -177,7 +184,9 @@ interface_def  = [ "input:"  , { "-" , text } ] ,
 
 metric_def     = "id:" , identifier ,
                  [ "formula:" , predicate ] ,          (* string *)
-                 [ "target:"  , scalar ] ;
+                 [ "target:"  , scalar ] ,
+                 [ "schedule:" , { "-" , schedule_entry } ] ,  (* Appendix K *)
+                 [ "measure:"  , measure_def ] ;               (* Appendix K *)
 ```
 
 `autonomy:` defaults to `medium`. In `actor_def`, the index of `id:` is
@@ -543,6 +552,7 @@ Keys of the structure, by the block in which they are recognised.
 | agent governance (Appendix G) | actor `agent` (`kind` `protocol` `tools`); contract `enforcement` (`default` `point`), `delegations` (`norm` `to` `grant` `revoke` `max_depth` `until`); prohibition `on_denied` (`escalate_to` `timeout` `fallback` `notify`) |
 | stochastic model (Appendix H) | `model` (`kind` `parameters` `variables` `commands` `labels` `regimes` `rewards` `properties` `regime_maps`); the keys of each entry are listed in H.2 |
 | strategic model (Appendix I) | `model` (`players` `profiles` `compliance` `payoffs` `equilibria`); command `owner`; property and regime map `profile`; the keys of each entry are listed in I.2 |
+| amendment (Appendix K) | `sos` `amendment` (`previous` `effective` `transitional` `decisions` `layers` `parameters`); metric `schedule` (`from` `target` `decision`), `measure` (`window` `every` `aggregate` `runs` `across_runs` `description` `decision`); the keys of each entry are listed in K.3 to K.5 |
 | grounding (Appendix J) | contract `grounding` (`items` `tolerance`); norm `shares`, `on_fulfilment` (`reward` `magnitude`), `on_violation` (`magnitude`); payoff term `sanction_of` `reward_of` |
 | `authority` | `decision_scope` `decision_holder` `beta` `mode` |
 | `information` | `alpha` `views` `sharing` |
@@ -566,8 +576,9 @@ Enumerated values: `Directed` `Acknowledged` `Collaborative` `Virtual`
 [Appendix F](./appendix-f-norms.md),
 [Appendix G](./appendix-g-agents.md),
 [Appendix H](./appendix-h-stochastic.md),
-[Appendix I](./appendix-i-games.md), and
-[Appendix J](./appendix-j-grounding.md).
+[Appendix I](./appendix-i-games.md),
+[Appendix J](./appendix-j-grounding.md), and
+[Appendix K](./appendix-k-amendment.md).
 
 ## A.12 Reference implementation status (`cadl` 0.3) {/* #a12-reference-implementation-status-v03 */}
 
@@ -712,7 +723,11 @@ deviates from this appendix as follows (checked against `cadl` 0.3.31).
   for an unknown extension; for a model with `kind: smg`, `cadl check`
   0.3.22 reports errors of S-1 and S-9 where H.10 and H.15 ask for one
   informational diagnostic, and it ignores the keys of Appendix J
-  without a diagnostic.
+  without a diagnostic. The extension `amendment` 0.1
+  ([Appendix K, K.9](./appendix-k-amendment.md#k9-reference-implementation-status))
+  is implemented from `cadl` 0.3.32 (`cadl amend-diff`); up to 0.3.31
+  its name got the informational diagnostic for an unknown extension
+  and its keys were ignored.
 
 Releases of `cadl` before 0.3.7 differed in several of these points; the history
 is in the

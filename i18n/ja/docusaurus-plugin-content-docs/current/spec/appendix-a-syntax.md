@@ -102,7 +102,8 @@ sos_body    = "name:" , text ,
               [ "verification:" , { "-" , verify_def } ] ,
               [ "codegen:"      , { "-" , codegen_def } ] ,
               [ "motivation:"   , motivation_block ] ,
-              [ "model:"        , model_block ] ;          (* 付録H *)
+              [ "model:"        , model_block ] ,          (* 付録H *)
+              [ "amendment:"    , amendment_block ] ;      (* 付録K *)
 sos_type    = "Directed" | "Acknowledged" | "Collaborative" | "Virtual" ;
 extension_decl = hyphen_name , ":" , scalar ;
 ```
@@ -111,7 +112,7 @@ extension_decl = hyphen_name , ":" , scalar ;
 セマンティックバージョンの文字列を書く。
 
 **拡張点。** `extensions:` は，ファイルが依存する言語拡張を，名前とバージョンの組
-（たとえば `- sos-dsl: 0.1`）として宣言する。次の7つの拡張を定義している。
+（たとえば `- sos-dsl: 0.1`）として宣言する。次の8つの拡張を定義している。
 最後のもの以外は，宣言できる名前を持つ。
 
 - SoS-DSL拡張（[付録E](./appendix-e-sos-dsl.md)）。名前 `sos-dsl`，バージョン `0.1` として
@@ -130,6 +131,9 @@ extension_decl = hyphen_name , ":" , scalar ;
   `norms` を必要とし，`contract_def`（A.4）にキー `grounding:` を，規範にキー `shares:` と
   `on_fulfilment:` を，その `on_violation:` に `magnitude:` を追加する。`games` とともに用いるときは，
   利得の項にキー `sanction_of:` と `reward_of:` を追加する。
+- 改正拡張（[付録K](./appendix-k-amendment.md)）。名前 `amendment`，バージョン `0.1` として宣言する。
+  `sos_body` にキー `amendment:`（改正できるパラメータ，バージョンとその経過規定，判断の記録）を，
+  `metric_def`（A.3）にキー `schedule:` と `measure:` を追加する。
 - 動機拡張（[付録C](./appendix-c-motivation.md)）。`motivation_block` を定義する。
   v0.3では `extensions:` に書く名前を持たず，`motivation:` ブロックを書くだけで用いる。
 
@@ -151,7 +155,9 @@ interface_def  = [ "input:"  , { "-" , text } ] ,
 
 metric_def     = "id:" , identifier ,
                  [ "formula:" , predicate ] ,          (* string *)
-                 [ "target:"  , scalar ] ;
+                 [ "target:"  , scalar ] ,
+                 [ "schedule:" , { "-" , schedule_entry } ] ,  (* 付録K *)
+                 [ "measure:"  , measure_def ] ;               (* 付録K *)
 ```
 
 `autonomy:` の既定値は `medium` である。`actor_def` の `id:` の添字は，通常は範囲
@@ -485,6 +491,7 @@ AND    OR    NOT    true    false    for all    exists    in
 | エージェント統治（付録G） | アクターの `agent`（`kind` `protocol` `tools`），契約の `enforcement`（`default` `point`）と `delegations`（`norm` `to` `grant` `revoke` `max_depth` `until`），禁止の `on_denied`（`escalate_to` `timeout` `fallback` `notify`） |
 | 確率モデル（付録H） | `model`（`kind` `parameters` `variables` `commands` `labels` `regimes` `rewards` `properties` `regime_maps`）。各要素のキーはH.2に示す |
 | 戦略モデル（付録I） | `model`（`players` `profiles` `compliance` `payoffs` `equilibria`），コマンドの `owner`，性質とモードマップの `profile`。各要素のキーはI.2に示す |
+| 改正（付録K） | `sos` の `amendment`（`previous` `effective` `transitional` `decisions` `layers` `parameters`），メトリクスの `schedule`（`from` `target` `decision`），`measure`（`window` `every` `aggregate` `runs` `across_runs` `description` `decision`）。各項目のキーはK.3からK.5に示す |
 | 根拠付け（付録J） | 契約の `grounding`（`items` `tolerance`），規範の `shares`，`on_fulfilment`（`reward` `magnitude`），`on_violation`（`magnitude`），利得の項の `sanction_of` `reward_of` |
 | `authority` | `decision_scope` `decision_holder` `beta` `mode` |
 | `information` | `alpha` `views` `sharing` |
@@ -502,7 +509,7 @@ AND    OR    NOT    true    false    for all    exists    in
 列挙値: `Directed` `Acknowledged` `Collaborative` `Virtual`（SoSの型），
 `low` `medium` `high`（自律度），`smt` `model_check` `simulation` `proof`
 （検証手法），`ms` `s` `min` `h`（時間の単位）。拡張のキーと値は
-[付録C](./appendix-c-motivation.md)，[付録E](./appendix-e-sos-dsl.md)，[付録F](./appendix-f-norms.md)，[付録G](./appendix-g-agents.md)，[付録H](./appendix-h-stochastic.md)，[付録I](./appendix-i-games.md)，[付録J](./appendix-j-grounding.md)に示す。
+[付録C](./appendix-c-motivation.md)，[付録E](./appendix-e-sos-dsl.md)，[付録F](./appendix-f-norms.md)，[付録G](./appendix-g-agents.md)，[付録H](./appendix-h-stochastic.md)，[付録I](./appendix-i-games.md)，[付録J](./appendix-j-grounding.md)，[付録K](./appendix-k-amendment.md)に示す。
 
 ## A.12 リファレンス実装の状況（`cadl` 0.3） {/* #a12-reference-implementation-status-v03 */}
 
@@ -601,7 +608,10 @@ AND    OR    NOT    true    false    for all    exists    in
   実装している（`cadl game-check`，`cadl norms-indices`）。それぞれの範囲は，挙げた2つの節に示す。
   0.3.22までは，これらの名前には，未知の拡張に対する情報レベルの診断が出ていた。`kind: smg` を持つ
   モデルについて，`cadl check` 0.3.22は，H.10とH.15が1つの情報レベルの診断を求めるところで，S-1とS-9の
-  誤りを報告する。また，付録Jのキーを，診断なしに無視する。
+  誤りを報告する。また，付録Jのキーを，診断なしに無視する。拡張 `amendment` 0.1
+  （[付録KのK.9節](./appendix-k-amendment.md#k9-reference-implementation-status)）は，`cadl` 0.3.32から
+  実装している（`cadl amend-diff`）。0.3.31までは，この名前には未知の拡張に対する情報レベルの診断が出て
+  おり，そのキーは無視されていた。
 
 `cadl` の0.3.7より前のリリースは，これらの点のいくつかで異なっていた。その経緯は，cadlリポジトリの
 [CHANGELOG](https://github.com/ertlnagoya/cadl/blob/master/CHANGELOG.md)にある。

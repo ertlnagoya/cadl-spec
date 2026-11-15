@@ -927,8 +927,12 @@ and compare violations, late deliveries and safety-invariant breaches during the
 - **Transitional provisions**: orders and waits begun before the change keep the old version's
   deadlines.
 
-Transitional provisions are also a question for the CADL specification: today CADL cannot say which
-version's deadlines and monitors apply to a contract instance that is already running (§13).
+Transitional provisions are also a question for the CADL specification. Up to `cadl` 0.3.31 CADL
+could not say which version's deadlines and monitors apply to a contract instance that is already
+running. From `cadl` 0.3.32 `amendment.transitional` of the amendment extension says, per contract,
+whether running instances keep the old version (`keep`) or switch to the new one (`switch`)
+([Appendix K, K.4](../spec/appendix-k-amendment.md), §13). The simulator of the exercise does not
+read this declaration yet, so try the three ways above by adding them to the code in `town/`.
 
 ### Exercise 12-4: let the human and the LLM choose the speed
 
@@ -957,7 +961,9 @@ LLM cost about US$1.3 per run in the §10 records (Claude Opus 5.5).
 
 ## 13. What the specification cannot express yet
 
-Building this exercise exposed these gaps in CADL 0.3. They are still there in `cadl` 0.3.31:
+Building this exercise exposed five gaps in CADL 0.3. They were all there up to `cadl` 0.3.31; `cadl`
+0.3.32 adds syntax for each of them, as the items below say, while the exercise itself still keeps
+its own files and lets the simulator apply the rules:
 
 - Up to `cadl` 0.3.31, `cadl sim-ir` did not emit `sos.transitions[*].safety_invariant` into the
   IR (`cadl check` did check it as an expression), so the exercise reads it from the checked source
@@ -974,18 +980,34 @@ Building this exercise exposed these gaps in CADL 0.3. They are still there in `
   values of its designs ([Appendix H, H.6](../spec/appendix-h-stochastic.md)). CADL can now say
   that centralized mode has bays (for example `environment.bays: 3`) and which contracts hold in it;
   how robots use the bays and the exclusive edges is still decided by the simulator.
-- Which layer (rule or contract) a parameter belongs to, and who decides its amendment, is written
-  in `constitution.yaml` and in `# @amend:` comments, not in CADL.
-- When a new version of the rules takes effect, there is no syntax for which version applies to
-  contract instances already running (transitional provisions), or for when a version takes
-  effect (§12, Exercise 12-3). The norms extension defines, with `on_amendment:`, what happens to
-  the norm instances that are running when an amendment takes effect
-  ([Appendix F, F.6](../spec/appendix-f-norms.md)); when a version takes effect is outside it, and
-  this exercise does not use norms.
-- A `metrics` `target` is a single expression: there is no syntax for a KPI that changes over time,
-  or for the choice of how a KPI is measured, and none to link the record of human decisions (GSN)
-  to a version of the rules. The exercise keeps `kpi.md`, `decisions.md` and `gsn.yaml` outside the
-  rules.
+- Up to `cadl` 0.3.31, which layer (rule or contract) a parameter belongs to, and who decides its
+  amendment, could be written only in `constitution.yaml` and in `# @amend:` comments. From `cadl`
+  0.3.32 the amendment extension (`amendment: 0.1`,
+  [Appendix K, K.3](../spec/appendix-k-amendment.md)) declares each amendable parameter in the
+  model: its layer, the actor or role that decides (for example `COUNCIL` by vote with a quorum of
+  2, or a human `OPERATOR`), `min`, `max`, `step`, how many steps one amendment may move it, and
+  `at:`, the places of the model that hold the value. `cadl check` rejects an unknown actor, a value
+  outside the range or off the steps, and a place that does not hold the value. The exercise still
+  reads `constitution.yaml` and the comments.
+- Up to `cadl` 0.3.31 there was no syntax for when a version of the rules takes effect, or for
+  which version applies to contract instances already running (transitional provisions; §12,
+  Exercise 12-3). From `cadl` 0.3.32 a version gives `sos.version`, the version it replaces, the
+  period or time from which it applies, and per contract whether running instances keep the old
+  version until they end or switch to the new one, at once or when they are in given states
+  ([Appendix K, K.4](../spec/appendix-k-amendment.md)). Switching is the case to which
+  `on_amendment:` of the norms extension applies
+  ([Appendix F, F.6](../spec/appendix-f-norms.md)); an instance that keeps the old version is not
+  amended. `cadl amend-diff OLD NEW` lists the parameters and contracts that changed between two
+  versions and reports every change that the declared amendability does not allow. No tool applies
+  versions while the town runs: the simulator still decides that.
+- Up to `cadl` 0.3.31 a `metrics` `target` was a single expression, with no syntax for a KPI that
+  changes over time, for how a KPI is measured, or to link the record of human decisions (GSN) to
+  a version of the rules. From `cadl` 0.3.32 a metric may give `schedule:` (a target from a period,
+  a time or a version on), `measure:` (for example one period, five seeds, the mean), and a version
+  lists the decision records it rests on (`decisions.md#d1`, `gsn.yaml#S2`), which parameters,
+  targets and measurements name ([Appendix K, K.5](../spec/appendix-k-amendment.md)). These are
+  declarations: the KPI itself, in natural language, and the records stay in `kpi.md`,
+  `decisions.md` and `gsn.yaml`.
 
 Up to `cadl` 0.3.11, an unreadable value such as `deadline: soon` passed `cadl check` and became
 `null` in the IR; from 0.3.12 it is an error. The exercise also rejects rules whose IR lacks a value

@@ -91,7 +91,7 @@ CADLの契約は規範的な合意を記述するが，規範はまだ，時間�
 | RD-6.2 | 時相付きの前提・保証と4値の判定 | 契約に有界なMTL/STLを許し，判定を，未決（未履行で期限内），履行，違反，前提違反（提供者の責任ではない） [[Henzinger & Saraç, RV 2020]](./appendix-b-references.md) の四つに分ける。PythonバックエンドではRTAMT [[Yamaguchi+, STTT 2024]](./appendix-b-references.md) へ，Unity C# バックエンドではR2U2の方式 [[Johannsen+, CAV 2023]](./appendix-b-references.md) で生成する観測器へ変換する。 |
 | RD-6.3 | counts-asによるプロトコルと契約の対応付け | 「プロトコルPのメッセージmは契約Cの制度的事象eとみなす」という形の規則 [[Boella & van der Torre, KR 2004]](./appendix-b-references.md) により，プロトコルのトレースが規範の状態を変えるようにする。 |
 | RD-6.4 | 組織をまたぐ監視と責任の所在 | 義務論的な実行時検証の責任の意味論 [[Kharraz+, ICTAC 2023]](./appendix-b-references.md) [[Colombo+, ISoLA 2024]](./appendix-b-references.md) を用いて，モニターの配置（提供側，利用側，中立の第三者） [[Francalanza+, 2018]](./appendix-b-references.md)，時計の不確かさ，改ざんを検知できる記録，委任された契約のグラフをさかのぼる違反の原因の追跡を扱う。 |
-| RD-6.5 | 改正をまたぐ規範の継続性 | モード遷移や改正が効力を持ったときに，発効中・停止中・違反中の義務を引き継ぐか，免除するか，変換するかを，経過措置とバージョンの施行時期とともに定める。本章の調査の範囲では，Symboleo，ODRL，NPLはこれを定めていない。ハンズオン教材の[Course D](../handson/robot-town-tutorial.md)は，システムを動かしたまま規則を改正し，経過措置の構文が欠けていることを挙げている。改正の速さに関する同コースの研究演習は，最初の実験である。 |
+| RD-6.5 | 改正をまたぐ規範の継続性 | モード遷移や改正が効力を持ったときに，発効中・停止中・違反中の義務を引き継ぐか，免除するか，変換するかを，経過措置とバージョンの施行時期とともに定める。本章の調査の範囲では，Symboleo，ODRL，NPLはこれを定めていない。ハンズオン教材の[Course D](../handson/robot-town-tutorial.md)は，システムを動かしたまま規則を改正し，経過措置の構文が欠けていることを挙げている。改正の速さに関する同コースの研究演習は，最初の実験である。`cadl` 0.3.32からは，改正拡張（[付録K](./appendix-k-amendment.md)）が，バージョンの施行時期と，動いている契約インスタンスに対する経過規定を書く構文を与える。 |
 | RD-6.6 | 監視から強制へ | ライフサイクルの状態機械を有限の抽象として用い，CADLの契約から当事者ごとのシールド [[Alshiekh+, AAAI 2018]](./appendix-b-references.md) [[Melcer+, NeurIPS 2022]](./appendix-b-references.md) ないしはSimplex型の代替動作を合成する。見つかったシールドは物理的な行動を対象としており，制度上の行為を対象としたものは見つからなかった。 |
 
 ## 9.7 戦略的な構成システム
