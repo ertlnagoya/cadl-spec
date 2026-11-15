@@ -1893,7 +1893,11 @@ At each observation the environment chooses three things.
    forms, with the other values fixed by the state. A processor MAY keep
    fewer states when the combinations found stay the same. From `cadl`
    0.3.32 the reference implementation does so in three ways, outside
-   components with linear arithmetic. First, a permutation of the
+   components with linear arithmetic, and only when the elimination
+   above needs more than 50 000 states at one step: it then adds the
+   quantities again with these reductions, so that a component within
+   that limit gets the same combinations and valuations as with `cadl`
+   0.3.31. First, a permutation of the
    members of a set maps a leaf that uses the members only through
    variables (those of its quantifiers and aggregates and those bound by
    an enclosing quantifier) to the leaf with the members of its bindings
@@ -1904,7 +1908,7 @@ At each observation the environment chooses three things.
    pattern with the same kinds, and keeps the remainders up to the order
    of the operands of `AND` and `OR`, and one of them is kept. This
    covers predicates that order every pair of members by their indices.
-   Second, before the steps, a number of runs add the quantities along
+   Second, before the first step, a number of runs add the quantities along
    one extension at a time and keep the combination of each run with its
    valuation; a state is not kept when every combination that its
    remainders can still give has been found. The values that a remainder
@@ -2109,7 +2113,8 @@ builds the 26 035 valuations of four ordered quantities without other
 literals in about 2 seconds. Beyond the limit (five such quantities
 have 424 213 valuations) the combinations are found by elimination,
 and the limit bounds the states of one step. The limit of the states
-and of the points of faces is 50 000 unless the user raises it; the
+and of the points of faces is 50 000 unless set with `--max-states`
+(1 to 1 000 000); the
 reference implementation takes it from `--max-states` (from `cadl`
 0.3.32, at most 1 000 000). The reference implementation adds a chain
 of 5 to 12 ordered quantities in less than a second, and every pair of
