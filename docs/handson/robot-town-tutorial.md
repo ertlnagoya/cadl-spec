@@ -55,7 +55,8 @@ as Course A (`contract_engine.py`, copied from `cadl-raspimouse-simulator`).
 :::info[About the recorded LLM output]
 §4–§8 can be followed without an API key by replaying the records in `examples/steward-d-en/`
 (English) and `examples/steward-goodhart/`. They are **records of real runs** with Claude Opus 5.5 on
-2026-10-29/30; `examples/steward-d/` holds the same run in Japanese. The answers to the decision
+2026-11-15; `examples/steward-d/` holds a run in Japanese with the same KPI, which parts from the
+English one in period 3 (§6). The answers to the decision
 requests (`answers.yaml`) were written by Claude playing the human operator when the records were
 made; from §4 on, answer them yourself. Every number shown is measured by the gates and the
 simulation on replay. §10 shows how to run a real LLM with your own key.
@@ -294,22 +295,22 @@ python -m town.steward --lang en --mode DISTRIBUTED --rounds 1 --name try-d-en \
 
 ```text
   KPI (from period 1): Deliver as many orders as possible across the town within the times we promised customers (120 seconds from order to pickup, 120 seconds from pickup to delivery). No company's customers should be kept waiting badly.
-  LLM: replay: examples/steward-d-en/p1-kpi.json (claude-opus-5-5, input 2428 / output 2266 tokens)
-  Reading: The KPI has two parts. The main goal is to maximize the number of orders delivered town-wide within the promised SLA times (120 s order-to-pickup, 120 s pickup-to-delivery), which maps directly to on_time_deliveries. The second part, 'no company's customers should be kept waiting badly', is a fairness floor across companies A, B and C. (…)
-   [1] Maximize town-wide on-time deliveries with a floor on the worst company: main goal on_time_deliveries (increase), min_company_on_time_rate (increase), unfinished (decrease), late_deliveries (decrease); conditions min_company_on_time_rate >= 0.8, unfinished <= 3
-   [2] Maximize the worst company's on-time rate (maximin fairness first): main goal min_company_on_time_rate (increase), on_time_deliveries (increase), unfinished (decrease); conditions unfinished <= 3
-   [3] Maximize town-wide on-time deliveries with a cap on the inter-company gap: main goal on_time_deliveries (increase), on_time_rate_gap (decrease), min_company_on_time_rate (increase); conditions on_time_rate_gap <= 0.15
-   Concern: 'Kept waiting badly' is not quantified. It could mean an absolute floor per company, a limit on the spread between companies, or no orders left undelivered. The numeric thresholds in the guards are provisional guesses and should be set from baseline measurements.
-   Concern: on_time_deliveries is a proxy that ignores orders already past their deadline. Optimizing it alone could deprioritize late orders and leave them unfinished, which is exactly the badly-kept-waiting outcome the KPI forbids. (…)
-   Concern: The promised times (120 s / 120 s) are part of the KPI and of DELIVERY_SLA. Raising the on-time count by loosening the SLA would game the metric, and any SLA change must be decided by humans as a contract amendment.
+  LLM: replay: examples/steward-d-en/p1-kpi.json (claude-opus-5-5, input 2431 / output 2069 tokens)
+  Reading: The KPI has two parts. The main aim is to maximize town-wide deliveries that meet the promised times (120 s from order to pickup, 120 s from pickup to delivery), which maps to on_time_deliveries. The second part, 'no company's customers should be kept waiting badly', is a fairness or floor condition across companies. It can be read three ways: (…)
+   [1] Maximize town-wide on-time deliveries with a per-company floor: main goal on_time_deliveries (increase), min_company_on_time_rate (increase), unfinished (decrease), late_deliveries (decrease); conditions min_company_on_time_rate >= 0.7
+   [2] Fairness first: raise the worst company's on-time rate: main goal min_company_on_time_rate (increase), on_time_deliveries (increase), on_time_rate_gap (decrease), unfinished (decrease); conditions unfinished <= 3
+   [3] Maximize on-time deliveries with a cap on inter-company disparity: main goal on_time_deliveries (increase), on_time_rate_gap (decrease), unfinished (decrease); conditions on_time_rate_gap <= 0.15
+   Concern: 'Kept waiting badly' is ambiguous. It could mean an absolute floor on each company's on-time rate, a limit on disparity between companies, or avoiding very late or never-delivered orders. Each reading leads to a different evaluation.
+   Concern: on_time_deliveries alone is a proxy. It can rise while orders that are hard to serve on time are left unfinished, so unfinished and late_deliveries must be watched.
+   Concern: Raising the on-time count by relaxing the 120 s promises would be a DELIVERY_SLA contract change. It must be decided by a human and should not be counted as an improvement under this KPI.
    (2 more)
   → Decision request K1 (the LLM recommends 1)
   Choose an id (1 / 2 / 3):
 ```
 
-This replays what Claude Opus 5.5 actually wrote on 2026-10-29. When a KPI has a single reading and
-no concern, the LLM uses its measure without asking. Here it found "kept waiting badly"
-unquantified and returned three measures with five concerns. The machine checks the metric names
+This replays what Claude Opus 5.5 actually wrote on 2026-11-15. When a KPI has a single reading and
+no concern, the LLM uses its measure without asking. Here it found three readings of "kept waiting
+badly" and returned three measures with five concerns. The machine checks the metric names
 and the shape of every measure the LLM writes; one that uses an unknown metric is dropped from the
 choices.
 
@@ -320,9 +321,9 @@ were written by Claude playing the operator when the record was made:
 ```yaml
 K1:
   choice: "1"
-  reason: Follow the order of the KPI. Town-wide on-time deliveries are the main goal, and the worst company's on-time rate, unfinished orders and late deliveries are watched. The floors are provisional, as the LLM says; 0.8 keeps today's worst company (0.84) from falling further. (…)
+  reason: Follow the order of the KPI. Town-wide on-time deliveries are the main goal, and the worst company's on-time rate has a floor. The floor is provisional and will be revisited once period 1 is measured.
   assumptions:
-    - Customers cannot choose their delivery company
+    - Customers cannot choose which company delivers their order
 ```
 
 ### Exercise 4-1
@@ -341,14 +342,13 @@ After K1, the LLM proposes amendments and each passes through the gates:
 | id | proposal | layer | check | constitution | on-time | late | blocked s | road violations | lowest on-time rate | change in on_time_deliveries | seeds improved | KPI conditions | utility A / B / C | votes A B C |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | — | current | — | — | — | 121.8 | 10.4 | 2404 | 25.8 | 0.84 | — | — | — | 38.4 / 38.9 / 28.8 | — |
-| 1 | block_k 3 → 2 | rule | ○ | ○ | 131.0 | 1.2 | 985 | 34.0 | 0.98 | +9.2 | 5/5 | ○ | 45.4 / 37.2 / 19.0 | ○ × × |
-| 2 | hold_limit 60s → 50s | rule | ○ | ○ | 120.6 | 11.6 | 2468 | 28.8 | 0.86 | -1.2 | 2/5 | ○ | 38.8 / 37.6 / 27.2 | ○ × × |
-| 3 | sanction_lambda 0.5 → 1 | rule | ○ | ○ | 121.8 | 10.4 | 2404 | 25.8 | 0.84 | +0.0 | 0/5 | ○ | 38.4 / 38.0 / 14.0 | ○ × × |
+| 1 | hold_limit 60s → 50s | rule | ○ | ○ | 120.6 | 11.6 | 2468 | 28.8 | 0.86 | -1.2 | 2/5 | ○ | 38.8 / 37.6 / 27.2 | ○ × × |
+| 2 | block_k 3 → 2 | rule | ○ | ○ | 131.0 | 1.2 | 985 | 34.0 | 0.98 | +9.2 | 5/5 | ○ | 45.4 / 37.2 / 19.0 | ○ × × |
 | R1 | invariants.min_company_on_time_rate 0.6 → 0.65 | regulation | — | ○ | | | | | | | | | | |
 ```
 
 (The "watched goals and conditions" and "notes" columns are left out here; the note on R1 reads
-"the current rules meet the new condition".) The LLM's first proposal, `block_k 3 → 2` (evict a
+"the current rules meet the new condition".) The LLM's second proposal, `block_k 3 → 2` (evict a
 robot as soon as two robots wait behind it), adds 9.2 on-time deliveries but is voted down by B
 and C. It also proposed a regulation: raising the constitution's floor on every company's on-time
 rate from 0.6 to 0.65. It proposed no contract change, having read at K1 that loosening the
@@ -378,20 +378,20 @@ flowchart TD
   T -->|yes| REQ["decision request D#lt;k#gt;<br/>the human chooses<br/>and writes the reason"]
 ```
 
-Here proposal 1 raises *agreement* and R1 raises *regulation*. The LLM writes decision request D1,
+Here proposal 2 raises *agreement* and R1 raises *regulation*. The LLM writes decision request D1,
 saved as `runs/try-d-en/p1-request.md`:
 
 ```text
-  → Decision request D1 (LLM: replay: examples/steward-d-en/p1-request.json (claude-opus-5-5, input 2712 / output 1957 tokens))
-  **Question**: Should we adopt the rule change block_k 3 → 2 even though B and C voted against it, raise the constitutional floor invariants.min_company_on_time_rate from 0.60 to 0.65, or keep the current rules (v1)?
-  - **1**: block_k 3 → 2. (…) Adopting it means overriding the votes of B and C (votes ○ × ×). (stakeholders: Gains: customers of all companies, because late deliveries fall from 10.4 to 1.2 and the worst company's on-time rate rises to 0.98. Company A also gains (utility 38.4 → 45.4). Losses: Company C (utility 28.8 → 19.0) and, slightly, Company B (38.9 → 37.2). (…))
-  - **R1**: (…) The current rules (lowest on-time rate 0.84) already meet it, so nothing changes in operation now. It only blocks future changes that would let the worst company fall below 0.65. (…)
+  → Decision request D1 (LLM: replay: examples/steward-d-en/p1-request.json (claude-opus-5-5, input 2505 / output 2232 tokens))
+  **Question**: Should we adopt rule change 2 (block_k 3 → 2) even though companies B and C voted against it, adopt the constitutional change R1 (raising invariants.min_company_on_time_rate from 0.6 to 0.65), or keep the current rules (v1)?
+  - **2**: block_k 3 → 2. (…) Votes: A for, B and C against, so adopting it means overriding a majority of the companies. (stakeholders: Customers of all companies gain the most: far fewer late deliveries, and the worst company's on-time rate rises from 0.84 to 0.98. Company A gains (utility 38.4 → 45.4). Company B loses slightly (38.9 → 37.2). Company C loses heavily (28.8 → 19.0, about a third of its utility). (…))
+  - **R1**: (…) the current rules already meet it (current lowest on-time rate 0.84), so today's operation does not change. Future rule proposals that would push any company's on-time rate below 0.65 would be rejected automatically. (…)
   - **keep**: no change. (…)
-  The LLM recommends: R1 — R1 is low-risk: the current rules (0.84) and proposal 1 (0.98) both satisfy it. It strengthens the KPI's fairness clause without overriding anyone. Proposal 1 has the strongest measured KPI gain, but it failed the company vote, cuts C's utility by about a third, and raises road violations. I suggest not forcing it now. Instead, take it to B and C for negotiation, (…) and re-measure before deciding.
-  The LLM does not know: Why C's utility drops sharply (28.8 → 19.0) under proposal 1 while the lowest company on-time rate rises to 0.98; the utility components were not broken down.
-  The LLM does not know: Whether B and C would accept proposal 1 with compensation or a modified threshold, and how the companies would change their behaviour if it were forced through.
-  The LLM does not know: Whether overriding a failed company vote is acceptable under the town's governance norms.
-  (3 more)
+  The LLM recommends: R1 — R1 is low-risk. The current rules already satisfy it, it does not change today's operation, and it moves the constitutional floor toward the human's provisional KPI floor of 0.7, which fits the goal that no company's customers wait badly. Proposal 2 is strongly better for customers and for the KPI on every measured seed. Still, it overrides two of three companies, cuts C's utility by about a third, and increases road violations, and I cannot explain why. I suggest asking B and C for their reasons, and checking what the extra road violations mean, before deciding on 2. (…)
+  The LLM does not know: Why C's utility drops from 28.8 to 19.0 under proposal 2 while the lowest on-time rate rises to 0.98: the components of each company's utility function are not shown.
+  The LLM does not know: Whether the rise in road violations (25.8 → 34.0) is a safety concern or a minor rule infraction, and who bears it.
+  The LLM does not know: How B and C would change their behavior (or cooperation) if their votes were overridden.
+  (4 more)
 ```
 
 A request contains the question; why the LLM is not deciding; for each option what happens and who
@@ -400,21 +400,22 @@ proposals that raised a reason, the proposal that could be adopted automatically
 "keep"; the LLM cannot add options. The table of numbers is the gates' measurement, not the LLM's
 prose.
 
-The recorded answer goes against the LLM's recommendation and adopts proposal 1, overturning the
+The recorded answer goes against the LLM's recommendation and adopts proposal 2, overturning the
 vote:
 
 ```yaml
 D1:
-  choice: "1"
-  reason: The intersections are a road shared by the three companies; waiting there is no company's right. Late deliveries fall from 10.4 to 1.2 and the worst company's on-time rate rises, so adopt it against B's and C's votes. Re-measure C's utility (28.8 to 19.0) and the road violations next period. The constitutional floor (R1) can wait; it changes nothing now.
+  choice: "2"
+  reason: The intersections are a road shared by the three companies; waiting there is no company's right. Late deliveries fall from 10.4 to 1.2 and the worst company's on-time rate rises to 0.98, so adopt it against B's and C's votes. Re-measure C's utility (28.8 to 19.0) and the road violations next period. The constitutional floor (R1) can wait; it changes nothing now.
   assumptions:
-    - B and C keep delivering in town after the rules change
+    - B and C keep delivering in the town after the rule changes
 ```
 
-The same period in Japanese (`examples/steward-d/`) produced no regulation proposal, and its
-recommendation changed when the request was sent a second time on the same numbers (first "1",
-then "keep"). A recommendation is the output of one request. The LLM laid out the material and
-showed that both choices had reasons; the human decided.
+The same period in Japanese (`examples/steward-d/`) measured the same proposals and also
+recommended R1. In the earlier records of this course (2026-10-29), the Japanese recommendation
+changed when the same request was sent a second time on the same numbers (first "1", then "keep").
+A recommendation is the output of one request. The LLM laid out the material and showed that each
+choice had reasons; the human decided.
 
 ### The record of decisions
 
@@ -513,8 +514,8 @@ some). The current rules are re-measured in each period's environment before bei
 | 2 (normal + rush) | uncertain (`block_k 2 → 1` improves on 2/5 seeds); LLM | keep | keep | v2 |
 | 3 (busy) | none (the only proposal gains +0.6, below the noise of one delivery) | — | — | v2 (automatic) |
 | 4 (busy + rush) | none (the LLM proposes nothing) | — | — | v2 (automatic) |
-| 5 (quiet) | see §7 | 1 | `hold_limit 60s → 70s` | v3 |
-| 6 (quiet) | KPI conflict (`hold_limit 70s → 80s` widens the spread of on-time rates from 0.02 to 0.05) | keep | keep | v3 |
+| 5 (quiet) | see §7 | 3 | `hold_limit 60s → 70s` | v3 |
+| 6 (quiet) | KPI conflict (`hold_limit 70s → 80s` lowers the lowest on-time rate from 0.97 to 0.94); regulation (floor 0.6 → 0.65) | 1 | keep | v3 |
 
 ```mermaid
 flowchart TD
@@ -524,23 +525,27 @@ flowchart TD
   V3 -->|"period 6<br/>no change"| V3
 ```
 
-The Japanese record (`examples/steward-d/`) ends with the same six outcomes, because the human
-answered the same way; the LLM's proposals and recommendations differ in places (see §10).
+The Japanese record (`examples/steward-d/`) parts from this in period 3. There its LLM proposed
+`block_k 2 → 1`, which improved on all five seeds but more than halved C's utility (46.9 → 21.4);
+the human kept the rules. In period 4 the human adopted `hold_limit 60s → 50s` against C's vote,
+and in period 5, under the new KPI, took it back. The Japanese rules end at v4, with the same values
+as v2 (see §10).
 
 Things to notice:
 
 - **Period 2**: `block_k 2 → 1` passes every gate, but only 2 of 5 seeds improve. The LLM also
-  asked on its own, citing the human's promise in D1 to re-measure C's utility. It lists as
-  unknown "Whether the A and B yes votes alone meet the quorum": in fact A and B's two votes reach
-  the quorum of 2, so no override is needed. The decision-request call is not given the
-  constitution, so the LLM did not know the quorum (the Japanese LLM, in the same period, wrongly
-  called it an override).
+  asked on its own, citing the human's promise in D1 to re-measure C's utility. It wrote that
+  adopting the proposal "would override C's vote again"; in fact A's and B's two votes reach the
+  quorum of 2, so no override is needed. The decision-request call is not given the constitution,
+  so the LLM did not know the quorum. It did list as unknown why B's vote differed from D1.
 - **Periods 3–4**: in the busy season there are few late deliveries left, so there is little room
   for the main goal. The LLM says so in its assessment and proposes nothing in period 4. No
   request; the GSN still records that the decision was automatic, and on what condition.
-- **Period 6**: the LLM recommends keeping the rules, citing the human's reason for 70 s in D5
-  ("almost no cost to on-time delivery") and noting that it no longer holds at 80 s. A past reason
-  became the ground for the next recommendation.
+- **Period 6**: the LLM recommends `hold_limit 70s → 80s`, comparing its cost (+0.6 late
+  deliveries) with D5, which the human accepted as "almost no cost to on-time delivery". The
+  recorded answer keeps the rules: 80 s lowers the worst company's on-time rate (0.97 → 0.94) and
+  moves utility from A and B to C. The same past reason was read both ways, by the LLM and by the
+  human.
 
 Open `runs/steward-d-en/gsn.md` to see the tree of six periods of decisions (GitHub and the VS Code
 preview render it as a Mermaid diagram).
@@ -583,36 +588,45 @@ rewrites the measure and lists earlier decisions whose premises no longer hold:
 
 ```text
   KPI (from period 5): The quiet season begins and orders fall. On-time delivery still matters, but to keep the companies cooperating, no single company should gain or lose because of how the road is used.
-   [1] Fairness of utility first, on-time delivery watched: main goal utility_gap (decrease), on_time_deliveries (increase), on_time_rate_gap (decrease), sanction_total (decrease); conditions min_company_on_time_rate >= 0.8, unfinished <= 3
-   [2] Fairness of on-time rates first: main goal on_time_rate_gap (decrease), on_time_deliveries (increase), utility_gap (decrease), min_company_on_time_rate (increase); conditions min_company_on_time_rate >= 0.8, unfinished <= 3
-   [3] On-time delivery first, fairness watched: main goal on_time_deliveries (increase), utility_gap (decrease), on_time_rate_gap (decrease), late_deliveries (decrease); conditions min_company_on_time_rate >= 0.8, unfinished <= 3
-   Concern: A gap metric can be improved by levelling down: making the best-off company worse instead of helping the worst-off one. (…)
-   Concern: 'No company should gain or lose' may mean no company ends up worse off than under the current rules. No available metric measures each company's change against today. (…)
+   [1] Fairness of utility first, on-time as a floor: main goal utility_gap (decrease), min_company_on_time_rate (increase), on_time_deliveries (increase), sanction_total (decrease); conditions min_company_on_time_rate >= 0.7
+   [2] Fairness of on-time rate first: main goal on_time_rate_gap (decrease), utility_gap (decrease), on_time_deliveries (increase); conditions min_company_on_time_rate >= 0.7
+   [3] On-time deliveries first, fairness as hard limits: main goal on_time_deliveries (increase), utility_gap (decrease), late_deliveries (decrease); conditions on_time_rate_gap <= 0.1, min_company_on_time_rate >= 0.7
+   Concern: The KPI says no company should gain or lose 'because of how the road is used', but utility_gap and on_time_rate_gap measure total differences between companies. (…)
+   Concern: Narrowing a gap can be achieved by making the best company worse off rather than helping the worst one. This would meet the metric but break 'no single company should ... lose'. (…)
    (2 more)
-   To review: K1 — K1 made town-wide on-time deliveries the main goal. The new KPI puts fairness between companies first and on-time delivery second, so the main goal and its guards need to be chosen again.
-   To review: D1 — D1 (block_k 3 → 2) was adopted against B's and C's votes, and C's utility fell from 28.8 to 19.0. The new KPI says no company should lose because of how the road is used. (…)
+   To review: K1 — K1's reading (town-wide on-time deliveries as the main goal) is replaced by a KPI that puts fairness between companies first. Its 0.7 floor was provisional and should be reset in light of measured rates and the quiet season.
+   To review: D1 — D1 was adopted against B's and C's votes even though it cut C's utility from 28.8 to 19.0. Under the new KPI, a company losing utility because of a road rule is exactly what should be avoided. (…)
   → Decision request K5 (the LLM recommends 1)
 ```
 
 The recorded answer picks measure 1 (narrow the utility spread). This period's proposals:
 
 | id | Proposal | On-time | Late | Main goal (utility spread) | Seeds improved | Utility A / B / C | Votes A B C | Watched values (excerpt) |
-|---|---|---|---|---|---|---|---|---|
-| — | current | 80.8 | 1.8 | — | — | 25.2 / 25.4 / 10.2 | — | on_time_rate_gap 0.03, sanction_total 20.0 |
-| 1 | `hold_limit 60s → 70s` | 80.2 | 2.4 | +1.7 | 4/5 | 25.0 / 24.7 / 11.5 | ○ × ○ | on_time_rate_gap 0.04, sanction_total 19.0 |
-| 2 | `block_k 2 → 3` | 74.8 | 7.8 | +7.5 | 4/5 | 23.0 / 23.6 / 15.9 | × × ○ | on_time_rate_gap 0.16, sanction_total 12.3 |
-| 3 | `sanction_lambda 0.5 → 0` | 80.8 | 1.8 | +12.0 | 4/5 | 25.2 / 27.2 / 28.4 | ○ ○ ○ | on_time_rate_gap 0.03, sanction_total 0.0 |
+|---|---|---|---|---|---|---|---|---|---|
+| — | current | 80.8 | 1.8 | — | — | 25.2 / 25.4 / 10.2 | — | lowest on-time rate 0.96, sanction_total 20.0 |
+| 1 | `hold_limit 60s → 70s` | 80.2 | 2.4 | +1.7 | 4/5 | 25.0 / 24.7 / 11.5 | ○ × ○ | lowest on-time rate 0.95, sanction_total 19.0 |
+| 2 | `block_k 2 → 3` | 74.8 | 7.8 | +7.5 | 4/5 | 23.0 / 23.6 / 15.9 | × × ○ | lowest on-time rate 0.83, sanction_total 12.3 |
+| 3 | `sanction_lambda 0.5 → 0` | 80.8 | 1.8 | +12.0 | 4/5 | 25.2 / 27.2 / 28.4 | ○ ○ ○ | lowest on-time rate 0.96, sanction_total 0.0 |
 
-Proposal 3 (switch off sanctions) improves the main goal most and wins every vote. The LLM still
-asks, writing "This would make utility_gap look fair by switching off all road enforcement. (…)
-That may be exactly the Goodhart pattern the KPI warns against", and recommends proposal 1:
+Proposal 3 (switch off sanctions) improves the main goal most, wins every vote and even improves
+the watched total of sanctions, so the gates alone would adopt it. The LLM still asks, writing that
+it "removes the road's sanction incentive entirely. The gap would close by abolishing penalties
+rather than by changing behaviour". Yet it recommends proposal 3, as a quiet-season measure with
+conditions:
 
 ```text
-  The LLM recommends: 1 — Option 1 narrows utility_gap (+1.7, 4/5 seeds) and lowers sanctions without reversing D1's principle and without switching off enforcement. Its costs to customers and the conditions are small (on-time 80.8 to 80.2, lowest rate 0.95, well above 0.8). Option 2 buys fairness with about 6 more late deliveries and a lowest rate of 0.83, near the floor. Option 3's large gain comes from no longer pricing C's and B's road use, which leaves A carrying the cost of being blocked and looks like the Goodhart pattern the KPI warns against. (…)
+  The LLM recommends: 3 — It gives the largest gap reduction (+12.0, 4/5 seeds) and also meets the monitored goal sanction_total (20.0 → 0.0). It changes no delivery metric in the measurement and all three companies voted yes. It also leaves D1's block_k untouched. I recommend it only as a quiet-season measure, with two conditions you should record: re-measure road violations, blocked seconds and A's on-time rate next period, and restore sanction_lambda to 0.5 if blocking rises or when the busy season returns. (…)
+  The LLM does not know: Whether the companies, especially C, will block more once sanctions are gone; the measurement does not appear to model a change in company behaviour (the delivery metrics are identical to the current state).
 ```
 
+The last line is right: in this simulation the robots' behaviour does not depend on the sanctions,
+so switching them off cannot change any delivery number. Only the utility, which subtracts the
+sanctions, moves. In the earlier records of this course (2026-10-29) the LLM recommended proposal 1
+in the same period and called proposal 3 "the Goodhart pattern the KPI warns against".
+
 Proposal 2 (undoing D1) is vetoed by A and B (*agreement*) and worsens the watched on-time
-deliveries and spread of on-time rates (*KPI conflict*). The recorded answer adopts 1:
+deliveries and lowest on-time rate (*KPI conflict*). The recorded answer adopts 1, against the
+LLM's recommendation:
 
 ```yaml
 D5:
@@ -649,23 +663,29 @@ python -m town.steward --lang en --kpi examples/steward-goodhart/kpi.en.md --mod
     --llm replay --replay-dir examples/steward-goodhart/en --answers examples/steward-goodhart/en/answers.yaml
 ```
 
-The LLM warned that "road_violations is defined by the rules themselves. A ROAD_USE amendment that
-lengthens release deadlines or weakens or removes blocking_guard would lower the count without
-making robots behave better", and offered only measures that also watch blocked time and service:
-(1) the count as main goal, watching blocked time, on-time deliveries and unfinished orders; (2)
-blocked time as main goal, watching the count. It offered no count-only measure at all. Its two
-proposals both tighten (`sanction_lambda 0.5 → 1`, `block_k 3 → 2`); neither reduces the count
-(+0.0 and −8.2: evicting earlier counts more evictions), so nothing is adopted.
+The LLM warned that "road_violations is a proxy. Because the road rules themselves (ROAD_USE) can
+be amended, an amendment could lower the count by loosening release deadlines or blocking_guard
+conditions, without making the roads any less obstructed", and every measure it offered also
+watches blocked time: (1) the count as main goal, watching blocked time; (2) the same, also watching
+on-time deliveries and unfinished orders, with a floor on the worst company's on-time rate
+(recommended); (3) zero violations as a hard condition. The recorded answer picks 2. Its two rule
+proposals both tighten (`sanction_lambda 0.5 → 1`, `block_k 3 → 2`), and neither reduces the count
+(+0.0, and −8.2 because evicting earlier counts more evictions). The LLM also proposed raising the
+constitution's floor (R1), which needs the human; the recorded answer keeps the rules.
 
-In Japanese (`examples/steward-goodhart/proxy/` and `guarded/`), the LLM did offer a measure of the
-count plus on-time deliveries only, with the same warning, and recommended the one with more
-watches. Even when the human chose the count-only measure, the LLM proposed no loosening, writing
-that loosening would cut the count but run against "make sure the rules are kept".
+In Japanese (`examples/steward-goodhart/proxy/` and `guarded/`), the LLM offered the same kind of
+measures, and the record answers K1 in two ways: *proxy* takes the count as main goal and watches
+blocked time and service; *guarded* also watches total sanctions and the spread between companies.
+Under *proxy* the LLM did propose a loosening: `hold_limit 60s → 70s` (a robot may stop on the road
+for 70 s instead of 60 s before it overstays). It cut the count on all five seeds, improved every
+watched value, and all three companies voted for it, so the gates would have adopted it. The LLM
+itself sent it to the human, writing (in Japanese) that the improvement comes from changing what
+counts as a violation, not from making the robots keep the rules, and recommended keeping the rules.
 
 | Measure (Japanese record) | LLM proposals | Road violations | Change in main goal | Outcome |
 |---|---|---|---|---|
-| proxy: count and on-time deliveries | `sanction_lambda 0.5 → 1`, `block_k 3 → 2` | 25.8 → 25.8, 34.0 | +0.0, −8.2 | no change, automatically |
-| guarded: also blocked time and total sanctions | `block_k 3 → 2`, `sanction_lambda 0.5 → 1` | 34.0, 25.8 → 25.8 | −8.2, +0.0 | request (LLM: enforcement by sanctions doubles total sanctions, 15.7 → 31.4) → human keeps |
+| proxy: count; watch blocked time and service | `sanction_lambda 0.5 → 1`, `block_k 3 → 2`, `hold_limit 60s → 70s` | 25.8 → 25.8, 34.0, 23.6 | +0.0, −8.2, +2.2 (5/5 seeds) | request (LLM: the count falls because the rule is looser) → human keeps |
+| guarded: also total sanctions and the spread | `block_k 3 → 2`, `sanction_lambda 0.5 → 1` | 34.0, 25.8 → 25.8 | −8.2, +0.0 | request (LLM: heavier sanctions double total sanctions, 15.7 → 31.4) → human keeps |
 
 How far the drift goes with no reader of the KPI's intent can be seen with the rule-based council,
 which looks only at the objective's number:
@@ -687,9 +707,9 @@ the council amended the rules four times in eight periods, every time loosening 
 violations fell, while blocked time and late deliveries both rose by about half. The constitution's
 invariant (on-time rate at least 0.6) does not stop the drift.
 
-There is no guarantee that an LLM will read the KPI's intent as it did here. Choosing the measure is
-the human's job, and when a loosening is proposed, what stops it is the watches and the human's
-decision.
+In the *proxy* run the watches did not catch the loosening, because every watched value improved;
+the LLM's own flag did. There is no guarantee that an LLM will read the KPI's intent as it did here.
+Choosing the measure is the human's job, and so is the decision when a loosening is proposed.
 
 ---
 
@@ -765,7 +785,7 @@ brought to the human as *safety*.
 
 ## 10. Run with a real LLM (optional, 15 min)
 
-The records in §4–§8 come from real runs with Claude Opus 5.5 on 2026-10-29/30. With your own API
+The records in §4–§8 come from real runs with Claude Opus 5.5 on 2026-11-15. With your own API
 key the LLM answers afresh each time, so you will get proposals and recommendations different from
 the records.
 
@@ -782,16 +802,19 @@ to `p<k>-request.md` and stops; write your answer to a YAML file and rerun the s
 same `--name`, adding `--answers <YAML>`, and the recorded LLM outputs are reused instead of being
 requested again.
 
-The six periods of the records used about 60,600 input and 52,200 output tokens in English, and
-61,600 and 52,800 in Japanese. One request took from 20 seconds to 2 minutes; once, a request had
-no response after 11 minutes and was retried.
+The six periods of the records used about 59,400 input and 48,100 output tokens in English, and
+69,300 and 67,700 in Japanese. In the earlier runs (2026-10-29/30), one request took from 20 seconds
+to 2 minutes; once, a request had no response after 11 minutes and was retried.
 
 ### What the real runs showed
 
-- **Recommendations vary.** In Japanese, the D1 recommendation changed from "1" to "keep" when the
-  same request was sent again; in English, the LLM recommended a regulation (R1) that the Japanese
-  run never proposed. The value of a decision request lies less in its recommendation than in
-  laying out the question, who gains and loses, and what is unknown.
+- **Recommendations vary.** The English and Japanese runs had the same KPI and the same answers to
+  the first two decision requests, yet parted in period 3 (§6). Between the earlier records of this
+  course (2026-10-29/30) and the current ones, the English D5 recommendation changed from
+  `hold_limit 60s → 70s` to switching off sanctions, and D6 from "keep" to `hold_limit 70s → 80s`; in
+  the earlier Japanese record, the D1 recommendation changed when the same request was sent again.
+  The value of a decision request lies less in its recommendation than in laying out the question,
+  who gains and loses, and what is unknown.
 - **The LLM's unknowns point at gaps in the tool.** The first version of the table did not show the
   values of the watched goals; the LLM wrote that it did not know "on_time_rate_gap が具体的に
   どれだけ悪化したか（表には最低の定時率しか載っていません）" ("how much on_time_rate_gap
@@ -942,7 +965,8 @@ With a real LLM (§10), make `town.steward` choose the speed:
 
 Which speed to choose cannot be read off the KPI's numbers; it depends on how the people following
 the rules take the change. Record the human's decisions and reasons in GSN. Six periods with a real
-LLM cost about US$1.3 per run in the §10 records (Claude Opus 5.5).
+LLM used about 50,000 to 70,000 input tokens and as many output tokens per run in the §10
+records (Claude Opus 5.5).
 
 ### Questions to close
 
