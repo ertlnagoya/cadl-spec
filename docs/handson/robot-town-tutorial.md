@@ -968,8 +968,8 @@ Building this exercise exposed these gaps in CADL 0.3. They are still there in `
   `alpha`, `beta` and `lambda` of a contract and of entries of `context.environment`, and the
   contracts that are active or suspended
   ([Appendix A, A.7.1](../spec/appendix-a-syntax.md#a71-regime-bindings)). `cadl sim-ir` writes
-  the bindings of every regime, `cadl verify` checks two contracts against each other only when some
-  regime has both in force, the generated Python code monitors a contract only in the regimes in
+  the bindings of every regime, `cadl verify` reports a conflict between two contracts that no regime
+  has in force together as a warning instead of a failure, the generated Python code monitors a contract only in the regimes in
   which it is in force, and the stochastic model extension takes the bound values as the parameter
   values of its designs ([Appendix H, H.6](../spec/appendix-h-stochastic.md)). CADL can now say
   that centralized mode has bays (for example `environment.bays: 3`) and which contracts hold in it;
