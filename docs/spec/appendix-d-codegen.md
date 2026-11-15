@@ -244,7 +244,7 @@ and treats a nested operator as a chain of levels, `CadlNormsMulti`,
 5 490 bytes (7 490, 10 410 and 5 230 in 0.3.30). From `cadl` 0.3.32, which
 adds the contents decided per observation to `CadlNormsMulti`, it,
 `CadlNormsEval`, `CadlNormsActs` and the contract are estimated at
-15 830, 11 540, 12 190 and 17 180 bytes (10 120, 11 440, 12 080 and 16 670
+16 270, 11 550, 12 200 and 17 250 bytes (10 120, 11 440, 12 080 and 16 670
 in 0.3.31). The size of the code does
 not depend on the number of temporal operators or of levels. The cost of an
 observation does not grow with the number of earlier observations: the
@@ -533,8 +533,12 @@ value: it is read again when that value is decided, and then waits for
 the next one if another remains. For `until`, the operand values at n
 decide a window that holds n only when p is false at n, after which no
 term of the window can be true, or q is true at n, which makes the
-windows with p true since them true; an operand value decided after its
-own observation makes every window that holds it read again. The content is read again at the
+windows with p true since them true. The operand values decided at n
+after their own observation make the windows that hold them read again,
+once per observation: the undecided windows from the first that holds
+such a value to the last such value. A window that waits is taken from
+its list before any window of the list is read again, so that a window
+that waits again does not change the list being read. The content is read again at the
 candidates at which an operator of the content was decided; a true
 candidate decides the norm, and one that is undecided keeps it pending,
 as with the tree. Each read gives the value of F.5 by the conditions
@@ -550,8 +554,25 @@ observations, except for the logarithm in these searches. It grows linearly
 with the number of temporal operators (no node of 5<sup>m</sup>
 combinations), and it can grow with the number of observations inside a
 window: after a gap in the times one observation can decide the values
-of a whole window, and for `until` an operand value decided after its
-observation makes every window that holds it read again. Whether these
+of a whole window, and for `until` the operand values decided after
+their observation make the windows that hold them read again. Each
+window that an observation reads again costs a few searches over the
+words of the window and a binary search over the times, so an
+observation costs at most in proportion to the observations of the
+windows that it decides or reads again. Measured at
+one observation per second: in `until(throughout(60s, p), within(60s,
+q), 60s)` the observation at the 60th second makes p false at all 61
+observations of the windows at once and costs 4.0 × 10<sup>6</sup> gas,
+with windows of 120 s 7.6 × 10<sup>6</sup>, about 6 × 10<sup>4</sup> per
+observation of a window. In a content of six `within(10s, …)` joined by
+`OR`, with an observation every 0.01 s and then one at t = 100 that ends
+every window, that observation costs 6.7 × 10<sup>6</sup> gas after 50
+observations and 2.2 × 10<sup>7</sup> after 150; about 200 reach the gas
+limit of a block in the tests (3 × 10<sup>7</sup>), and the monitor then
+cannot record that observation. `cadl codegen` does not refuse such a
+content, since the bound depends on the trace: a deployment should bound
+the number of observations inside a window (the rate of observations
+times the longest duration of the content). Whether these
 contents can be monitored with a gas that does not grow with the number
 of observations inside a window is left open. The values are not
 deleted: two bits per operand and per operator for each observation from
