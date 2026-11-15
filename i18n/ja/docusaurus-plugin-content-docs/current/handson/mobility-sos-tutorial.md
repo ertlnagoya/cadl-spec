@@ -108,12 +108,15 @@ sos:
 
 コース A のロボット配送と同じ Acknowledged 型 SoS です。
 
+実線は `cadl/mobility_sos.cadl` の契約に書かれたメッセージ、点線は契約がメッセージとしては扱っていないやり取りです。
+
 ```mermaid
 flowchart TD
-  PA["PASSENGER[1..M]<br/>autonomy: medium<br/>乗車を要求する"] -->|乗車要求| PF["PLATFORM<br/>autonomy: low<br/>マッチング"]
+  PA["PASSENGER[1..M]<br/>autonomy: medium<br/>乗車を要求する"] -.->|乗車を頼む| PF["PLATFORM<br/>autonomy: low<br/>マッチング"]
+  PA -->|cancel| PF
   PF -->|match_assignment| TX["TAXI[1..N]<br/>autonomy: high<br/>自己利益で動く"]
   TX -->|"ack(accepted)"| PF
-  TX -->|乗せて運ぶ| PA
+  TX -.->|乗せて運ぶ| PA
 ```
 
 :::tip[可視化チェックポイント 0 — 構造だけの仕様で何が得られるか]

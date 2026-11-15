@@ -117,12 +117,15 @@ the taxis are self-interested agents with high autonomy; passengers issue reques
 
 The same **Acknowledged** SoS type as the robot-delivery example.
 
+Solid arrows are the messages named in the contract of `cadl/mobility_sos.cadl`; dotted arrows are exchanges the contract does not model as messages.
+
 ```mermaid
 flowchart TD
-  PA["PASSENGER[1..M]<br/>autonomy: medium<br/>requests a ride"] -->|ride request| PF["PLATFORM<br/>autonomy: low<br/>matches rides"]
+  PA["PASSENGER[1..M]<br/>autonomy: medium<br/>requests a ride"] -.->|asks for a ride| PF["PLATFORM<br/>autonomy: low<br/>matches rides"]
+  PA -->|cancel| PF
   PF -->|match_assignment| TX["TAXI[1..N]<br/>autonomy: high<br/>self-interested"]
   TX -->|"ack(accepted)"| PF
-  TX -->|pickup and ride| PA
+  TX -.->|pickup and ride| PA
 ```
 
 :::tip[🔍 Visualization Checkpoint 0 — What a structure-only spec gives you]
