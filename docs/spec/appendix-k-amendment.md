@@ -158,8 +158,9 @@ in this version: it groups the parameters and gives them a default
 authority.
 
 The declaration bounds amendments. It is not a constraint on the
-system while it runs: a regime binding (A.7.1) or a later version may
-give the same place another value.
+system while it runs: a regime binding
+([A.7.1](./appendix-a-syntax.md#a71-regime-bindings)) or a later
+version may give the same place another value.
 
 ### Locations
 
@@ -169,10 +170,14 @@ A location is a dot-separated path of keys from `sos:`:
 - in a sequence, a segment selects the item whose `id:` equals it, for
   an entry of `transitions:` the item written `FROM->TO`, and a segment
   of digits selects the item at that index, counted from 0;
+- a segment in double quotes is taken as written, dots included, so
+  that a value bound to a regime can be named:
+  `regimes.CENTRALIZED.parameters."ROUTING.beta"`; the quotes span the
+  whole segment (in YAML, write the location in single quotes);
 - when the first segment is not a key of `sos:`, `C.alpha`, `C.beta`,
   and `C.lambda` name the values of the contract `C` and
   `environment.X` the entry `X` of `context.environment`, as in the
-  regime bindings of [A.7.1](./appendix-a-syntax.md).
+  regime bindings of [A.7.1](./appendix-a-syntax.md#a71-regime-bindings).
 
 | Location | Value |
 | --- | --- |
@@ -181,15 +186,18 @@ A location is a dot-separated path of keys from `sos:`:
 | `contracts.DELIVERY_SLA.guarantee.0` | the first item of `guarantee:` |
 | `contracts.JOB.norms.report.deadline` | the `deadline:` of a norm (Appendix F) |
 | `transitions.DISTRIBUTED->CENTRALIZED.condition` | the condition of a regime transition |
+| `regimes.CENTRALIZED.parameters."ROUTING.beta"` | the value that the regime `CENTRALIZED` binds to `ROUTING.beta` (A.7.1) |
 | `ROAD_USE.lambda`, `environment.bays` | short forms of `contracts.ROAD_USE.incentives.lambda` and `context.environment.bays` |
 
 A location **holds** the parameter when the value written there, read
 as a literal (A.1), equals `value:`, or, for an expression, when the
 expression has a literal equal to `value:` or uses the name of the
-parameter as a name (`hold_time <= hold_limit`). Every literal equal to
-`value:` at a location is an occurrence of the parameter: a location
-should therefore be as narrow as the file allows (`guarantee.0` rather
-than `guarantee` when two items hold equal values). Two literals are
+parameter as a name (`hold_time <= hold_limit`). The index of an actor
+reference (`ROBOT[3]`) is not a literal of this kind. Every literal
+equal to `value:` at a location is an occurrence of the parameter: a
+location should therefore be as narrow as the file allows
+(`guarantee.0` rather than `guarantee` when two items hold equal
+values), and a processor warns when it is not (K-9). Two literals are
 equal when they denote the same number or the same duration: `120s`
 and `2min` are equal, `120s` and `120` are not.
 
@@ -322,8 +330,9 @@ following as errors.
   contract's `lifecycle:` that are not terminal.
 - **K-5** A `decision_def` has an identifier as `id:`, unique among the
   decisions, a `ref:` without white space, and a `kind:` from the list.
-- **K-6** `decided_by:` and every item of `voters:` name an actor of the
-  file (by the id, with or without an index) or a role of an actor.
+- **K-6** `decided_by:` names an actor of the file (by the id, with or
+  without an index) or a role of an actor; every item of `voters:` names
+  an actor.
   A layer of `layers:` is one of `rule`, `contract`, `regulation`, and
   its authority has `decided_by:`. `procedure: vote` has a positive
   `quorum:`, no larger than the number of `voters:` when they are all
@@ -337,16 +346,22 @@ following as errors.
   `step:` is positive and `min:` is not greater than `max:`; `value:`
   lies in `[min, max]` and, when `min:` and `step:` are given, differs
   from `min:` by a whole number of steps. `max_steps:` is a positive
-  integer and is given only with `step:`.
+  integer and is given only with `step:`. A processor SHOULD warn when a
+  parameter located at `alpha`, `beta`, or `lambda` of a contract is not
+  a number or declares `min:` below 0 or `max:` above 1, the range of
+  these values (A.12).
 - **K-9** `at:` is a non-empty list of distinct locations; each
   resolves (K.3), is not inside `version:` or `amendment:`, and holds
   the parameter. A processor SHOULD warn when two parameters have the
   same value at the same location, or one inside the other: an
-  amendment of one could not be told from one of the other.
+  amendment of one could not be told from one of the other. It SHOULD
+  also warn when a location is a mapping or a sequence, or holds the
+  value more than once: every such literal counts as the parameter.
 - **K-10** A `decision:` names a decision of `amendment.decisions`.
 - **K-11** A `schedule:` is a non-empty list of entries with one form
   of `from:`, in increasing order for `period:` and `at:` and with
-  distinct versions for `version:`; a `target:` is a scalar.
+  distinct versions for `version:`; a `target:` is a string or a
+  number.
 - **K-12** `window:` and `every:` are positive durations, `every:` is
   given only with `window:` and is not longer; `aggregate:` and
   `across_runs:` are from the list and are given only with `every:` and
@@ -363,32 +378,50 @@ instances keep the old version while it has norms: their
 
 Two versions of a model are compared under the declaration of the
 **old** one, since that is the declaration under which the amendment is
-made. A change of the model **respects the declared amendability**
-when it is the change of declared parameters at their locations, each
-within the bounds of its old declaration:
+made. An old version that does not declare `amendment: 0.1` declares no
+parameter, whatever keys it has. A change of the model **respects the
+declared amendability** when it is the change of declared parameters
+at their locations, each within the bounds of its old declaration:
 
 1. For each parameter of the old version whose value changes, the new
    value is of the same kind, lies in the old `[min, max]`, lies on the
    old steps from `min:`, and differs from the old value by at most
    `max_steps` × `step`.
-2. Replacing, at each location of each changed parameter in the old
-   version, the occurrences of the old value by the new value gives the
-   new version, apart from `version:`, `amendment:`, and the sections
-   that are not rules: `name:`, `description:`, `metrics:`,
-   `verification:`, `codegen:`, and `motivation:`. Values are compared
-   as in K.3: `60s` and `1min` are equal.
-3. When the two versions give an effective time of the same form, the
-   new one is later.
-4. For a contract that changes and whose running instances switch, the
+2. Replacing in the old version, in one pass, the occurrences of the
+   old value of every changed parameter at each of its locations by its
+   new value gives the new version, apart from `version:`,
+   `amendment:`, and the sections that are not rules: `name:`,
+   `description:`, `metrics:`, `codegen:`, and `motivation:`.
+   `verification:` is compared like the rules, since a change of it can
+   weaken what is proved. Values are compared as in K.3: `60s` and
+   `1min` are equal. The replacement is **ambiguous**, and the change is
+   not explained, when a location holds the old value more than once
+   (the other occurrences would change with it), or when two changed
+   parameters have the same old value at the same place and give it
+   different new values.
+3. A list whose items have ids keeps the order of the items that both
+   versions have, where the semantics use that order: the norms of a
+   contract (F.5, step 2, processes them in declaration order) and the
+   actors (the file order of Appendix J). A change of order of another
+   such list SHOULD be reported as a warning.
+4. `previous:` of the new version, when given, is the `sos.version` of
+   the old one, and the two versions differ. When both give an
+   effective time of the same form, the new one is later; a period and
+   a time cannot be compared, and a processor SHOULD say so.
+5. For a contract that changes and whose running instances switch, the
    states in which an instance may switch (`in_states:`, or every state
-   that is not terminal) are states of the new version (F.6).
+   that is not terminal) are states of the new version (F.6). A removed
+   state is already a change that no parameter explains (item 2); a
+   processor SHOULD add, as a warning, which switching instances it
+   affects, without counting it as a second error.
 
 A change of the declaration itself (a parameter's layer, authority,
 range, step, or locations, a parameter that is added) is not covered by
 the declaration, and a processor SHOULD report it. A change of a
-section that is not a rule SHOULD be reported. For a contract with
-norms whose running instances switch, a processor SHOULD report what
-F.6 does to its norms, as `cadl norms-diff` does.
+section that is not a rule SHOULD be reported. For every contract with
+norms whose running instances switch, whether or not its text changes,
+a processor SHOULD report what F.6 does to its norms, as
+`cadl norms-diff` does: every running instance of it is amended.
 
 ## K.8 Intermediate Representation (IR) addition
 
@@ -413,7 +446,8 @@ each parameter carries its resolved authority.
   ],
   "metrics": [
     { "id": "on_time_deliveries",
-      "measure": { "window_ms": 3600000, "runs": 5, "across_runs": "mean" },
+      "measure": { "window_ms": 3600000, "runs": 5, "across_runs": "mean",
+                   "decision": "K1" },
       "schedule": [ { "from": { "period": 5 },
                       "target": ">= 0.85 * count(orders)", "decision": "K5" } ] }
   ]
@@ -511,13 +545,18 @@ From `cadl` 0.3.32 the reference implementation provides:
 - `cadl amend-diff OLD NEW` (text or `--format json`): the comparison
   of K.7. It lists every declared parameter with its old and new value,
   layer, and authority, every contract that changed with the parameters
-  that changed it and its transitional rule, and the findings. A change
-  outside the sections that are not rules is an error, a change of
-  those sections and of the declaration a warning, an old version
-  without the declaration a warning (every change of the rules is then
-  unexplained). For a contract with norms that switches, the findings
-  of `cadl norms-diff` for that contract are included; for one that
-  keeps, they are not, since F.6 does not apply. Exit status 0 when the
+  that changed it and its transitional rule, and the findings. An
+  unexplained change of the rules (including `verification:` and the
+  order of the actors and of the norms) and an ambiguous replacement
+  are errors; a change of the sections that are not rules, of the order
+  of other lists, and of the declaration is a warning, and so is an old
+  version without the declaration (every change of the rules is then
+  unexplained). A `previous:` that is not the old version, the same
+  version on both sides, and an effective time that is not later are
+  errors. For every contract with norms that switches, the findings of
+  `cadl norms-diff` for that contract are included, also when its text
+  is unchanged; for one that keeps, they are not, since F.6 does not
+  apply. Exit status 0 when the
   changes respect the declared amendability, 1 when they do not or the
   new version does not pass `cadl check`, 2 for a missing file or an
   old version that does not pass `cadl check`.
@@ -529,8 +568,7 @@ instance, which is `switch` at the effective time; a host that keeps
 instances writes no `amend` for them. The models of `cadl norms-check`
 (F.12) amend every instance at the same observation, which is `switch`.
 The schedules and measurement methods are not evaluated (no tool
-evaluates metrics), and decision records are not opened. A location
-cannot name a key that contains a dot.
+evaluates metrics), and decision records are not opened.
 
 ## K.10 Backward compatibility
 
