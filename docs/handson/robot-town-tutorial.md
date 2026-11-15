@@ -962,7 +962,7 @@ LLM cost about US$1.3 per run in the §10 records (Claude Opus 5.5).
 ## 13. What the specification cannot express yet
 
 Building this exercise exposed five gaps in CADL 0.3. They were all there up to `cadl` 0.3.31; `cadl`
-0.3.32 adds syntax for each of them, as the items below say, while the exercise itself still keeps
+0.3.32 adds syntax or IR output for each of them, as the items below say, while the exercise itself still keeps
 its own files and lets the simulator apply the rules:
 
 - Up to `cadl` 0.3.31, `cadl sim-ir` did not emit `sos.transitions[*].safety_invariant` into the

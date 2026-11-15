@@ -405,7 +405,9 @@ at their locations, each within the bounds of its old declaration:
    actors (the file order of Appendix J). A change of order of another
    such list SHOULD be reported as a warning.
 4. `previous:` of the new version, when given, is the `sos.version` of
-   the old one, and the two versions differ. When both give an
+   the old one, and the two versions differ. When the old version has no
+   `sos.version`, `previous:` cannot be checked, and a processor SHOULD
+   report that as a warning. When both give an
    effective time of the same form, the new one is later; a period and
    a time cannot be compared, and a processor SHOULD say so.
 5. For a contract that changes and whose running instances switch, the
