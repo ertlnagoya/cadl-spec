@@ -62,10 +62,18 @@ monitor them, with the norms, in a separate file per contract (from
 For a file with `regimes:` ([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings)),
 the generated code applies, from `cadl` 0.3.33, the bindings of the
 current regime as A.7.1 ("Runs") defines; a file without the block gets
-the same code as before, byte for byte.
+the same code as before, byte for byte (apart from the two corrections of
+the `opa` target below). A file with transitions and an empty block
+(`regimes: {}`) counts as a file with the block: its controllers start in
+the initial regime, and its Rego contract policies require
+`input.regime`.
 
 - `python`: the regime controller starts in the initial regime of A.7.1
-  (it still takes another one as an argument), publishes the values of
+  (it still takes another one as an argument, and raises `ValueError`
+  for a name that is not a regime), checks the safety invariant of a
+  transition explicitly (not with `assert`) and, when it does not hold or
+  cannot be compiled or evaluated, does not take the transition and
+  records it in `refused_transitions` and the log, publishes the values of
   the bound parameters of the current regime in `ctx.parameters`, and
   the runtime runs the monitor of a contract only in the regimes in
   which it is in force. A transition is evaluated after the monitors of
@@ -80,14 +88,24 @@ the same code as before, byte for byte.
   returns without checking while it is not in force, and `ALPHA`,
   `BETA`, and `LAMBDA` become view functions with the same getter that
   return the value of the current regime (times 1000, as the
-  constants). The orchestrator creates the controller first.
+  constants). The orchestrator creates the controller first. One step
+  of A.7.1 is one call of the orchestrator's `runMonitorCycle()`: only
+  its deployer (the reporter) may call it and set the observed state
+  (`setUint`, `setBool`, passed to every contract and the controller),
+  and only the orchestrator may run the steps of the contracts and of
+  the controller. A transition whose safety invariant does not hold, or
+  cannot be compiled, is not taken; the event `RegimeTransitionRefused`
+  names it.
 - `opa`: each contract policy reads `input.regime`. A contract that the
   regime does not have in force is satisfied (`allow`) and has no
   violation; `alpha`, `beta`, and `lambda_` have the value of the
   regime. Without `input.regime`, or with a name that is not a regime of
   the file, nothing is allowed and `regime_error` (also in `violation`)
   says why. `main.rego` gives `regimes`, `initial_regime`, and
-  `parameters`, the values of the bound parameters in the regime.
+  `parameters`, the values of the bound parameters in the regime
+  (undefined without a regime of the file). The policies take no
+  transitions: the host that passes the regime takes them and checks
+  their safety invariants (A.7.1).
 - `unity-csharp`: the generated Unity runtime has no regime controller.
   A file in which a regime does not have a contract with `lifecycle:` or
   `monitors:` in force is refused; for other files the bindings change
@@ -98,6 +116,15 @@ the same code as before, byte for byte.
 - The norms monitors of the `opa` and `solidity` targets are not
   generated for a contract that some regime does not have in force
   (D.5).
+
+Two errors of the `opa` target are corrected in `cadl` 0.3.33 for every
+file: `all_violations` of `main.rego` assigned `msg` once per contract,
+which OPA rejects for two or more contracts, and is now one rule per
+contract; and a function call that Rego does not have was written as is
+(a bare name for a call without arguments, unsafe in OPA, as in
+`all_routes_conflict_free()`), and is now a value of the input that the
+host gives: `input.NAME` without arguments, `input.calls["TEXT"]` with
+them (`count`, `sum`, `max`, `min`, and `abs` stay Rego functions).
 
 Environment values (`environment.X`) appear in `ctx.parameters` and in
 `main.rego`; the Solidity code has no such values.
@@ -204,7 +231,8 @@ observation with `amend` is refused at run time.
 
 **Regimes.** Neither monitor reads the current regime (A.7.1). From
 `cadl` 0.3.33 a contract that some regime of `regimes:` does not have in
-force gets no monitor, and the processor names the regimes: such a
+force gets no monitor (`cadl codegen` warns, and the generator functions
+refuse it), and the processor names the regimes: such a
 monitor would judge observations that F.5 ("Contracts not in force")
 leaves out, and would let the deadlines run while the contract is not
 in force. The norms monitor of the `python` target judges such a

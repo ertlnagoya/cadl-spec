@@ -373,11 +373,16 @@ extension ([Appendix F](./appendix-f-norms.md), F.5).
    of `transitions:`, that is not the `to:` of any transition, and
    otherwise the `from:` of the first transition. This is the initial
    state of the regime map of `cadl regime-map`. A host MAY start a run
-   in another regime.
+   in another regime; until it names one, the run is in the initial
+   regime.
 3. After the evaluations of a step, the transitions from the current
    regime are considered in the order of `transitions:`, and the first
-   whose `condition:` holds is taken; its `safety_invariant:` is
-   checked then. At most one transition is taken per step. The
+   whose `condition:` holds is selected. Its `safety_invariant:` is
+   checked then: when it holds, the transition is taken; when it does
+   not hold, or cannot be evaluated, the transition is not taken, the
+   regime stays, and the processor reports the refused transition. A
+   transition is never taken without its invariant. At most one
+   transition is taken per step. The
    `protocol:` of a transition names how the parties carry it out; its
    messages belong to the steps at which they are sent and do not delay
    the change of regime.
@@ -399,6 +404,14 @@ a regime change only the code that writes them out (the institutional
 parameters of the Solidity and Rego targets, the parameters of the
 generated Python runtime) and the models of Appendices H and I, which
 evaluate each regime as a design of its own.
+
+A runtime that does not take transitions itself, such as the generated
+Rego policies, is told the current regime by its host; the host then
+takes the transitions and checks their invariants as items 2 and 3 say.
+A `regimes:` block makes these rules apply even when it binds nothing:
+with `transitions:`, an empty block (`regimes: {}`) fixes the initial
+regime, and the generated code reads the regime (for example, a Rego
+contract policy then requires `input.regime`).
 
 **Static rules.** A processor MUST report the following as errors.
 
@@ -707,14 +720,19 @@ deviates from this appendix as follows (checked against `cadl` 0.3.32).
   the transitions and is not changed by the bindings. The code
   generators apply the bindings from `cadl` 0.3.33
   ([Appendix D](./appendix-d-codegen.md), D.1): the `python` target
-  starts the regime controller in the initial regime, gives it the
-  methods `parameters()`, `contract_active()`, and `apply_bindings()`,
+  starts the regime controller in the initial regime, rejects a name
+  that is not a regime, checks the safety invariant of a transition
+  explicitly and does not take the transition when it fails, gives the
+  controller the methods `parameters()`, `contract_active()`, and
+  `apply_bindings()`,
   exposes the values of the current regime in `ctx.parameters`, and runs
   the monitor of a contract only in the regimes in which it is in force
   (from 0.3.32); its norms monitor and `cadl norms-eval` read the
-  current regime from the trace (F.5, F.10). The `solidity` and `opa`
-  targets read the current regime for the contracts in force and the
-  institutional parameters. A target that cannot read the regime does
+  current regime from the trace, which is in the initial regime until it
+  names one (F.5, F.10). The `solidity` target makes one step one call
+  of the orchestrator and checks the safety invariants in the same way;
+  the `solidity` and `opa` targets read the current regime for the
+  contracts in force and the institutional parameters. A target that cannot read the regime does
   not generate code that ignores it: the norms monitors of the `opa`
   and `solidity` targets are not generated for a contract that some
   regime does not have in force (D.5), `unity-csharp` refuses a file in

@@ -759,11 +759,15 @@ force. As for a norm instance that a power suspends, their deadline and
 window clocks stop and content does not count; unlike it, an `active`
 instance stays `active`, so a power can still suspend or resume it once
 the contract is in force again. The instance starts at the first
-observation of the projection. An observation that names no regime
-belongs to the regime of the previous one; before the first observation
-that names a regime, the regime is not known and the contract is in
-force. A processor given observations without regimes therefore judges
-the contract as in force throughout, as before `cadl` 0.3.33.
+observation of the projection; when that observation ends the instance
+while the contract is not in force, the norms that become active when
+the instance starts are activated there before the settlement. An
+observation that names no regime belongs to the regime of the previous
+one, and the observations before the first one that names a regime
+belong to the initial regime (A.7.1, "Runs"). Observations that name no
+regime are therefore judged as before `cadl` 0.3.33 when the initial
+regime has the contract in force, and always for a file without
+`regimes:`, whose contracts are in force at every step.
 
 ### Verdicts
 
@@ -1511,14 +1515,17 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   as F.5 ("Contracts not in force") defines. An observation of a trace
   names the current regime with the key `regime`; the key is allowed
   only for a file with a `regimes:` block that passes R-1 to R-6, and its
-  value must be a regime of the file. A trace without the key gives the
-  result of `cadl` 0.3.32, and so does the generated monitor of a file
-  without `regimes:`, which is the same module as before. The result
+  value must be a regime of the file. A trace without the key is in the
+  initial regime throughout; it gives the result of `cadl` 0.3.32 for a
+  file without `regimes:` and when the initial regime has the contract
+  in force. The generated monitor of a file without `regimes:` is the
+  same module as before. The result
   counts in `observations` the observations of the projection, and an
   instance that ends while the contract is not in force has an
   `end_reason` that says so. A trace that names a regime cannot also
-  amend the contract (`amend`): `cadl norms-eval` refuses it, and the
-  monitor refuses the observation. In the monitor, an observation at
+  amend the contract (`amend`), nor can one for a contract that the
+  initial regime does not have in force: `cadl norms-eval` refuses it,
+  and the monitor refuses the observation. In the monitor, an observation at
   which the contract is not in force returns no change, `in_force` says
   whether the contract is in force, and `next_deadline` and
   `next_check` are `None` until it is in force again. The norms
