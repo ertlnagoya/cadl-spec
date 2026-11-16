@@ -67,7 +67,7 @@ the KPI and of the decisions, and the values of the constitution that
 are not values of the model (the invariants and the improvement
 threshold of the exercise). The extension does not apply a version: a
 runtime or simulator that runs several versions reads their
-declarations (K.4).
+declarations (K.4), and applies them as K.11 says.
 
 ## K.2 Concepts
 
@@ -584,3 +584,204 @@ Keys of the extension in a file that does not declare it get one
 warning (K-13) and are otherwise ignored, as A.2 asks of keys that are
 not part of a version of the language. The core `metrics` entries of
 the IR are unchanged also for a file that declares the extension.
+
+## K.11 Applying versions while a system runs {/* #k11-applying-versions-while-a-system-runs */}
+
+K.4 and K.5 declare when a version takes effect, what a running
+contract instance does then, and which target a metric has at a time.
+This section fixes how a processor that runs or monitors a system
+applies these declarations, from `cadl` 0.3.34. It adds no key. It
+uses the steps of [Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings)
+("Runs") and the amendment of norm instances of
+[Appendix F, F.6](./appendix-f-norms.md), which it does not change.
+
+### The versions of a run
+
+The versions of a run are files that declare `amendment: 0.1` and
+form one sequence by `previous:`: every version but the first gives
+`previous:`, which names the `sos.version` of the version before it,
+and every version but the first gives `effective:`. A processor MUST
+refuse a set of versions that does not form such a sequence, or in
+which two versions have the same `sos.version`.
+
+### Time base
+
+An effective time is a point in the time of the run, the time stamps
+of its steps; it is not read on the clock of a contract
+([F.5](./appendix-f-norms.md#contracts-not-in-force)), since a version
+is a version of the whole model and the clock measures only the time
+in which one contract is in force. Since K.4 leaves the length of a
+period to the system, the run gives its *time base*:
+
+- for `period: k`, the length `L` of a period and the time `T0` at
+  which period 1 starts: period `k` starts at `T0 + (k - 1) × L`;
+- for `at:`, that the time stamps are seconds since
+  1970-01-01T00:00:00Z, so that the instant is a time stamp (a date
+  stands for 00:00 UTC, and a date-time without an offset is UTC, as
+  in K.4).
+
+With a time base, the effective times of the versions MUST increase
+strictly along the sequence; a processor refuses the versions
+otherwise.
+
+### The version in force at a step
+
+At every step exactly one version is in force. It is determined in one
+of two ways, or in both:
+
+1. **By the effective times.** With a time base, the version in force
+   at a step with time stamp `t` is the last version of the sequence
+   whose effective time is not after `t`; the first version without
+   `effective:` is in force from the start. A step before the effective
+   time of the first version has no version in force, and a processor
+   refuses it.
+2. **By the host.** As a host names the regime (A.7.1), it may name
+   the version in force at a step; the version stays in force until
+   another step names one, and before the first one the first version
+   of the sequence is in force. A named version MUST NOT come before
+   the version in force at the previous step. With a time base as
+   well, the named version MUST be the version that item 1 gives; a
+   processor refuses the step otherwise.
+
+Without a time base and without a named version, the first version of
+the sequence is in force at every step. A version therefore takes
+effect at the first step whose time stamp is at or after its effective
+time, between that step and the one before it, as the bindings of a
+regime change (A.7.1, item 4). A value or a message observed at a step
+at exactly the effective time belongs to the new version: F.6 applies
+the new version at that step before anything else is evaluated.
+
+### Running contract instances
+
+A contract instance *follows* one version at each step. It follows the
+version in force at its first step. When a version `V` takes effect at
+a step, every running instance follows the transitional rule of its
+contract in `V` (K.4):
+
+| Rule of `V` | At this step |
+| --- | --- |
+| `keep` | The instance goes on following its version. Nothing of F.6 applies, and its norm instances, deadlines, and windows are not touched. |
+| `switch` | The instance is amended (F.6) from the version it follows to `V`, before anything else is evaluated at this step. |
+| `switch` with `in_states:` | The switch waits. It is made, as above, at the first step from this one on at which the lifecycle state of the instance before the step (the state that the predicates of the step see, F.5) is one of `in_states:`. |
+
+F.6 is applied as it stands, with the version that the instance
+follows as the old version: an instance that kept version 1 when
+version 2 took effect and switches when version 3 takes effect is
+amended from version 1 to version 3, and the `on_amendment:` of the
+norms of version 1 applies. A waiting switch is dropped when a later
+version takes effect before it is made; the rule of the later version
+then applies alone, and an instance that ends first never switches.
+When several versions take effect at one step, they take effect in the
+order of the sequence, and the instance follows the rule of each in
+turn: two switches at one step are two amendments, applied one after
+the other before anything else. A switch to a version that does not
+have the contract, or in which the current lifecycle state does not
+exist, cannot be applied (F.6), and a processor refuses the step. An
+instance that keeps its version has the deadlines, monitors, `assume:`
+and `guarantee:` items, and norms of that version until it ends or
+switches.
+
+A trace that amends a contract with the key `amend` of
+[F.10](./appendix-f-norms.md#f10-reference-implementation-status)
+switches its instance at that observation whatever the versions
+declare. A processor MUST NOT apply both to one run: with versions, the
+transitional rules decide when an instance is amended.
+
+### Regimes
+
+A run of a file with `regimes:` that names a regime, or whose initial
+regime does not have the contract in force, cannot be given versions:
+a processor refuses it, as `cadl` 0.3.33 refused such a run with an
+amendment. Two questions are not settled. A version may change
+`regimes:` and with it the contracts in force; this appendix does not
+say whether an instance that keeps an older version is in force by the
+bindings of its own version or of the version in force. And F.6 counts
+the time elapsed against a deadline in the time of the run, while F.5
+counts it on the clock of the contract. For the other runs every
+version of the sequence MUST have the contract in force in its initial
+regime; the run is then judged as one of a file without `regimes:`.
+
+### Metric schedules and measurements
+
+One measurement of a metric covers the window `[s, s + window)` of its
+`measure:`, where `s` is its start, a time stamp of the run; without
+`window:` it is taken at the instant `s`. It is judged as follows.
+
+1. **Declaration.** The target, the schedule, and the measurement
+   method are those of the metric in the version in force at `s`. A
+   version that does not declare the metric does not judge it.
+2. **Target.** The target at a time is the one K.5 gives. An entry
+   with `from: { version: X }` applies from the effective time of `X`
+   in the sequence of versions; an entry whose time cannot be placed
+   (no time base for its form, or a version that is not in the
+   sequence) leaves the measurement not judged. When the target at
+   `s` differs from the target at some time inside the window, no
+   single target applies, and the measurement is not judged.
+3. **Value.** Without `every:`, one run gives one value. With
+   `every:`, one run gives the values of the formula at `s`,
+   `s + every`, ..., before `s + window`, that is
+   ⌈`window` / `every`⌉ values, combined by `aggregate:`. With `runs:`,
+   the measurement has that many runs, combined by `across_runs:`;
+   without it, one. `median` of an even number of values is the mean
+   of the two middle ones. The formula itself is evaluated by the
+   system that runs, not by this appendix.
+4. **Comparison.** A target that is a comparison operator (`<`, `<=`,
+   `>`, `>=`, `==`, `!=`) followed by an arithmetic expression of
+   numbers, durations, and terms is compared with the value: the value
+   is the left operand. A duration is in seconds, and so is the value
+   of a metric whose target has a duration. A term that is not a
+   number or a duration (`count(orders)`) takes the value that the
+   measurement gives for it, by its text. The measurement *meets* the
+   target when the comparison holds and *does not meet* it when it
+   does not. A target of another form, a term without a value, and a
+   division by zero leave the measurement not judged, with the reason.
+
+Numbers are exact, as in F.5.
+
+### What the tools can state
+
+- `cadl verify` judges one version. Its results hold for every step at
+  which that version is in force and for every instance that follows
+  it; a property of an instance that switches is not a property of
+  either version alone, and `cadl verify` does not state it.
+- `cadl amend-diff` states, as before, whether the change from one
+  version to the next respects the declared amendability; it does not
+  depend on when the version takes effect.
+- `cadl norms-check` with `--version` lets the environment amend every
+  instance at any one observation, which is `switch` without
+  `in_states:` at an effective time it does not know. From `cadl`
+  0.3.34 it refuses a later version whose rule for the contract is
+  `keep` or `switch` with `in_states:`: its model would amend instances
+  that the version keeps, or in states in which they do not switch.
+  For `keep`, each version is checked alone.
+- `cadl norms-eval` and the norms monitor of the Python target apply
+  this section to a trace (F.10), and `cadl metrics-eval` judges
+  measurements (K.9).
+
+### Generated code
+
+A file is one version, and the code generated from it is the code of
+that version. Code that keeps no contract instance from one step to
+the next (the contract checks of the Python, Solidity, and Rego
+targets, and the boundary policies of Appendix G) applies a version at
+every step at which the host runs it: a host applies this section by
+running, at each step, the code of the version in force, and for an
+instance that keeps an older version the code of that version. Code
+that keeps the state of contract instances must move them when they
+switch:
+
+- the norms monitor of the Python target applies this section when it
+  is given the models of the other versions (F.10); the Python target
+  also writes the module `version.py`, with the identity, the
+  effective time, the transitional rules, and the parameter values of
+  the version, for the host that decides which version is in force;
+- the norms monitors of the Rego and Solidity targets
+  ([D.5](./appendix-d-codegen.md#d5-norms-monitors-of-the-opa-and-solidity-targets))
+  do not apply amendments; a version that names `previous:` gets no
+  monitor for a contract with norms whose running instances switch
+  (`switch`, also by default), since the monitor could not take them
+  over. For a contract whose instances keep their version, the monitor
+  serves the instances that start under this version;
+- the Unity C# target keeps lifecycle instances with deadlines; it
+  refuses a version that names `previous:` and in which a contract with
+  `lifecycle:` switches its running instances.
