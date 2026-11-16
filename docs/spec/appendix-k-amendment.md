@@ -695,20 +695,22 @@ contract in `V` (K.4):
 | Rule of `V` | At this step |
 | --- | --- |
 | `keep` | The instance goes on following its version. Nothing of F.6 applies, and its norm instances, deadlines, and windows are not touched. |
-| `switch` | The instance is amended (F.6) from the version it follows to `V`, before anything else is evaluated at this step. |
+| `switch` | The instance is amended (F.6) from the version it follows to `V`, before anything else is evaluated at this step. As K.4 says, the time already spent in its current lifecycle state counts against the deadlines of `V`, as the time already elapsed counts against the deadline of a norm that carries over (F.6). |
 | `switch` with `in_states:` | The switch waits. It is made, as above, at the first step from this one on at which the lifecycle state of the instance before the step (the state that the predicates of the step see, F.5) is one of `in_states:`. |
 
 F.6 is applied as it stands, with the version that the instance
 follows as the old version: an instance that kept version 1 when
 version 2 took effect and switches when version 3 takes effect is
 amended from version 1 to version 3, and the `on_amendment:` of the
-norms of version 1 applies. A waiting switch is dropped when a later
-version takes effect before it is made; the rule of the later version
-then applies alone, and an instance that ends first never switches.
-When several versions take effect at one step, they take effect in the
-order of the sequence, and the instance follows the rule of each in
-turn: two switches at one step are two amendments, applied one after
-the other before anything else. A switch to a version that does not
+norms of version 1 applies. At one step, a waiting switch whose state
+holds before the step is made first, and then the versions that take
+effect at that step apply; a waiting switch is dropped when a later
+version takes effect at a step at which it is not made, and the rule of
+the later version then applies alone. An instance that ends first never
+switches. When several versions take effect at one step, they take
+effect in the order of the sequence, and the instance follows the rule
+of each in turn: two switches at one step are two amendments, applied
+one after the other before anything else. A switch to a version that does not
 have the contract, or in which the current lifecycle state does not
 exist, cannot be applied (F.6), and a processor refuses the step. An
 instance that keeps its version has the deadlines, monitors, `assume:`
@@ -719,7 +721,12 @@ A trace that amends a contract with the key `amend` of
 [F.10](./appendix-f-norms.md#f10-reference-implementation-status)
 switches its instance at that observation whatever the versions
 declare. A processor MUST NOT apply both to one run: with versions, the
-transitional rules decide when an instance is amended.
+transitional rules decide when an instance is amended. When a processor
+applies such a key to a file whose transitional rule for the contract
+is `keep` or `switch` with `in_states:`, it SHOULD warn that the
+amendment is applied as a switch. The models of new versions that a
+processor is given for the key `amend` are not versions of a run; the
+versions of a run are given to it separately.
 
 ### Regimes
 
@@ -729,9 +736,12 @@ a processor refuses it, as `cadl` 0.3.33 refused such a run with an
 amendment. Two questions are not settled. A version may change
 `regimes:` and with it the contracts in force; this appendix does not
 say whether an instance that keeps an older version is in force by the
-bindings of its own version or of the version in force. And F.6 counts
-the time elapsed against a deadline in the time of the run, while F.5
-counts it on the clock of the contract. For the other runs every
+bindings of its own version or of the version in force. And this
+appendix places an effective time on the time of the run, while F.5
+measures the deadlines of a contract on its clock, which stops while
+the contract is not in force; it does not say when a version that takes
+effect while the contract is not in force reaches the instance, or how
+the time elapsed against its deadlines is then counted. For the other runs every
 version of the sequence MUST have the contract in force in its initial
 regime; the run is then judged as one of a file without `regimes:`.
 
@@ -750,7 +760,13 @@ One measurement of a metric covers the window `[s, s + window)` of its
    (no time base for its form, or a version that is not in the
    sequence) leaves the measurement not judged. When the target at
    `s` differs from the target at some time inside the window, no
-   single target applies, and the measurement is not judged.
+   single target applies, and the measurement is not judged. The
+   target at a time inside the window is that of the version in force
+   then: a version that takes effect inside the window and gives the
+   metric another target, or does not declare it, leaves the
+   measurement not judged, as a schedule entry would, so that a change
+   written as a new version and one written as an entry of `schedule:`
+   are judged alike.
 3. **Value.** Without `every:`, one run gives one value. With
    `every:`, one run gives the values of the formula at `s`,
    `s + every`, ..., before `s + window`, that is
@@ -805,10 +821,15 @@ that keeps the state of contract instances must move them when they
 switch:
 
 - the norms monitor of the Python target applies this section when it
-  is given the models of the other versions (F.10); the Python target
-  also writes the module `version.py`, with the identity, the
-  effective time, the transitional rules, and the parameter values of
-  the version, for the host that decides which version is in force;
+  is given the models of the other versions of the run (F.10); the
+  Python target also writes the module `version.py`, with the identity,
+  the effective time, the transitional rules, the parameter values, and
+  the metric schedules of the version, for the host that decides which
+  version is in force. The target check of a metric with `schedule:`
+  in `metrics.py` takes the time and the time base and checks the
+  target in force then; it returns no verdict (not judged) when the
+  time or the time base is missing, and so does any target check whose
+  target cannot be compiled;
 - the norms monitors of the Rego and Solidity targets
   ([D.5](./appendix-d-codegen.md#d5-norms-monitors-of-the-opa-and-solidity-targets))
   do not apply amendments; a version that names `previous:` gets no
