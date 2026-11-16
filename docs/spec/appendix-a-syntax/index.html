@@ -1,4 +1,4 @@
-<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-a-syntax" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix A: Syntax Reference (EBNF) | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-a-syntax/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix A: Syntax Reference (EBNF) | CADL"/><meta data-rh=true name=description content="Reference grammar of CADL v0.3 in EBNF: document structure, expression sub-language, reserved keywords, and reference implementation status."/><meta data-rh=true property=og:description content="Reference grammar of CADL v0.3 in EBNF: document structure, expression sub-language, reserved keywords, and reference implementation status."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-a-syntax/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-a-syntax/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-a-syntax/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-a-syntax/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-a-syntax","name":"Appendix A: Syntax Reference (EBNF)","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.e2adfa23.js defer></script><script src=/cadl-spec/assets/js/main.aa0ba327.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=en-US dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-a-syntax" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>Appendix A: Syntax Reference (EBNF) | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/docs/spec/appendix-a-syntax/ /><meta data-rh=true property=og:locale content=en_US /><meta data-rh=true property=og:locale:alternate content=ja /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Appendix A: Syntax Reference (EBNF) | CADL"/><meta data-rh=true name=description content="Reference grammar of CADL v0.3 in EBNF: document structure, expression sub-language, reserved keywords, and reference implementation status."/><meta data-rh=true property=og:description content="Reference grammar of CADL v0.3 in EBNF: document structure, expression sub-language, reserved keywords, and reference implementation status."/><link data-rh=true rel=icon href=/cadl-spec/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-a-syntax/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-a-syntax/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-a-syntax/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-a-syntax/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/docs/spec/appendix-a-syntax","name":"Appendix A: Syntax Reference (EBNF)","position":1}]}</script><link rel=stylesheet href=/cadl-spec/assets/css/styles.aceecb03.css /><script src=/cadl-spec/assets/js/runtime~main.4288c077.js defer></script><script src=/cadl-spec/assets/js/main.aa0ba327.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-689")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label="Skip to main content"><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/docs/quickstart/>Quick Start</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/docs/spec/intro/>Specification</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/textbook/>Textbook</a><a class="navbar__item navbar__link" href=/cadl-spec/docs/handson/>Hands-on</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>English</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-a-syntax/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-a-syntax/ target=_self rel="noopener noreferrer" class=dropdown__link lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=Search aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/intro/><span title="CADL Specification v0.3" class=linkLabel_E58b>CADL Specification v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/introduction/><span title="1. Introduction" class=linkLabel_E58b>1. Introduction</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/objectives/><span title="2. Language Objectives" class=linkLabel_E58b>2. Language Objectives</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/comparison/><span title="3. Comparison with Existing Languages" class=linkLabel_E58b>3. Comparison with Existing Languages</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/requirements/><span title="4. Requirements Specification" class=linkLabel_E58b>4. Requirements Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/language-spec/><span title="5. Language Specification" class=linkLabel_E58b>5. Language Specification</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/design/><span title="6. Design" class=linkLabel_E58b>6. Design</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/examples/><span title="7. Domain-Specific Description Examples" class=linkLabel_E58b>7. Domain-Specific Description Examples</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/use-cases/><span title="8. Use Cases and Novelty Analysis" class=linkLabel_E58b>8. Use Cases and Novelty Analysis</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/research/><span title="9. Research Directions and Open Challenges" class=linkLabel_E58b>9. Research Directions and Open Challenges</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/roadmap/><span title="10. Implementation Roadmap" class=linkLabel_E58b>10. Implementation Roadmap</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/docs/spec/appendix-a-syntax/><span title="Appendix A: Syntax Reference (EBNF)" class=linkLabel_E58b>Appendix A: Syntax Reference (EBNF)</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-b-references/><span title="Appendix B: References" class=linkLabel_E58b>Appendix B: References</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-c-motivation/><span title="Appendix C: Motivation Extension" class=linkLabel_E58b>Appendix C: Motivation Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-d-codegen/><span title="Appendix D: Codegen Target Catalog" class=linkLabel_E58b>Appendix D: Codegen Target Catalog</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-e-sos-dsl/><span title="Appendix E: SoS-DSL Extension" class=linkLabel_E58b>Appendix E: SoS-DSL Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-f-norms/><span title="Appendix F: Norms Extension" class=linkLabel_E58b>Appendix F: Norms Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-g-agents/><span title="Appendix G: Agent Governance Extension" class=linkLabel_E58b>Appendix G: Agent Governance Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-h-stochastic/><span title="Appendix H: Stochastic Model Extension" class=linkLabel_E58b>Appendix H: Stochastic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-i-games/><span title="Appendix I: Strategic Model Extension" class=linkLabel_E58b>Appendix I: Strategic Model Extension</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-j-grounding/><span title="Appendix J: Grounding of the Institutional Parameters" class=linkLabel_E58b>Appendix J: Grounding of the Institutional Parameters</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/appendix-k-amendment/><span title="Appendix K: Amendment of a Model" class=linkLabel_E58b>Appendix K: Amendment of a Model</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/docs/spec/glossary/><span title=Glossary class=linkLabel_E58b>Glossary</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/cadl-spec/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Appendix A: Syntax Reference (EBNF)</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Appendix A. Syntax Reference (EBNF)</h1></header>
@@ -169,9 +169,63 @@ regime has an entry. A file without regimes (without <code>transitions:</code>)
 has every contract in force at all times, even when it has an empty
 <code>regimes:</code> block. The declared values themselves are not changed: the
 contract keeps the number written in it. A transition from <code>R</code> to <code>R'</code>
-replaces the bindings of <code>R</code> by those of <code>R'</code>; this appendix does not
-say at which step of the transition's <code>protocol:</code> that happens, nor in
-which regime the system starts.</p>
+replaces the bindings of <code>R</code> by those of <code>R'</code>, at the point that "Runs"
+below fixes.</p>
+<p><strong>Runs.</strong> From <code>cadl</code> 0.3.33 this appendix fixes in which regime a run
+of the system is at each step. These rules apply to every file with
+<code>transitions:</code>, with or without a <code>regimes:</code> block; the bindings
+(parameter values and the contracts in force) apply only to a file with
+the block, and without it every contract is in force at every step. A <em>step</em> is the unit at which a runtime
+evaluates contracts: one cycle of the generated Python runtime, one call
+of <code>runMonitorCycle()</code> of the generated Solidity, one decision of the
+generated Rego policy, and one observation of a trace of the norms
+extension (<a class="" href=/cadl-spec/docs/spec/appendix-f-norms/>Appendix F</a>, F.5).</p>
+<ol>
+<li class="">At every step exactly one regime is current.</li>
+<li class="">A run starts in the <em>initial regime</em>: the first <code>from:</code>, in the order
+of <code>transitions:</code>, that is not the <code>to:</code> of any transition, and
+otherwise the <code>from:</code> of the first transition. This is the initial
+state of the regime map of <code>cadl regime-map</code>. A host MAY start a run
+in another regime; until it names one, the run is in the initial
+regime.</li>
+<li class="">After the evaluations of a step, the transitions from the current
+regime are considered in the order of <code>transitions:</code>, and the first
+whose <code>condition:</code> holds is selected; a condition that cannot be
+evaluated (it reads a value that is not given) does not hold, and the
+run goes on. Its <code>safety_invariant:</code> is
+checked then: when it holds, the transition is taken; when it does
+not hold, or cannot be evaluated, the transition is not taken, the
+regime stays, and the processor reports the refused transition. A
+transition is never taken without its invariant. At most one
+transition is taken per step. The
+<code>protocol:</code> of a transition names how the parties carry it out; its
+messages belong to the steps at which they are sent and do not delay
+the change of regime.</li>
+<li class="">The bindings change together with the regime, between two steps.
+Every evaluation of a step (the <code>assume:</code> and <code>guarantee:</code> items, the
+monitors, the norms, and the policies, and every parameter value that
+generated code reads) uses the bindings of the regime current at that
+step and of no other regime. Two contracts are therefore in force at
+the same step only if some regime has both in force.</li>
+<li class="">A contract that is not in force at a step is not evaluated at it.
+For the norms extension, F.5 ("Contracts not in force") defines what
+a contract instance sees when its contract is not in force: its norm
+instances keep their states, their deadlines and the intervals of the
+temporal operators do not advance, and nothing that happens meanwhile
+counts.</li>
+</ol>
+<p>A predicate cannot name a parameter (A.10), so the parameter values of
+a regime change only the code that writes them out (the institutional
+parameters of the Solidity and Rego targets, the parameters of the
+generated Python runtime) and the models of Appendices H and I, which
+evaluate each regime as a design of its own.</p>
+<p>A runtime that does not take transitions itself, such as the generated
+Rego policies, is told the current regime by its host; the host then
+takes the transitions and checks their invariants as items 2 and 3 say.
+An empty block (<code>regimes: {}</code>) in a file with <code>transitions:</code> binds
+nothing, but makes the file one with bindings: the generated code reads
+the regime (for example, a Rego contract policy then requires
+<code>input.regime</code>).</p>
 <p><strong>Static rules.</strong> A processor MUST report the following as errors.</p>
 <ul>
 <li class=""><strong>R-1</strong> A key of <code>regimes:</code> is a regime of the file, a name used in
@@ -310,9 +364,9 @@ predicates of <code>condition:</code>, <code>safety_invariant:</code>, <code>for
 monitor <code>rule:</code>, lifecycle <code>when:</code>, and an <code>on:</code> that is not a message
 event are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. <code>cadl</code> 0.3
-deviates from this appendix as follows (checked against <code>cadl</code> 0.3.32).</p>
+deviates from this appendix as follows (checked against <code>cadl</code> 0.3.33).</p>
 <ul>
-<li class=""><strong>Expressions.</strong> Expressions follow A.10 and A.11 in <code>cadl</code> 0.3.32; no
+<li class=""><strong>Expressions.</strong> Expressions follow A.10 and A.11 in <code>cadl</code> 0.3.33; no
 deviation is known. Up to <code>cadl</code> 0.3.17 the unary <code>-</code> of <code>factor</code> was
 not accepted: an item that used it was kept as an opaque predicate,
 and for a lifecycle <code>on:</code> or <code>when:</code> or a monitor <code>rule:</code>, <code>cadl check</code>
@@ -362,21 +416,50 @@ contracts: <code>cadl sim-ir</code> writes them (A.7.1) and <code>cadl sim-gen</
 them to the <code>python</code> and <code>go</code> configurations (<code>regimes</code>) and to the
 <code>unity</code> configuration (<code>regimeBindings</code>). <code>cadl verify</code> checks every
 pair of contracts that share a party. When no regime has both in force
-under the regime bindings of A.7.1, a conflict is reported as a
-warning (<code>WARN</code>) that names the regimes of each: A.7.1 leaves open at
-which step of a transition the bindings switch, so both may be in
-force then (when one of the two is in force in no regime, the warning
-says so instead). Such a pair gets an <code>info</code> line when it is
-consistent and stays <code>unknown</code> when the solver does not decide it. A
-file without regimes has every contract in force, so every pair is
-judged as before, even with an empty <code>regimes:</code> block. The <code>python</code>
-target of <code>cadl codegen</code> gives the regime controller the methods
-<code>parameters()</code>, <code>contract_active()</code>, and <code>apply_bindings()</code>, exposes
-the values of the current regime in <code>ctx.parameters</code>, which the
-generated monitors do not read, and runs the monitor of a contract
-only in the regimes in which it is in force. The generated
-<code>unity-csharp</code>, <code>solidity</code>, and <code>opa</code> code, the online monitor of the
-norms, and <code>cadl regime-map</code> do not use the bindings. The
+under the regime bindings of A.7.1, the pair is reported as <code>info</code>
+with the regimes of each, also when the two contradict each other:
+from <code>cadl</code> 0.3.33 every step of a run has the bindings of one regime
+(A.7.1, "Runs"), so the two are never in force at the same step. In
+0.3.32, which left that step open, such a conflict was a warning
+(<code>WARN</code>). A pair that some regime has in force is judged as before,
+and a pair that the solver does not decide stays <code>unknown</code>. A file
+without regimes has every contract in force, so every pair is judged
+as before, even with an empty <code>regimes:</code> block. <code>cadl regime-map</code>
+shows, from <code>cadl</code> 0.3.33, the bindings of each regime in its text,
+DOT, and JSON outputs (JSON: the key <code>regimes</code>, in the form of the IR,
+<code>null</code> for a block that breaks R-1 to R-6); its analysis reads only
+the transitions and is not changed by the bindings. The code
+generators apply the bindings from <code>cadl</code> 0.3.33
+(<a class="" href=/cadl-spec/docs/spec/appendix-d-codegen/>Appendix D</a>, D.1): the <code>python</code> target
+starts the regime controller in the initial regime, rejects a name
+that is not a regime, checks the safety invariant of a transition
+explicitly and does not take the transition when it fails, gives the
+controller the methods <code>parameters()</code>, <code>contract_active()</code>, and
+<code>apply_bindings()</code>,
+exposes the values of the current regime in <code>ctx.parameters</code>, and runs
+the monitor of a contract only in the regimes in which it is in force
+(from 0.3.32); its norms monitor and <code>cadl norms-eval</code> read the
+current regime from the trace, which is in the initial regime until it
+names one (F.5, F.10). The <code>solidity</code> target makes one step one call
+of the orchestrator and checks the safety invariants in the same way;
+the <code>solidity</code> and <code>opa</code> targets read the current regime for the
+contracts in force and the institutional parameters. A target that cannot read the regime does
+not generate code that ignores it: the norms monitors of the <code>opa</code>
+and <code>solidity</code> targets are not generated for a contract that some
+regime does not have in force (D.5), <code>unity-csharp</code> refuses a file in
+which a regime does not have a contract with <code>lifecycle:</code> or
+<code>monitors:</code> in force, and the boundary policy of
+<a class="" href=/cadl-spec/docs/spec/appendix-g-agents/>Appendix G</a> refuses a file in which a regime
+does not have an enforced contract in force. Up to 0.3.32 the
+generated <code>unity-csharp</code>, <code>solidity</code>, and <code>opa</code> code, the online
+monitor of the norms, and <code>cadl regime-map</code> did not use the bindings,
+the Python regime controller started in the <code>from:</code> of the first
+transition and checked the safety invariant with <code>assert</code>, and the
+Solidity <code>RegimeController</code> started in the first regime in
+alphabetical order, did not check the invariant, had no setters, and
+could be called by anyone. From 0.3.33 the rules of "Runs" (the
+initial regime, the explicit check, one step per call of the
+orchestrator) apply to every file with transitions. The
 <code>safety_invariant</code> of a transition is in the IR and the simulator
 configurations from <code>cadl</code> 0.3.32; up to 0.3.31 <code>cadl check</code> checked it
 but <code>cadl sim-ir</code> left it out.</li>
