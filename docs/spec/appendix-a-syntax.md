@@ -380,7 +380,9 @@ extension ([Appendix F](./appendix-f-norms.md), F.5).
    regime.
 3. After the evaluations of a step, the transitions from the current
    regime are considered in the order of `transitions:`, and the first
-   whose `condition:` holds is selected. Its `safety_invariant:` is
+   whose `condition:` holds is selected; a condition that cannot be
+   evaluated (it reads a value that is not given) does not hold, and the
+   run goes on. Its `safety_invariant:` is
    checked then: when it holds, the transition is taken; when it does
    not hold, or cannot be evaluated, the transition is not taken, the
    regime stays, and the processor reports the refused transition. A

@@ -62,7 +62,9 @@ monitor them, with the norms, in a separate file per contract (from
 From `cadl` 0.3.33 the generated code of every file with `transitions:`
 follows A.7.1 ("Runs"): the `python` and `solidity` controllers start in
 the initial regime, take at most one transition after the evaluations of
-a step, check its safety invariant explicitly (not with `assert`; in
+a step (a condition that cannot be evaluated, because a value is missing
+or unset or Solidity cannot express it, does not hold), check its safety
+invariant explicitly (not with `assert`; in
 Solidity only with values that were set) and do not take it when the
 invariant does not hold or cannot be evaluated or compiled; in Solidity
 one step is one call of the orchestrator, whose deployer sets the
