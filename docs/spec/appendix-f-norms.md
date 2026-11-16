@@ -1563,7 +1563,7 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   transitional rule for the contract is `keep` or `switch` with
   `in_states:` is applied as before, with a warning (on the standard
   error of `cadl norms-eval`, in `amend_warnings` of the monitor, and in
-  the warnings of `cadl agents-run` and the gateways). `cadl norms-check` refuses a later version
+  the warnings of `cadl agents-run`). `cadl norms-check` refuses a later version
   (`--version`) whose transitional rule for the contract is `keep` or
   `switch` with `in_states:`, since its model amends every instance at
   any observation. The norms monitors of the Rego and Solidity targets

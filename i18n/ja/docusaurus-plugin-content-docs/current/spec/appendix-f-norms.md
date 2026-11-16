@@ -1108,7 +1108,7 @@ sos:
   後のバージョンも時間の基準もなく，このキーを含まないトレースは，改正拡張を宣言したファイルでも，
   これまでと同じに判定する。契約の経過規定が `keep` または `in_states:` を持つ `switch` である
   バージョンへの `amend` は，これまでどおり適用し，警告を出す（`cadl norms-eval` では標準エラー出力，
-  モニターでは `amend_warnings`，`cadl agents-run` とゲートウェイでは警告の一覧）。`cadl norms-check` は，契約の経過規定が `keep`
+  モニターでは `amend_warnings`，`cadl agents-run` では警告の一覧）。`cadl norms-check` は，契約の経過規定が `keep`
   または `in_states:` を持つ `switch` である後のバージョン（`--version`）を拒否する。そのモデルは
   すべてのインスタンスを任意の観測で改正するからである。RegoとSolidityのターゲットの規範のモニターは，
   `previous:` を持つバージョンに動いているインスタンスが切り替わる契約については生成しない（D.5節）。
