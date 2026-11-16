@@ -59,6 +59,112 @@ temporal operators out of the contract policy, with a comment, and
 monitor them, with the norms, in a separate file per contract (from
 `cadl` 0.3.25; D.5). The `unity-csharp` target does not monitor norms.
 
+From `cadl` 0.3.33 the generated code of every file with `transitions:`
+follows A.7.1 ("Runs"): the `python` and `solidity` controllers start in
+the initial regime, take at most one transition after the evaluations of
+a step (a condition that cannot be evaluated, because a value is missing
+or unset or Solidity cannot express it, does not hold), check its safety
+invariant explicitly (not with `assert`; in
+Solidity only with values that were set) and do not take it when the
+invariant does not hold or cannot be evaluated or compiled; in Solidity
+one step is one call of the orchestrator, whose deployer sets the
+observed state. For a file with `regimes:`
+([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings)) the
+generated code also applies the bindings of the current regime, as the
+list below says; a file with transitions and an empty block
+(`regimes: {}`) counts as a file with the block (its Rego contract
+policies require `input.regime`). A file without `transitions:` gets the
+same code as before, apart from the corrections of the `opa` target
+below. Up to `cadl` 0.3.32 the Python controller checked the invariant
+with `assert`, so a failing invariant raised `AssertionError` and
+`python -O` took the transition, and the Solidity `RegimeController`
+started in the first regime in alphabetical order, did not check the
+invariant, had no setters (conditions read 0), and could be called by
+anyone.
+
+- `python`: the regime controller starts in the initial regime of A.7.1
+  (it still takes another one as an argument, and raises `ValueError`
+  for a name that is not a regime), checks the safety invariant of a
+  transition explicitly (not with `assert`) and, when it does not hold or
+  cannot be compiled or evaluated, does not take the transition and
+  records it in `refused_transitions` and the log, publishes the values of
+  the bound parameters of the current regime in `ctx.parameters`, and
+  the runtime runs the monitor of a contract only in the regimes in
+  which it is in force. A transition is evaluated after the monitors of
+  a cycle, so the next cycle has the bindings of the new regime. The
+  norms monitor `norms_monitor.py` reads the key `regime` of an
+  observation ([F.5](./appendix-f-norms.md#contracts-not-in-force),
+  [F.10](./appendix-f-norms.md#f10-reference-implementation-status)).
+- `solidity`: `RegimeController` starts in the initial regime and gives
+  `contractActive(id)`. A contract that some regime does not have in
+  force, or whose `alpha`, `beta`, or `lambda` some regime binds, takes
+  the controller as constructor argument; its `runMonitorCycle()`
+  returns without checking while it is not in force, and `ALPHA`,
+  `BETA`, and `LAMBDA` become view functions with the same getter that
+  return the value of the current regime (times 1000, as the
+  constants). The orchestrator creates the controller first. One step
+  of A.7.1 is one call of the orchestrator's `runMonitorCycle()`: only
+  its deployer (the reporter) may call it and set the observed state
+  (`setUint`, `setBool`, passed to every contract and the controller),
+  and only the orchestrator may run the steps of the contracts and of
+  the controller. A transition whose safety invariant does not hold, or
+  cannot be compiled, is not taken; the event `RegimeTransitionRefused`
+  names it. The controller records which values were set, per type
+  (`isSetUint`, `isSetBool`), and
+  an invariant holds only when every value it reads was set, as the
+  Python check refuses a missing value. An invariant that reads anything
+  but names of the observed state, integers, and booleans with the
+  operators of A.10 (a function such as `len(queue)`, a field of an actor,
+  a text) is compiled as `false`. In both targets a bare name, such as
+  `Idle` in `mode == Idle`, is a quantity of the observed state.
+- `opa`: each contract policy reads `input.regime`. A contract that the
+  regime does not have in force is satisfied (`allow`) and has no
+  violation; `alpha`, `beta`, and `lambda_` have the value of the
+  regime. Without `input.regime`, or with a name that is not a regime of
+  the file, nothing is allowed and `regime_error` (also in `violation`)
+  says why. `main.rego` gives `regimes`, `initial_regime`, and
+  `parameters`, the values of the bound parameters in the regime
+  (undefined without a regime of the file). The policies take no
+  transitions: the host that passes the regime takes them and checks
+  their safety invariants (A.7.1).
+- `unity-csharp`: the generated Unity runtime has no regime controller.
+  A file in which a regime does not have a contract with `lifecycle:` or
+  `monitors:` in force is refused; for other files the bindings change
+  nothing that the target writes.
+- `agent-rego` and `agent-cedar`: the boundary policy does not read the
+  regime, and a file in which a regime does not have an enforced
+  contract in force is refused ([Appendix G](./appendix-g-agents.md)).
+- The norms monitors of the `opa` and `solidity` targets are not
+  generated for a contract that some regime does not have in force
+  (D.5).
+
+Five errors of the `opa` target are corrected in `cadl` 0.3.33 for every
+file. A negated literal (`NOT ok`, `NOT (y == 3)`) held when a value it
+reads was missing, since OPA's `not input.y == 3` holds then; each input
+reference is now bound before the negation (`neg_1 := input.y; not neg_1
+== 3`), so `flag != true` and `NOT (flag == true)` agree. An `assume:` or `guarantee:` item with a quantifier or a
+comprehension was written as Rego that OPA rejects (`not` inside an
+expression, a comprehension as a comment) or that ranged over no member;
+it is now a truth value that the host gives, `input.items["TEXT"] ==
+true`, as is a text (an opaque predicate), as a whole item or as an
+operand of `AND`, `OR`, or `NOT`, which was a string that Rego reads as
+true. An item with `OR`, or with `NOT` over `AND`, `OR`, or
+`NOT`, was written as `(A) # OR (B)`, which drops `B`, or as `not A; B`;
+it is now a rule with one body per disjunct of its disjunctive normal
+form, with `NOT` pushed to the comparisons. Further, `all_violations` of `main.rego` assigned `msg` once per contract,
+which OPA rejects for two or more contracts, and is now one rule per
+contract; and a function call that Rego does not have was written as is
+(a bare name for a call without arguments, unsafe in OPA, as in
+`all_routes_conflict_free()`), and is now a value of the input that the
+host gives: `input.NAME` without arguments, `input.calls["TEXT"]` with
+them (`count`, `sum`, `max`, `min`, and `abs` stay Rego functions).
+A value that the host does not give leaves a guarantee unsatisfied (a
+violation) and makes an assumption fail (no violation, nothing allowed);
+a negation never holds on a missing value.
+
+Environment values (`environment.X`) appear in `ctx.parameters` and in
+`main.rego`; the Solidity code has no such values.
+
 ## D.2 Two-tier generator layout
 
 The reference implementation splits codegen into two tiers, reflecting
@@ -158,6 +264,18 @@ code would exceed the 24576 bytes of EIP-170 (`cadl codegen` estimates
 both sizes from above). In
 a `guarantee:` item these lead to the item being left out, as above. An
 observation with `amend` is refused at run time.
+
+**Regimes.** Neither monitor reads the current regime (A.7.1). From
+`cadl` 0.3.33 a contract that some regime of `regimes:` does not have in
+force gets no monitor (`cadl codegen` warns, and the generator functions
+refuse it), and the processor names the regimes: such a
+monitor would judge observations that F.5 ("Contracts not in force")
+leaves out, and would let the deadlines run while the contract is not
+in force. The norms monitor of the `python` target judges such a
+contract. For a contract that every regime has in force the monitor is
+the same as without `regimes:`, since no norm, counts-as rule, or item
+reads a parameter. Up to `cadl` 0.3.32 the monitor was generated and
+judged every observation.
 
 **The Rego monitor.** The Rego monitor is a step function. OPA keeps no state, so the
 policy computes the next state of the monitor from the previous state
