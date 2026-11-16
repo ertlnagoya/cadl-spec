@@ -362,7 +362,10 @@ replaces the bindings of `R` by those of `R'`, at the point that "Runs"
 below fixes.
 
 **Runs.** From `cadl` 0.3.33 this appendix fixes in which regime a run
-of the system is at each step. A *step* is the unit at which a runtime
+of the system is at each step. These rules apply to every file with
+`transitions:`, with or without a `regimes:` block; the bindings
+(parameter values and the contracts in force) apply only to a file with
+the block, and without it every contract is in force at every step. A *step* is the unit at which a runtime
 evaluates contracts: one cycle of the generated Python runtime, one call
 of `runMonitorCycle()` of the generated Solidity, one decision of the
 generated Rego policy, and one observation of a trace of the norms
@@ -408,10 +411,10 @@ evaluate each regime as a design of its own.
 A runtime that does not take transitions itself, such as the generated
 Rego policies, is told the current regime by its host; the host then
 takes the transitions and checks their invariants as items 2 and 3 say.
-A `regimes:` block makes these rules apply even when it binds nothing:
-with `transitions:`, an empty block (`regimes: {}`) fixes the initial
-regime, and the generated code reads the regime (for example, a Rego
-contract policy then requires `input.regime`).
+An empty block (`regimes: {}`) in a file with `transitions:` binds
+nothing, but makes the file one with bindings: the generated code reads
+the regime (for example, a Rego contract policy then requires
+`input.regime`).
 
 **Static rules.** A processor MUST report the following as errors.
 
@@ -742,10 +745,13 @@ deviates from this appendix as follows (checked against `cadl` 0.3.32).
   does not have an enforced contract in force. Up to 0.3.32 the
   generated `unity-csharp`, `solidity`, and `opa` code, the online
   monitor of the norms, and `cadl regime-map` did not use the bindings,
-  and the Python regime controller started in the `from:` of the first
-  transition, which 0.3.33 keeps for a file without `regimes:`; it
-  checked the safety invariant with `assert`, which 0.3.33 replaces in
-  every file by the explicit check of A.7.1. The
+  the Python regime controller started in the `from:` of the first
+  transition and checked the safety invariant with `assert`, and the
+  Solidity `RegimeController` started in the first regime in
+  alphabetical order, did not check the invariant, had no setters, and
+  could be called by anyone. From 0.3.33 the rules of "Runs" (the
+  initial regime, the explicit check, one step per call of the
+  orchestrator) apply to every file with transitions. The
   `safety_invariant` of a transition is in the IR and the simulator
   configurations from `cadl` 0.3.32; up to 0.3.31 `cadl check` checked it
   but `cadl sim-ir` left it out.

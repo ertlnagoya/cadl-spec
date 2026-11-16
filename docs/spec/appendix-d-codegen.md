@@ -59,20 +59,26 @@ temporal operators out of the contract policy, with a comment, and
 monitor them, with the norms, in a separate file per contract (from
 `cadl` 0.3.25; D.5). The `unity-csharp` target does not monitor norms.
 
-For a file with `regimes:` ([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings)),
-the generated code applies, from `cadl` 0.3.33, the bindings of the
-current regime as A.7.1 ("Runs") defines; a file without the block gets
-the same code as before, byte for byte, apart from the corrections of
-the `opa` target below and the check of safety invariants in
-`transitions.py` of the `python` target, which applies to every file with
-`transitions:`: up to `cadl` 0.3.32 it was an `assert`, so a failing
-invariant raised `AssertionError` and `python -O` took the transition;
-from 0.3.33 a transition whose invariant does not hold, cannot be
-evaluated, or cannot be compiled is not taken, and the refusal is recorded
-in `refused_transitions` and the log (A.7.1). A file with transitions and an empty block
-(`regimes: {}`) counts as a file with the block: its controllers start in
-the initial regime, and its Rego contract policies require
-`input.regime`.
+From `cadl` 0.3.33 the generated code of every file with `transitions:`
+follows A.7.1 ("Runs"): the `python` and `solidity` controllers start in
+the initial regime, take at most one transition after the evaluations of
+a step, check its safety invariant explicitly (not with `assert`; in
+Solidity only with values that were set) and do not take it when the
+invariant does not hold or cannot be evaluated or compiled; in Solidity
+one step is one call of the orchestrator, whose deployer sets the
+observed state. For a file with `regimes:`
+([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings)) the
+generated code also applies the bindings of the current regime, as the
+list below says; a file with transitions and an empty block
+(`regimes: {}`) counts as a file with the block (its Rego contract
+policies require `input.regime`). A file without `transitions:` gets the
+same code as before, apart from the corrections of the `opa` target
+below. Up to `cadl` 0.3.32 the Python controller checked the invariant
+with `assert`, so a failing invariant raised `AssertionError` and
+`python -O` took the transition, and the Solidity `RegimeController`
+started in the first regime in alphabetical order, did not check the
+invariant, had no setters (conditions read 0), and could be called by
+anyone.
 
 - `python`: the regime controller starts in the initial regime of A.7.1
   (it still takes another one as an argument, and raises `ValueError`
@@ -101,7 +107,8 @@ the initial regime, and its Rego contract policies require
   and only the orchestrator may run the steps of the contracts and of
   the controller. A transition whose safety invariant does not hold, or
   cannot be compiled, is not taken; the event `RegimeTransitionRefused`
-  names it. The controller records which values were set (`isSet`), and
+  names it. The controller records which values were set, per type
+  (`isSetUint`, `isSetBool`), and
   an invariant holds only when every value it reads was set, as the
   Python check refuses a missing value. An invariant that reads anything
   but names of the observed state, integers, and booleans with the
