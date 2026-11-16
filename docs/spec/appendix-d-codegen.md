@@ -101,7 +101,13 @@ the initial regime, and its Rego contract policies require
   and only the orchestrator may run the steps of the contracts and of
   the controller. A transition whose safety invariant does not hold, or
   cannot be compiled, is not taken; the event `RegimeTransitionRefused`
-  names it.
+  names it. The controller records which values were set (`isSet`), and
+  an invariant holds only when every value it reads was set, as the
+  Python check refuses a missing value. An invariant that reads anything
+  but names of the observed state, integers, and booleans with the
+  operators of A.10 (a function such as `len(queue)`, a field of an actor,
+  a text) is compiled as `false`. In both targets a bare name, such as
+  `Idle` in `mode == Idle`, is a quantity of the observed state.
 - `opa`: each contract policy reads `input.regime`. A contract that the
   regime does not have in force is satisfied (`allow`) and has no
   violation; `alpha`, `beta`, and `lambda_` have the value of the
@@ -123,13 +129,17 @@ the initial regime, and its Rego contract policies require
   generated for a contract that some regime does not have in force
   (D.5).
 
-Four errors of the `opa` target are corrected in `cadl` 0.3.33 for every
-file. An `assume:` or `guarantee:` item with a quantifier or a
+Five errors of the `opa` target are corrected in `cadl` 0.3.33 for every
+file. A negated literal (`NOT ok`, `NOT (y == 3)`) held when a value it
+reads was missing, since OPA's `not input.y == 3` holds then; each input
+reference is now bound before the negation (`neg_1 := input.y; not neg_1
+== 3`), so `flag != true` and `NOT (flag == true)` agree. An `assume:` or `guarantee:` item with a quantifier or a
 comprehension was written as Rego that OPA rejects (`not` inside an
 expression, a comprehension as a comment) or that ranged over no member;
 it is now a truth value that the host gives, `input.items["TEXT"] ==
-true`, as is a text item (an opaque predicate), which was a string that
-Rego reads as true. An item with `OR`, or with `NOT` over `AND`, `OR`, or
+true`, as is a text (an opaque predicate), as a whole item or as an
+operand of `AND`, `OR`, or `NOT`, which was a string that Rego reads as
+true. An item with `OR`, or with `NOT` over `AND`, `OR`, or
 `NOT`, was written as `(A) # OR (B)`, which drops `B`, or as `not A; B`;
 it is now a rule with one body per disjunct of its disjunctive normal
 form, with `NOT` pushed to the comparisons. Further, `all_violations` of `main.rego` assigned `msg` once per contract,
@@ -139,6 +149,9 @@ contract; and a function call that Rego does not have was written as is
 `all_routes_conflict_free()`), and is now a value of the input that the
 host gives: `input.NAME` without arguments, `input.calls["TEXT"]` with
 them (`count`, `sum`, `max`, `min`, and `abs` stay Rego functions).
+A value that the host does not give leaves a guarantee unsatisfied (a
+violation) and makes an assumption fail (no violation, nothing allowed);
+a negation never holds on a missing value.
 
 Environment values (`environment.X`) appear in `ctx.parameters` and in
 `main.rego`; the Solidity code has no such values.
