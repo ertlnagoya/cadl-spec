@@ -59,6 +59,49 @@ temporal operators out of the contract policy, with a comment, and
 monitor them, with the norms, in a separate file per contract (from
 `cadl` 0.3.25; D.5). The `unity-csharp` target does not monitor norms.
 
+For a file with `regimes:` ([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings)),
+the generated code applies, from `cadl` 0.3.33, the bindings of the
+current regime as A.7.1 ("Runs") defines; a file without the block gets
+the same code as before, byte for byte.
+
+- `python`: the regime controller starts in the initial regime of A.7.1
+  (it still takes another one as an argument), publishes the values of
+  the bound parameters of the current regime in `ctx.parameters`, and
+  the runtime runs the monitor of a contract only in the regimes in
+  which it is in force. A transition is evaluated after the monitors of
+  a cycle, so the next cycle has the bindings of the new regime. The
+  norms monitor `norms_monitor.py` reads the key `regime` of an
+  observation ([F.5](./appendix-f-norms.md#contracts-not-in-force),
+  [F.10](./appendix-f-norms.md#f10-reference-implementation-status)).
+- `solidity`: `RegimeController` starts in the initial regime and gives
+  `contractActive(id)`. A contract that some regime does not have in
+  force, or whose `alpha`, `beta`, or `lambda` some regime binds, takes
+  the controller as constructor argument; its `runMonitorCycle()`
+  returns without checking while it is not in force, and `ALPHA`,
+  `BETA`, and `LAMBDA` become view functions with the same getter that
+  return the value of the current regime (times 1000, as the
+  constants). The orchestrator creates the controller first.
+- `opa`: each contract policy reads `input.regime`. A contract that the
+  regime does not have in force is satisfied (`allow`) and has no
+  violation; `alpha`, `beta`, and `lambda_` have the value of the
+  regime. Without `input.regime`, or with a name that is not a regime of
+  the file, nothing is allowed and `regime_error` (also in `violation`)
+  says why. `main.rego` gives `regimes`, `initial_regime`, and
+  `parameters`, the values of the bound parameters in the regime.
+- `unity-csharp`: the generated Unity runtime has no regime controller.
+  A file in which a regime does not have a contract with `lifecycle:` or
+  `monitors:` in force is refused; for other files the bindings change
+  nothing that the target writes.
+- `agent-rego` and `agent-cedar`: the boundary policy does not read the
+  regime, and a file in which a regime does not have an enforced
+  contract in force is refused ([Appendix G](./appendix-g-agents.md)).
+- The norms monitors of the `opa` and `solidity` targets are not
+  generated for a contract that some regime does not have in force
+  (D.5).
+
+Environment values (`environment.X`) appear in `ctx.parameters` and in
+`main.rego`; the Solidity code has no such values.
+
 ## D.2 Two-tier generator layout
 
 The reference implementation splits codegen into two tiers, reflecting
@@ -158,6 +201,17 @@ code would exceed the 24576 bytes of EIP-170 (`cadl codegen` estimates
 both sizes from above). In
 a `guarantee:` item these lead to the item being left out, as above. An
 observation with `amend` is refused at run time.
+
+**Regimes.** Neither monitor reads the current regime (A.7.1). From
+`cadl` 0.3.33 a contract that some regime of `regimes:` does not have in
+force gets no monitor, and the processor names the regimes: such a
+monitor would judge observations that F.5 ("Contracts not in force")
+leaves out, and would let the deadlines run while the contract is not
+in force. The norms monitor of the `python` target judges such a
+contract. For a contract that every regime has in force the monitor is
+the same as without `regimes:`, since no norm, counts-as rule, or item
+reads a parameter. Up to `cadl` 0.3.32 the monitor was generated and
+judged every observation.
 
 **The Rego monitor.** The Rego monitor is a step function. OPA keeps no state, so the
 policy computes the next state of the monitor from the previous state
