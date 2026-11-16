@@ -55,6 +55,11 @@ sos:
       protocol: <遷移プロトコルID>
       safety_invariant: <安全条件>
 
+  regimes:                      # モードごとのパラメータ値と契約
+    <モードID>:
+      parameters: { <C.beta | environment.X>: <値>, ... }
+      contracts: { suspended: [ ... ] }   # または active: [ ... ]
+
   metrics:                      # 評価指標定義
     - id: <識別子>
       formula: <式>
@@ -63,7 +68,7 @@ sos:
 
 この構造の例は主要なブロックだけを示しており，`description`，`verification`，`codegen`，`extensions`，`motivation` は省略している。キーの完全な一覧は[付録AのA.11節](./appendix-a-syntax.md#a11-reserved-keywords)にある。
 
-v0.3では，運用モード（regime）は名前である。`transitions:` の `from:` / `to:` に現れることで導入され，別個の宣言はない。また，契約やパラメータ値をモードに結び付ける構文はコア言語にない。確率モデル拡張は，確率モデルの中でモードごとにパラメータの値を割り当てる（[付録HのH.6節](./appendix-h-stochastic.md)）。
+v0.3では，運用モード（regime）は名前である。`transitions:` の `from:` / `to:` に現れることで導入され，別個の宣言はない。`cadl` 0.3.32から，省略可能なブロック `regimes:` で，パラメータの値と有効な契約をモードに結び付けられる。モードごとに，契約の `alpha`，`beta`，`lambda` と `context.environment` のエントリの値，およびそのモードで有効（`active`）または停止（`suspended`）する契約を書く。エントリのないモードでは，宣言された値がすべてそのまま使われ，すべての契約が有効である（[付録AのA.7.1節](./appendix-a-syntax.md#a71-regime-bindings)）。確率モデル拡張は，これらの値をそのモードの設計のパラメータ値とし，確率モデルの中でほかのパラメータに値を割り当ててもよい（[付録HのH.6節](./appendix-h-stochastic.md)）。
 
 ### 5.1.1 段階的記述レベル
 
@@ -158,7 +163,7 @@ sos:
       expr: "weekly_reward >= 0 AND weekly_reward <= 400"
 ```
 
-このブロックを追加したファイルを，`cadl verify`（`cadl` 0.3.31）は受理し，2つの項目をどちらも合格と報告する。`expr:` を持つ項目については，述語が充足可能であることだけを検査し，モデルに対して証明することはしない（[付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)）。
+このブロックを追加したファイルを，`cadl verify`（`cadl` 0.3.32）は受理し，2つの項目をどちらも合格と報告する。`expr:` を持つ項目については，述語が充足可能であることだけを検査し，モデルに対して証明することはしない（[付録AのA.12節](./appendix-a-syntax.md#a12-reference-implementation-status-v03)）。
 
 [7.1節](./07-examples.md)は，検証レベルが目指す矛盾検出を例示する（[1.2節の目的2](./01-introduction.md#目的2-sosの制度違反や矛盾を計算できるようにする)）。7.1節の記述例は概念的なものであり，A.8節のキーとは異なるキーを用いている（第7章冒頭の注記を参照）。このように，同一の制度が利用者のニーズに応じて異なる粒度で記述でき，AIが概要レベルから設計・検証レベルへの精緻化を支援する。
 
@@ -358,6 +363,7 @@ sos_definition = "name:" , text ,
     [ "protocols:" , { "-" , protocol_def } ] ,
     [ "algorithms:" , { algorithm_def } ] ,
     [ "transitions:" , { "-" , transition_def } ] ,
+    [ "regimes:" , regimes_block ] ,
     [ "metrics:" , { "-" , metric_def } ] ,
     [ "verification:" , { "-" , verify_def } ] ,
     [ "codegen:" , { "-" , codegen_def } ] ;
@@ -440,6 +446,7 @@ CADLの契約は，Benvenisteらの契約ベース設計理論およびSaoudら�
 - 5.2節で詳しく扱っていないブロック（`context`，`algorithms`，`transitions`，`metrics`，`verification`，`codegen`）: [付録A](./appendix-a-syntax.md)のA.3節とA.6〜A.9節で規定する。
 - 契約のライフサイクルとモニター（`lifecycle:`，`monitors:`）: [付録E](./appendix-e-sos-dsl.md)。
 - 動機拡張: [付録C](./appendix-c-motivation.md)。
+- どの値を誰が改正できるか，モデルのバージョンと，バージョンが効力を持つときに動いている契約インスタンスの扱い，時間とともに変わるメトリクスの目標，人間の判断の記録への参照: [付録K](./appendix-k-amendment.md)。
 - コード生成ターゲット: [付録D](./appendix-d-codegen.md)。
 - ファイルの検査: `cadl parse`，`cadl check`，`cadl verify`（インストール方法は[仕様書イントロダクション](./intro.md)に示す）。
 - 実行できる例: cadlリポジトリの[`examples/` ディレクトリ](https://github.com/ertlnagoya/cadl/tree/master/examples)。

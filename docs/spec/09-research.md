@@ -13,7 +13,7 @@ tool already solves part of a problem, we say which part CADL would hand
 to that tool and which question the tool cannot answer.
 
 The starting point is this specification (Version 0.3) and the reference
-implementation `cadl` 0.3.31. It checks the satisfiability of contracts
+implementation `cadl` 0.3.32. It checks the satisfiability of contracts
 with Z3 [[de Moura & Bjørner, 2008]](./appendix-b-references.md), detects
 protocol deadlocks by structural analysis, supports the SoS-DSL extension
 ([Appendix E](./appendix-e-sos-dsl.md): `lifecycle:`, `monitors:`,
@@ -301,24 +301,23 @@ parameters. The formal meaning of α, β, and λ in terms of norms,
 design-time checking that F.12 does not cover (nonlinear arithmetic
 over a quantity without a given domain, which is checked only under a
 domain assumed from the literals of the predicate, groups of compared
-quantities whose elimination exceeds the limit, such as a leaf that
-reads many of them at once or all pairs of six or more members compared
-asymmetrically, instances of different contracts
+quantities whose elimination exceeds the limit, such as, from `cadl`
+0.3.32, a leaf that reads many of them through `count` when one of its
+values never occurs, linear arithmetic over many ordered quantities, or
+members read both through `max` and by their indices, instances of different contracts
 together, more than four instances, sets of actors whose size is not fixed, continuous
 time, and which party can avoid a violation),
 monitoring in the Unity C#
 runtime, monitoring in the generated Rego and Solidity of what they
 refuse (quantifiers, aggregates, wildcard and range references in
 predicates, index expressions, and amendments; in Rego also `/`; in Solidity also `*`,
-`/`, literals with more than six decimals, six or more temporal
-operators in the content of a norm, temporal operators inside another
-one other than a `within` or `throughout` whose operand is another
-`within` or `throughout`, or its negation, over an operand without a
-temporal operator or over such a nesting (for `until` in a nesting and
-for an operand that combines a nested operator with other parts no
-construction with bounded gas is known), temporal operators inside another one outside the
+`/`, literals with more than six decimals, temporal operators inside another one outside the
 content of a norm,
 and contracts whose creation code exceeds the limit of EIP-3860),
+a gas of an observation of the Solidity monitor that does not grow with
+the observations inside a window for `until` in a nesting and for an
+operand that combines a nested operator with other parts (decided per
+observation from `cadl` 0.3.32),
 weighted indices, norms per regime, and the derivation of model
 probabilities from norms remain open. We found no work that handles first-class norm
 objects together with the institutional parameters α, β, and λ, the
@@ -334,7 +333,7 @@ verdict and on the responsible party.
 | RD-6.2 | Temporal Assume-Guarantee<br />and Four-valued Verdicts | Allow bounded MTL/STL in contracts and give four verdicts: pending (open and within its deadline), fulfilled, violated, and assumption violated (the provider is not to blame) [[Henzinger & Saraç, RV 2020]](./appendix-b-references.md). Translate them to RTAMT for the Python backend [[Yamaguchi+, STTT 2024]](./appendix-b-references.md) and to generated observers in the style of R2U2 for the Unity C# backend [[Johannsen+, CAV 2023]](./appendix-b-references.md). |
 | RD-6.3 | Counts-as Bridge<br />to Protocols | Rules of the form "message m in protocol P counts as institutional event e in contract C" [[Boella & van der Torre, KR 2004]](./appendix-b-references.md), so that protocol traces change the state of norms. |
 | RD-6.4 | Cross-organizational<br />Monitoring and Blame | Placement of monitors (provider, consumer, neutral third party) [[Francalanza+, 2018]](./appendix-b-references.md), uncertainty of clocks, tamper-evident records, and tracing the cause of a violation upstream along the graph of delegated contracts, using the blame semantics of deontic runtime verification [[Kharraz+, ICTAC 2023]](./appendix-b-references.md) [[Colombo+, ISoLA 2024]](./appendix-b-references.md). |
-| RD-6.5 | Continuity of Norms<br />across Amendments | Define what happens to obligations that are active, suspended, or violated when a regime transition or an amendment takes effect: carried over, discharged, or transformed, together with transitional provisions and the time a version takes effect. To our knowledge Symboleo, ODRL, and NPL do not define this. [Course D](../handson/robot-town-tutorial.md) of the hands-on materials amends rules while the system runs and lists the missing syntax for transitional provisions; its research exercise on the speed of amendment is a first experiment. |
+| RD-6.5 | Continuity of Norms<br />across Amendments | Define what happens to obligations that are active, suspended, or violated when a regime transition or an amendment takes effect: carried over, discharged, or transformed, together with transitional provisions and the time a version takes effect. To our knowledge Symboleo, ODRL, and NPL do not define this. [Course D](../handson/robot-town-tutorial.md) of the hands-on materials amends rules while the system runs and lists the missing syntax for transitional provisions; its research exercise on the speed of amendment is a first experiment. From `cadl` 0.3.32 the amendment extension ([Appendix K](./appendix-k-amendment.md)) gives the syntax for the time a version takes effect and for transitional provisions for running contract instances. |
 | RD-6.6 | From Monitoring<br />to Enforcement | Synthesize per-party shields [[Alshiekh+, AAAI 2018]](./appendix-b-references.md) [[Melcer+, NeurIPS 2022]](./appendix-b-references.md) or Simplex-style fallback behaviour from CADL contracts, using the lifecycle state machines as the finite abstraction. The shields we found act on physical actions; we found none for institutional acts. |
 
 ## 9.7 Strategic Constituents
@@ -451,7 +450,7 @@ such as voting and dissent (RD-8.4) and plan-level verification
 ## 9.9 Research Roadmap
 We organize the above research directions along a time axis and present
 a short-, medium-, and long-term research roadmap. The order follows the
-current implementation: items that extend what `cadl` 0.3.31 already
+current implementation: items that extend what `cadl` 0.3.32 already
 provides come first.
 
 | **Period** | **Key Challenges** | **Content** |

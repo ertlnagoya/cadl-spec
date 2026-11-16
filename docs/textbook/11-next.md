@@ -31,7 +31,7 @@ To try the workflow on a fresh problem, go on to the other courses of the [hands
 - **[Course C — Your own SoS](../handson/own-sos.md)**: an open-ended, self-directed track given as an outline. Pick a *different* domain (food delivery, smart traffic, data sharing between organisations, …), write its CADL from a blank page, exercise it with a small simulation harness of your choice (a Python discrete-event harness such as SimPy is the suggested default), and compare results across parameter sweeps.
 
 The specification also has extensions that this textbook does not use. Each one is an appendix of
-the specification, and `cadl` 0.3.31 provides commands for it (`cadl --help` lists them):
+the specification, and `cadl` 0.3.32 provides commands for it (`cadl --help` lists them):
 
 - **Norms** ([Appendix F](../spec/appendix-f-norms.md)): obligations, permissions, prohibitions and
   powers. `cadl norms-eval` judges them on a recorded trace, `cadl norms-check` checks them with the
@@ -47,3 +47,6 @@ the specification, and `cadl` 0.3.31 provides commands for it (`cadl --help` lis
 - **Grounding** ([Appendix J](../spec/appendix-j-grounding.md)): an index of information sharing,
   an index of the concentration of powers and the coverage of incentives, computed from the norms
   (`cadl norms-indices`).
+- **Amendment** ([Appendix K](../spec/appendix-k-amendment.md)): which parameters may be amended
+  and who decides, versions of the rules with the time they take effect and their transitional
+  rules, and KPI targets that change over time. `cadl amend-diff` compares two versions.

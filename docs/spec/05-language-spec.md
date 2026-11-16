@@ -54,6 +54,11 @@ sos:
       protocol: <transition_protocol_id>
       safety_invariant: <safety_condition>
 
+  regimes:                      # Per-regime parameter values and contracts
+    <regime_id>:
+      parameters: { <C.beta | environment.X>: <value>, ... }
+      contracts: { suspended: [ ... ] }   # or active: [ ... ]
+
   metrics:                      # Evaluation metric definitions
     - id: <identifier>
       formula: <expression>
@@ -65,10 +70,18 @@ The skeleton shows the main blocks only; `description`, `verification`,
 of keys is in [Appendix A, §A.11](./appendix-a-syntax.md#a11-reserved-keywords).
 
 In v0.3 a regime is a name. It is introduced by appearing in `from:` /
-`to:` of `transitions:`; there is no separate declaration, and the
-core language has no syntax that attaches contracts or parameter values to a
-regime. The stochastic model extension assigns parameter values per regime
-inside its probabilistic model ([Appendix H, H.6](./appendix-h-stochastic.md)).
+`to:` of `transitions:`; there is no separate declaration. From `cadl`
+0.3.32 the optional block `regimes:` binds parameter values and the
+contracts in force to a regime: per regime it gives values of
+`alpha`, `beta`, and `lambda` of a contract and of entries of
+`context.environment`, and the contracts that are `active` or
+`suspended` in it. A regime without an entry keeps every declared value
+and has every contract in force
+([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings)). The
+stochastic model extension takes these values as the parameter values
+of the design of the regime and may assign values to further parameters
+inside its probabilistic model
+([Appendix H, H.6](./appendix-h-stochastic.md)).
 
 ### 5.1.1 Graduated Description Levels
 
@@ -191,7 +204,7 @@ the same indentation as `protocols:`.
       expr: "weekly_reward >= 0 AND weekly_reward <= 400"
 ```
 
-With this block appended, `cadl verify` (`cadl` 0.3.31) accepts the file and
+With this block appended, `cadl verify` (`cadl` 0.3.32) accepts the file and
 reports both entries as passed. For the entry with `expr:` it checks
 only that the predicate is satisfiable; it does not prove it against
 the model
@@ -437,6 +450,7 @@ sos_definition = "name:" , text ,
     [ "protocols:" , { "-" , protocol_def } ] ,
     [ "algorithms:" , { algorithm_def } ] ,
     [ "transitions:" , { "-" , transition_def } ] ,
+    [ "regimes:" , regimes_block ] ,
     [ "metrics:" , { "-" , metric_def } ] ,
     [ "verification:" , { "-" , verify_def } ] ,
     [ "codegen:" , { "-" , codegen_def } ] ;
@@ -560,6 +574,10 @@ analysis ([Section 6.3](./06-design.md)).
 - Contract lifecycle and monitors (`lifecycle:`, `monitors:`):
   [Appendix E](./appendix-e-sos-dsl.md).
 - Motivation extension: [Appendix C](./appendix-c-motivation.md).
+- Which values may be amended and by whom, versions of a model and the
+  rule for contract instances running when a version takes effect,
+  metric targets that change over time, and references to records of
+  human decisions: [Appendix K](./appendix-k-amendment.md).
 - Code generation targets: [Appendix D](./appendix-d-codegen.md).
 - Checking a file: `cadl parse`, `cadl check`, and `cadl verify`
   (installation is described in the

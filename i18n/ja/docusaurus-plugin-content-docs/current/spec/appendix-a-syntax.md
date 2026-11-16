@@ -97,11 +97,13 @@ sos_body    = "name:" , text ,
               [ "protocols:"    , { "-" , protocol_def } ] ,
               [ "algorithms:"   , { algorithm_def } ] ,
               [ "transitions:"  , { "-" , transition_def } ] ,
+              [ "regimes:"      , regimes_block ] ,       (* A.7.1 *)
               [ "metrics:"      , { "-" , metric_def } ] ,
               [ "verification:" , { "-" , verify_def } ] ,
               [ "codegen:"      , { "-" , codegen_def } ] ,
               [ "motivation:"   , motivation_block ] ,
-              [ "model:"        , model_block ] ;          (* 付録H *)
+              [ "model:"        , model_block ] ,          (* 付録H *)
+              [ "amendment:"    , amendment_block ] ;      (* 付録K *)
 sos_type    = "Directed" | "Acknowledged" | "Collaborative" | "Virtual" ;
 extension_decl = hyphen_name , ":" , scalar ;
 ```
@@ -110,7 +112,7 @@ extension_decl = hyphen_name , ":" , scalar ;
 セマンティックバージョンの文字列を書く。
 
 **拡張点。** `extensions:` は，ファイルが依存する言語拡張を，名前とバージョンの組
-（たとえば `- sos-dsl: 0.1`）として宣言する。次の7つの拡張を定義している。
+（たとえば `- sos-dsl: 0.1`）として宣言する。次の8つの拡張を定義している。
 最後のもの以外は，宣言できる名前を持つ。
 
 - SoS-DSL拡張（[付録E](./appendix-e-sos-dsl.md)）。名前 `sos-dsl`，バージョン `0.1` として
@@ -129,6 +131,9 @@ extension_decl = hyphen_name , ":" , scalar ;
   `norms` を必要とし，`contract_def`（A.4）にキー `grounding:` を，規範にキー `shares:` と
   `on_fulfilment:` を，その `on_violation:` に `magnitude:` を追加する。`games` とともに用いるときは，
   利得の項にキー `sanction_of:` と `reward_of:` を追加する。
+- 改正拡張（[付録K](./appendix-k-amendment.md)）。名前 `amendment`，バージョン `0.1` として宣言する。
+  `sos_body` にキー `amendment:`（改正できるパラメータ，バージョンとその経過規定，判断の記録）を，
+  `metric_def`（A.3）にキー `schedule:` と `measure:` を追加する。
 - 動機拡張（[付録C](./appendix-c-motivation.md)）。`motivation_block` を定義する。
   v0.3では `extensions:` に書く名前を持たず，`motivation:` ブロックを書くだけで用いる。
 
@@ -150,7 +155,9 @@ interface_def  = [ "input:"  , { "-" , text } ] ,
 
 metric_def     = "id:" , identifier ,
                  [ "formula:" , predicate ] ,          (* string *)
-                 [ "target:"  , scalar ] ;
+                 [ "target:"  , scalar ] ,
+                 [ "schedule:" , { "-" , schedule_entry } ] ,  (* 付録K *)
+                 [ "measure:"  , measure_def ] ;               (* 付録K *)
 ```
 
 `autonomy:` の既定値は `medium` である。`actor_def` の `id:` の添字は，通常は範囲
@@ -271,6 +278,100 @@ transition_def = "from:" , identifier ,
 別個の宣言はない。`protocol:` は `protocols:` で宣言したプロトコルを
 指すことが望ましい。
 
+### A.7.1 モードへの束縛 {/* #a71-regime-bindings */}
+
+`cadl` 0.3.32から，ブロック `regimes:` で，運用モードごとに，宣言されたパラメータの値と
+有効な契約を指定できる。
+
+```ebnf
+regimes_block   = { identifier , ":" , regime_binding } ;
+regime_binding  = [ "parameters:" , { param_ref , ":" , scalar } ] ,
+                  [ "contracts:"  , contracts_in_force ] ;
+param_ref       = identifier , "." , ( "alpha" | "beta" | "lambda" )
+                | "environment" , "." , identifier ;
+contracts_in_force = "active:"    , { "-" , identifier }
+                   | "suspended:" , { "-" , identifier } ;
+```
+
+```yaml
+  transitions:
+    - { from: DISTRIBUTED, to: CENTRALIZED, condition: "orders_in_window < 22",
+        safety_invariant: "robots_on_road == 0" }
+    - { from: CENTRALIZED, to: DISTRIBUTED, condition: "orders_in_window >= 26" }
+
+  regimes:
+    DISTRIBUTED:
+      contracts: { suspended: [BAY_ASSIGNMENT] }
+    CENTRALIZED:
+      parameters:
+        ROUTING.beta: 0.9           # 契約 ROUTING の authority.beta
+        environment.bays: 3         # context.environment のエントリ bays
+      contracts: { active: [ROUTING, BAY_ASSIGNMENT] }
+```
+
+`param_ref` は，ファイルが宣言している値を指す。`C.alpha`，`C.beta`，`C.lambda` は，
+`id: C` の契約の `information.alpha`，`authority.beta`，`incentives.lambda` であり，
+`environment.X` は `context.environment` のエントリ `X` である。これらは，確率モデル拡張の
+パラメータのソースと同じである（[付録HのH.3節](./appendix-h-stochastic.md)）。
+
+**意味。** モード `R` でのパラメータの値は，`R` がそれに束縛する値があればその値，なければ
+宣言された値である。契約がモード `R` で有効であるのは，`R` が `active:` を与えてその契約を挙げて
+いる場合，`R` が `suspended:` を与えてその契約を挙げていない場合，`R` がどちらも与えていない場合
+である。エントリのないモードでは，宣言された値がすべてそのまま使われ，すべての契約が有効である。
+`regimes:` のないファイルは，どのモードもエントリを持たないファイルと同じに扱う。モードを
+持たない（`transitions:` のない）ファイルでは，空の `regimes:` ブロックがあっても，すべての
+契約が常に有効である。宣言された値そのものは変わらず，契約はそこに書かれた数を保持する。モード `R` から `R'` への遷移は，`R` の
+束縛を `R'` の束縛に置き換える。遷移の `protocol:` のどのステップで置き換わるか，また，
+システムがどのモードで始まるかは，本付録では定めない。
+
+**静的規則。** 処理系は，次の違反をエラーとして報告しなければならない。
+
+- **R-1** `regimes:` のキーは，ファイルのモード，すなわち `transitions:` の `from:` または
+  `to:` で用いる名前である。`transitions:` のないファイルはモードを持たないので，エントリも
+  持てない。YAML 1.1 が真偽値またはnullとして読むモード名（`yes`，`ON`，`null`）は，
+  引用符で囲まなければならない。
+- **R-2** エントリは，`parameters:` と `contracts:` 以外のキーを持たない。
+- **R-3** `param_ref` は，宣言された契約のうちその値を書いているものの `alpha`，`beta`，
+  `lambda`，または `context.environment` のエントリを指す。
+- **R-4** `C.alpha`，`C.beta`，`C.lambda` の値は `[0, 1]` の数である。`environment.X` の
+  値はエントリと同じ型を持つ。真偽値には真偽値，整数には整数，数には整数または数，文字列には
+  文字列である。スカラーでないエントリは束縛できない。
+- **R-5** `contracts:` は `active:` と `suspended:` のちょうど一方を持ち，その列は宣言された
+  契約を，それぞれ高々1回挙げる。
+- **R-6** 1つのモードは，同じパラメータを高々1回束縛する（`ROUTING.beta` と
+  `"ROUTING . beta"` は同じパラメータである）。また，そのモードで有効でない契約の `alpha`，
+  `beta`，`lambda` を束縛しない。
+- **R-7** `stochastic: 0.1` を宣言したファイルでは，モードがソースに束縛した値は，その
+  `from:` を持つすべてのモデルパラメータの，そのモードの設計での値である。`model.regimes:` は，
+  同じモードでそのパラメータに同じ値を与えてもよいが，別の値を与えてはならない（H.6）。
+  R-1からR-6に違反する `regimes:` ブロックがあると，モデルの設計は定まらない。
+
+**IR。** `cadl sim-ir` は，3層IR（モジュール `cadl.sim.ir`）に次の2つを加える。
+
+- `transitions` の各要素は，遷移が `safety_invariant` を持つとき，その述語を書かれたとおりに
+  持つ（`condition` と同じ扱い）。持たないときは，キーそのものがない。
+- `regimes:` を持つファイルでは，トップレベルのキー `regimes` が加わる。これは，`transitions:`
+  に最初に現れる順に，モードごとに1つの要素を持つ列である。
+
+```json
+"regimes": [
+  { "name": "DISTRIBUTED", "parameters": {},
+    "active_contracts": ["ROUTING", "FREE_PASSAGE"],
+    "suspended_contracts": ["BAY_ASSIGNMENT"] },
+  { "name": "CENTRALIZED",
+    "parameters": { "ROUTING.beta": 0.9, "environment.bays": 3 },
+    "active_contracts": ["ROUTING", "BAY_ASSIGNMENT"],
+    "suspended_contracts": ["FREE_PASSAGE"] }
+]
+```
+
+`parameters` は，モードが束縛する値を，スペースを含まない `param_ref` をキーとして持つ。そこにない
+パラメータは宣言された値を持ち，その値はIRの契約（`governance`）または `environment` にある。
+2つの契約の列は，すべての契約を宣言の順に挙げる。ブロックがR-1からR-6のいずれかに違反する
+とき `regimes` は `null` である。`model.regimes:` との矛盾（R-7）は確率モデルだけに関わり，
+そのときも `regimes` は出力される。ブロックのないファイルにはこのキーがなく，そのIRは，
+`safety_invariant` を除いて `cadl` 0.3.31と同じである。
+
 ## A.8 検証ブロック {/* #a8-verification-block */}
 
 ```ebnf
@@ -381,7 +482,7 @@ AND    OR    NOT    true    false    for all    exists    in
 | ブロック | キー |
 |---|---|
 | ファイル | `sos` |
-| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `metrics` `verification` `codegen` `motivation` `model` |
+| `sos` | `name` `type` `version` `description` `extensions` `context` `actors` `contracts` `protocols` `algorithms` `transitions` `regimes` `metrics` `verification` `codegen` `motivation` `model` |
 | `context` | `environment` `assumptions` |
 | アクター | `id` `role` `autonomy` `capabilities` `interface`（`input` `output`） |
 | 契約 | `id` `parties` `assume` `guarantee` `authority` `information` `responsibilities` `incentives` `violation` `duration` `lifecycle` `monitors` `norms` `counts_as` `enforcement` `delegations` `grounding` |
@@ -390,6 +491,7 @@ AND    OR    NOT    true    false    for all    exists    in
 | エージェント統治（付録G） | アクターの `agent`（`kind` `protocol` `tools`），契約の `enforcement`（`default` `point`）と `delegations`（`norm` `to` `grant` `revoke` `max_depth` `until`），禁止の `on_denied`（`escalate_to` `timeout` `fallback` `notify`） |
 | 確率モデル（付録H） | `model`（`kind` `parameters` `variables` `commands` `labels` `regimes` `rewards` `properties` `regime_maps`）。各要素のキーはH.2に示す |
 | 戦略モデル（付録I） | `model`（`players` `profiles` `compliance` `payoffs` `equilibria`），コマンドの `owner`，性質とモードマップの `profile`。各要素のキーはI.2に示す |
+| 改正（付録K） | `sos` の `amendment`（`previous` `effective` `transitional` `decisions` `layers` `parameters`），メトリクスの `schedule`（`from` `target` `decision`），`measure`（`window` `every` `aggregate` `runs` `across_runs` `description` `decision`）。各項目のキーはK.3からK.5に示す |
 | 根拠付け（付録J） | 契約の `grounding`（`items` `tolerance`），規範の `shares`，`on_fulfilment`（`reward` `magnitude`），`on_violation`（`magnitude`），利得の項の `sanction_of` `reward_of` |
 | `authority` | `decision_scope` `decision_holder` `beta` `mode` |
 | `information` | `alpha` `views` `sharing` |
@@ -399,6 +501,7 @@ AND    OR    NOT    true    false    for all    exists    in
 | ステップ | `if` `else` `parallel` `barrier` |
 | アルゴリズム | `central` `local` |
 | 遷移 | `from` `to` `condition` `protocol` `safety_invariant` |
+| モードへの束縛（A.7.1） | `parameters` `contracts`（`active` `suspended`） |
 | メトリクス | `id` `formula` `target` |
 | 検証 | `id` `type` `target` `property` `method` `expr` `bound` |
 | コード生成 | `target` `output` `mappings` |
@@ -406,7 +509,7 @@ AND    OR    NOT    true    false    for all    exists    in
 列挙値: `Directed` `Acknowledged` `Collaborative` `Virtual`（SoSの型），
 `low` `medium` `high`（自律度），`smt` `model_check` `simulation` `proof`
 （検証手法），`ms` `s` `min` `h`（時間の単位）。拡張のキーと値は
-[付録C](./appendix-c-motivation.md)，[付録E](./appendix-e-sos-dsl.md)，[付録F](./appendix-f-norms.md)，[付録G](./appendix-g-agents.md)，[付録H](./appendix-h-stochastic.md)，[付録I](./appendix-i-games.md)，[付録J](./appendix-j-grounding.md)に示す。
+[付録C](./appendix-c-motivation.md)，[付録E](./appendix-e-sos-dsl.md)，[付録F](./appendix-f-norms.md)，[付録G](./appendix-g-agents.md)，[付録H](./appendix-h-stochastic.md)，[付録I](./appendix-i-games.md)，[付録J](./appendix-j-grounding.md)，[付録K](./appendix-k-amendment.md)に示す。
 
 ## A.12 リファレンス実装の状況（`cadl` 0.3） {/* #a12-reference-implementation-status-v03 */}
 
@@ -424,9 +527,9 @@ AND    OR    NOT    true    false    for all    exists    in
 みなされ，宣言されていなければならない。単独で現れる名前は状態変数とみなされ，
 検査されない。`condition:`，`safety_invariant:`，`formula:`，`expr:`，モニターの
 `rule:`，ライフサイクルの `when:`，およびメッセージイベントでない `on:` の述語については，未宣言のアクターの検査を行わない。それ以外の必須キーが
-欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.31で確認）。
+欠けている場合は，空の値で置き換える。`cadl` 0.3では，次の点で本付録と相違する（`cadl` 0.3.32で確認）。
 
-- **式。** `cadl` 0.3.31では，式はA.10とA.11に従う。既知の相違はない。`cadl` 0.3.17までは，
+- **式。** `cadl` 0.3.32では，式はA.10とA.11に従う。既知の相違はない。`cadl` 0.3.17までは，
   `factor` の単項 `-` を受け付けなかった。それを使った項目は不透明な述語として保持し，
   ライフサイクルの `on:` と `when:`，モニターの `rule:` については `cadl check` が警告を出した。
 - **識別子。** `cadl` 0.3.9からは，`cadl check` は，アクター，契約，プロトコル，メトリクスのid，
@@ -456,6 +559,23 @@ AND    OR    NOT    true    false    for all    exists    in
   先頭の名前だけが保持される。この形式は本付録の一部ではない。
   `cadl` 0.3.10からは，`low`，`medium`，`high` 以外の `autonomy:` の値は，`cadl check` で
   エラーとなる。それより前のリリースは，診断なしに `medium` として読んでいた。
+- **モード。** `cadl` 0.3.32からは，`cadl check` はA.7.1のR-1からR-7を適用する。束縛は，
+  各ツールがパラメータと契約を読むところで使われる。`cadl sim-ir` はそれを書き出し（A.7.1），
+  `cadl sim-gen` は `python` と `go` の設定（`regimes`）と `unity` の設定
+  （`regimeBindings`）に渡す。`cadl verify` は，当事者を共有する契約の組をすべて検査する。
+  A.7.1のモードへの束縛のもとで両方が有効なモードがない組では，矛盾を，それぞれが有効な
+  モードを挙げた警告（`WARN`）として報告する。A.7.1は遷移のどのステップで束縛が置き換わるかを
+  定めず，その間は両方が有効でありうるからである（一方がどのモードでも有効でないときは，
+  警告はそのことを理由として示す）。そのような組で矛盾がなければ `info` の行を出し，ソルバーが
+  判定できなければ `unknown` のままとする。モードを持たないファイルではすべての契約が有効なので，
+  空の `regimes:` ブロックがあっても，すべての組をこれまでどおり判定する。`cadl codegen` の
+  `python` ターゲットは，モードの制御クラスにメソッド `parameters()`，`contract_active()`，
+  `apply_bindings()` を与え，現在のモードの値を `ctx.parameters` に置く。生成されるモニターは
+  この値を読まない。契約のモニターは，その契約が有効なモードでだけ実行する。生成される
+  `unity-csharp`，`solidity`，`opa` のコード，規範のオンラインモニター，`cadl regime-map` は
+  束縛を使わない。遷移の
+  `safety_invariant` は，`cadl` 0.3.32からIRとシミュレータの設定に含まれる。0.3.31までは
+  `cadl check` が検査していたが，`cadl sim-ir` は出力しなかった。
 - **検証。** `method:`，`expr:`，`bound:` は読み込まれる。`smt` 以外の手法は
   `not_supported` として報告され（テキスト出力では `[SKIP]` と表示される），未知の手法は
   エラーとなる。宣言されたものを何も指さない `target:` は，どの手法についてもエラーとなる。
@@ -488,7 +608,10 @@ AND    OR    NOT    true    false    for all    exists    in
   実装している（`cadl game-check`，`cadl norms-indices`）。それぞれの範囲は，挙げた2つの節に示す。
   0.3.22までは，これらの名前には，未知の拡張に対する情報レベルの診断が出ていた。`kind: smg` を持つ
   モデルについて，`cadl check` 0.3.22は，H.10とH.15が1つの情報レベルの診断を求めるところで，S-1とS-9の
-  誤りを報告する。また，付録Jのキーを，診断なしに無視する。
+  誤りを報告する。また，付録Jのキーを，診断なしに無視する。拡張 `amendment` 0.1
+  （[付録KのK.9節](./appendix-k-amendment.md#k9-reference-implementation-status)）は，`cadl` 0.3.32から
+  実装している（`cadl amend-diff`）。0.3.31までは，この名前には未知の拡張に対する情報レベルの診断が出て
+  おり，そのキーは無視されていた。
 
 `cadl` の0.3.7より前のリリースは，これらの点のいくつかで異なっていた。その経緯は，cadlリポジトリの
 [CHANGELOG](https://github.com/ertlnagoya/cadl/blob/master/CHANGELOG.md)にある。
