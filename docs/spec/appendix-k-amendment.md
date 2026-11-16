@@ -563,14 +563,48 @@ From `cadl` 0.3.32 the reference implementation provides:
   new version does not pass `cadl check`, 2 for a missing file or an
   old version that does not pass `cadl check`.
 
-Not provided: no tool applies versions, effective times, or
-transitional rules while a system runs. `cadl norms-eval` and
-`cadl agents-run` amend where a trace says `amend`, for every running
-instance, which is `switch` at the effective time; a host that keeps
-instances writes no `amend` for them. The models of `cadl norms-check`
-(F.12) amend every instance at the same observation, which is `switch`.
-The schedules and measurement methods are not evaluated (no tool
-evaluates metrics), and decision records are not opened.
+From `cadl` 0.3.34 the reference implementation applies versions while
+a system runs, as K.11 says:
+
+- `cadl norms-eval FILE --version FILE ... [--period DURATION]
+  [--origin SECONDS] [--epoch]`: the versions of the run (the file and
+  the later versions, one sequence by `previous:`), the time base, and
+  the key `version` of an observation of the trace, which names the
+  version in force. The result has the key `versions`, with the version
+  under which the instance started, the version it follows, and every
+  `keep`, `switch`, waiting switch, and dropped switch with its time;
+  an amendment by a switch is reported as one by `amend` is (F.10). A
+  trace with versions cannot have `amend`, and a run that names a
+  regime or whose initial regime does not have the contract in force
+  cannot have versions (K.11, "Regimes"). Without `--version`, a time
+  base, or the key `version`, the result is that of `cadl` 0.3.33,
+  also for a file that declares the extension.
+- the norms monitor of the Python target (F.10), for a file that
+  declares the extension with an `amendment:` block: the models of the
+  other versions, the time base, and the key `version` of an
+  observation, as `cadl norms-eval`;
+- `cadl metrics-eval FILE --measurements FILE [--version FILE ...]`
+  with the same time base: the judgement of measurements of K.11
+  (`met`, `not met`, or `not judged` with the reason). A measurement
+  gives the start of its window (a time stamp or a period), the value
+  of each run (a list of samples with `every:`), and the values of the
+  terms of the target. Exit status 1 when a measurement does not meet
+  its target;
+- `cadl norms-check --version` refuses a version whose rule for the
+  contract is `keep` or `switch` with `in_states:` (K.11);
+- the module `version.py` of the Python target, and the refusals of the
+  norms monitors of the Rego and Solidity targets and of the Unity C#
+  target that K.11 gives.
+
+The test suite compares `cadl norms-eval` with versions with
+`cadl norms-eval` given an `amend` line at each observation at which a
+reference implementation of K.11, written separately in the test,
+switches the instance, and the monitor with `cadl norms-eval`, on random
+traces of the example with two to four versions and random rules (`keep`,
+`switch`, `switch` with `in_states:`, and pickup deadlines). Each of four
+errors injected into the choice of the version in force or of the
+switch was detected. `cadl agents-run` still amends only where a trace
+says `amend`, and decision records are not opened.
 
 ## K.10 Backward compatibility
 

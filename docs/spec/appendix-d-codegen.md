@@ -138,6 +138,24 @@ anyone.
   generated for a contract that some regime does not have in force
   (D.5).
 
+**Versions.** From `cadl` 0.3.34 a file that declares `amendment: 0.1`
+is one version of a model
+([Appendix K, K.11](./appendix-k-amendment.md#k11-applying-versions-while-a-system-runs)).
+The code generated from it is the code of that version; a host applies
+versions by running, at each step, the code of the version in force,
+and for an instance that keeps an older version, the code of that
+version. For a file with an `amendment:` block the `python` target also
+writes `version.py` (the version, the version it replaces, the
+effective time, the transitional rules, and the values of the amendable
+parameters), and its norms monitor applies the versions of a run (F.10).
+Code that keeps running contract instances and cannot move them to a
+new version is refused for a version that names `previous:`: the norms
+monitors of the `opa` and `solidity` targets for a contract whose
+running instances switch to it (D.5), and the `unity-csharp` target
+when a contract with `lifecycle:` switches. A file without the
+extension, or without an `amendment:` block, gets the same code as
+before.
+
 Five errors of the `opa` target are corrected in `cadl` 0.3.33 for every
 file. A negated literal (`NOT ok`, `NOT (y == 3)`) held when a value it
 reads was missing, since OPA's `not input.y == 3` holds then; each input
@@ -276,6 +294,16 @@ contract. For a contract that every regime has in force the monitor is
 the same as without `regimes:`, since no norm, counts-as rule, or item
 reads a parameter. Up to `cadl` 0.3.32 the monitor was generated and
 judged every observation.
+
+**Versions.** Neither monitor applies amendments (F.6). From `cadl`
+0.3.34, in a file that declares `amendment: 0.1` and names the version
+it replaces (`previous:`), a contract whose running instances switch to
+this version (`switch`, also by default) gets no monitor, with a
+warning, since the monitor could not take over an instance that started
+under the old version
+([Appendix K, K.11](./appendix-k-amendment.md#k11-applying-versions-while-a-system-runs)).
+For a contract whose instances keep their version the monitor is
+generated; it serves the instances that start under this version.
 
 **The Rego monitor.** The Rego monitor is a step function. OPA keeps no state, so the
 policy computes the next state of the monitor from the previous state
