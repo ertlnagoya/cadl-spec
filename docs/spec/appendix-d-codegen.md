@@ -123,12 +123,16 @@ the initial regime, and its Rego contract policies require
   generated for a contract that some regime does not have in force
   (D.5).
 
-Three errors of the `opa` target are corrected in `cadl` 0.3.33 for every
+Four errors of the `opa` target are corrected in `cadl` 0.3.33 for every
 file. An `assume:` or `guarantee:` item with a quantifier or a
 comprehension was written as Rego that OPA rejects (`not` inside an
 expression, a comprehension as a comment) or that ranged over no member;
 it is now a truth value that the host gives, `input.items["TEXT"] ==
-true`. Further, `all_violations` of `main.rego` assigned `msg` once per contract,
+true`, as is a text item (an opaque predicate), which was a string that
+Rego reads as true. An item with `OR`, or with `NOT` over `AND`, `OR`, or
+`NOT`, was written as `(A) # OR (B)`, which drops `B`, or as `not A; B`;
+it is now a rule with one body per disjunct of its disjunctive normal
+form, with `NOT` pushed to the comparisons. Further, `all_violations` of `main.rego` assigned `msg` once per contract,
 which OPA rejects for two or more contracts, and is now one rule per
 contract; and a function call that Rego does not have was written as is
 (a bare name for a call without arguments, unsafe in OPA, as in
