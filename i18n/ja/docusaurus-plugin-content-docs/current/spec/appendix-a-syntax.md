@@ -621,7 +621,8 @@ AND    OR    NOT    true    false    for all    exists    in
   ファイルを拒否する。0.3.32までは，生成される `unity-csharp`，`solidity`，`opa` のコード，
   規範のオンラインモニター，`cadl regime-map` は束縛を使わず，Pythonのモードの制御クラスは
   最初の遷移の `from:` で始まっていた。`regimes:` のないファイルについては，0.3.33もこの動作を
-  変えない。遷移の
+  変えない。安全不変条件は `assert` で検査していたが，0.3.33は，すべてのファイルでこれをA.7.1の
+  明示的な検査に置き換える。遷移の
   `safety_invariant` は，`cadl` 0.3.32からIRとシミュレータの設定に含まれる。0.3.31までは
   `cadl check` が検査していたが，`cadl sim-ir` は出力しなかった。
 - **検証。** `method:`，`expr:`，`bound:` は読み込まれる。`smt` 以外の手法は

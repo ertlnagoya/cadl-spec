@@ -62,8 +62,14 @@ monitor them, with the norms, in a separate file per contract (from
 For a file with `regimes:` ([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings)),
 the generated code applies, from `cadl` 0.3.33, the bindings of the
 current regime as A.7.1 ("Runs") defines; a file without the block gets
-the same code as before, byte for byte (apart from the two corrections of
-the `opa` target below). A file with transitions and an empty block
+the same code as before, byte for byte, apart from the corrections of
+the `opa` target below and the check of safety invariants in
+`transitions.py` of the `python` target, which applies to every file with
+`transitions:`: up to `cadl` 0.3.32 it was an `assert`, so a failing
+invariant raised `AssertionError` and `python -O` took the transition;
+from 0.3.33 a transition whose invariant does not hold, cannot be
+evaluated, or cannot be compiled is not taken, and the refusal is recorded
+in `refused_transitions` and the log (A.7.1). A file with transitions and an empty block
 (`regimes: {}`) counts as a file with the block: its controllers start in
 the initial regime, and its Rego contract policies require
 `input.regime`.
@@ -117,8 +123,12 @@ the initial regime, and its Rego contract policies require
   generated for a contract that some regime does not have in force
   (D.5).
 
-Two errors of the `opa` target are corrected in `cadl` 0.3.33 for every
-file: `all_violations` of `main.rego` assigned `msg` once per contract,
+Three errors of the `opa` target are corrected in `cadl` 0.3.33 for every
+file. An `assume:` or `guarantee:` item with a quantifier or a
+comprehension was written as Rego that OPA rejects (`not` inside an
+expression, a comprehension as a comment) or that ranged over no member;
+it is now a truth value that the host gives, `input.items["TEXT"] ==
+true`. Further, `all_violations` of `main.rego` assigned `msg` once per contract,
 which OPA rejects for two or more contracts, and is now one rule per
 contract; and a function call that Rego does not have was written as is
 (a bare name for a call without arguments, unsafe in OPA, as in

@@ -743,7 +743,9 @@ deviates from this appendix as follows (checked against `cadl` 0.3.32).
   generated `unity-csharp`, `solidity`, and `opa` code, the online
   monitor of the norms, and `cadl regime-map` did not use the bindings,
   and the Python regime controller started in the `from:` of the first
-  transition, which 0.3.33 keeps for a file without `regimes:`. The
+  transition, which 0.3.33 keeps for a file without `regimes:`; it
+  checked the safety invariant with `assert`, which 0.3.33 replaces in
+  every file by the explicit check of A.7.1. The
   `safety_invariant` of a transition is in the IR and the simulator
   configurations from `cadl` 0.3.32; up to 0.3.31 `cadl check` checked it
   but `cadl sim-ir` left it out.
