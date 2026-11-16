@@ -715,6 +715,56 @@ activates the norms that become active when the instance starts.
    [Appendix E](./appendix-e-sos-dsl.md), and, if the contract instance
    has ended, settle its norms (item 6).
 
+### Contracts not in force {/* #contracts-not-in-force */}
+
+A file with `regimes:` ([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings))
+says which contracts are in force in each regime, and every observation
+belongs to one regime (A.7.1, "Runs"). From `cadl` 0.3.33 a contract
+instance is judged as follows when its contract is not in force at some
+observations. The contract *leaves force* at the time of the first
+observation of a regime that does not have it in force, and *re-enters
+force* at the time of the first later observation of a regime that
+has. The *clock* of the contract at an observation is its time stamp
+minus the time the contract spent out of force before it; at an
+observation at which the contract is not in force the clock is the
+clock at which it left force.
+
+The contract instance is judged by the rest of this section on the
+*projection* of the observations:
+
+- the projection has the observations at which the contract is in
+  force, in their order;
+- each of them keeps its time stamp for everything that is reported and
+  for `now`, but deadlines (items 2 and 3 below), the time spent
+  `suspended`, and the intervals of the temporal operators (F.4) are
+  measured on the clock;
+- the observed quantities and the lifecycle state are those of all
+  observations: a value or a state given at an observation that is not
+  in the projection is seen from the next observation of the projection
+  on, as a value stays until it is changed;
+- messages sent at an observation that is not in the projection are not
+  seen: they trigger, fulfil, and violate nothing, create no
+  institutional event, and exercise no power;
+- when the contract instance ends at an observation at which the
+  contract is not in force (an end that the host signals, a terminal
+  state, or the last observation of a recorded trace), that observation
+  is in the projection, but only the settlement of item 6 applies at
+  it, on the clock at which the contract left force; no item is
+  evaluated and no other step applies there. A deadline that passed
+  before the contract left force therefore makes the obligation
+  `violated` there.
+
+The norm instances keep their states while the contract is not in
+force. As for a norm instance that a power suspends, their deadline and
+window clocks stop and content does not count; unlike it, an `active`
+instance stays `active`, so a power can still suspend or resume it once
+the contract is in force again. The instance starts at the first
+observation of the projection. An observation that names no regime
+belongs to the regime of the previous one; before the first observation
+that names a regime, the regime is not known and the contract is in
+force. A processor given observations without regimes therefore judges
+the contract as in force throughout, as before `cadl` 0.3.33.
+
 ### Verdicts
 
 The **verdict** of a norm instance, or of a guarantee with temporal
@@ -827,8 +877,11 @@ an item that is removed keeps the verdict it had. An assumption that
 failed before the amendment still excuses later violations. When the
 contract has a `lifecycle:` block, the current state of the instance
 MUST be a state of the new version; otherwise the amendment cannot be
-applied to that instance. A regime transition (A.7) does not affect
-norm instances in version 0.1.
+applied to that instance. A regime transition (A.7) is not an
+amendment: it changes no norm, and it acts on a contract instance only
+by the contracts it has in force (F.5, "Contracts not in force"; up to
+`cadl` 0.3.32 this paragraph said that a regime transition does not
+affect norm instances in version 0.1).
 
 A processor that applies amendments SHOULD report, before the new
 version takes effect, every carried-over norm whose `content` or
@@ -1453,6 +1506,38 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   simulator generators of `cadl sim-gen` copy predicates as text. The
   monitors of Appendix E and the simulator outputs are therefore the
   same as in `cadl` 0.3.23.
+- From `cadl` 0.3.33, `cadl norms-eval` and the norms monitor of the
+  Python target judge a contract that a regime does not have in force
+  as F.5 ("Contracts not in force") defines. An observation of a trace
+  names the current regime with the key `regime`; the key is allowed
+  only for a file with a `regimes:` block that passes R-1 to R-6, and its
+  value must be a regime of the file. A trace without the key gives the
+  result of `cadl` 0.3.32, and so does the generated monitor of a file
+  without `regimes:`, which is the same module as before. The result
+  counts in `observations` the observations of the projection, and an
+  instance that ends while the contract is not in force has an
+  `end_reason` that says so. A trace that names a regime cannot also
+  amend the contract (`amend`): `cadl norms-eval` refuses it, and the
+  monitor refuses the observation. In the monitor, an observation at
+  which the contract is not in force returns no change, `in_force` says
+  whether the contract is in force, and `next_deadline` and
+  `next_check` are `None` until it is in force again. The norms
+  monitors of the Rego and Solidity targets do not read the regime and
+  are not generated for a contract that some regime does not have in
+  force ([Appendix D, D.5](./appendix-d-codegen.md#d5-norms-monitors-of-the-opa-and-solidity-targets));
+  for the other contracts the bindings change nothing they judge, since
+  no norm reads a parameter. `cadl norms-check` (F.12) is not changed
+  and judges the contract on its own clock. The projection of a trace up
+  to its last observation in force is a trace of the contract; an
+  instance that ends while the contract is not in force is settled as
+  one that ends at a further observation at the clock at which it left
+  force, with no new value or message, except that a temporal content
+  still undecided there stays `pending`. The answers to the questions of
+  possibility therefore hold for the projections; the questions of
+  necessity assume, as before, an instance that runs to the horizon,
+  here on its clock. The gateways and the runtime of [Appendix G](./appendix-g-agents.md) do
+  not read the regime; their boundary policy refuses a file in which a
+  regime does not have an enforced contract in force.
 
 ## F.11 Backward compatibility
 

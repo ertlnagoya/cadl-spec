@@ -358,9 +358,47 @@ regime has an entry. A file without regimes (without `transitions:`)
 has every contract in force at all times, even when it has an empty
 `regimes:` block. The declared values themselves are not changed: the
 contract keeps the number written in it. A transition from `R` to `R'`
-replaces the bindings of `R` by those of `R'`; this appendix does not
-say at which step of the transition's `protocol:` that happens, nor in
-which regime the system starts.
+replaces the bindings of `R` by those of `R'`, at the point that "Runs"
+below fixes.
+
+**Runs.** From `cadl` 0.3.33 this appendix fixes in which regime a run
+of the system is at each step. A *step* is the unit at which a runtime
+evaluates contracts: one cycle of the generated Python runtime, one call
+of `runMonitorCycle()` of the generated Solidity, one decision of the
+generated Rego policy, and one observation of a trace of the norms
+extension ([Appendix F](./appendix-f-norms.md), F.5).
+
+1. At every step exactly one regime is current.
+2. A run starts in the *initial regime*: the first `from:`, in the order
+   of `transitions:`, that is not the `to:` of any transition, and
+   otherwise the `from:` of the first transition. This is the initial
+   state of the regime map of `cadl regime-map`. A host MAY start a run
+   in another regime.
+3. After the evaluations of a step, the transitions from the current
+   regime are considered in the order of `transitions:`, and the first
+   whose `condition:` holds is taken; its `safety_invariant:` is
+   checked then. At most one transition is taken per step. The
+   `protocol:` of a transition names how the parties carry it out; its
+   messages belong to the steps at which they are sent and do not delay
+   the change of regime.
+4. The bindings change together with the regime, between two steps.
+   Every evaluation of a step (the `assume:` and `guarantee:` items, the
+   monitors, the norms, and the policies, and every parameter value that
+   generated code reads) uses the bindings of the regime current at that
+   step and of no other regime. Two contracts are therefore in force at
+   the same step only if some regime has both in force.
+5. A contract that is not in force at a step is not evaluated at it.
+   For the norms extension, F.5 ("Contracts not in force") defines what
+   a contract instance sees when its contract is not in force: its norm
+   instances keep their states, their deadlines and the intervals of the
+   temporal operators do not advance, and nothing that happens meanwhile
+   counts.
+
+A predicate cannot name a parameter (A.10), so the parameter values of
+a regime change only the code that writes them out (the institutional
+parameters of the Solidity and Rego targets, the parameters of the
+generated Python runtime) and the models of Appendices H and I, which
+evaluate each regime as a design of its own.
 
 **Static rules.** A processor MUST report the following as errors.
 
@@ -654,21 +692,40 @@ deviates from this appendix as follows (checked against `cadl` 0.3.32).
   them to the `python` and `go` configurations (`regimes`) and to the
   `unity` configuration (`regimeBindings`). `cadl verify` checks every
   pair of contracts that share a party. When no regime has both in force
-  under the regime bindings of A.7.1, a conflict is reported as a
-  warning (`WARN`) that names the regimes of each: A.7.1 leaves open at
-  which step of a transition the bindings switch, so both may be in
-  force then (when one of the two is in force in no regime, the warning
-  says so instead). Such a pair gets an `info` line when it is
-  consistent and stays `unknown` when the solver does not decide it. A
-  file without regimes has every contract in force, so every pair is
-  judged as before, even with an empty `regimes:` block. The `python`
-  target of `cadl codegen` gives the regime controller the methods
-  `parameters()`, `contract_active()`, and `apply_bindings()`, exposes
-  the values of the current regime in `ctx.parameters`, which the
-  generated monitors do not read, and runs the monitor of a contract
-  only in the regimes in which it is in force. The generated
-  `unity-csharp`, `solidity`, and `opa` code, the online monitor of the
-  norms, and `cadl regime-map` do not use the bindings. The
+  under the regime bindings of A.7.1, the pair is reported as `info`
+  with the regimes of each, also when the two contradict each other:
+  from `cadl` 0.3.33 every step of a run has the bindings of one regime
+  (A.7.1, "Runs"), so the two are never in force at the same step. In
+  0.3.32, which left that step open, such a conflict was a warning
+  (`WARN`). A pair that some regime has in force is judged as before,
+  and a pair that the solver does not decide stays `unknown`. A file
+  without regimes has every contract in force, so every pair is judged
+  as before, even with an empty `regimes:` block. `cadl regime-map`
+  shows, from `cadl` 0.3.33, the bindings of each regime in its text,
+  DOT, and JSON outputs (JSON: the key `regimes`, in the form of the IR,
+  `null` for a block that breaks R-1 to R-6); its analysis reads only
+  the transitions and is not changed by the bindings. The code
+  generators apply the bindings from `cadl` 0.3.33
+  ([Appendix D](./appendix-d-codegen.md), D.1): the `python` target
+  starts the regime controller in the initial regime, gives it the
+  methods `parameters()`, `contract_active()`, and `apply_bindings()`,
+  exposes the values of the current regime in `ctx.parameters`, and runs
+  the monitor of a contract only in the regimes in which it is in force
+  (from 0.3.32); its norms monitor and `cadl norms-eval` read the
+  current regime from the trace (F.5, F.10). The `solidity` and `opa`
+  targets read the current regime for the contracts in force and the
+  institutional parameters. A target that cannot read the regime does
+  not generate code that ignores it: the norms monitors of the `opa`
+  and `solidity` targets are not generated for a contract that some
+  regime does not have in force (D.5), `unity-csharp` refuses a file in
+  which a regime does not have a contract with `lifecycle:` or
+  `monitors:` in force, and the boundary policy of
+  [Appendix G](./appendix-g-agents.md) refuses a file in which a regime
+  does not have an enforced contract in force. Up to 0.3.32 the
+  generated `unity-csharp`, `solidity`, and `opa` code, the online
+  monitor of the norms, and `cadl regime-map` did not use the bindings,
+  and the Python regime controller started in the `from:` of the first
+  transition, which 0.3.33 keeps for a file without `regimes:`. The
   `safety_invariant` of a transition is in the IR and the simulator
   configurations from `cadl` 0.3.32; up to 0.3.31 `cadl check` checked it
   but `cadl sim-ir` left it out.
