@@ -404,6 +404,13 @@ extension ([Appendix F](./appendix-f-norms.md), F.5).
    temporal operators do not advance, and nothing that happens meanwhile
    counts.
 
+A run with versions of the amendment extension combines these rules
+with the versions in force: from `cadl` 0.3.35 the regime transition
+chosen at the end of a step is taken before the versions that take
+effect at the next step, and the contracts in force are those of the
+bindings of the version in force
+([Appendix K, K.11, "Versions and regimes"](./appendix-k-amendment.md#versions-and-regimes)).
+
 A predicate cannot name a parameter (A.10), so the parameter values of
 a regime change only the code that writes them out (the institutional
 parameters of the Solidity and Rego targets, the parameters of the
