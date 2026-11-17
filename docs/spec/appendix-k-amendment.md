@@ -712,9 +712,12 @@ previous version is ambiguous, and a processor MUST refuse the versions
 and ask for `previous:`. Without a time base, effective times of the
 same form are ordered by their period or instant. A processor MUST
 refuse a set of versions that does not form one sequence, in which two
-versions have the same `sos.version`, or (with a time base) in which a
-`previous:` given in a version contradicts the order of the effective
-times.
+versions have the same `sos.version`, or in which a `previous:` given
+in a version contradicts the order of the effective times. With a time
+base every two effective times are compared. Without one (from `cadl`
+0.3.35) effective times of the same form are compared, period numbers
+with each other and instants with each other, and a period and an
+instant are not compared, as in 0.3.34.
 
 ### Time base
 
