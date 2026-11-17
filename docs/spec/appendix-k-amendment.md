@@ -83,7 +83,11 @@ declarations (K.4), and applies them as K.11 says.
   `voters:` with a `quorum:` (`procedure: vote`).
 - A **version** of a model is one file. Its identity is `sos.version`.
   It **takes effect** at a period or at an instant, and stays in force
-  until the next version takes effect.
+  until the next version takes effect. It **replaces** the version that
+  `previous:` names, or, when it gives no `previous:`, the version with
+  the latest effective time before its own (K.11). A version without
+  `previous:` that gives no `effective:` or `effective: { period: 1 }`
+  replaces none: it is a first version.
 - A **transitional rule** says, per contract, what an instance that is
   running when a version takes effect does: it **keeps** the version it
   started under, or it **switches** to the new version.
@@ -219,7 +223,8 @@ transitional_rule  = "keep" | "switch" ;
 ### Meaning
 
 `sos.version` is the identity of the version, `previous:` names the
-version it replaces, and `effective:` says when it takes effect: at the
+version it replaces (optional; K.11 says which version a version
+without it replaces), and `effective:` says when it takes effect: at the
 start of the period with the given number (`period:`, counted from 1;
 what a period is, is set by the system, in the hands-on one simulated
 hour), or at an instant (`at:`, an ISO 8601 date or date-time; a date
@@ -573,10 +578,11 @@ a system runs, as K.11 says:
   version in force. The result has the key `versions`, with the version
   under which the instance started, the version it follows, and every
   `keep`, `switch`, waiting switch, and dropped switch with its time;
-  an amendment by a switch is reported as one by `amend` is (F.10). A
-  trace with versions cannot have `amend`, and a run that names a
-  regime or whose initial regime does not have the contract in force
-  cannot have versions (K.11, "Regimes"). Without `--version`, a time
+  an amendment by a switch is reported as one by `amend` is (F.10). Up
+  to `cadl` 0.3.34 a trace with versions could not have `amend`, and a
+  run that named a regime or whose initial regime did not have the
+  contract in force could not have versions (both lifted in 0.3.35,
+  K.11). Without `--version`, a time
   base, or the key `version`, the result is that of `cadl` 0.3.33,
   also for a file that declares the extension.
 - the norms monitor of the Python target (F.10), for a file that
@@ -603,8 +609,64 @@ switches the instance, and the monitor with `cadl norms-eval`, on random
 traces of the example with two to four versions and random rules (`keep`,
 `switch`, `switch` with `in_states:`, and pickup deadlines). Each of four
 errors injected into the choice of the version in force or of the
-switch was detected. `cadl agents-run` still amends only where a trace
-says `amend`, and decision records are not opened.
+switch was detected. Up to `cadl` 0.3.34 `cadl agents-run` amended only
+where a trace said `amend`. Decision records are not opened.
+
+From `cadl` 0.3.35 the reference implementation provides:
+
+- versions that give no `previous:`, placed by their effective times
+  (K.11, "The versions of a run"), and the key `version` of a trace for
+  a file without an `amendment:` block (K.11, "The version in force at a
+  step");
+- versions together with regime bindings in `cadl norms-eval` and the
+  norms monitor of the Python target (K.11, "Versions and regimes");
+- `cadl agents-run FILE --trace T --version FILE ... [--period DURATION]
+  [--origin SECONDS] [--epoch]`, and the same options of
+  `cadl mcp-gateway` and `cadl a2a-gateway`: the enforcement point
+  switches to a version at the first line of the trace whose time
+  reaches its effective time. At that line it first expires the holds
+  whose deadline has passed and applies the withdrawals and host events
+  of the line (G.6), as at every line; then the versions take effect,
+  before the contract instances of the line are created (they start under
+  the new version), before the time and values of the line are observed,
+  and before its messages are decided.
+  With `--epoch` an instant is placed on the time of the trace through
+  its `epoch` (the instant of `t = 0`). An `amend` of the same line is
+  applied after the versions that take effect there. The enforcement
+  point holds one version of the file with its boundary policy, so it
+  refuses a version whose rule for a changed enforced contract is `keep`
+  or `switch` with `in_states:` while an instance of that contract runs;
+  a gateway refuses versions that change the actors or the `counts_as:`
+  rules that create `approval` or `rejection`, which it reads once;
+- the target checks of `metrics.py` with the versions of the run (K.11,
+  "Generated code"); a version whose effective time the time base
+  cannot place is refused (`ValueError`), and without a time base the
+  first version is in force unless the check is given the version in
+  force;
+- `amend` together with versions in `cadl norms-eval` and the norms
+  monitor, in the order of `cadl agents-run` (the versions first; an
+  `amend` cancels a waiting switch), and the key `version` in a trace of
+  `cadl agents-run`;
+- the refusals of the Rego and Solidity norms monitors and of Unity C#
+  for a version that gives no `previous:` and an effective time other
+  than `period: 1`.
+
+The test suite compares `cadl norms-eval` with versions and regimes with
+a reference written in the test (the projection on the clock of the
+contract, as a trace of a file without regimes with `amend` lines where
+the reference switches the instance) on 300 random runs with up to four
+versions, random rules, and versions that differ in the regime that
+suspends the contract; each of four errors injected into the
+combination (the state seen while the contract is not in force, a
+switch made then, the bindings of the version in force, and the clock)
+was detected. The monitor is compared with `cadl norms-eval` on 300
+further runs, `metrics.py` with `cadl metrics-eval` on 1800 random
+measurements, and `cadl agents-run` with versions with `cadl agents-run`
+given an `amend` line at the effective time on 100 random traces.
+`cadl agents-run` and `cadl norms-eval` are compared on the same file
+and trace with versions and an `amend` line (in 53 of 120 random traces
+at the line at which a version takes effect), and the monitor with
+`cadl norms-eval` on 80 such traces.
 
 ## K.10 Backward compatibility
 
@@ -632,11 +694,30 @@ uses the steps of [Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings
 ### The versions of a run
 
 The versions of a run are files that declare `amendment: 0.1` and
-form one sequence by `previous:`: every version but the first gives
-`previous:`, which names the `sos.version` of the version before it,
-and every version but the first gives `effective:`. A processor MUST
-refuse a set of versions that does not form such a sequence, or in
-which two versions have the same `sos.version`.
+form one sequence: every version but the first gives `effective:`, and
+the version before a version is the one that its `previous:` names. A
+version that gives no `previous:` (from `cadl` 0.3.35; up to 0.3.34
+every version but the first gave it) replaces the version of the run
+with the latest effective time strictly earlier than its own. A version
+without `previous:` is not placed after another one when it gives no
+`effective:` or `effective: { period: 1 }`, or when no version of the
+run takes effect before it; it is then the first version. For example,
+in a run whose version 1 gives no `effective:`, a version 2 with
+`effective: { period: 2 }` and no `previous:` replaces version 1, while
+one with `effective: { period: 1 }` would be a second first version and
+the run would be refused. When two versions take effect at that latest
+time, or the effective times cannot be ordered (they use both forms of
+`effective:` and the run has no time base for one of them), the
+previous version is ambiguous, and a processor MUST refuse the versions
+and ask for `previous:`. Without a time base, effective times of the
+same form are ordered by their period or instant. A processor MUST
+refuse a set of versions that does not form one sequence, in which two
+versions have the same `sos.version`, or in which a `previous:` given
+in a version contradicts the order of the effective times. With a time
+base every two effective times are compared. Without one (from `cadl`
+0.3.35) effective times of the same form are compared, period numbers
+with each other and instants with each other, and a period and an
+instant are not compared, as in 0.3.34.
 
 ### Time base
 
@@ -685,6 +766,14 @@ regime change (A.7.1, item 4). A value or a message observed at a step
 at exactly the effective time belongs to the new version: F.6 applies
 the new version at that step before anything else is evaluated.
 
+A file that does not declare versions of a run (it has no
+`amendment:` block) has one version. From `cadl` 0.3.35 a host may
+still name it: a named version equal to the `sos.version` of the file
+is accepted and changes nothing, and a processor MUST refuse any other
+value, stating that the file declares no versions to switch to. With
+versions of a run, a named version has the meaning above in every
+processor, also in `cadl agents-run`.
+
 ### Running contract instances
 
 A contract instance *follows* one version at each step. It follows the
@@ -720,30 +809,75 @@ switches.
 A trace that amends a contract with the key `amend` of
 [F.10](./appendix-f-norms.md#f10-reference-implementation-status)
 switches its instance at that observation whatever the versions
-declare. A processor MUST NOT apply both to one run: with versions, the
-transitional rules decide when an instance is amended. When a processor
+declare. Up to `cadl` 0.3.34 a processor did not apply both to one run.
+From 0.3.35 a processor that applies both (`cadl norms-eval`, the norms
+monitor of the Python target, `cadl agents-run`, and the gateways of
+Appendix G) MUST apply, at one step, the versions that take effect there
+first and the `amend` afterwards, as versions take effect before F.6
+amends at a step; a later version is then applied, by its transitional
+rule, to the definition that the `amend` gave. An `amend` applied to an
+instance cancels its waiting switch (`switch` with `in_states:`): the
+instance follows the amended file, and later versions apply to it by
+their rules. A run that combines versions with regime bindings
+("Versions and regimes") cannot have `amend`; a run with regime
+bindings alone cannot have it either (F.10).
+When a processor
 applies such a key to a file whose transitional rule for the contract
 is `keep` or `switch` with `in_states:`, it SHOULD warn that the
 amendment is applied as a switch. The models of new versions that a
 processor is given for the key `amend` are not versions of a run; the
 versions of a run are given to it separately.
 
-### Regimes
+### Versions and regimes {/* #versions-and-regimes */}
 
-A run of a file with `regimes:` that names a regime, or whose initial
-regime does not have the contract in force, cannot be given versions:
-a processor refuses it, as `cadl` 0.3.33 refused such a run with an
-amendment. Two questions are not settled. A version may change
-`regimes:` and with it the contracts in force; this appendix does not
-say whether an instance that keeps an older version is in force by the
-bindings of its own version or of the version in force. And this
-appendix places an effective time on the time of the run, while F.5
-measures the deadlines of a contract on its clock, which stops while
-the contract is not in force; it does not say when a version that takes
-effect while the contract is not in force reaches the instance, or how
-the time elapsed against its deadlines is then counted. For the other runs every
-version of the sequence MUST have the contract in force in its initial
-regime; the run is then judged as one of a file without `regimes:`.
+From `cadl` 0.3.35 a run of a file with `regimes:`
+([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings)) can be
+given versions; up to 0.3.34 a processor refused a run that named a
+regime, or whose initial regime did not have the contract in force.
+A run is then judged as follows.
+
+1. **Order at a step.** Between two steps, the regime transition chosen
+   at the end of the earlier step (A.7.1, "Runs", item 3) is taken
+   first; it was chosen with the versions in force during that step.
+   Then the versions take effect, in the order of "Running contract
+   instances" above: a waiting `switch` with `in_states:` whose state
+   holds first, then the versions whose effective time is reached.
+2. **Contracts in force.** Whether a contract is in force at a step is
+   decided by the regime bindings of the version in force at that step,
+   by the name of the contract. The version that an instance follows
+   selects only the definition of the contract; an instance that keeps
+   an older version is in force by the bindings of the version in force.
+3. **Regimes of the versions.** The run starts in the initial regime of
+   the version in force at its first step. A regime that is current at
+   some step MUST be a regime of every version that the run uses (every
+   version in force at some step), and a run that is in no regime (its
+   first version has no `regimes:`) MUST NOT use a version that has
+   `regimes:`. A processor refuses a run that breaks this, naming the
+   regime and the version.
+4. **A version that takes effect while the contract is not in force.**
+   The contract instance is judged on the projection of the steps and on
+   the clock of the contract (F.5, "Contracts not in force"). A version
+   that takes effect at a step at which the contract is not in force
+   still applies to the instance at that step: `keep` leaves it on its
+   version, `switch` replaces its definition, and `switch` with
+   `in_states:` waits as above, judged on the lifecycle state that the
+   instance sees, which does not change while the contract is not in
+   force (the state after the last step of the projection). Since the
+   clock of the contract does not advance meanwhile, the amendment (F.6)
+   is applied at the next step of the projection (the next step at which
+   the contract is in force, or the step at which the instance ends),
+   before anything else is evaluated there; the time already elapsed
+   against its deadlines is that of the clock. A processor reports the
+   switch at the time of the step at which the version took effect. An
+   instance starts at the first step of its projection, under the
+   version in force then.
+
+A run that names no regime and whose versions have no `regimes:` is
+judged as in `cadl` 0.3.34. A run of 0.3.34 that named no regime and
+whose versions had different initial regimes was judged as one of a
+file without `regimes:`; from 0.3.35 it is in the initial regime of the
+version in force at its first step, and it is refused by item 3 when
+that regime is not a regime of a later version.
 
 ### Metric schedules and measurements
 
@@ -806,7 +940,9 @@ Numbers are exact, as in F.5.
   For `keep`, each version is checked alone.
 - `cadl norms-eval` and the norms monitor of the Python target apply
   this section to a trace (F.10), and `cadl metrics-eval` judges
-  measurements (K.9).
+  measurements (K.9). From `cadl` 0.3.35 `cadl agents-run` and the
+  gateways of Appendix G switch the enforcement point at the effective
+  times (K.9).
 
 ### Generated code
 
@@ -829,14 +965,32 @@ switch:
   in `metrics.py` takes the time and the time base and checks the
   target in force then; it returns no verdict (not judged) when the
   time or the time base is missing, and so does any target check whose
-  target cannot be compiled;
+  target cannot be compiled. From `cadl` 0.3.35, for a file with an
+  `amendment:` block, every target check also takes the versions of the
+  run (the modules `version.py` of their packages, in the order of the
+  sequence; `version.py` has the targets of the metrics as well): it then
+  judges a measurement whose window starts at the given time as
+  "Metric schedules and measurements" above says, placing an entry
+  `from: { version: X }` at the effective time of `X`, and returns no
+  verdict when its own version is not in force at that time, an entry
+  cannot be placed, or the target changes inside the window of its
+  `measure:`. The norms monitor of the Python target also applies
+  "Versions and regimes" above;
 - the norms monitors of the Rego and Solidity targets
   ([D.5](./appendix-d-codegen.md#d5-norms-monitors-of-the-opa-and-solidity-targets))
-  do not apply amendments; a version that names `previous:` gets no
+  do not apply amendments; a version that may replace another gets no
   monitor for a contract with norms whose running instances switch
   (`switch`, also by default), since the monitor could not take them
-  over. For a contract whose instances keep their version, the monitor
-  serves the instances that start under this version;
+  over. Generated code sees one file, so it treats a version as one that
+  may replace another when it names `previous:`, or, from `cadl` 0.3.35,
+  when it gives no `previous:` and an effective time other than
+  `period: 1` ("The versions of a run"). This is a conservative test,
+  not the definition of a first version: such a version may be the
+  first of its run, but the file cannot show it, while a version without
+  `previous:` and with no `effective:` or `effective: { period: 1 }` is
+  always a first version. For a contract
+  whose instances keep their version, the monitor serves the instances
+  that start under this version;
 - the Unity C# target keeps lifecycle instances with deadlines; it
-  refuses a version that names `previous:` and in which a contract with
-  `lifecycle:` switches its running instances.
+  refuses a version that may replace another and in which a contract
+  with `lifecycle:` switches its running instances.

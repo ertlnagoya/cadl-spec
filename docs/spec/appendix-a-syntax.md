@@ -404,6 +404,13 @@ extension ([Appendix F](./appendix-f-norms.md), F.5).
    temporal operators do not advance, and nothing that happens meanwhile
    counts.
 
+A run with versions of the amendment extension combines these rules
+with the versions in force: from `cadl` 0.3.35 the regime transition
+chosen at the end of a step is taken before the versions that take
+effect at the next step, and the contracts in force are those of the
+bindings of the version in force
+([Appendix K, K.11, "Versions and regimes"](./appendix-k-amendment.md#versions-and-regimes)).
+
 A predicate cannot name a parameter (A.10), so the parameter values of
 a regime change only the code that writes them out (the institutional
 parameters of the Solidity and Rego targets, the parameters of the
@@ -658,9 +665,9 @@ predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
 monitor `rule:`, lifecycle `when:`, and an `on:` that is not a message
 event are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. `cadl` 0.3
-deviates from this appendix as follows (checked against `cadl` 0.3.34).
+deviates from this appendix as follows (checked against `cadl` 0.3.35).
 
-- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.34; no
+- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.35; no
   deviation is known. Up to `cadl` 0.3.17 the unary `-` of `factor` was
   not accepted: an item that used it was kept as an opaque predicate,
   and for a lifecycle `on:` or `when:` or a monitor `rule:`, `cadl check`

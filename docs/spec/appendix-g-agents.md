@@ -637,6 +637,12 @@ instance is tested against the new version; an instance whose
 permission has no `delegations:` entry there, or whose original was
 discharged by the amendment, is `discharged`.
 
+A new version takes effect where a trace says `amend`, and, from
+`cadl` 0.3.35, at the effective times of the versions of a run given to
+`cadl agents-run` and the gateways
+([Appendix K, K.11](./appendix-k-amendment.md#k11-applying-versions-while-a-system-runs)
+and K.9); the rules above apply to both.
+
 ## G.8 Audit record
 
 An enforcement point SHOULD record every decision and SHOULD keep the

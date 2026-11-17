@@ -1553,11 +1553,12 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   `amend` looks up) and a time base for their effective times, or a trace whose
   observations name the version in force with the key `version`, they
   amend a contract instance (F.6) at the observation at which its
-  transitional rule switches it, and not when it keeps its version. Such
-  a trace cannot also have `amend`, and a run that names a regime, or
-  whose initial regime does not have the contract in force, cannot have
-  versions, and the monitor refuses an observation that names a version
-  once an `amend` has been applied. A trace without the key, given no
+  transitional rule switches it, and not when it keeps its version. Up
+  to `cadl` 0.3.34 such a trace could not also have `amend`, a run that
+  named a regime, or whose initial regime did not have the contract in
+  force, could not have versions, and the monitor refused an observation
+  that named a version once an `amend` had been applied (0.3.35 lifts
+  all three, see below). A trace without the key, given no
   later version and no time base, is judged as before, also for a file
   that declares the amendment extension. An `amend` to a version whose
   transitional rule for the contract is `keep` or `switch` with
@@ -1569,6 +1570,25 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   any observation. The norms monitors of the Rego and Solidity targets
   are not generated for a contract whose running instances switch to a
   version that names `previous:` (D.5).
+- From `cadl` 0.3.35, `cadl norms-eval` and the norms monitor of the
+  Python target apply versions also to a run that names a regime or
+  whose versions bind regimes
+  ([Appendix K, K.11, "Versions and regimes"](./appendix-k-amendment.md#versions-and-regimes)):
+  the contract is in force by the bindings of the version in force, and
+  a version that takes effect while the contract is not in force applies
+  to the instance at that observation (`keep`, `switch`, or a waiting
+  `switch`); only the amendment of a switch waits for the next
+  observation of the projection, where it is applied on the clock of the
+  contract (K.11, "Versions and regimes", item 4). A trace of a file without an `amendment:` block may
+  have the key `version`: the `sos.version` of the file is accepted,
+  and any other value is a trace error that says that the file declares
+  no versions to switch to. A trace with versions may also have `amend`:
+  at one observation the versions that take effect are applied first,
+  then the `amend`, which cancels a waiting switch (K.11); up to 0.3.34
+  such a trace was refused, and it still is when regime bindings combine
+  with the versions.
+  `cadl agents-run` and the gateways switch the enforcement point at the
+  effective times of the versions (K.9).
 
 ## F.11 Backward compatibility
 
