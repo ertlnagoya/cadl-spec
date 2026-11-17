@@ -1545,6 +1545,30 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   here on its clock. The gateways and the runtime of [Appendix G](./appendix-g-agents.md) do
   not read the regime; their boundary policy refuses a file in which a
   regime does not have an enforced contract in force.
+- From `cadl` 0.3.34, `cadl norms-eval` and the norms monitor of the
+  Python target apply the versions of a run of
+  [Appendix K, K.11](./appendix-k-amendment.md#k11-applying-versions-while-a-system-runs):
+  given later versions of the file (`--version`, or the models of their
+  monitors as `run_versions`, a parameter apart from the `versions` that
+  `amend` looks up) and a time base for their effective times, or a trace whose
+  observations name the version in force with the key `version`, they
+  amend a contract instance (F.6) at the observation at which its
+  transitional rule switches it, and not when it keeps its version. Such
+  a trace cannot also have `amend`, and a run that names a regime, or
+  whose initial regime does not have the contract in force, cannot have
+  versions, and the monitor refuses an observation that names a version
+  once an `amend` has been applied. A trace without the key, given no
+  later version and no time base, is judged as before, also for a file
+  that declares the amendment extension. An `amend` to a version whose
+  transitional rule for the contract is `keep` or `switch` with
+  `in_states:` is applied as before, with a warning (on the standard
+  error of `cadl norms-eval`, in `amend_warnings` of the monitor, and in
+  the warnings of `cadl agents-run`). `cadl norms-check` refuses a later version
+  (`--version`) whose transitional rule for the contract is `keep` or
+  `switch` with `in_states:`, since its model amends every instance at
+  any observation. The norms monitors of the Rego and Solidity targets
+  are not generated for a contract whose running instances switch to a
+  version that names `previous:` (D.5).
 
 ## F.11 Backward compatibility
 
