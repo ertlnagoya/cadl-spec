@@ -149,7 +149,9 @@ writes `version.py` (the version, the version it replaces, the
 effective time, the transitional rules, and the values of the amendable
 parameters), and its norms monitor applies the versions of a run (F.10).
 Code that keeps running contract instances and cannot move them to a
-new version is refused for a version that names `previous:`: the norms
+new version is refused for a version that may replace another (it names
+`previous:`, or from `cadl` 0.3.35 it gives no `previous:` and an
+effective time other than `period: 1`, K.11): the norms
 monitors of the `opa` and `solidity` targets for a contract whose
 running instances switch to it (D.5), and the `unity-csharp` target
 when a contract with `lifecycle:` switches. A file without the
@@ -297,7 +299,10 @@ judged every observation.
 
 **Versions.** Neither monitor applies amendments (F.6). From `cadl`
 0.3.34, in a file that declares `amendment: 0.1` and names the version
-it replaces (`previous:`), a contract whose running instances switch to
+it replaces (`previous:`), and from 0.3.35 also in one that gives no
+`previous:` and an effective time other than `period: 1` (such a file
+may be a later version of its run, K.11, "The versions of a run"), a
+contract whose running instances switch to
 this version (`switch`, also by default) gets no monitor, with a
 warning, since the monitor could not take over an instance that started
 under the old version
