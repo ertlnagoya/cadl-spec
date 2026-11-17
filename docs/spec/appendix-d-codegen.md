@@ -301,7 +301,9 @@ judged every observation.
 0.3.34, in a file that declares `amendment: 0.1` and names the version
 it replaces (`previous:`), and from 0.3.35 also in one that gives no
 `previous:` and an effective time other than `period: 1` (such a file
-may be a later version of its run, K.11, "The versions of a run"), a
+may be a later version of its run, K.11, "The versions of a run"; this
+is a conservative test on one file, not the definition of a first
+version, see K.11, "Generated code"), a
 contract whose running instances switch to
 this version (`switch`, also by default) gets no monitor, with a
 warning, since the monitor could not take over an instance that started

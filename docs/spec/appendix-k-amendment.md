@@ -580,10 +580,9 @@ a system runs, as K.11 says:
   `keep`, `switch`, waiting switch, and dropped switch with its time;
   an amendment by a switch is reported as one by `amend` is (F.10). Up
   to `cadl` 0.3.34 a trace with versions could not have `amend`, and a
-  run that names a
-  regime or whose initial regime does not have the contract in force
-  could not have versions up to `cadl` 0.3.34 (from 0.3.35, K.11,
-  "Versions and regimes"). Without `--version`, a time
+  run that named a regime or whose initial regime did not have the
+  contract in force could not have versions (both lifted in 0.3.35,
+  K.11). Without `--version`, a time
   base, or the key `version`, the result is that of `cadl` 0.3.33,
   also for a file that declares the extension.
 - the norms monitor of the Python target (F.10), for a file that
@@ -625,8 +624,12 @@ From `cadl` 0.3.35 the reference implementation provides:
   [--origin SECONDS] [--epoch]`, and the same options of
   `cadl mcp-gateway` and `cadl a2a-gateway`: the enforcement point
   switches to a version at the first line of the trace whose time
-  reaches its effective time, before anything else of the line, and the
-  contract instances that the line creates start under the new version.
+  reaches its effective time. At that line it first expires the holds
+  whose deadline has passed and applies the withdrawals and host events
+  of the line (G.6), as at every line; then the versions take effect,
+  before the contract instances of the line are created (they start under
+  the new version), before the time and values of the line are observed,
+  and before its messages are decided.
   With `--epoch` an instant is placed on the time of the trace through
   its `epoch` (the instant of `t = 0`). An `amend` of the same line is
   applied after the versions that take effect there. The enforcement
@@ -636,10 +639,14 @@ From `cadl` 0.3.35 the reference implementation provides:
   a gateway refuses versions that change the actors or the `counts_as:`
   rules that create `approval` or `rejection`, which it reads once;
 - the target checks of `metrics.py` with the versions of the run (K.11,
-  "Generated code");
+  "Generated code"); a version whose effective time the time base
+  cannot place is refused (`ValueError`), and without a time base the
+  first version is in force unless the check is given the version in
+  force;
 - `amend` together with versions in `cadl norms-eval` and the norms
-  monitor, in the order of `cadl agents-run` (the versions first), and
-  the key `version` in a trace of `cadl agents-run`;
+  monitor, in the order of `cadl agents-run` (the versions first; an
+  `amend` cancels a waiting switch), and the key `version` in a trace of
+  `cadl agents-run`;
 - the refusals of the Rego and Solidity norms monitors and of Unity C#
   for a version that gives no `previous:` and an effective time other
   than `period: 1`.
@@ -691,11 +698,14 @@ form one sequence: every version but the first gives `effective:`, and
 the version before a version is the one that its `previous:` names. A
 version that gives no `previous:` (from `cadl` 0.3.35; up to 0.3.34
 every version but the first gave it) replaces the version of the run
-with the latest effective time strictly earlier than its own; a version
-without `previous:` that gives no `effective:` or `effective: { period: 1 }`,
-or with no version of the run effective earlier, is a first version (so
-that a single file shows whether it may replace another one, see
-"Generated code"). When two versions take effect at that latest
+with the latest effective time strictly earlier than its own. A version
+without `previous:` is not placed after another one when it gives no
+`effective:` or `effective: { period: 1 }`, or when no version of the
+run takes effect before it; it is then the first version. For example,
+in a run whose version 1 gives no `effective:`, a version 2 with
+`effective: { period: 2 }` and no `previous:` replaces version 1, while
+one with `effective: { period: 1 }` would be a second first version and
+the run would be refused. When two versions take effect at that latest
 time, or the effective times cannot be ordered (they use both forms of
 `effective:` and the run has no time base for one of them), the
 previous version is ambiguous, and a processor MUST refuse the versions
@@ -746,7 +756,12 @@ of two ways, or in both:
    processor refuses the step otherwise.
 
 Without a time base and without a named version, the first version of
-the sequence is in force at every step.
+the sequence is in force at every step. A version therefore takes
+effect at the first step whose time stamp is at or after its effective
+time, between that step and the one before it, as the bindings of a
+regime change (A.7.1, item 4). A value or a message observed at a step
+at exactly the effective time belongs to the new version: F.6 applies
+the new version at that step before anything else is evaluated.
 
 A file that does not declare versions of a run (it has no
 `amendment:` block) has one version. From `cadl` 0.3.35 a host may
@@ -754,12 +769,7 @@ still name it: a named version equal to the `sos.version` of the file
 is accepted and changes nothing, and a processor MUST refuse any other
 value, stating that the file declares no versions to switch to. With
 versions of a run, a named version has the meaning above in every
-processor, also in `cadl agents-run`. A version therefore takes
-effect at the first step whose time stamp is at or after its effective
-time, between that step and the one before it, as the bindings of a
-regime change (A.7.1, item 4). A value or a message observed at a step
-at exactly the effective time belongs to the new version: F.6 applies
-the new version at that step before anything else is evaluated.
+processor, also in `cadl agents-run`.
 
 ### Running contract instances
 
@@ -802,9 +812,12 @@ monitor of the Python target, `cadl agents-run`, and the gateways of
 Appendix G) MUST apply, at one step, the versions that take effect there
 first and the `amend` afterwards, as versions take effect before F.6
 amends at a step; a later version is then applied, by its transitional
-rule, to the definition that the `amend` gave. A run that combines
-versions with regime bindings ("Versions and regimes") cannot have
-`amend`, as a run with regime bindings could not before.
+rule, to the definition that the `amend` gave. An `amend` applied to an
+instance cancels its waiting switch (`switch` with `in_states:`): the
+instance follows the amended file, and later versions apply to it by
+their rules. A run that combines versions with regime bindings
+("Versions and regimes") cannot have `amend`; a run with regime
+bindings alone cannot have it either (F.10).
 When a processor
 applies such a key to a file whose transitional rule for the contract
 is `keep` or `switch` with `in_states:`, it SHOULD warn that the
@@ -965,11 +978,14 @@ switch:
   do not apply amendments; a version that may replace another gets no
   monitor for a contract with norms whose running instances switch
   (`switch`, also by default), since the monitor could not take them
-  over. A version may replace another when it names `previous:`, or,
-  from `cadl` 0.3.35, when it gives no `previous:` and an effective time
-  other than `period: 1` ("The versions of a run"): a single file cannot
-  show that such a version is the first of its run. A first version
-  gives no `effective:` or `effective: { period: 1 }`. For a contract
+  over. Generated code sees one file, so it treats a version as one that
+  may replace another when it names `previous:`, or, from `cadl` 0.3.35,
+  when it gives no `previous:` and an effective time other than
+  `period: 1` ("The versions of a run"). This is a conservative test,
+  not the definition of a first version: such a version may be the
+  first of its run, but the file cannot show it, while a version without
+  `previous:` and with no `effective:` or `effective: { period: 1 }` is
+  always a first version. For a contract
   whose instances keep their version, the monitor serves the instances
   that start under this version;
 - the Unity C# target keeps lifecycle instances with deadlines; it
