@@ -779,9 +779,9 @@ proposal 3 lowers the count by loosening the standard rather than by changing ho
 The recorded answer adopts 1.
 
 Under *guarded*, the LLM did not propose the loosening at all. Its assessment says that lengthening
-`hold_limit` would lower the count on paper but would likely lengthen stops and blocked time,
-which does not fit the reason the human gave at K1 (keep the intersections clear). The human's reason
-shaped the proposals of the same period. Of its two proposals, the heavier sanction weight passed
+`hold_limit` would lower the counted violations but would likely lengthen stops and blocked time,
+which does not fit the reason the human gave at K1 (keep the intersections clear). The LLM read
+the human's reason and left the loosening out. Of its two proposals, the heavier sanction weight passed
 every gate without worsening a watched goal and was adopted automatically, as in English.
 
 In the earlier records of this course (2026-11-15), the robots did not respond to the sanction
@@ -955,25 +955,24 @@ The differences:
 
 ### What the real runs showed
 
-- **Recommendations vary with the language and the request.** In period 1 the two runs saw the
+- Recommendations vary with the language and the request. In period 1 the two runs saw the
   same proposals and numbers, yet the Japanese LLM recommended adopting and the English one keeping.
   In the records of 2026-10-29/30, the Japanese D1 recommendation changed when the same request was
-  sent again. The value of a decision request lies less in its recommendation than in laying out the
-  question, who gains and loses, and what is unknown.
-- **What the measure watches decides the outcome.** The runs parted in period 5 not because the LLMs
-  recommended differently but because the humans had chosen different measures at K5. A watched
-  metric shows its worsening; an unwatched one does not. Choosing the measure (a K request) is as
-  weighty as choosing an amendment (a D request).
-- **The LLM's unknowns point at gaps in the tool.** The first version of the table did not show the
+  sent again. What the human can use from a decision request is less its recommendation than the
+  question, who gains and loses, and what the LLM does not know.
+- The runs parted in period 5 because the humans had chosen different measures at K5. A watched
+  metric shows its worsening; an unwatched one does not. The measure chosen in a K request decides
+  which numbers the later D requests show.
+- What the LLM lists as unknown shows what the tool lacks. The first version of the table did not show the
   values of the watched goals; the LLM wrote that it did not know "on_time_rate_gap が具体的に
   どれだけ悪化したか（表には最低の定時率しか載っていません）" ("how much on_time_rate_gap
   worsened; the table only shows the lowest on-time rate"), so the table gained a column of watched
   goals and conditions. Not knowing the quorum (Japanese period 2) and taking the constitution's
   `min_improvement` for the gate (period 4, both languages) are not fixed yet (§11).
-- **Past reasons shape later proposals and recommendations.** The LLM cited D1 in period 2 and D5
+- The LLM uses the reasons of earlier decisions in later proposals and recommendations. It cited D1 in period 2 and D5
   in period 6. Under the guarded proxy KPI, the LLM read the human's K1 reason and did not propose
   the loosening at all.
-- **The simulation shapes the proposals and the decisions.** In the records of 2026-11-15, the
+- The proposals and the decisions depend on how the simulation is built. In the records of 2026-11-15, the
   companies did not respond to the sanction weight, so switching off sanctions changed no delivery
   number and only narrowed the spread, and the English LLM recommended it. Now that lighter
   sanctions mean longer waits at the intersection, neither LLM recommends them.
@@ -1113,8 +1112,8 @@ that breaks C2 even once is not chosen, however small its T.
 
 With the default `step`, the first amendment meets G1, but blocked time never meets G2 in six
 periods. With a large `step`, a single amendment in period 1 meets G1 and G2, but C's utility falls
-to 18.7, breaking C2, and road violations rise by 40%. Here, speed to the KPI and one company's loss
-pull against each other; whether some `step` reconciles them is the question of Exercise 12-1.
+to 18.7, breaking C2, and road violations rise by 40%. Here, reaching the KPI sooner makes C lose
+heavily. Exercise 12-1 asks whether some `step` meets G1 and G2 and keeps C2.
 
 ### Exercise 12-1: size of amendments and speed to the KPI (robots only)
 
