@@ -1,4 +1,4 @@
-<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-d-codegen" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録D. コード生成ターゲット一覧 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-d-codegen/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録D. コード生成ターゲット一覧 | CADL"/><meta data-rh=true name=description content="CADL v0.3のコード生成ターゲットの一覧。各ターゲットのカテゴリ，生成物，リファレンス実装のモジュールとコマンドを示す。"/><meta data-rh=true property=og:description content="CADL v0.3のコード生成ターゲットの一覧。各ターゲットのカテゴリ，生成物，リファレンス実装のモジュールとコマンドを示す。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-d-codegen/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-d-codegen/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-d-codegen/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-d-codegen/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-d-codegen","name":"付録D. コード生成ターゲット一覧","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.aceecb03.css /><script src=/cadl-spec/ja/assets/js/runtime~main.ff564454.js defer></script><script src=/cadl-spec/ja/assets/js/main.c0cd8892.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=ja dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-spec/appendix-d-codegen" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.0"><title data-rh=true>付録D. コード生成ターゲット一覧 | CADL</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:url content=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-d-codegen/ /><meta data-rh=true property=og:locale content=ja /><meta data-rh=true property=og:locale:alternate content=en_US /><meta data-rh=true name=docusaurus_locale content=ja /><meta data-rh=true name=docsearch:language content=ja /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="付録D. コード生成ターゲット一覧 | CADL"/><meta data-rh=true name=description content="CADL v0.3のコード生成ターゲットの一覧。各ターゲットのカテゴリ，生成物，リファレンス実装のモジュールとコマンドを示す。"/><meta data-rh=true property=og:description content="CADL v0.3のコード生成ターゲットの一覧。各ターゲットのカテゴリ，生成物，リファレンス実装のモジュールとコマンドを示す。"/><link data-rh=true rel=icon href=/cadl-spec/ja/img/favicon.ico /><link data-rh=true rel=canonical href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-d-codegen/ /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-d-codegen/ hreflang=en-US /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-d-codegen/ hreflang=ja /><link data-rh=true rel=alternate href=https://www.ertl.jp/cadl-spec/docs/spec/appendix-d-codegen/ hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://www.ertl.jp/cadl-spec/ja/docs/spec/appendix-d-codegen","name":"付録D. コード生成ターゲット一覧","position":1}]}</script><link rel=stylesheet href=/cadl-spec/ja/assets/css/styles.aceecb03.css /><script src=/cadl-spec/ja/assets/js/runtime~main.baa190ad.js defer></script><script src=/cadl-spec/ja/assets/js/main.c0cd8892.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-bfa")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=メインコンテンツまでスキップ><a class=skipToContent_g33O href=#__docusaurus_skipToContent_fallback>メインコンテンツまでスキップ</a></div><nav aria-label=ナビゲーション class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label=ナビゲーションバーを開く aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/cadl-spec/ja/><b class="navbar__title text--truncate">CADL</b></a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/quickstart/>クイックスタート</a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/cadl-spec/ja/docs/spec/intro/>仕様書</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/textbook/>テキストブック</a><a class="navbar__item navbar__link" href=/cadl-spec/ja/docs/handson/>ハンズオン</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href=https://cadl-explorer.streamlit.app/ target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">CADL Explorer<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><a href=https://github.com/ertlnagoya/cadl target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_ASGH><use href=#theme-svg-external-link /></svg></a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href=# aria-haspopup=true aria-expanded=false role=button class=navbar__link><svg viewBox="0 0 24 24" width=20 height=20 aria-hidden=true class=iconLanguage_wY04><path fill=currentColor d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>日本語</a><ul class=dropdown__menu><li><a href=/cadl-spec/docs/spec/appendix-d-codegen/ target=_self rel="noopener noreferrer" class=dropdown__link lang=en-US>English</a><li><a href=/cadl-spec/ja/docs/spec/appendix-d-codegen/ target=_self rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang=ja>日本語</a></ul></div><div class="toggle_I__j colorModeToggle_ktuf"><button class="clean-btn toggleButton_gI0c toggleButtonDisabled_HB1C" type=button disabled title=システムモード aria-label=ダークモードを切り替える(現在はシステムモード)><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT lightToggleIcon_Vq1I"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT darkToggleIcon_sbyK"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_bxWT systemToggleIcon_qLIt"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_mCdt><div class="navbar__search searchBarContainer_hzym" dir=ltr><input placeholder=検索 aria-label=Search class="navbar__search-input searchInput_FMcr" value="" /><div class="loadingRing__j3D searchBarLoadingRing_P6pB"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_mX8n"><div class=docsWrapper_V3ov><button aria-label=先頭へ戻る class="clean-btn theme-back-to-top-button backToTopButton_fbj7" type=button></button><div class=docRoot_iOy_><aside class="theme-doc-sidebar-container docSidebarContainer_a8im"><div class=sidebarViewport_AN2_><div class=sidebar_tTdz><nav aria-label=ドキュメントのサイドバー class="menu thin-scrollbar menu_epyR"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/intro/><span title="CADL仕様書 v0.3" class=linkLabel_E58b>CADL仕様書 v0.3</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/introduction/><span title="1. はじめに" class=linkLabel_E58b>1. はじめに</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/objectives/><span title="2. 言語の目的" class=linkLabel_E58b>2. 言語の目的</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/comparison/><span title="3. 既存言語との比較" class=linkLabel_E58b>3. 既存言語との比較</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/requirements/><span title="4. 要求仕様" class=linkLabel_E58b>4. 要求仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/language-spec/><span title="5. 言語仕様" class=linkLabel_E58b>5. 言語仕様</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/design/><span title="6. 設計" class=linkLabel_E58b>6. 設計</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/examples/><span title="7. 用途別記述例" class=linkLabel_E58b>7. 用途別記述例</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/use-cases/><span title="8. 活用事例と新規性分析" class=linkLabel_E58b>8. 活用事例と新規性分析</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/research/><span title="9. 研究方向性と未解決課題" class=linkLabel_E58b>9. 研究方向性と未解決課題</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/roadmap/><span title="10. 実装ロードマップ" class=linkLabel_E58b>10. 実装ロードマップ</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-a-syntax/><span title="付録A. 構文リファレンス（EBNF）" class=linkLabel_E58b>付録A. 構文リファレンス（EBNF）</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-b-references/><span title="付録B. 参考文献" class=linkLabel_E58b>付録B. 参考文献</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-c-motivation/><span title="付録C. 動機拡張" class=linkLabel_E58b>付録C. 動機拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/cadl-spec/ja/docs/spec/appendix-d-codegen/><span title="付録D. コード生成ターゲット一覧" class=linkLabel_E58b>付録D. コード生成ターゲット一覧</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-e-sos-dsl/><span title="付録E. SoS-DSL拡張" class=linkLabel_E58b>付録E. SoS-DSL拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-f-norms/><span title="付録F. 規範拡張" class=linkLabel_E58b>付録F. 規範拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-g-agents/><span title="付録G. エージェント統治拡張" class=linkLabel_E58b>付録G. エージェント統治拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-h-stochastic/><span title="付録H. 確率モデル拡張" class=linkLabel_E58b>付録H. 確率モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-i-games/><span title="付録I. 戦略モデル拡張" class=linkLabel_E58b>付録I. 戦略モデル拡張</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-j-grounding/><span title="付録J. 制度パラメータの根拠付け" class=linkLabel_E58b>付録J. 制度パラメータの根拠付け</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/appendix-k-amendment/><span title="付録K. モデルの改正" class=linkLabel_E58b>付録K. モデルの改正</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/cadl-spec/ja/docs/spec/glossary/><span title=用語集 class=linkLabel_E58b>用語集</span></a></ul></nav></div></div></aside><main class=docMainContainer_HGTX><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_jyzz"><div class=docItemContainer_ZV5M><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Wwrd" aria-label=パンくずリストのナビゲーション><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label=ホームページ class=breadcrumbs__link href=/cadl-spec/ja/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_NKiX><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>付録D. コード生成ターゲット一覧</span></ul></nav><div class="tocCollapsible_KEPH theme-doc-toc-mobile tocMobile_GYpB"><button type=button class="clean-btn tocCollapsibleButton_lUXr">このページの見出し</button></div><div class="theme-doc-markdown markdown"><header><h1>付録D. コード生成ターゲット一覧</h1></header>
@@ -75,12 +75,42 @@ Python の制御クラスと Solidity の制御コントラクトは初期モー
 <code>initial_regime</code>，<code>parameters</code>（そのモードで束縛されたパラメータの値。ファイルのモードが
 与えられないときは定義されない）を与える。ポリシーは遷移をとらない。モードを与えるホストが遷移をとり，
 その安全不変条件を検査する（A.7.1）。</li>
-<li class=""><code>unity-csharp</code>：生成される Unity の実行環境はモードの制御クラスを持たない。<code>lifecycle:</code> または
-<code>monitors:</code> を持つ契約を有効としないモードがあるファイルは拒否する。それ以外のファイルでは，
-束縛はこのターゲットが書き出すものを何も変えない。</li>
-<li class=""><code>agent-rego</code> と <code>agent-cedar</code>：境界ポリシーはモードを読まない。強制される契約を有効としない
-モードがあるファイルは拒否する（<a class="" href=/cadl-spec/ja/docs/spec/appendix-g-agents/>付録G</a>）。</li>
-<li class=""><code>opa</code> と <code>solidity</code> の規範のモニターは，あるモードで有効でない契約については生成しない（D.5）。</li>
+<li class=""><code>unity-csharp</code>：<code>cadl</code> 0.3.36 から，<code>lifecycle:</code> または <code>monitors:</code> を持つ契約を有効としない
+モードがあるファイルについては <code>Generated/CadlRegimes.cs</code> も書く。これはモード，各モードが有効と
+しない契約，初期モード，現在のモードを持ち，ホストはモードの制御が遷移をとるときに
+<code>Set(regime, tMs)</code> で現在のモードを設定する。そのような契約のインスタンスは <code>CadlRegimes</code> の
+オブジェクトを与えて作り（与えなければ初期モードで始まる），現在のモードに従う。契約が有効で
+ないあいだはイベントも tick も受け取らず，再び有効になったときに，期限と周期モニターの最後の
+時刻を有効でなかった時間だけ先へ送る。こうして期限と周期モニターは契約の時計で進む（F.5 の
+「有効でない契約」）。イベントは実行の時刻を報告する。それ以外のファイルでは，束縛はこの
+ターゲットが書き出すものを何も変えない。0.3.33 から 0.3.35 までは，そのようなファイルは拒否していた。
+一部のバージョンがモードを束縛する実行のほかのバージョンを与えたとき（<code>--version</code>，K.11），
+<code>Generated/CadlRegimes.cs</code> はすべてのバージョンのモードと，各モードが有効としない契約を持ち，実行は
+コンストラクタに与えたバージョン（既定は最初のバージョン）の初期モードで始まる。バージョンに従うクラスは
+このオブジェクトを最後のコンストラクタ引数で受け取り，
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-k-amendment/#versions-and-regimes>K.11節の「バージョンとモード」</a>を適用する。契約は，効力を
+持つバージョンの束縛によって有効になる。インスタンスは，契約が初めて有効になった時刻に，そのとき効力を
+持つバージョンで始まる（本体をそこで作る）。契約が有効でないあいだは，上と同じく時計が止まる（本体は期限を
+設定した時刻も先へ送る）。そのあいだに効力を持ったバージョンは，契約が再び有効になったときに，効力を持った
+順に，ほかの何よりも先に，インスタンスがそのとき持つ状態で適用する。この切り替えのライフサイクルの
+イベント <code>&lt;version></code> は，バージョンが効力を持った時刻（<code>SetVersion</code> に与えた時刻。K.11の「バージョンと
+モード」の4.）を持ち，<code>in_states:</code> を持つ待っている切り替えは，切り替えた時刻を持つ。インスタンスに
+対して効力を持ったことのあるすべてのバージョンのモードでないモードに対して，<code>SetVersion</code> と <code>Set</code> は
+例外を投げる。<code>Set</code> は <code>Tick</code> を呼ばない。契約が有効でなくなる前に契約の時計で過ぎた期限は，契約が
+再び有効になった後の最初の <code>Tick</code> で，そのあいだに効力を持ったバージョンを適用した後に決まる。
+<code>cadl norms-eval</code> が射影の次の観測で決めるのと同じである。ホストは <code>Set</code>，<code>Tick</code> の順に呼び，その後で
+その時刻のイベントを渡す。同じバージョンの組から
+モードを除いて生成したコードを実行の射影（契約の時計の上の有効なステップ。契約が有効でないあいだに効力を
+持ったバージョンは，再び有効になったときに適用する）で動かしたものと比べる。<code>cadl</code> 0.3.36 のテストでは，
+ロボットの町の2つまたは3つのバージョンの組 25 個についての 1000 個の乱数の実行（31 000 ステップ。そのうち
+14 549 ステップは有効でなく，459 個のバージョンは契約が有効でないあいだに効力を持つ）に差はない（Mono）。
+0.3.36 より前はこの組み合わせを拒否していた。</li>
+<li class=""><code>agent-rego</code> と <code>agent-cedar</code>：<code>cadl</code> 0.3.36 から，強制される契約を有効としないモードがある
+ファイルについては，境界ポリシーはポリシー入力のキー <code>regime</code>（Cedar では <code>context.regime</code>）から
+現在のモードを読み，そのモードで有効でない契約はどのメッセージも統治しない
+（<a class="" href=/cadl-spec/ja/docs/spec/appendix-g-agents/>付録G</a>のG.10）。0.3.33 から 0.3.35 までは，
+そのようなファイルは拒否していた。</li>
+<li class=""><code>opa</code> と <code>solidity</code> の規範のモニターは，<code>cadl</code> 0.3.36 から現在のモードに従う（D.5）。</li>
 </ul>
 <p><strong>バージョン。</strong> <code>cadl</code> 0.3.34 から，<code>amendment: 0.1</code> を宣言したファイルはモデルの1つのバージョン
 である（<a class="" href=/cadl-spec/ja/docs/spec/appendix-k-amendment/#k11-applying-versions-while-a-system-runs>付録KのK.11</a>）。それから
@@ -93,7 +123,13 @@ Python の制御クラスと Solidity の制御コントラクトは初期モー
 <code>previous:</code> を持たず，<code>period: 1</code> 以外の効力の発生時点を持つバージョンも含む。K.11）について拒否する。<code>opa</code> と <code>solidity</code> の規範のモニターは，
 動いているインスタンスがそのバージョンに切り替わる契約について生成せず（D.5），<code>unity-csharp</code>
 ターゲットは，<code>lifecycle:</code> を持つ契約が切り替わるときに拒否する。拡張を宣言しないファイルと，
-<code>amendment:</code> ブロックを持たないファイルには，これまでと同じコードを生成する。</p>
+<code>amendment:</code> ブロックを持たないファイルには，これまでと同じコードを生成する。<code>cadl</code> 0.3.36 から，
+<code>cadl codegen --version FILE</code>（繰り返せる）が実行のほかのバージョンを与える。このとき Rego と Solidity の
+モニターと Unity C# のコードは，呼び出し側が示す効力を持つバージョンに従う（D.5。Solidity では
+オーケストレーターの <code>setVersion</code>，Unity C# ではバージョンごとのクラスと <code>SetVersion</code> を持つクラス）。
+Unity C# ターゲットは，その id の契約を <code>lifecycle:</code> または <code>monitors:</code> とともに持たないバージョンを拒否する。
+インスタンスはすべてのバージョンを通じてその契約に従うからである。ほかのターゲットは <code>--version</code> を拒否する
+（<code>python</code> ターゲットは，規範のモニターの <code>run_versions</code> によって実行時にバージョンを適用する）。</p>
 <p><code>cadl</code> 0.3.33 は，すべてのファイルについて <code>opa</code> ターゲットの 5 つの誤りを訂正する。否定した
 リテラル（<code>NOT ok</code>，<code>NOT (y == 3)</code>）は，それが読む値がないときに成り立っていた。OPA の
 <code>not input.y == 3</code> は値がないときに成り立つからである。そこで，否定の前に入力の参照を変数に束縛する
@@ -171,14 +207,38 @@ Solidity のモニターは小数点以下 6 桁の固定小数点数を用い�
 デプロイ時のコード（creation code）が EIP-3860 の上限 49152 バイトを超える契約と，実行時コードが
 EIP-170 の上限 24576 バイトを超える契約も拒否する（<code>cadl codegen</code> はどちらの大きさも大きめに見積もる）。<code>guarantee:</code> の項目でこれらを使う
 場合は，上と同じくその項目だけを外す。<code>amend</code> を持つ観測は実行時に拒否する。</p>
-<p><strong>モード。</strong> どちらのモニターも現在のモード（A.7.1）を読まない。<code>cadl</code> 0.3.33 から，
-<code>regimes:</code> のあるモードで有効でない契約にはモニターを生成せず（<code>cadl codegen</code> は警告を出し，
-生成器の関数はその契約を拒否する），処理系はそのモードを示す。
-このようなモニターは，F.5 の「有効でない契約」が除く観測を判定し，契約が有効でないあいだも
-期限を進めるからである。このような契約は <code>python</code> ターゲットの規範のモニターが判定する。
-すべてのモードで有効な契約については，パラメータを読む規範，counts-as 規則，項目はないので，
-モニターは <code>regimes:</code> がないときと同じである。<code>cadl</code> 0.3.32 までは，モニターを生成し，
-すべての観測を判定していた。</p>
+<p><strong>モード。</strong> <code>cadl</code> 0.3.36 から，<code>regimes:</code> のあるモードで有効でない契約のモニターは，
+<code>python</code> ターゲットの規範のモニターと同じように現在のモード（A.7.1）に従う（F.5 の「有効でない
+契約」）。最初にモードが名指されるまで，実行は初期モードにある。契約を有効としないモードの観測では，
+モニターは変化も期限も報告しない。その観測の値は次の有効な観測から見え，メッセージは見えず，
+契約の時計は止まる。期限と時相演算子の区間はこの時計，すなわち有効でなかった時間を除いた
+トレースの時刻で進む。<code>now</code>，<code>next_deadline</code>，報告するすべての時刻はトレースの時刻である。
+そのような観測で終わるインスタンス（<code>end</code>，終端状態，またはその後のインスタンスの終了）は，
+そこで止まった時計で精算し，その観測のほかの部分は適用しない。</p>
+<ul>
+<li class="">Rego：観測はキー <code>regime</code>（ファイルのモード）を持ってよい。ホストが保存する状態の形式は
+<code>cadl-norms-monitor-regimes/1</code> であり，現在のモード，時計（<code>offset</code> はそれまでに有効でなかった
+時間，<code>out_since</code> は有効でなくなった時刻），契約が有効でないあいだに与えられた値とライフサイクルの
+状態，元のモニターの状態を持つ。ホストが渡すのは観測だけであり，状態を持たないポリシーは止まった
+時計をこの状態に保つ。結果は <code>in_force</code> も持つ。ファイルは，元のモニターのライブラリの 5 行を
+変えたもの（元のモニターの時刻は <code>input.clock</code> で与える時計である。<code>now</code> はトレースの時刻を読む。有効で
+ないあいだに与えられたライフサイクルの状態は，最初の有効な観測の前の状態である。その <code>result</code> は
+<code>core_result</code> になる）の後に，モードを読む部分を置いたものである。</li>
+<li class="">Solidity：モニターは <code>CadlNormsMonitorRegimes</code> から派生する。コンストラクタは報告者と
+オーケストレータを受け取る（ゼロアドレスならデプロイした者）。<code>setRegime(name)</code> はオーケストレータ
+だけが呼べ，ファイルのモードでない名前は拒否し，トレースのキー <code>regime</code> と同じように，次の観測から
+そのモードを現在のモードにする。<code>inForce()</code>，<code>regime()</code>，<code>lastTraceT()</code> で状態を読める。<code>lastT()</code> は
+最後の有効な観測での時計である。イベントはトレースの時刻を持つ。モードを読む部分は実行時コードを
+約 3 kB 増やす（ロボット配送の例で 19.6 kB。solc 0.8.24 と 0.8.37）。生成時のコードの見積もりは
+この分を含む。</li>
+</ul>
+<p>モードを持つ乱数のトレースで，各観測の後にモニターを <code>python</code> ターゲットの規範のモニターと比べる。
+<code>cadl</code> 0.3.36 のテストでは，既定の数で OPA の 300 本と EVM の 12 本，より長い実行
+（<code>CADL_REGIME_TARGET_TRACES=300</code>）で OPA の 600 本と EVM の 600 本のトレースに差はない。<code>cadl</code> 0.3.33 から
+0.3.35 までは，そのような契約にはモニターを生成しなかった。<code>cadl</code> 0.3.32 までは，モニターを生成し，
+すべての観測を判定していた。すべてのモードで有効な契約については，パラメータを読む規範，
+counts-as 規則，項目はないので，モニターは <code>regimes:</code> がないときと同じである。モードを名指す
+トレースは，<code>cadl norms-eval</code> と同じく契約を改正できない。</p>
 <p><strong>バージョン。</strong> どちらのモニターも改正（F.6）を適用しない。<code>cadl</code> 0.3.34 から，<code>amendment: 0.1</code> を
 宣言し，置き換えるバージョンを指す（<code>previous:</code>）ファイルでは，また0.3.35からは <code>previous:</code> を持たず
 <code>period: 1</code> 以外の効力の発生時点を持つファイル（実行の後のバージョンでありうる。K.11の「実行の
@@ -188,6 +248,71 @@ EIP-170 の上限 24576 バイトを超える契約も拒否する（<code>cadl 
 古いバージョンで始まったインスタンスを引き継げないからである
 （<a class="" href=/cadl-spec/ja/docs/spec/appendix-k-amendment/#k11-applying-versions-while-a-system-runs>付録KのK.11</a>）。インスタンスが
 バージョンを保つ契約にはモニターを生成し，そのモニターはこのバージョンで始まるインスタンスを扱う。</p>
+<p><code>cadl</code> 0.3.36 から，実行のほかのバージョンとともに生成する Rego のモニター（<code>cadl codegen -t opa FILE --version OTHER ...</code>）は，すべてのバージョンの契約（各バージョンのモデルと述語）を持ち，観測がキー
+<code>version</code> で示す効力を持つバージョンに従う。呼び出し側は，それを効力発生時点から求める。インスタンスは
+最初の観測で効力を持つバージョンに従い，効力を持ったバージョンはその契約の経過規定を適用する。切り替えは
+<code>cadl norms-eval</code> と同じく F.6 の改正を適用する。効力を持つインスタンスは，経過時間（内容が同じなら
+判定を待つ候補も）とともに引き継がれるか，解除されるか，変換される。新しい期限を過ぎていれば違反または
+履行になる。トリガのない新しい規範は発効する。同じ文の項目は続き，新しい項目は改正から評価し，未決の
+項目は閉じる。バージョンが持たなくなった規範と項目は結果の最後に残り，前のバージョンから保たれた
+インスタンスは，その権能の内容で行為を作る。変化は Python のモニターと同じく報告する（新しい規範には前の
+状態がなく，取り除かれた規範には状態がない）。状態の形式は <code>cadl-norms-monitor-versions/1</code> である。
+実行のバージョンでない <code>version</code> は，インスタンスが終わった後でも拒否する。<code>cadl norms-eval</code> がどの行でも
+それを拒否するのと同じである（下のモードとともに使うときも同じ）。
+バージョンとともに使うとき，Rego のモニターは，モニターが外す <code>guarantee:</code> の項目を持つバージョンを
+拒否する。各観測の後に，<code>run_versions</code> を与えた <code>python</code> ターゲットの規範のモニターと比べる。
+<code>cadl</code> 0.3.36 のテストでは，2つまたは3つのバージョンからなる 70 個の乱数の実行の 900 本のトレースに
+差はない。</p>
+<p>実行のバージョンがモードを束縛する（<code>regimes:</code>）ときは，バージョンを持つ Rego のモニターは
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-k-amendment/#versions-and-regimes>K.11節の「バージョンとモード」</a>も適用する（<code>cadl</code> 0.3.36 から。
+それより前はこの組み合わせを拒否していた）。観測は，キー <code>regime</code> で現在のモードを，キー <code>version</code> で
+効力を持つバージョンを示せる。観測では，まずモードが現在になり，その後でバージョンが効力を持つ。最初の
+<code>regime</code> までは，最初の観測で効力を持つバージョンの初期モードにある。契約は，効力を持つバージョンの束縛に
+よって有効になる。ある観測で現在のモードは，ある観測で効力を持ったすべてのバージョンのモードでなければ
+ならず（<code>regimes:</code> を持たないバージョンでは，実行はどのモードにもない），そうでなければその観測を拒否する。
+インスタンスは，契約が有効な最初の観測，またはインスタンスが終わる観測で，そこで効力を持つバージョンで
+始まる。契約が有効でないあいだは，上のモードを持つファイルと同じく，インスタンスは何も見ず，時計が止まる。
+そのあいだに効力を持つバージョンもインスタンスに及ぶ（経過規定は，インスタンスが最後に見たライフサイクルの
+状態で判定する）。改正は，次の有効な観測で，またはインスタンスの終わりに止まった時計で，ほかの何よりも先に
+適用する。終わりで改正が違反にした規範は，回復義務も遷移もなしに報告する。<code>amend</code> を持つ観測は，
+<code>cadl norms-eval</code> と同じく拒否する。状態の形式は <code>cadl-norms-monitor-regimes-versions/1</code> である。各観測の
+後に，<code>run_versions</code> を与えた <code>python</code> ターゲットの規範のモニターと比べる。<code>cadl</code> 0.3.36 のテストでは，
+モードが契約を有効でなくする2つまたは3つのバージョンからなる 300 個の乱数の実行の 3600 本のトレース
+（1633 本は有効でない観測を含み，502 本は切り替わり，385 本は両者が拒否する）に差はない。</p>
+<p><code>cadl</code> 0.3.36 から，実行のほかのバージョンとともに生成する Solidity のモニター（<code>cadl codegen -t solidity FILE --version OTHER ...</code>）は <code>CadlNormsMonitorVersions</code> を継承し，すべてのバージョンの契約の定義を順に持つ。
+インスタンスは，規範インスタンスの一覧（それぞれが従う定義を持つ）と，<code>assume:</code> と <code>guarantee:</code> の項目の
+一覧（それぞれが定義，始まる観測，同一性を持つ）を自分で持つ。規範の時相の内容は，その候補をスロットに
+保持する。同じ規範で内容が同じ定義は，バージョンをまたいで同じスロットを使う。したがって，引き継いだ
+インスタンスは，F.6 のとおり判定を待つ候補を保つ。コンストラクタは報告者とオーケストレーターを受け取る。
+オーケストレーターは，バージョンが効力を持つ観測の前に <code>setVersion(name)</code> を呼ぶ。最初の呼び出しまでは
+最初のバージョンが効力を持つ。<code>setVersion</code> は，実行のバージョンでない名前と，インスタンスが終わるまでは
+最後の観測で効力を持っていたバージョンより前のバージョンについて，実行を取り消す（revert）。経過規定と
+F.6 の改正は，Rego のモニターと同じく，観測のステップ 1 の前に適用する。改正が違反にした規範は，
+ステップ 5 で最初に扱う。<code>normIds()</code> と <code>verdicts()</code> はインスタンスの規範と項目に従い，バージョンが
+持たなくなったものは最後に置く。<code>NormChanged</code> は，バージョンで新しい規範の直前の状態と判定，および
+バージョンが取り除く規範の状態と判定を 255 で示す。<code>version()</code> は，効力を持つバージョンと，インスタンスが
+従うバージョンを返す。ライブラリ <code>CadlNormsVersions</code> は <code>CadlNormsActs</code> の後にデプロイしてリンクする。
+実行のバージョンがモードを束縛する（<code>regimes:</code>）ときは，モニターは <code>CadlNormsMonitorRegimesVersions</code> を継承し，
+<a class="" href=/cadl-spec/ja/docs/spec/appendix-k-amendment/#versions-and-regimes>K.11節の「バージョンとモード」</a>を適用する。オーケストレーターは
+<code>setRegime</code> でモードも設定する。観測では，まずモードが現在になり，その後でバージョンが効力を持つ。契約は，
+効力を持つバージョンの束縛によって有効になる。最初の <code>setRegime</code> までは，最初の観測で効力を持つバージョンの
+初期モードにある。ある観測で現在のモードは，ある観測で効力を持ったすべてのバージョンのモードでなければならず，
+そうでなければモニターは実行を取り消す（revert）。契約が有効でないあいだは，上と同じく時計が止まる。そのあいだに効力を持つバージョンも
+インスタンスに及ぶ（待っている切り替えは，インスタンスが最後に見たライフサイクルの状態で判定する）。改正は，
+次の有効な観測かインスタンスの終わりで，ほかの何よりも先に適用する。終わりで改正が違反にした規範は，回復義務も
+遷移もなしに報告する。バージョンとともに使うとき，Solidity のモニターは，モニターが外す <code>guarantee:</code> の
+項目を拒否する。さらに，ライフサイクル（状態，初期状態，終端状態）または宣言したアクターが異なるバージョンを
+拒否する。モニターはライフサイクルとアクターの宣言をそれぞれ1つだけ持つからである。また，2つのバージョンで
+内容のテキストが同じでも，モニターの読み方が異なる規範を拒否する。F.6 はそのような内容の判定を待つ候補を
+保つからである。実行時コードは，solc 0.8.24 と 0.8.37 で，バージョンを持つモニターが 19.3 kB，バージョンと
+モードを持つモニターが 23.9 kB，<code>CadlNormsVersions</code> が 13.2 kB である（EIP-170 の上限は 24 576 バイト）。
+作成コードはバージョンとともに増え，ロボット配送の例では，2つのバージョンで約 33 kB，3つのバージョンで約
+37 kB，モードを持つ3つのバージョンで 42 kB から 43 kB である（EIP-3860 の上限は 49 152 バイト）。作成コードの
+見積もりがこの上限を超えるモニターは拒否する。最も大きいもののデプロイには約 2400 万ガスを使う。各観測の
+後に，<code>run_versions</code> を与えた <code>python</code> ターゲットの規範のモニターと EVM 上で比べる。<code>cadl</code> 0.3.36 の
+テストでは，バージョンについて，2つまたは3つのバージョンからなり <code>assume:</code> と <code>guarantee:</code> の項目を乱数で
+選ぶ 20 個の乱数の実行の 240 本のトレース（1330 個の観測）に，バージョンとモードについて，モードが契約を
+有効でなくする 32 個の乱数の実行の 372 本のトレース（1895 個の観測。204 本は有効でない観測を含む）に差はない。</p>
 <p><strong>Rego のモニター。</strong> Rego のモニターはステップ関数である。OPA は状態を持たないので，ポリシーは直前の状態と
 1 つの観測からモニターの次の状態を計算する。状態は呼び出しの間ホストが保存する。規則 <code>result</code> は
 <code>input</code> として次を受け取る。</p>
