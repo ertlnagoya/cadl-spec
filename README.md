@@ -1,14 +1,12 @@
 # CADL Specification Site (cadl-spec)
 
-This repository hosts the specification and teaching materials for **CADL (Contract Architecture Description Language)** and its **SoS-DSL extension**. The site is built with [Docusaurus](https://docusaurus.io/) and published at:
-
-**https://www.ertl.jp/cadl-spec/**
+This repository holds the specification and teaching materials for CADL (Contract Architecture Description Language) and its SoS-DSL extension. The site is built with [Docusaurus](https://docusaurus.io/) and published at <https://www.ertl.jp/cadl-spec/>.
 
 ## What is on the site
 
 | Section | English | 日本語 |
 | --- | --- | --- |
-| Specification (chapters 1–10, appendices A–J, glossary) | [docs/spec/intro](https://www.ertl.jp/cadl-spec/docs/spec/intro/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/spec/intro/) |
+| Specification (chapters 1–10, appendices A–K, glossary) | [docs/spec/intro](https://www.ertl.jp/cadl-spec/docs/spec/intro/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/spec/intro/) |
 | Quick Start (two paths: CADL Explorer in the browser, or the `cadl` CLI) | [docs/quickstart](https://www.ertl.jp/cadl-spec/docs/quickstart/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/quickstart/) |
 | Textbook (Course A with the exercises of a 5-session class; self-contained) | [docs/textbook](https://www.ertl.jp/cadl-spec/docs/textbook/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/textbook/) |
 | Hands-on course | [docs/handson](https://www.ertl.jp/cadl-spec/docs/handson/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/) |
@@ -19,7 +17,7 @@ The tool the specification describes is [`cadl`](https://github.com/ertlnagoya/c
 
 ## Hands-on
 
-A self-paced workshop of about 95 minutes and a 5-session exercise course that walk through the complete CADL / SoS-DSL toolchain — modelling, contracts (lifecycle + monitors), visualisation, code generation, and live simulation — on a robot-delivery System of Systems.
+A self-paced workshop of about 95 minutes and a 5-session exercise course. Both use the CADL / SoS-DSL toolchain on a robot-delivery System of Systems: modelling, contracts (lifecycle and monitors), visualisation, code generation and simulation.
 
 | Material | English | 日本語 |
 | --- | --- | --- |
@@ -30,9 +28,9 @@ A self-paced workshop of about 95 minutes and a 5-session exercise course that w
 | Course D — Robot Town (rules a community amends itself) | [robot-town-tutorial](https://www.ertl.jp/cadl-spec/docs/handson/robot-town-tutorial) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/robot-town-tutorial) |
 | Course C — Your own SoS | [own-sos](https://www.ertl.jp/cadl-spec/docs/handson/own-sos/) | [ja](https://www.ertl.jp/cadl-spec/ja/docs/handson/own-sos/) |
 
-Sources live under [`docs/handson/`](docs/handson/) (English) and [`i18n/ja/docusaurus-plugin-content-docs/current/handson/`](i18n/ja/docusaurus-plugin-content-docs/current/handson/) (Japanese).
+Sources are under [`docs/handson/`](docs/handson/) (English) and [`i18n/ja/docusaurus-plugin-content-docs/current/handson/`](i18n/ja/docusaurus-plugin-content-docs/current/handson/) (Japanese).
 
-The runnable toolchain referenced by the hands-on lives in the companion repositories: [`cadl`](https://github.com/ertlnagoya/cadl) (compiler / CLI) and [`cadl-explorer`](https://github.com/ertlnagoya/cadl-explorer) (visualisation). The simulator used in Course A Steps 5–6 is [`cadl-raspimouse-simulator`](https://github.com/ertlnagoya/cadl-raspimouse-simulator) (Unity scene + arbitrator + Python runtime). Course D's exercise is [`cadl-robot-town`](https://github.com/ertlnagoya/cadl-robot-town).
+The tools used in the hands-on are in other repositories: [`cadl`](https://github.com/ertlnagoya/cadl) (compiler / CLI) and [`cadl-explorer`](https://github.com/ertlnagoya/cadl-explorer) (visualisation). The simulator used in Course A Steps 5–6 is [`cadl-raspimouse-simulator`](https://github.com/ertlnagoya/cadl-raspimouse-simulator) (Unity scene + arbitrator + Python runtime). Course D's exercise is [`cadl-robot-town`](https://github.com/ertlnagoya/cadl-robot-town).
 
 ## Development
 
@@ -48,7 +46,7 @@ npm install
 npm run start
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+This command starts a local development server and opens a browser window. Most changes appear without restarting the server.
 
 To preview the Japanese pages locally:
 
@@ -62,7 +60,7 @@ npm run start -- --locale ja
 npm run build
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+This command writes the static site to the `build` directory, which any static web server can serve.
 
 ### Deployment
 
