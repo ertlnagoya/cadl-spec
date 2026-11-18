@@ -1528,12 +1528,14 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   and the monitor refuses the observation. In the monitor, an observation at
   which the contract is not in force returns no change, `in_force` says
   whether the contract is in force, and `next_deadline` and
-  `next_check` are `None` until it is in force again. The norms
-  monitors of the Rego and Solidity targets do not read the regime and
-  are not generated for a contract that some regime does not have in
-  force ([Appendix D, D.5](./appendix-d-codegen.md#d5-norms-monitors-of-the-opa-and-solidity-targets));
-  for the other contracts the bindings change nothing they judge, since
-  no norm reads a parameter. `cadl norms-check` (F.12) is not changed
+  `next_check` are `None` until it is in force again. From `cadl`
+  0.3.36 the norms monitors of the Rego and Solidity targets follow the
+  regime in the same way (the key `regime` of an observation in Rego,
+  `setRegime` of the orchestrator in Solidity;
+  [Appendix D, D.5](./appendix-d-codegen.md#d5-norms-monitors-of-the-opa-and-solidity-targets));
+  in 0.3.33 to 0.3.35 they were not generated for a contract that some
+  regime does not have in force. For the other contracts the bindings
+  change nothing they judge, since no norm reads a parameter. `cadl norms-check` (F.12) is not changed
   and judges the contract on its own clock. The projection of a trace up
   to its last observation in force is a trace of the contract; an
   instance that ends while the contract is not in force is settled as
@@ -1542,9 +1544,13 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   still undecided there stays `pending`. The answers to the questions of
   possibility therefore hold for the projections; the questions of
   necessity assume, as before, an instance that runs to the horizon,
-  here on its clock. The gateways and the runtime of [Appendix G](./appendix-g-agents.md) do
-  not read the regime; their boundary policy refuses a file in which a
-  regime does not have an enforced contract in force.
+  here on its clock. The decision function and the generated boundary
+  policies of [Appendix G](./appendix-g-agents.md) read the current
+  regime from the policy input from `cadl` 0.3.36 (G.10), and so do the
+  runtime and the gateways of Appendix G, which read the key `regime` of
+  a trace line as `cadl norms-eval` does and judge each contract instance
+  on the clock of its contract (G.13); in 0.3.33 to 0.3.35 they refused a file
+  in which a regime does not have an enforced contract in force.
 - From `cadl` 0.3.34, `cadl norms-eval` and the norms monitor of the
   Python target apply the versions of a run of
   [Appendix K, K.11](./appendix-k-amendment.md#k11-applying-versions-while-a-system-runs):
@@ -1564,12 +1570,14 @@ The reference implementation (`cadl` 0.3) implements norms 0.1 from
   transitional rule for the contract is `keep` or `switch` with
   `in_states:` is applied as before, with a warning (on the standard
   error of `cadl norms-eval`, in `amend_warnings` of the monitor, and in
-  the warnings of `cadl agents-run`). `cadl norms-check` refuses a later version
-  (`--version`) whose transitional rule for the contract is `keep` or
-  `switch` with `in_states:`, since its model amends every instance at
-  any observation. The norms monitors of the Rego and Solidity targets
-  are not generated for a contract whose running instances switch to a
-  version that names `previous:` (D.5).
+  the warnings of `cadl agents-run`). `cadl norms-check` refused, in
+  `cadl` 0.3.34 and 0.3.35, a later version (`--version`) whose
+  transitional rule for the contract is `keep` or `switch` with
+  `in_states:`; from 0.3.36 it models it as K.11 applies it (F.12). The
+  norms monitors of the Rego and Solidity targets are not generated for
+  a contract whose running instances switch to a version that names
+  `previous:` (D.5), unless the monitor is generated with the other
+  versions of the run (from 0.3.36).
 - From `cadl` 0.3.35, `cadl norms-eval` and the norms monitor of the
   Python target apply versions also to a run that names a regime or
   whose versions bind regimes
@@ -1737,6 +1745,47 @@ lines name only the later versions; a witness names, for each such
 instance, the file whose instance it is. Every instance has the same
 sequence of versions, each with the bindings of the instance, and the
 model is exact for each of these traces as stated above.
+
+**Versions of a run.** From `cadl` 0.3.36, when the transitional rule
+of the contract in a later version is `keep` or `switch` with
+`in_states:`, the model follows the versions of a run of
+[Appendix K, K.11](./appendix-k-amendment.md#k11-applying-versions-while-a-system-runs)
+instead of amending every instance at one observation. Every file, the
+file of the model too, declares the extension with an `amendment:`
+block, and the later versions are given in the order of their sequence
+by `previous:`; a model that does not meet this is refused. The version
+in force is shared by the instances: at every observation the
+environment may choose that the next version takes effect, at most once
+per version and in their order, without a time base (every effective
+time is possible). Each instance has its own version: the model holds,
+per instance, the version it follows, the version of a waiting switch
+with `in_states:` (none at first), and the class of its lifecycle
+state. The classes divide the lifecycle states that are not terminal:
+two states belong to one class when every `in_states:` of the versions
+contains both or neither, and the initial state stands for its class
+(the end of an instance is chosen as above). At every observation the
+environment also chooses, per instance, the class of the lifecycle
+state after the observation. An instance follows the version in force
+at its first observation. At a later observation it is updated as
+`cadl norms-eval` applies K.11: a waiting switch whose states contain
+the class before the observation is made first; then a version that
+takes effect there drops a waiting switch and applies its rule, `keep`
+leaving the instance on its version, `switch` amending it, and `switch`
+with `in_states:` amending it when its states contain that class and
+otherwise waiting. Each amendment is that of F.6 as
+above, one after the other when one observation makes two; an
+`assume:` item that a version has again after one without it continues
+when it was decided before, and starts again otherwise, as F.6 closes
+an undecided item. A witness names the version in force at each
+observation (`version`) and, with `in_states:`, the state of the class
+chosen there (`state`), and has no `amend` line, so that
+`cadl norms-eval --version` with the same files reads it. The
+variables and commands grow with the versions, the classes, and the
+instances; a model above the limits on commands ("Limits") is refused
+with the limit. The tests of `cadl` 0.3.36 compare the model with
+`cadl norms-eval --version` on 780 random paths of seven models of two
+or three versions (one or two instances), without a difference. `cadl` 0.3.34 and 0.3.35 refused such
+a version.
 
 ### What the environment chooses
 

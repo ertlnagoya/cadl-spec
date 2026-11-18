@@ -732,7 +732,18 @@ gives to the agent or deletes (`push_config`), one that it refuses
 (`push_refused`), a notification that it relays to the client
 (`push_sent`) or cannot relay (`push_failed`), and a notification that it
 does not relay because it is not authenticated or not of the task of its
-configuration (`push_dropped`). These records change no decision,
+configuration (`push_dropped`), and, from `cadl` 0.3.36, a change of the
+current regime that it accepts (`regime_change`, with the regime as
+`reason`) or refuses (`regime_refused`). The `reason` of `regime_refused`
+is one of five: `unauthenticated` (the host authenticates the changes and
+the file has no valid MAC or nonce, or the host has no key for them),
+`wrong_run` (the file names another run), `replayed` (its nonce was used
+before), `no_regimes` (the file has no `regimes:`), and `unknown_regime`
+(a name that is not a regime of the file or, with versions, not a regime
+of every version that the run used, uses, or may still use, K.11). The
+first three are decided before the regime that the file names is read,
+so a change that is not authenticated is recorded with one of them only.
+These records change no decision,
 and they are only as trustworthy as the host that writes them: a log
 replayed from a trace that anyone could write proves nothing about
 them.
@@ -1023,6 +1034,23 @@ Input:
   the `id` of each norm that is not static (below) to `true` or
   `false`, and a missing entry is unknown; `derived` lists the derived
   instances that the runtime found valid by G.7, with their chains.
+- `regime` (from `cadl` 0.3.36; required for a file in which a regime
+  of `regimes:` does not have an enforced contract in force, and read
+  only for such a file): the current regime
+  ([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings)). A
+  contract that the regime does not have in force governs no message
+  (F.5, "Contracts not in force"); an input without a regime of the
+  file does not have the form of a policy input. `cadl agents-decide`,
+  `agent-rego`, and `agent-cedar` (where the request carries it as
+  `context.regime`, and a forbid policy `regime` denies a request
+  without a regime of the file) read it. From `cadl` 0.3.36
+  `cadl agents-run` and the gateways follow the current regime too and
+  give it in every policy input they build (G.13); in 0.3.33 to 0.3.35 they
+  refused such a file.
+  The decision function and both policies are compared on random files
+  with regimes in the tests of `cadl` 0.3.36: 10560 inputs on two files
+  for each policy with the default count, and 52800 inputs on ten files
+  in a longer run (`CADL_REGIME_TARGET_TRACES=10`), without a difference.
 - A `derived` entry is re-checked fail-closed. It applies only if its
   norm is a delegable permission of that contract, the holder is the
   sender of the message and the last element of the chain, the chain
@@ -2327,6 +2355,68 @@ message (G.5), together with an amendment; each message is decided, and
 an allowed one is one observation; a change of lifecycle state and the
 end of instances are a last observation. Messages after the end of an
 instance are still decided and recorded.
+
+From `cadl` 0.3.36 the runtime and the gateways follow the current
+regime of a file in which a regime of `regimes:` does not have an
+enforced contract in force
+([Appendix A, A.7.1](./appendix-a-syntax.md#a71-regime-bindings),
+"Runs"); in 0.3.33 to 0.3.35 they refused such a file. A line of the trace
+names the regime with the key `regime`, as a trace of `cadl norms-eval`
+does, and before the first one the run is in the initial regime. At a
+line the named regime is current first, after the expired holds, the
+withdrawals and the host events; then the versions that take effect
+there are applied
+([Appendix K, K.11](./appendix-k-amendment.md#k11-applying-versions-while-a-system-runs));
+then the line goes on as above. Every policy input carries the regime
+(G.10), so a contract that the regime does not have in force governs no
+message, and a decision record lists only the instances of the
+contracts in force. An instance of such a contract sees nothing while
+the contract is not in force (F.5, "Contracts not in force"): its
+deadlines, the windows of its prohibitions and the in-force flag of a
+violated prohibition are measured on the clock of the contract, a
+change of lifecycle state other than to a terminal state is not seen,
+and an instance that ends then is settled on the stopped clock. A hold
+of such a contract stays held: its approval is a message that the
+contract does not govern then, so it approves nothing until the
+contract is in force again or the hold expires. The deadline of a hold
+is a time of the trace, not of the clock of the contract: the hold
+expires at it also while the contract is not in force. A version that takes
+effect while the contract is not in force reaches the instance at its
+next observation (an instance that has observed nothing yet starts on
+the version in force then), and a regime must be a regime of every
+version that the run uses. `amend` in such a run is refused, as in
+`cadl norms-eval`: F.6 amends an instance at an observation, and an
+instance whose contract is not in force has none. A gateway takes the
+regime of its first line from `--init` and later changes from its
+inbox, as files of the kind `regime` that
+`cadl mcp-regime DIR REGIME [--key FILE]` writes; it writes each
+accepted change as a trace line with `regime` and the host event
+`regime_change` (G.8), so the replay by `cadl agents-run` gives the
+same log. Given `--regime-key FILE`, the gateway authenticates every
+such file with HMAC-SHA256 under that key over the canonical JSON of
+G.8, with the run id and a nonce, also under `--insecure-approvals`
+(which then leaves only approvals and other messages unauthenticated),
+and says `regimes_signed` in the published `run.json`. With
+`--approver-keys` and without `--regime-key` it refuses every change
+of regime (`unauthenticated`); under `--insecure-approvals` without
+`--regime-key` it reads a change without authentication, for tests.
+`cadl mcp-regime` without `--key` refuses, with a nonzero exit status,
+an inbox whose `run.json` says `approver_keys` or `regimes_signed`. A
+refused change (G.8) leaves the regime as it was, and the gateway goes
+on; this includes, with versions, a regime that a version that the run
+used, the version in force, or a later version of the run does not
+have, which K.11 ("Versions and regimes", item 3) would make the run
+fail on when that version takes effect. The gateway refuses to start
+when the regime of its first line (from `--init` or the initial regime)
+is such a regime, and when the run starts in no regime (the version in
+force at its first line has no `regimes:`) while a version of the run
+has `regimes:`, which K.11 forbids. A gateway that does not start
+removes the audit log, the trace, and `run.json` that it created. The tests of `cadl`
+0.3.36 compare every decision with the decision function on its input
+and the verdicts of every contract instance with `cadl norms-eval` on the
+observations that the enforcement point made, on 400 random traces of
+five files and on 120 runs with two versions whose regime bindings
+differ, without a difference.
 
 Three points are readings of the implementation and not rules of this
 appendix. An amendment applies to the enforced contracts whose

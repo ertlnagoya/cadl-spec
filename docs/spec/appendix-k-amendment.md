@@ -596,8 +596,10 @@ a system runs, as K.11 says:
   of each run (a list of samples with `every:`), and the values of the
   terms of the target. Exit status 1 when a measurement does not meet
   its target;
-- `cadl norms-check --version` refuses a version whose rule for the
-  contract is `keep` or `switch` with `in_states:` (K.11);
+- `cadl norms-check --version` models a version whose rule for the
+  contract is `keep` or `switch` with `in_states:` as K.11 applies it
+  from `cadl` 0.3.36 (F.10, F.12); `cadl` 0.3.34 and 0.3.35 refused
+  such a version;
 - the module `version.py` of the Python target, and the refusals of the
   norms monitors of the Rego and Solidity targets and of the Unity C#
   target that K.11 gives.
@@ -934,15 +936,29 @@ Numbers are exact, as in F.5.
 - `cadl norms-check` with `--version` lets the environment amend every
   instance at any one observation, which is `switch` without
   `in_states:` at an effective time it does not know. From `cadl`
-  0.3.34 it refuses a later version whose rule for the contract is
-  `keep` or `switch` with `in_states:`: its model would amend instances
-  that the version keeps, or in states in which they do not switch.
-  For `keep`, each version is checked alone.
+  0.3.34 it refused a later version whose rule for the contract is
+  `keep` or `switch` with `in_states:`. From `cadl` 0.3.36 such a run is
+  modelled as this section applies it: every file declares the
+  extension with an `amendment:` block, the later versions are given in
+  the order of `previous:`, and the next version takes effect at any
+  observation (every effective time is possible). Each instance has the
+  version it follows, the version of a waiting `in_states:` switch, and
+  the class of its lifecycle state, which the environment sets at every
+  observation (states that no rule tells apart form one class). A
+  witness trace names the version in force (`version`) and the state
+  (`state`), so that `cadl norms-eval` with the versions reads it. A
+  model above the limits of commands is refused with the limit (F.12).
 - `cadl norms-eval` and the norms monitor of the Python target apply
   this section to a trace (F.10), and `cadl metrics-eval` judges
   measurements (K.9). From `cadl` 0.3.35 `cadl agents-run` and the
   gateways of Appendix G switch the enforcement point at the effective
-  times (K.9).
+  times (K.9). From `cadl` 0.3.36 they also follow regime bindings
+  together with the versions ("Versions and regimes"): at a line the
+  regime it names is current first, then the versions take effect; a
+  version that takes effect while a contract is not in force reaches its
+  instances at their next observation; a regime must be a regime of
+  every version that the run uses
+  ([Appendix G, G.13](./appendix-g-agents.md#g13-ir-addition-and-reference-implementation-status)).
 
 ### Generated code
 
@@ -990,7 +1006,27 @@ switch:
   `previous:` and with no `effective:` or `effective: { period: 1 }` is
   always a first version. For a contract
   whose instances keep their version, the monitor serves the instances
-  that start under this version;
+  that start under this version. From `cadl` 0.3.36 the Rego monitor
+  generated with the other versions of the run (`cadl codegen -t opa
+  FILE --version OTHER ...`) contains the contract of every version and applies
+  this section to the versions that the observations name, with the
+  amendment of F.6; so does the Solidity monitor generated with them
+  (`-t solidity`), to the versions that the orchestrator sets with
+  `setVersion`, and it also applies "Versions and regimes" above when a
+  version binds regimes (`setRegime`), as does the Rego monitor (the key
+  `regime` of an observation). Given the other versions, the generated code takes the
+  sequence of the run as this section builds it, without the
+  conservative test;
 - the Unity C# target keeps lifecycle instances with deadlines; it
-  refuses a version that may replace another and in which a contract
-  with `lifecycle:` switches its running instances.
+  refuses, without the other versions, a version that may replace
+  another and in which a contract with `lifecycle:` switches its running
+  instances. From `cadl` 0.3.36, given the other versions (`--version
+  FILE`), it writes a class per version and a class that follows the
+  version the host sets (`SetVersion`); a moved instance keeps its state,
+  the time at which the deadlines of that state were armed, and the last
+  times of its periodic monitors. When a version binds regimes, the class
+  also follows the regime the host sets (`CadlRegimes.Set`) as "Versions
+  and regimes" above says: the contract is in force by the bindings of the
+  version in force, the instance starts at the first time it is in force,
+  and a version that takes effect while it is not in force is applied when
+  it is in force again, before anything else.

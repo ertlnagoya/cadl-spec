@@ -665,9 +665,9 @@ predicates of `condition:`, `safety_invariant:`, `formula:`, `expr:`,
 monitor `rule:`, lifecycle `when:`, and an `on:` that is not a message
 event are not checked for undeclared actors. Other
 missing required keys are replaced by an empty value. `cadl` 0.3
-deviates from this appendix as follows (checked against `cadl` 0.3.35).
+deviates from this appendix as follows (checked against `cadl` 0.3.36).
 
-- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.35; no
+- **Expressions.** Expressions follow A.10 and A.11 in `cadl` 0.3.36; no
   deviation is known. Up to `cadl` 0.3.17 the unary `-` of `factor` was
   not accepted: an item that used it was kept as an opaque predicate,
   and for a lifecycle `on:` or `when:` or a monitor `rule:`, `cadl check`
@@ -744,14 +744,16 @@ deviates from this appendix as follows (checked against `cadl` 0.3.35).
   names one (F.5, F.10). The `solidity` target makes one step one call
   of the orchestrator and checks the safety invariants in the same way;
   the `solidity` and `opa` targets read the current regime for the
-  contracts in force and the institutional parameters. A target that cannot read the regime does
-  not generate code that ignores it: the norms monitors of the `opa`
-  and `solidity` targets are not generated for a contract that some
-  regime does not have in force (D.5), `unity-csharp` refuses a file in
-  which a regime does not have a contract with `lifecycle:` or
-  `monitors:` in force, and the boundary policy of
-  [Appendix G](./appendix-g-agents.md) refuses a file in which a regime
-  does not have an enforced contract in force. Up to 0.3.32 the
+  contracts in force and the institutional parameters. From `cadl`
+  0.3.36 the norms monitors of the `opa` and `solidity` targets (D.5),
+  the `unity-csharp` target, and the boundary policies of
+  [Appendix G](./appendix-g-agents.md) (`cadl agents-decide`,
+  `agent-rego`, `agent-cedar`) follow the current regime as well; in
+  0.3.33 to 0.3.35 they refused a contract that some regime does not
+  have in force. From `cadl` 0.3.36 `cadl agents-run` and the gateways of
+  Appendix G follow the current regime too: a trace line, or the host of
+  a gateway, names it (G.13); in 0.3.33 to 0.3.35 they refused a file in
+  which a regime does not have an enforced contract in force. Up to 0.3.32 the
   generated `unity-csharp`, `solidity`, and `opa` code, the online
   monitor of the norms, and `cadl regime-map` did not use the bindings,
   the Python regime controller started in the `from:` of the first
