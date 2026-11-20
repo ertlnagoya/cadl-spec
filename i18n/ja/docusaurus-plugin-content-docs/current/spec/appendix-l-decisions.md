@@ -266,7 +266,8 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
 項目は，それより前に書かれた項目だけを指す。`basis`，`fulfils`，`proposal`，`of`，`compared_with`，
 `request`，`decision`，`objective`，`corrects`，`options`，`choice` の `id` は，前の行の `id`
 （または `"keep"`）である。項目の `point` は減らない。1つの時点の中では，項目は生じた順に書く。目的，
-改正案，測定と検査，投票，判断の要求，推奨，判断，後で確かめる約束，バージョンの順である。
+改正案，測定と検査，投票，判断の要求，推奨，判断，後で確かめる約束，バージョンの順である。この順序は推奨
+であり，検証者は，この順序に従わない記録を報告しない。
 
 ## L.6 検査と指摘 {/* #l6-checks-and-findings */}
 
@@ -281,10 +282,15 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
 - L-5 `by` は，種類が求める役割を持つ当事者を指す。`objective` は owner，`proposal` は proposer，
   `measurement` と `check` は assessor，`vote` は voter，`recommendation` は advisor，`decision` は
   decider である。`request`，`follow_up`，`version`，`correction`，`note` はどの当事者でもよい。
-- L-6 判断の `choice` は，その `options` の1つである。`procedure` が `vote` または `override` の
-  判断は，`choice` への投票を `basis` に持つ（`choice` が `"keep"` のときは，退けた改正案への投票）。
-  `vote` では，`choice` への投票がK.3の判断者の定めに従って結果を決める。`override` では投票が結果を
-  決めない。`procedure` が `automatic` の判断は `rule` を持ち，判断する者は種類が `tool` の当事者である。
+- L-6 判断の `choice` は，その `options` の1つである。改正案への投票は，その改正案への `vote` の
+  項目で，投票者ごとに1つである。同じ投票者の後の投票は，前の投票に代わる。`procedure` が `vote`
+  または `override` の判断は，`choice` について判断する（`choice` が `"keep"` のときは，`options` の
+  最初の改正案について判断する）。その改正案へのそれまでの投票をすべて `basis` に持つ。`vote` では，
+  投票がK.3の判断者の定めに従って結果を決める。投票者の賛成が定足数に届くのは，判断がその改正案を
+  採択するときに限る。`override` では，投票が結果を決めない。賛成が定足数に届くかどうかは，有効な
+  バージョンのCADLファイルがあるときだけ検査できる（L-9〜L-11）。ないときは，検証者は検査しなかった
+  ことを示す。`procedure` が `automatic` の判断は `rule` を持ち，判断する者は種類が `tool` の当事者で
+  ある。ほかの判断の `rule` は `null` である。
 - L-7 改正案を採択する `version` の項目は，その改正案を `choice` とする判断を指し，その判断の
   `result` はバージョンの `version` である。
 - L-8 どの `proposal`，`recommendation`，`decision` も，当事者の種類によらず，L.4の証拠のフィールドを
@@ -313,7 +319,7 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
 | against recommendation | 判断が，根拠にある推奨と違う選択肢を選んだ。 |
 | delegated | ほかの当事者に代わって判断する当事者（`on_behalf_of`）が判断した。サービス運営者に代わるLLMなど。 |
 | unknowns | 判断，または判断の根拠にある推奨が，その当事者の分からなかったことを挙げている。 |
-| prediction missed | 提案，推奨，判断の予測が，後の項目と食い違う。予測の対象の選択肢の測定を `compared_with` の測定と比べた結果，または予測が指す当事者の投票である。 |
+| prediction missed | 提案，推奨，判断の予測が，後の項目と食い違う。メトリクスの予測では，予測の対象の選択肢の後の測定が，その `compared_with` の測定と比べて，上がっていない（`increase`），下がっていない（`decrease`），変わっている（`unchanged`。許す幅は検証者が示す），または条件を満たさない。投票の予測では，予測が指す当事者の後の投票が，予測と違う。 |
 | affected not measured | 判断が採択する改正案について，その `affected` の当事者（`contract` の層のパラメータの変更では，役割 `affected` を持つ当事者）の値が，根拠にあるどの測定の `per_party` にもない。 |
 | unmeasured choice | 判断が，種類が `amendment` の改正案を，その測定を根拠に持たずに採択した。 |
 | reading not decided | `measure` のない目的のあと，判断が読み方を選ぶ前に測定が行われた。 |
@@ -473,21 +479,19 @@ P1.2については prediction missed を報告する。LLMはBが賛成する�
 
 ## L.10 リファレンス実装の状況 {/* #l10-reference-implementation-status */}
 
-`cadl` 0.3.36は，判断の記録を読み書きしない。現在あるものは次のとおりである。
+`cadl` 0.3.37から，次のものがある。
 
-- `cadl audit-verify` は，L.3が用いるG.8の連鎖を検証する。
-- cadl-robot-town（v0.2.2より後）は，`town.steward` の実行ごとに `evidence.json`（形式
-  `robot-town-evidence/1`）を書き出す。これはこの形式の前身である。JSON Linesではなく1つのJSON文書で
-  あり，その記録に連鎖を持ち，フィールドは演習のものである。そのK記録は，`objective`，種類が `measure` の
-  `proposal`，`recommendation`，`decision` にあたる。D記録は，この形式が `measurement`，`proposal`，
-  `check`，`vote`，`request`，`recommendation`，`decision`，`version` の項目として書く内容を持つ。
-  `follow_up` の項目はなく，証拠のフィールドも，理由，人間の前提，LLMの推奨の分からないことのほかは
-  持たない。
-- cadl-explorer（v1.4.2より後）のページDecision Evidenceは，`evidence.json` を読み，当事者の時系列，
-  各判断の経緯，GSN，L.6の指摘，連鎖を示す。
-
-予定しているのは，cadl-robot-townでの判断の記録の書き出し，L.6の検査を行う `cadl` の検証器，
-cadl-explorerでの判断の記録の読み込みである。
+- `cadl.decisions.DecisionChain` は記録を書き，`cadl decisions-verify RECORD.jsonl` は記録を検査する。
+  エラーL-1〜L-8と，バージョンのCADLファイル（`version` の項目の `.cadl` の添付と，`--version` で渡した
+  ファイル）に対するL-9〜L-11を報告する。L.6の指摘を報告し，検査できなかったものを挙げる。値が比べる
+  値の1%以内なら `unchanged` とみなす。`--key`，`--run-id`，`--anchor` は `cadl audit-verify` と同じで
+  ある。
+- cadl-robot-town（v0.3.0から）は，`town.steward` と `town.council` の実行ごとに `decisions.jsonl` を
+  書き出す。`--decider llm` では，LLMが運営者に代わって判断要求に答え，`on_behalf_of` を持つ当事者と
+  して記録される。演習のモデルは改正拡張を宣言していないので，バージョンの項目はCADLファイルを添付せず，
+  L-9〜L-11は検査されない。
+- cadl-explorer（v1.5.0から）のページDecision Evidenceは，記録を読み，`cadl.decisions` で検証し，
+  当事者の時系列，各判断の経緯，当事者ごとの証拠，L.8のGSN，指摘，連鎖を示す。
 
 ## L.11 後方互換性 {/* #l11-backward-compatibility */}
 

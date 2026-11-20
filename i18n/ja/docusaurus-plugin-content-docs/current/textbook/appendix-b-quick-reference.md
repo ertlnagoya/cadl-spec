@@ -6,7 +6,7 @@ title: "付録 B — 記法の早見表"
 
 # 付録 B — 記法の早見表
 
-本書で使う CADL の書き方、コマンド、ファイルの場所を 1 ページにまとめます。それぞれの意味は第 3 章で説明しています。この付録の CADL の例は、つなげると 1 つのファイルになり、`cadl` 0.3.36 の `cadl check` と `cadl verify` を通ります。
+本書で使う CADL の書き方、コマンド、ファイルの場所を 1 ページにまとめます。それぞれの意味は第 3 章で説明しています。この付録の CADL の例は、つなげると 1 つのファイルになり、`cadl` 0.3.37 の `cadl check` と `cadl verify` を通ります。
 
 ## B.1 ファイルの構成
 
@@ -136,7 +136,7 @@ sos:
 | `streamlit run app.py`（`cadl-explorer` で） | cadl-explorer を起動する | 6.3 |
 | `nats-server -p 4222` | NATS を起動する | 8.2 |
 | `go run .`（`arbitrator/C-SoS/main` で） | arbitrator を起動する | 8.2 |
-| `cadl --help` | すべてのコマンドを表示する。本書で使わない拡張のコマンドとして、規範拡張の `norms-eval` と `norms-check`（[付録 F](../spec/appendix-f-norms.md)）、エージェント統治拡張の `agents-run`、`audit-verify`、`mcp-gateway`、`a2a-gateway`（[付録 G](../spec/appendix-g-agents.md)）、確率モデル拡張の `model-check`（[付録 H](../spec/appendix-h-stochastic.md)）、戦略モデル拡張の `game-check`（[付録 I](../spec/appendix-i-games.md)）、根拠付け拡張の `norms-indices`（[付録 J](../spec/appendix-j-grounding.md)）も表示される | 2.4、11.2 |
+| `cadl --help` | すべてのコマンドを表示する。本書で使わない拡張のコマンドとして、規範拡張の `norms-eval` と `norms-check`（[付録 F](../spec/appendix-f-norms.md)）、エージェント統治拡張の `agents-run`、`audit-verify`、`mcp-gateway`、`a2a-gateway`（[付録 G](../spec/appendix-g-agents.md)）、確率モデル拡張の `model-check`（[付録 H](../spec/appendix-h-stochastic.md)）、戦略モデル拡張の `game-check`（[付録 I](../spec/appendix-i-games.md)）、根拠付け拡張の `norms-indices`（[付録 J](../spec/appendix-j-grounding.md)）、改正拡張の `amend-diff`（[付録 K](../spec/appendix-k-amendment.md)）、判断の記録の `decisions-verify`（[付録 L](../spec/appendix-l-decisions.md)）も表示される | 2.4、11.2 |
 
 ## B.6 ソースファイルの場所
 

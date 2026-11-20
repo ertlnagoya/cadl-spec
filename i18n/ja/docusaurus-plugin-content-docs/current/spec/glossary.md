@@ -253,8 +253,8 @@ SoS Contract DSL 拡張の用語である。
 
 ## 判断の記録
 
-判断の記録の形式の用語である。[付録L](./appendix-l-decisions.md) を参照。リファレンス実装は，まだこれを
-提供しない。
+判断の記録の形式の用語である。[付録L](./appendix-l-decisions.md) を参照。リファレンス実装は，`cadl` 0.3.37から
+これを提供する（`cadl decisions-verify`）。
 
 - **Decision record（判断の記録）** — モデルとは別に置く，JSON Linesのファイル。モデルの改正がどのように
   判断されたかを，[付録G，G.8](./appendix-g-agents.md)のハッシュの連鎖とともに記録する。
