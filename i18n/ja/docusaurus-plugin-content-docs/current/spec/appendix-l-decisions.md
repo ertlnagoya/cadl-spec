@@ -1,12 +1,12 @@
 ---
 sidebar_position: 20.6
 title: "付録L. 判断の記録"
-description: "判断の記録（decisions 0.1）の形式を規定する。モデルの改正がどのように判断されたかを記録するファイルの形式であり，当事者とその役割，目的，改正案，測定，検査，投票，推奨，判断の要求，判断，バージョン，後で確かめる約束を項目として持つ。各判断の根拠，G.8 のハッシュの連鎖による完全性，検証者が行う検査と，確認のために報告する指摘，付録Kとの関係，GSNへの対応を定める。"
+description: "判断の記録（decisions 0.1）の形式を規定する。モデルの改正がどのように判断されたかを記録するファイルの形式であり，人，LLM，ツールのどれにも同じ証拠を求める。当事者とその役割（ほかの当事者に代わって判断する当事者を含む），目的，改正案，測定，検査，投票，推奨，判断の要求，判断，バージョン，後で確かめる約束を項目として持つ。各判断の根拠，G.8 のハッシュの連鎖による完全性，検証者が行う検査と，確認のために報告する指摘，付録Kとの関係，GSNへの対応を定める。"
 ---
 
 # 付録L. 判断の記録（decisions 0.1）
 
-[付録K，K.5](./appendix-k-amendment.md)では，モデルのバージョンは，その根拠となった人間の判断の記録を
+[付録K，K.5](./appendix-k-amendment.md)では，モデルのバージョンは，その根拠となった判断の記録を
 URI参照で指すことができる。K.5は記録そのものについては何も定めない。この付録は，そのような記録の形式を
 定める。この形式の記録を，判断の記録と呼ぶ。判断の記録があれば，記録を書いたシステムを知らないツールでも，
 記録を読み，検査し，示すことができる。
@@ -37,10 +37,16 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
 - 何が，誰によって提案され，何が測られたか。
 - それぞれの改正案がどの検査を通ったか，誰が検査したか。
 - 各当事者がどう投票したか。
-- 助言者が何を推奨し，何が分からないと述べたか。
-- 誰が，どの手続きで，どの理由と前提によって判断したか。判断がどの項目を根拠としたか。
+- 提案者が何を予測し，助言者が何を推奨したか。その理由と前提，何が分からないと述べたか。
+- 誰が，どの手続きで，どの理由，前提，分からないことのもとで判断したか。判断がどの項目を根拠としたか。
 - モデルのどのバージョンが効力を持ったか。
 - 判断した者が後で何を確かめると約束したか。それが果たされたか。
+
+どの当事者にも同じ証拠を求める。LLMやツールが行った提案，推奨，判断は，人が行ったものと同じ
+フィールドで記録し，同じ規則で検査する。理由，根拠とした項目，前提，予測，分からないことである
+（L.4の「証拠のフィールド」）。コースDでは，LLMが提案と推奨を行い，人間に代わって判断することもある。
+規則の改正でも，顧客との契約の改正でも同じである。確認する人は，LLMの判断を人間の判断と同じように
+詳しく読めなければならず，誰が誰に代わって判断したかを記録から読み取れなければならない。
 
 この付録が定めるのは，項目とそのフィールド，項目のあいだの参照，ファイルの完全性，検証者の検査である。
 定めないのは，項目を生み出す手続き（システムがどの判定を行うか，改正案をどう作るか），メトリクスの
@@ -60,7 +66,7 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
   | `assessor` | 改正案を測り，検査する |
   | `voter` | 改正案に投票する |
   | `advisor` | 判断する者に選択肢を推奨する |
-  | `decider` | 判断する |
+  | `decider` | 判断する。ほかの当事者に代わって判断することもある（`on_behalf_of`，L.3） |
   | `affected` | 判断の影響を受けるが，判断には加わらない（顧客など）。項目が誰に影響するかを示すために挙げる |
 
 - 項目は，記録のヘッダより後の1行である。項目は，種類（L.4），識別子，項目を作った当事者，項目が属する
@@ -102,9 +108,11 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
 | `name` | 読む人のための名前，または `null`。 |
 | `actor` | 当事者が，モデルのどのアクターまたは役割にあたるか。K.3の `decided_by:` と `voters:` が指す形で書く（`COUNCIL`，`service_operator`）。なければ `null`。 |
 | `model` | `llm` ではモデルの識別子，`tool` ではツールの名前とバージョン。それ以外は `null`。 |
+| `on_behalf_of` | この当事者が代わりを務める当事者の `id`，または `null`。サービス運営者に代わって判断するLLMは，自身が役割 `decider` を持ち，ここに運営者の当事者を書く。 |
 
 種類が `human` の当事者は，人が担う役割を表す。記録はその人の名前を示さなくてよい。誰がその役割を
-担ったかは，記録を保管する組織が扱う。
+担ったかは，記録を保管する組織が扱う。種類が `llm` と `tool` の当事者は `model` を持つ。どのモデル，
+どのバージョンのツールが項目を作ったかを，読む人が分かるようにするためである。
 
 ## L.4 項目 {/* #l4-entries */}
 
@@ -120,9 +128,25 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
 | `basis` | この項目の根拠となった，より前の項目の `id`。空でもよい。 |
 | `fulfils` | この項目が果たす，より前の `follow_up` の項目の `id`。空でもよい。 |
 | `attachments` | 項目に属するファイル。`path`（記録からの相対パス），`sha256`，`media_type` または `null`。測定の表，LLMの出力，改正案のCADLファイルなど。 |
+| `generated` | 文をLLMが生成した項目では，ほかの当事者が項目を書いたときも，`model`（モデルの識別子）と `request_digest`（LLMへの依頼の要約）。同じ入力による2回の実行と，異なる入力による実行を見分けるためである。それ以外は `null`。 |
 
 判断，判断の要求，推奨の選択肢は，`proposal` の項目の `id`，またはモデルを変えないことを表す `"keep"`
 である。
+
+### 証拠のフィールド
+
+`proposal`，`recommendation`，`decision` は，作った当事者の種類によらず，さらに4つのフィールドを持つ。
+
+| フィールド | 内容 |
+| --- | --- |
+| `reason` | その当事者が，なぜそれを提案，推奨，判断するか。当事者自身の言葉で書く。空であってはならない。ただし `procedure` が `automatic` の判断は，代わりに `rule` を持ち，`null` でもよい。 |
+| `assumptions` | 当事者が確かめずに正しいとしていること。文の並び。 |
+| `unknowns` | 当事者が分からず，知る必要があると述べたこと。文の並び。 |
+| `predictions` | 当事者が起こると予測すること。`option`（予測の対象の選択肢。提案では自身の `id`），`subject`（メトリクスは `metric:<名前>`，1つの当事者のメトリクスは `metric:<名前>@<当事者>`，投票は `vote:<当事者>`），`expected`（`increase`，`decrease`，`unchanged`，`yes`，`no`，または `"<= 1"` のような条件の文字列），`note`（文，または `null`）の並び。 |
+
+並びは空でもよい。空の `unknowns` は，当事者が分からないことを何も挙げなかったことを表す。これらの
+フィールドによって，確認する人は，各当事者が述べたことを後で測ったことと比べられる。人でもLLMでも同じ
+方法で比べる。
 
 ### 種類
 
@@ -143,10 +167,12 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
 | --- | --- |
 | `kind` | `amendment`（モデルの新しいバージョン）または `measure`（目的の読み方）。 |
 | `title` | 短い題名。 |
-| `rationale` | 提案者が書いた，提案の理由。 |
 | `changes` | 改正では，`parameter`（K.3のパラメータの `id`，またはシステムでの名前），`from`，`to`（数，または時間の文字列），`layer`（`rule`，`contract`，`regulation`，または `null`）の並び。 |
 | `objective` | 読み方では，読む目的の `id`。 |
 | `measure` | 読み方では，測り方の項目。 |
+| `affected` | 変更の影響を受け，その判断に加わらない当事者の `id`。顧客との契約の変更での顧客など。空でもよい。 |
+
+提案は証拠のフィールドも持つ。
 
 `measurement`：有効なバージョン，または改正案について測った値。
 
@@ -191,8 +217,8 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
 | `request` | 判断の要求の `id`，または `null`。 |
 | `options` | `option`，`summary`，`affected`（誰が得をし，誰が損をするかの文）の並び。 |
 | `recommends` | 推奨する選択肢，または `null`。 |
-| `reason` | 理由。 |
-| `unknowns` | 助言者が分からないと述べたこと。文の並び。 |
+
+推奨は証拠のフィールドも持つ。
 
 `decision`：判断。
 
@@ -203,10 +229,10 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
 | `choice` | 選んだ選択肢。 |
 | `procedure` | `single`（判断する者が単独で判断した），`vote`（`choice` への投票の結果に従った），`override`（判断する者が投票の結果を覆した），`automatic`（ツールが `rule` に書いた規則を適用した）のいずれか。 |
 | `rule` | `automatic` では，その規則の文（たとえば「すべての検査と投票を通った案のうち，改善が最も大きいものを採択する」）。それ以外は `null`。 |
-| `reason` | 判断する者が書いた理由，または `null`。 |
-| `assumptions` | 判断の前提。文の並び。 |
 | `affected` | 判断の影響を受ける当事者の `id`。空でもよい。 |
 | `result` | 判断の後に有効な `sos.version`。読み方についての判断では `null`。 |
+
+判断は証拠のフィールドも持つ。
 
 `version`：モデルのバージョンが効力を持つ。
 
@@ -258,20 +284,24 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
 - L-6 判断の `choice` は，その `options` の1つである。`procedure` が `vote` または `override` の
   判断は，`choice` への投票を `basis` に持つ（`choice` が `"keep"` のときは，退けた改正案への投票）。
   `vote` では，`choice` への投票がK.3の判断者の定めに従って結果を決める。`override` では投票が結果を
-  決めず，`reason` は `null` でない。`procedure` が `automatic` の判断は `rule` を持ち，判断する者は
-  種類が `tool` の当事者である。
+  決めない。`procedure` が `automatic` の判断は `rule` を持ち，判断する者は種類が `tool` の当事者である。
 - L-7 改正案を採択する `version` の項目は，その改正案を `choice` とする判断を指し，その判断の
   `result` はバージョンの `version` である。
+- L-8 どの `proposal`，`recommendation`，`decision` も，当事者の種類によらず，L.4の証拠のフィールドを
+  持ち，その `reason` は空でない（L.4が `automatic` に認める場合を除く）。種類が `llm` と `tool` の
+  当事者は `model` を持つ。当事者の `on_behalf_of` はほかの当事者を指し，自身の代わりを務める当事者は
+  ない。予測の `subject` は，メトリクス，または役割 `voter` を持つ当事者を指す。
 
 バージョンのCADLファイルが手元にあるとき（`version` の項目の `attachments` のパス，または検証者に
 渡されたファイル），検証者は次のものも報告しなければならない。
 
-- L-8 ヘッダと各 `version` の項目の `source_sha256` は，ファイルのSHA-256である。ファイルの
+- L-9 ヘッダと各 `version` の項目の `source_sha256` は，ファイルのSHA-256である。ファイルの
   `sos.version`，`amendment.previous`，`amendment.effective` は項目のものと同じである。
-- L-9 種類が `amendment` の改正案の各 `parameter` は，有効なバージョンのK.3のパラメータであり，
+- L-10 種類が `amendment` の改正案の各 `parameter` は，有効なバージョンのK.3のパラメータであり，
   `from` はそのパラメータの値，`to` はK.3が1回の改正で許す値である。
-- L-10 改正案を採択する判断の判断する者は，それが変える各パラメータのK.3の判断者である（`actor` が
-  `decided_by:` である当事者）。そうでなければ，判断の `procedure` は `override` であり，理由を持つ。
+- L-11 改正案を採択する判断の判断する者は，それが変える各パラメータのK.3の判断者である（`actor` が
+  `decided_by:` である当事者）か，その当事者に代わって判断する（`on_behalf_of`）。そうでなければ，
+  判断の `procedure` は `override` である。
   結果を決める投票の投票者は，`actor` が `voters:` にある当事者である。
 
 検証者は，次の指摘も報告する。指摘はエラーではない。記録が，確認する人の見るべきことを示しており，
@@ -281,8 +311,10 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。
 | --- | --- |
 | override | 判断が投票の結果を覆した（`procedure` が `override`）。 |
 | against recommendation | 判断が，根拠にある推奨と違う選択肢を選んだ。 |
-| no reason | 種類が `human` の判断する者が，理由なしに判断した。 |
-| unknowns | 判断の根拠にある推奨が，助言者の分からなかったことを挙げている。 |
+| delegated | ほかの当事者に代わって判断する当事者（`on_behalf_of`）が判断した。サービス運営者に代わるLLMなど。 |
+| unknowns | 判断，または判断の根拠にある推奨が，その当事者の分からなかったことを挙げている。 |
+| prediction missed | 提案，推奨，判断の予測が，後の項目と食い違う。予測の対象の選択肢の測定を `compared_with` の測定と比べた結果，または予測が指す当事者の投票である。 |
+| affected not measured | 判断が採択する改正案について，その `affected` の当事者（`contract` の層のパラメータの変更では，役割 `affected` を持つ当事者）の値が，根拠にあるどの測定の `per_party` にもない。 |
 | unmeasured choice | 判断が，種類が `amendment` の改正案を，その測定を根拠に持たずに採択した。 |
 | reading not decided | `measure` のない目的のあと，判断が読み方を選ぶ前に測定が行われた。 |
 | open follow-up | 後で確かめる約束が果たされておらず，その `due` の時点を過ぎている（または記録が完全である）。 |
@@ -314,7 +346,7 @@ sos:
 ```
 
 記録とモデルは，異なる当事者が異なる時点に書くので，どちらも他方に依存しない。モデルは記録の項目を
-指すことができ，記録はモデルのバージョンを `sos.version` とファイルのSHA-256で指す（L-8）。
+指すことができ，記録はモデルのバージョンを `sos.version` とファイルのSHA-256で指す（L-9）。
 
 ## L.8 GSNへの対応（参考） {/* #l8-mapping-to-gsn-informative */}
 
@@ -331,6 +363,7 @@ sos:
 | 根拠にある `measurement` と `check` | StrategyのSolution |
 | `reason` | StrategyのJustification |
 | `assumptions` | StrategyのAssumption |
+| `unknowns` と `predictions` | StrategyのContext。後の測定と食い違った予測は，そのStrategyへの反証である。 |
 | 根拠にある `recommendation` | StrategyのContext |
 | `follow_up` | Strategyの下のGoal。後の項目が果たすまでは未展開とし，果たした項目をそのSolutionとする。 |
 
@@ -339,23 +372,24 @@ sos:
 コースDの英語の記録（cadl-robot-townの `examples/steward-d-en`）の第1期を，短くしたもの。各オブジェクトは
 ファイルの1行である。ここでは複数の行に分けて示し，完全性のフィールドは省いた。バージョンは，実行の
 ファイルの名前にならって `v1`，`v2` と呼ぶ。演習のモデルはまだ改正拡張を宣言していないので，これは
-それらのファイルが持つことになる `sos.version` である。
+それらのファイルが持つことになる `sos.version` である。提案の予測は，その理由の文から取った。人間は
+D1に前提，分からないこと，予測を書かなかったので，空の並びで記録している。
 
 ```json
 {"decisions_format": "cadl-decisions/1", "hash": "sha256", "key_id": null,
  "run_id": "3f2a…", "model": {"name": "RobotTown", "version": "v1", "source_sha256": "9c1e…"},
- "time_base": "one simulated hour of the robot town", "started": "2026-11-18T09:12:03Z", "previous": null,
- "parties": [
+ "time_base": "one simulated hour of the robot town", "started": "2026-11-18T09:12:03Z",
+ "previous": null, "parties": [
   {"id": "operator", "kind": "human", "roles": ["owner", "decider"], "name": "service operator",
-   "actor": null, "model": null},
+   "actor": null, "model": null, "on_behalf_of": null},
   {"id": "llm", "kind": "llm", "roles": ["proposer", "advisor"], "name": null, "actor": null,
-   "model": "claude-opus-5-5"},
+   "model": "claude-opus-5-5", "on_behalf_of": null},
   {"id": "steward", "kind": "tool", "roles": ["assessor", "decider"], "name": "town.steward",
-   "actor": null, "model": "cadl-robot-town (main, 2026-11-20)"},
-  {"id": "A", "kind": "agent", "roles": ["voter"], "name": "company A", "actor": null, "model": null},
-  {"id": "B", "kind": "agent", "roles": ["voter"], "name": "company B", "actor": null, "model": null},
-  {"id": "C", "kind": "agent", "roles": ["voter"], "name": "company C", "actor": null, "model": null},
-  {"id": "customers", "kind": "organisation", "roles": ["affected"], "name": null, "actor": null, "model": null}]}
+   "actor": null, "model": "cadl-robot-town (main, 2026-11-20)", "on_behalf_of": null},
+  {"id": "A", "kind": "agent", "roles": ["voter"], "name": "company A", "actor": null, "model": null, "on_behalf_of": null},
+  {"id": "B", "kind": "agent", "roles": ["voter"], "name": "company B", "actor": null, "model": null, "on_behalf_of": null},
+  {"id": "C", "kind": "agent", "roles": ["voter"], "name": "company C", "actor": null, "model": null, "on_behalf_of": null},
+  {"id": "customers", "kind": "organisation", "roles": ["affected"], "name": null, "actor": null, "model": null, "on_behalf_of": null}]}
 {"id": "K1", "type": "objective", "point": {"period": 1}, "by": "operator",
  "text": "Deliver as many orders as possible across the town within the times we promised customers …",
  "measure": null, "basis": [], "fulfils": [], "attachments": [], "written": "…"}
@@ -376,7 +410,14 @@ sos:
 {"id": "P1.2", "type": "proposal", "point": {"period": 1}, "by": "llm", "kind": "amendment",
  "title": "Lower blocking_guard threshold from 3 to 2 waiting robots",
  "changes": [{"parameter": "block_k", "from": "3", "to": "2", "layer": "rule"}],
- "rationale": "Only 2.8 blocking_guard evictions fire per period, yet 2404 s of blocked time …", …}
+ "affected": ["customers"],
+ "reason": "Only 2.8 blocking_guard evictions fire per period, yet 2404 s of blocked time …",
+ "assumptions": ["Queues of two robots are common, queues of three are rare"], "unknowns": [],
+ "predictions": [{"option": "P1.2", "subject": "metric:blocked_s", "expected": "decrease", "note": null},
+                 {"option": "P1.2", "subject": "vote:A", "expected": "yes", "note": null},
+                 {"option": "P1.2", "subject": "vote:B", "expected": "yes", "note": "probably"},
+                 {"option": "P1.2", "subject": "vote:C", "expected": "no", "note": null}],
+ "generated": {"model": "claude-opus-5-5", "request_digest": "5be0…"}, …}
 {"id": "P1.2.m", "type": "measurement", "point": {"period": 1}, "by": "steward", "of": "P1.2",
  "values": {"on_time_deliveries": 131.0, "late_deliveries": 1.2, "blocked_s": 985},
  "per_party": {"A": {"utility": 45.4}, "B": {"utility": 37.2}, "C": {"utility": 19.0}},
@@ -394,11 +435,12 @@ sos:
  "why": [{"option": "P1.2", "reason": "the main goal improves by +9.2, but B and C voted it down"}], …}
 {"id": "D1.rec", "type": "recommendation", "point": {"period": 1}, "by": "llm", "request": "D1.req",
  "recommends": "keep", "reason": "Adopting it means overriding a majority vote. …",
+ "assumptions": [], "predictions": [],
  "unknowns": ["Why C's utility drops sharply while the lowest on-time rate improves", "…"], …}
 {"id": "D1", "type": "decision", "point": {"period": 1}, "by": "operator",
  "options": ["P1.2", "keep"], "choice": "P1.2", "procedure": "override", "rule": null,
  "reason": "The intersections are a road shared by the three companies; waiting there is no company's right. …",
- "assumptions": [], "affected": ["C", "customers"], "result": "v2",
+ "assumptions": [], "unknowns": [], "predictions": [], "affected": ["C", "customers"], "result": "v2",
  "basis": ["K1.d", "P1.m0", "P1.2", "P1.2.m", "P1.2.c", "P1.2.vA", "P1.2.vB", "P1.2.vC", "D1.req", "D1.rec"], …}
 {"id": "D1.f1", "type": "follow_up", "point": {"period": 1}, "by": "operator", "decision": "D1",
  "text": "Re-measure C's utility (28.8 to 19.0) and the road violations (25.8 to 34.0)",
@@ -410,6 +452,24 @@ sos:
 
 第2期にv2のもとで行う測定は，`fulfils` に `D1.f1` を挙げる。検証者は，D1について指摘 override，
 against recommendation，unknowns を報告し，エラーは報告しない。判断が理由と根拠を示しているからである。
+P1.2については prediction missed を報告する。LLMはBが賛成すると予測したが，Bは反対した。
+
+サービス運営者がLLMに自分の代わりに判断させていたら，記録には当事者が1つ増え，判断は同じフィールドで
+同じように書かれ，同じ検査を受ける。
+
+```json
+{"id": "llm-decider", "kind": "llm", "roles": ["decider"], "name": null, "actor": null,
+ "model": "claude-opus-5-5", "on_behalf_of": "operator"}
+{"id": "D1", "type": "decision", "point": {"period": 1}, "by": "llm-decider",
+ "options": ["P1.2", "keep"], "choice": "keep", "procedure": "vote", "rule": null,
+ "reason": "Adopting it means overriding a majority vote. …",
+ "assumptions": ["…"], "unknowns": ["Why C's utility drops sharply …", "…"],
+ "predictions": [{"option": "keep", "subject": "metric:late_deliveries", "expected": "unchanged", "note": null}],
+ "generated": {"model": "claude-opus-5-5", "request_digest": "…"}, "result": "v1", …}
+```
+
+この場合，検証者は delegated と unknowns を報告する。LLMが運営者に代わって判断してよいか，どの層で
+よいかは，記録を保管する組織が決める。記録は，LLMが代わって判断したことを示す。
 
 ## L.10 リファレンス実装の状況 {/* #l10-reference-implementation-status */}
 
@@ -421,7 +481,8 @@ against recommendation，unknowns を報告し，エラーは報告しない。�
   あり，その記録に連鎖を持ち，フィールドは演習のものである。そのK記録は，`objective`，種類が `measure` の
   `proposal`，`recommendation`，`decision` にあたる。D記録は，この形式が `measurement`，`proposal`，
   `check`，`vote`，`request`，`recommendation`，`decision`，`version` の項目として書く内容を持つ。
-  `follow_up` の項目はない。
+  `follow_up` の項目はなく，証拠のフィールドも，理由，人間の前提，LLMの推奨の分からないことのほかは
+  持たない。
 - cadl-explorer（v1.4.2より後）のページDecision Evidenceは，`evidence.json` を読み，当事者の時系列，
   各判断の経緯，GSN，L.6の指摘，連鎖を示す。
 

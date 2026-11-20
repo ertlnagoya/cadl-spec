@@ -1,14 +1,14 @@
 ---
 sidebar_position: 20.6
 title: "Appendix L: Decision Records"
-description: "Decision records (decisions 0.1): a file format for the record of how amendments of a model were decided. Parties and their roles; objectives, proposals, measurements, checks, votes, recommendations, requests, decisions, versions and follow-ups as entries; the basis of each decision; integrity by the hash chain of G.8; the checks that a verifier makes and the findings it reports for review; the relation to Appendix K and a mapping to GSN."
+description: "Decision records (decisions 0.1): a file format for the record of how amendments of a model were decided, with the same evidence required of every party, whether a person, an LLM, or a tool. Parties and their roles, including a party that decides in place of another; objectives, proposals, measurements, checks, votes, recommendations, requests, decisions, versions and follow-ups as entries; the basis of each decision; integrity by the hash chain of G.8; the checks that a verifier makes and the findings it reports for review; the relation to Appendix K and a mapping to GSN."
 ---
 
 # Appendix L — Decision Records (decisions 0.1)
 
 [Appendix K, K.5](./appendix-k-amendment.md) lets a version of a model
-name the records of human decisions on which it rests, by a URI
-reference, and says nothing about the records themselves. This appendix
+name the records of decisions on which it rests, by a URI reference,
+and says nothing about the records themselves. This appendix
 gives a format for such a record: a **decision record**. With it, a
 tool that does not know the system that wrote a record can read it,
 check it, and show it.
@@ -49,11 +49,23 @@ system. For each decision it says:
 - what was proposed, by whom, and what was measured;
 - which checks each proposal passed, and who made them;
 - how each party voted;
-- what an advisor recommended, and what it said it did not know;
-- who decided, by which procedure, with which reason and
-  assumptions, and on which earlier entries the decision rests;
+- what each proposer predicted and what an advisor recommended, with
+  their reasons, assumptions, and what they said they did not know;
+- who decided, by which procedure, with which reason, assumptions and
+  unknowns, and on which earlier entries the decision rests;
 - which version of the model came into force;
 - what the deciders promised to follow up, and whether it was done.
+
+The same evidence is asked of every party. A proposal, a
+recommendation, or a decision made by an LLM or by a tool is recorded
+with the same fields, and checked by the same rules, as one made by a
+person: its reason, the entries it rests on, its assumptions, what it
+predicts, and what it does not know (L.4, "Evidence fields"). In Course
+D the LLM proposes and recommends, and it may also decide in place of
+the human, for amendments of the rules and of the contract with the
+customers alike. A reviewer must be able to read a decision of the LLM
+as closely as a decision of the human, and to tell from the record who
+decided in whose place.
 
 In scope: the entries and their fields, the references between them,
 the integrity of the file, and the checks of a verifier. Out of scope:
@@ -78,7 +90,7 @@ record.
   | `assessor` | measures proposals and checks them |
   | `voter` | votes on proposals |
   | `advisor` | recommends an option to a decider |
-  | `decider` | decides |
+  | `decider` | decides, also in place of another party (`on_behalf_of`, L.3) |
   | `affected` | is affected by a decision and takes no part in it (for example customers); named so that an entry can say who is affected |
 
 - An **entry** is one line of the record after its header. Each entry
@@ -132,10 +144,13 @@ in `previous` (its `run_id` and the digest of its end record).
 | `name` | A name for a reader, or `null`. |
 | `actor` | The actor id or the role of the model that the party is, as `decided_by:` and `voters:` of K.3 name it (`COUNCIL`, `service_operator`), or `null`. |
 | `model` | For an `llm`, the model identifier; for a `tool`, its name and version; otherwise `null`. |
+| `on_behalf_of` | The `id` of the party in whose place this party acts, or `null`. An LLM that decides in place of the service operator has the role `decider` itself and names the operator's party here. |
 
 A party whose kind is `human` stands for a role held by a person; the
 record does not need to name the person. Who held the role is a matter
-for the organisation that keeps the record.
+for the organisation that keeps the record. A party of kind `llm` or
+`tool` gives `model`, so that a reader knows which model or which
+version of a tool made its entries.
 
 ## L.4 Entries
 
@@ -151,9 +166,27 @@ for the organisation that keeps the record.
 | `basis` | The `id`s of earlier entries on which this entry rests; may be empty. |
 | `fulfils` | The `id`s of earlier `follow_up` entries that this entry fulfils; may be empty. |
 | `attachments` | Files that belong to the entry: `path` (relative to the record), `sha256`, `media_type` or `null`. For example the table of a measurement, the output of an LLM, the CADL file of a proposal. |
+| `generated` | For an entry whose text an LLM produced, also when another party wrote the entry: `model` (the model identifier) and `request_digest` (a digest of the request to the LLM, so that two runs with the same input can be told apart from two with different input). Otherwise `null`. |
 
 An option of a decision, a request, or a recommendation is the `id` of
 a `proposal` entry, or `"keep"` for leaving the model as it is.
+
+### Evidence fields
+
+A `proposal`, a `recommendation`, and a `decision` carry four more
+fields, whatever the kind of the party that makes them:
+
+| Field | Content |
+| --- | --- |
+| `reason` | Why the party proposes, recommends, or decides it, in the party's own words. Not empty, except in a decision with `procedure` `automatic`, which gives `rule` instead and may give `null`. |
+| `assumptions` | What the party takes to be true without having checked it: a list of texts. |
+| `unknowns` | What the party says it does not know and would need to know: a list of texts. |
+| `predictions` | What the party expects to happen: a list of `option` (the option the prediction is about; for a proposal, its own `id`), `subject` (`metric:<name>` for a metric, `metric:<name>@<party>` for a metric of one party, or `vote:<party>` for a vote), `expected` (`increase`, `decrease`, `unchanged`, `yes`, `no`, or a condition as text, such as `"<= 1"`), and `note` (text or `null`). |
+
+A list may be empty: an empty `unknowns` says that the party names
+nothing it does not know. The fields let a reviewer compare what each
+party said with what was measured afterwards, in the same way for a
+person and for an LLM.
 
 ### Types
 
@@ -176,10 +209,12 @@ system), `role` (`goal`, `watch`, or `guard`), `direction` (`increase`,
 | --- | --- |
 | `kind` | `amendment` (a new version of the model) or `measure` (a reading of an objective). |
 | `title` | A short title. |
-| `rationale` | Why the proposer proposes it, as the proposer wrote it. |
 | `changes` | For an amendment: a list of `parameter` (the `id` of a parameter of K.3, or a name of the system), `from`, `to` (numbers or durations as text), and `layer` (`rule`, `contract`, `regulation`, or `null`). |
 | `objective` | For a reading: the `id` of the objective it reads. |
 | `measure` | For a reading: the measure items. |
+| `affected` | The `id`s of parties that the change affects and that take no part in deciding it, such as customers for a change of the contract with them; may be empty. |
+
+A proposal also gives the evidence fields.
 
 **`measurement`**: values measured for the version in force or for a
 proposal.
@@ -225,8 +260,8 @@ proposal.
 | `request` | The `id` of the request, or `null`. |
 | `options` | A list of `option`, `summary`, and `affected` (who gains and who loses, as text). |
 | `recommends` | The recommended option, or `null`. |
-| `reason` | The reason. |
-| `unknowns` | What the advisor says it does not know: a list of texts. |
+
+A recommendation also gives the evidence fields.
 
 **`decision`**: a decision.
 
@@ -237,10 +272,10 @@ proposal.
 | `choice` | The option chosen. |
 | `procedure` | `single` (the decider decided alone), `vote` (the decision follows the votes on `choice`), `override` (the decider set aside the outcome of the votes), or `automatic` (a tool applied a rule stated in `rule`). |
 | `rule` | For `automatic`, the rule in words (for example "adopt the proposal with the largest gain among those that pass every check and the vote"); otherwise `null`. |
-| `reason` | The reason, as the decider wrote it, or `null`. |
-| `assumptions` | Assumptions on which the decision rests: a list of texts. |
 | `affected` | The `id`s of parties affected by the decision, or empty. |
 | `result` | The `sos.version` in force after the decision, or `null` for a decision on a reading. |
+
+A decision also gives the evidence fields.
 
 **`version`**: a version of the model comes into force.
 
@@ -303,29 +338,35 @@ error cannot be relied on as it stands.
   with `procedure` `vote` or `override` has in its `basis` the votes on
   `choice` (for a choice of `"keep"`, on the proposal set aside). With
   `vote`, the votes on `choice` decide as the authority of K.3 says;
-  with `override`, they do not, and `reason` is not `null`. A decision
-  with `procedure` `automatic` gives `rule`, and its decider is a
-  party of kind `tool`.
+  with `override`, they do not. A decision with `procedure` `automatic`
+  gives `rule`, and its decider is a party of kind `tool`.
 - **L-7** A `version` entry that adopts a proposal names the decision
   whose `choice` is that proposal, and that decision's `result` is the
   version's `version`.
+- **L-8** Every `proposal`, `recommendation`, and `decision` gives the
+  evidence fields of L.4, whatever the kind of its party, and its
+  `reason` is not empty except as L.4 allows for `automatic`. A party of
+  kind `llm` or `tool` gives `model`. The `on_behalf_of` of a party
+  names another party, and no party acts in its own place. The
+  `subject` of a prediction names a metric or a party with the role
+  `voter`.
 
 When the CADL files of the versions are at hand (the paths in the
 `attachments` of the `version` entries, or given to the verifier), a
 verifier MUST also report:
 
-- **L-8** The `source_sha256` of the header and of each `version` entry
+- **L-9** The `source_sha256` of the header and of each `version` entry
   is the SHA-256 of the file, and its `sos.version`, `amendment.previous`
   and `amendment.effective` are those of the entry.
-- **L-9** Each `parameter` of a proposal of kind `amendment` is a
+- **L-10** Each `parameter` of a proposal of kind `amendment` is a
   parameter of K.3 of the version in force, its `from` is the value of
   the parameter, and its `to` is a value that K.3 allows in one
   amendment.
-- **L-10** The decider of a decision that adopts a proposal is the
+- **L-11** The decider of a decision that adopts a proposal is the
   authority of K.3 for each parameter it changes (the party whose
-  `actor` is `decided_by:`), or the decision has `procedure`
-  `override` and a reason. The voters whose votes decide are parties
-  whose `actor` is in `voters:`.
+  `actor` is `decided_by:`), or acts on behalf of that party
+  (`on_behalf_of`), or the decision has `procedure` `override`. The
+  voters whose votes decide are parties whose `actor` is in `voters:`.
 
 A verifier also reports the following **findings**. A finding is not an
 error: the record shows something that a reviewer should look at, and
@@ -335,8 +376,10 @@ whether it was right is for the reviewer to judge.
 | --- | --- |
 | **override** | A decision set aside the outcome of the votes (`procedure` `override`). |
 | **against recommendation** | A decision chose another option than the recommendation in its basis. |
-| **no reason** | A decision of a `human` decider without a reason. |
-| **unknowns** | A recommendation in the basis of a decision lists what the advisor did not know. |
+| **delegated** | A decision was made by a party that acts on behalf of another (`on_behalf_of`), for example an LLM in place of the service operator. |
+| **unknowns** | A decision, or a recommendation in its basis, lists what its party did not know. |
+| **prediction missed** | A prediction of a proposal, a recommendation, or a decision is contradicted by a later entry: a measurement of the option it is about, compared with the measurement in `compared_with`, or a vote of the party it names. |
+| **affected not measured** | A decision adopts a proposal whose `affected` parties, or, for a change of a parameter of layer `contract`, the parties with the role `affected`, have no values in `per_party` of any measurement of the proposal in the basis. |
 | **unmeasured choice** | A decision adopts a proposal of kind `amendment` with no measurement of it in its basis. |
 | **reading not decided** | An objective without `measure` was followed by measurements before any decision chose a reading. |
 | **open follow-up** | A follow-up has not been fulfilled, and its `due` point has passed (or the record is complete). |
@@ -371,7 +414,7 @@ sos:
 The record and the model are written by different parties and at
 different times, so neither depends on the other: a model may name
 entries of a record, and a record names versions of the model by
-`sos.version` and by the SHA-256 of their files (L-8).
+`sos.version` and by the SHA-256 of their files (L-9).
 
 ## L.8 Mapping to GSN (informative)
 
@@ -389,6 +432,7 @@ keeps the two from disagreeing.
 | `measurement` and `check` in the basis | Solution of the strategy |
 | `reason` | Justification of the strategy |
 | `assumptions` | Assumption of the strategy |
+| `unknowns` and `predictions` | Context of the strategy; a prediction that a later measurement contradicts is a counter-evidence of it |
 | `recommendation` in the basis | Context of the strategy |
 | `follow_up` | Goal under the strategy, undeveloped until a later entry fulfils it; the fulfilling entry is its Solution |
 
@@ -399,23 +443,26 @@ cadl-robot-town), shortened. Each object is one line of the file; here
 it is spread over several lines, and the integrity fields are left out.
 The versions are called `v1` and `v2` after the files of the run; the
 model of the exercise does not declare the amendment extension yet, so
-this is the `sos.version` that those files would give.
+this is the `sos.version` that those files would give. The predictions
+of the proposal are taken from the text of its reason; the human gave
+no assumptions, unknowns, or predictions for D1, which the empty lists
+record.
 
 ```json
 {"decisions_format": "cadl-decisions/1", "hash": "sha256", "key_id": null,
  "run_id": "3f2a…", "model": {"name": "RobotTown", "version": "v1", "source_sha256": "9c1e…"},
  "time_base": "one simulated hour of the robot town", "started": "2026-11-18T09:12:03Z",
- "parties": [
+ "previous": null, "parties": [
   {"id": "operator", "kind": "human", "roles": ["owner", "decider"], "name": "service operator",
-   "actor": null, "model": null},
+   "actor": null, "model": null, "on_behalf_of": null},
   {"id": "llm", "kind": "llm", "roles": ["proposer", "advisor"], "name": null, "actor": null,
-   "model": "claude-opus-5-5"},
+   "model": "claude-opus-5-5", "on_behalf_of": null},
   {"id": "steward", "kind": "tool", "roles": ["assessor", "decider"], "name": "town.steward",
-   "actor": null, "model": "cadl-robot-town (main, 2026-11-20)"},
-  {"id": "A", "kind": "agent", "roles": ["voter"], "name": "company A", "actor": null, "model": null},
-  {"id": "B", "kind": "agent", "roles": ["voter"], "name": "company B", "actor": null, "model": null},
-  {"id": "C", "kind": "agent", "roles": ["voter"], "name": "company C", "actor": null, "model": null},
-  {"id": "customers", "kind": "organisation", "roles": ["affected"], "name": null, "actor": null, "model": null}]}
+   "actor": null, "model": "cadl-robot-town (main, 2026-11-20)", "on_behalf_of": null},
+  {"id": "A", "kind": "agent", "roles": ["voter"], "name": "company A", "actor": null, "model": null, "on_behalf_of": null},
+  {"id": "B", "kind": "agent", "roles": ["voter"], "name": "company B", "actor": null, "model": null, "on_behalf_of": null},
+  {"id": "C", "kind": "agent", "roles": ["voter"], "name": "company C", "actor": null, "model": null, "on_behalf_of": null},
+  {"id": "customers", "kind": "organisation", "roles": ["affected"], "name": null, "actor": null, "model": null, "on_behalf_of": null}]}
 {"id": "K1", "type": "objective", "point": {"period": 1}, "by": "operator",
  "text": "Deliver as many orders as possible across the town within the times we promised customers …",
  "measure": null, "basis": [], "fulfils": [], "attachments": [], "written": "…"}
@@ -436,7 +483,14 @@ this is the `sos.version` that those files would give.
 {"id": "P1.2", "type": "proposal", "point": {"period": 1}, "by": "llm", "kind": "amendment",
  "title": "Lower blocking_guard threshold from 3 to 2 waiting robots",
  "changes": [{"parameter": "block_k", "from": "3", "to": "2", "layer": "rule"}],
- "rationale": "Only 2.8 blocking_guard evictions fire per period, yet 2404 s of blocked time …", …}
+ "affected": ["customers"],
+ "reason": "Only 2.8 blocking_guard evictions fire per period, yet 2404 s of blocked time …",
+ "assumptions": ["Queues of two robots are common, queues of three are rare"], "unknowns": [],
+ "predictions": [{"option": "P1.2", "subject": "metric:blocked_s", "expected": "decrease", "note": null},
+                 {"option": "P1.2", "subject": "vote:A", "expected": "yes", "note": null},
+                 {"option": "P1.2", "subject": "vote:B", "expected": "yes", "note": "probably"},
+                 {"option": "P1.2", "subject": "vote:C", "expected": "no", "note": null}],
+ "generated": {"model": "claude-opus-5-5", "request_digest": "5be0…"}, …}
 {"id": "P1.2.m", "type": "measurement", "point": {"period": 1}, "by": "steward", "of": "P1.2",
  "values": {"on_time_deliveries": 131.0, "late_deliveries": 1.2, "blocked_s": 985},
  "per_party": {"A": {"utility": 45.4}, "B": {"utility": 37.2}, "C": {"utility": 19.0}},
@@ -454,11 +508,12 @@ this is the `sos.version` that those files would give.
  "why": [{"option": "P1.2", "reason": "the main goal improves by +9.2, but B and C voted it down"}], …}
 {"id": "D1.rec", "type": "recommendation", "point": {"period": 1}, "by": "llm", "request": "D1.req",
  "recommends": "keep", "reason": "Adopting it means overriding a majority vote. …",
+ "assumptions": [], "predictions": [],
  "unknowns": ["Why C's utility drops sharply while the lowest on-time rate improves", "…"], …}
 {"id": "D1", "type": "decision", "point": {"period": 1}, "by": "operator",
  "options": ["P1.2", "keep"], "choice": "P1.2", "procedure": "override", "rule": null,
  "reason": "The intersections are a road shared by the three companies; waiting there is no company's right. …",
- "assumptions": [], "affected": ["C", "customers"], "result": "v2",
+ "assumptions": [], "unknowns": [], "predictions": [], "affected": ["C", "customers"], "result": "v2",
  "basis": ["K1.d", "P1.m0", "P1.2", "P1.2.m", "P1.2.c", "P1.2.vA", "P1.2.vB", "P1.2.vC", "D1.req", "D1.rec"], …}
 {"id": "D1.f1", "type": "follow_up", "point": {"period": 1}, "by": "operator", "decision": "D1",
  "text": "Re-measure C's utility (28.8 to 19.0) and the road violations (25.8 to 34.0)",
@@ -471,7 +526,27 @@ this is the `sos.version` that those files would give.
 The measurement of period 2 under v2 names `D1.f1` in `fulfils`. A
 verifier reports for D1 the findings override, against recommendation,
 and unknowns, and no error: the decision gives its reason and its
-basis.
+basis. For P1.2 it reports prediction missed: the LLM expected B to
+vote for the change, and B voted against it.
+
+Had the service operator let the LLM decide in its place, the record
+would have one more party and the decision would be written in the same
+way, with the same fields and the same checks:
+
+```json
+{"id": "llm-decider", "kind": "llm", "roles": ["decider"], "name": null, "actor": null,
+ "model": "claude-opus-5-5", "on_behalf_of": "operator"}
+{"id": "D1", "type": "decision", "point": {"period": 1}, "by": "llm-decider",
+ "options": ["P1.2", "keep"], "choice": "keep", "procedure": "vote", "rule": null,
+ "reason": "Adopting it means overriding a majority vote. …",
+ "assumptions": ["…"], "unknowns": ["Why C's utility drops sharply …", "…"],
+ "predictions": [{"option": "keep", "subject": "metric:late_deliveries", "expected": "unchanged", "note": null}],
+ "generated": {"model": "claude-opus-5-5", "request_digest": "…"}, "result": "v1", …}
+```
+
+Here the verifier reports delegated and unknowns. Whether the LLM may
+decide in place of the operator, and for which layers, is for the
+organisation that keeps the record; the record shows that it did.
 
 ## L.10 Reference implementation status
 
@@ -486,7 +561,9 @@ basis.
   kind `measure`, `recommendation`, and `decision`; each D record holds
   what this format writes as `measurement`, `proposal`, `check`, `vote`,
   `request`, `recommendation`, `decision`, and `version` entries; it
-  has no `follow_up` entries.
+  has no `follow_up` entries, and none of the evidence fields beyond
+  the reasons, the assumptions of the human, and the unknowns of the
+  LLM's recommendation.
 - The page Decision Evidence of cadl-explorer (from the version after
   v1.4.2) reads `evidence.json` and shows a timeline of the parties,
   the trail of each decision, the GSN, the findings of L.6, and the
