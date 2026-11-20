@@ -299,7 +299,8 @@ provides it from `cadl` 0.3.23 (`cadl norms-indices`).
 
 Terms of the format for records of decisions; see
 [Appendix L](./appendix-l-decisions.md). The reference implementation
-provides it from `cadl` 0.3.37 (`cadl decisions-verify`).
+provides it from `cadl` 0.3.37 (`cadl decisions-verify`), decisions 0.2
+from 0.3.38.
 
 - **Decision record** — A file of JSON Lines, beside a model, that
   records how its amendments were decided, with the hash chain of
@@ -310,7 +311,12 @@ provides it from `cadl` 0.3.37 (`cadl decisions-verify`).
 - **Basis** — The earlier entries on which a decision rests: the
   objective in force, measurements, checks, votes, a recommendation.
 - **Follow-up** — A promise, made with a decision, to check or do
-  something later; a later entry fulfils it.
+  something later; a later entry fulfils it. From decisions 0.2 it says
+  what fulfils it (`fulfilled_by`): a promise to re-measure, for example,
+  only a measurement under the same conditions as the one it re-checks.
+- **Layers of a party** — The layers (rule, contract, regulation) on
+  which a party decides, so that a record can tell the operator from the
+  regulator and limit what a party acting for another may decide.
 - **Finding** — Something a verifier reports for review that is not an
   error, such as a decision that set aside the votes or did not follow
   the recommendation.
