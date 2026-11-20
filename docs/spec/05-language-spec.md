@@ -578,6 +578,8 @@ analysis ([Section 6.3](./06-design.md)).
   rule for contract instances running when a version takes effect,
   metric targets that change over time, and references to records of
   human decisions: [Appendix K](./appendix-k-amendment.md).
+- The format of a record of how amendments were decided, beside the
+  model: [Appendix L](./appendix-l-decisions.md).
 - Code generation targets: [Appendix D](./appendix-d-codegen.md).
 - Checking a file: `cadl parse`, `cadl check`, and `cadl verify`
   (installation is described in the

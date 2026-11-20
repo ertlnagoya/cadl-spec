@@ -316,7 +316,9 @@ decisions (`record`), and `text:` summarises it. A parameter (the
 decision that set its current value), a schedule entry (the decision
 that set the target), and a measurement method (the decision that chose
 it) name a record with `decision:`. The extension does not read the
-records.
+records. [Appendix L](./appendix-l-decisions.md) gives a format for a
+record of decisions, whose entries a `ref:` names by their `id` as the
+fragment (`decisions.jsonl#D1`, L.7).
 
 ## K.6 Static semantics {/* #k6-static-semantics */}
 
