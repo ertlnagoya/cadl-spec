@@ -312,7 +312,9 @@ An entry refers only to entries written before it: the `id`s in
 of earlier lines (or `"keep"`). The `point` of the entries does not
 decrease. Within one point, the entries are written in the order in
 which they arise: objective, proposals, measurements and checks, votes,
-request, recommendation, decision, follow-ups, version.
+request, recommendation, decision, follow-ups, version. This order is
+a recommendation: a verifier does not report a record that departs
+from it.
 
 ## L.6 Checks and findings
 
@@ -334,12 +336,19 @@ error cannot be relied on as it stands.
   `objective` owner; `proposal` proposer; `measurement` and `check`
   assessor; `vote` voter; `recommendation` advisor; `decision` decider;
   `request`, `follow_up`, `version`, `correction`, and `note` any party.
-- **L-6** The `choice` of a decision is one of its `options`. A decision
-  with `procedure` `vote` or `override` has in its `basis` the votes on
-  `choice` (for a choice of `"keep"`, on the proposal set aside). With
-  `vote`, the votes on `choice` decide as the authority of K.3 says;
-  with `override`, they do not. A decision with `procedure` `automatic`
-  gives `rule`, and its decider is a party of kind `tool`.
+- **L-6** The `choice` of a decision is one of its `options`. The votes
+  on a proposal are the `vote` entries on it, one per voter: a later
+  vote of a voter replaces an earlier one. A decision with `procedure`
+  `vote` or `override` decides on `choice`, or, for a choice of
+  `"keep"`, on the first proposal among its `options`; it has in its
+  `basis` every earlier vote on that proposal. With `vote`, the votes
+  decide as the authority of K.3 says: the yes votes of its voters reach
+  the quorum exactly when the decision adopts the proposal. With
+  `override`, they do not. Whether the votes reach the quorum can be
+  checked only with the CADL file of the version in force (L-9 to
+  L-11); without it, a verifier says that it did not check it. A
+  decision with `procedure` `automatic` gives `rule`, and its decider is
+  a party of kind `tool`; any other decision gives `rule` as `null`.
 - **L-7** A `version` entry that adopts a proposal names the decision
   whose `choice` is that proposal, and that decision's `result` is the
   version's `version`.
@@ -378,7 +387,7 @@ whether it was right is for the reviewer to judge.
 | **against recommendation** | A decision chose another option than the recommendation in its basis. |
 | **delegated** | A decision was made by a party that acts on behalf of another (`on_behalf_of`), for example an LLM in place of the service operator. |
 | **unknowns** | A decision, or a recommendation in its basis, lists what its party did not know. |
-| **prediction missed** | A prediction of a proposal, a recommendation, or a decision is contradicted by a later entry: a measurement of the option it is about, compared with the measurement in `compared_with`, or a vote of the party it names. |
+| **prediction missed** | A prediction of a proposal, a recommendation, or a decision is contradicted by a later entry. For a metric: a later measurement of the option it is about, compared with the measurement in its `compared_with`, that is not above it (`increase`), not below it (`decrease`), different from it (`unchanged`, within a tolerance that the verifier states), or that does not meet the condition. For a vote: a later vote of the party it names, other than the one expected. |
 | **affected not measured** | A decision adopts a proposal whose `affected` parties, or, for a change of a parameter of layer `contract`, the parties with the role `affected`, have no values in `per_party` of any measurement of the proposal in the basis. |
 | **unmeasured choice** | A decision adopts a proposal of kind `amendment` with no measurement of it in its basis. |
 | **reading not decided** | An objective without `measure` was followed by measurements before any decision chose a reading. |
@@ -550,28 +559,26 @@ organisation that keeps the record; the record shows that it did.
 
 ## L.10 Reference implementation status
 
-`cadl` 0.3.36 does not read or write decision records. What exists:
+From `cadl` 0.3.37:
 
-- `cadl audit-verify` verifies the chain of G.8, which L.3 uses.
-- cadl-robot-town (from the version after v0.2.2) writes
-  `evidence.json` (format `robot-town-evidence/1`) in each run of
-  `town.steward`. It is a precursor of this format: one JSON document
-  with a chain over its records, not a JSON Lines file, and fields of
-  the exercise. Its K records correspond to `objective`, `proposal` of
-  kind `measure`, `recommendation`, and `decision`; each D record holds
-  what this format writes as `measurement`, `proposal`, `check`, `vote`,
-  `request`, `recommendation`, `decision`, and `version` entries; it
-  has no `follow_up` entries, and none of the evidence fields beyond
-  the reasons, the assumptions of the human, and the unknowns of the
-  LLM's recommendation.
-- The page Decision Evidence of cadl-explorer (from the version after
-  v1.4.2) reads `evidence.json` and shows a timeline of the parties,
-  the trail of each decision, the GSN, the findings of L.6, and the
-  chain.
-
-Planned: a writer of decision records in cadl-robot-town, a verifier in
-`cadl` with the checks of L.6, and the reading of decision records in
-cadl-explorer.
+- `cadl.decisions.DecisionChain` writes a record, and `cadl
+  decisions-verify RECORD.jsonl` checks it: the errors L-1 to L-8, and
+  L-9 to L-11 against the CADL files of the versions (the `.cadl`
+  attachments of the `version` entries and the files given with
+  `--version`). It reports the findings of L.6 and lists what it could
+  not check. It counts a value as `unchanged` within 1 % of the value it
+  is compared with. `--key`, `--run-id` and `--anchor` work as for
+  `cadl audit-verify`.
+- cadl-robot-town (from v0.3.0) writes `decisions.jsonl` in each run of
+  `town.steward` and `town.council`. With `--decider llm`, the LLM
+  answers the decision requests in place of the operator, as a party
+  with `on_behalf_of`. The model of the exercise does not declare the
+  amendment extension, so its version entries attach no CADL file and
+  L-9 to L-11 are not checked.
+- The page Decision Evidence of cadl-explorer (from v1.5.0) reads a
+  record, verifies it with `cadl.decisions`, and shows a timeline of the
+  parties, the trail of each decision, the evidence of each party, the
+  GSN of L.8, the findings and the chain.
 
 ## L.11 Backward compatibility
 

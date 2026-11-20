@@ -6,7 +6,7 @@ title: "Appendix B — Notation quick reference"
 
 # Appendix B — Notation quick reference
 
-The CADL notation, the commands and the file locations used in this textbook, on one page. Chapter 3 explains what each construct means. The CADL listings of this appendix fit together into one file, which passes `cadl check` and `cadl verify` of `cadl` 0.3.36.
+The CADL notation, the commands and the file locations used in this textbook, on one page. Chapter 3 explains what each construct means. The CADL listings of this appendix fit together into one file, which passes `cadl check` and `cadl verify` of `cadl` 0.3.37.
 
 ## B.1 The skeleton of a file
 
@@ -136,7 +136,7 @@ Conditions (`assume`, `guarantee`, `on:`, `when:`, `rule:` and others) are writt
 | `streamlit run app.py` (in `cadl-explorer`) | Starts cadl-explorer | 6.3 |
 | `nats-server -p 4222` | Starts NATS | 8.2 |
 | `go run .` (in `arbitrator/C-SoS/main`) | Starts the arbitrator | 8.2 |
-| `cadl --help` | Lists all commands, including those of the extensions that this textbook does not use: `norms-eval` and `norms-check` of the norms extension ([Appendix F](../spec/appendix-f-norms.md)), `agents-run`, `audit-verify`, `mcp-gateway` and `a2a-gateway` of the agent governance extension ([Appendix G](../spec/appendix-g-agents.md)), `model-check` of the stochastic model extension ([Appendix H](../spec/appendix-h-stochastic.md)), `game-check` of the strategic model extension ([Appendix I](../spec/appendix-i-games.md)) and `norms-indices` of the grounding extension ([Appendix J](../spec/appendix-j-grounding.md)) | 2.4, 11.2 |
+| `cadl --help` | Lists all commands, including those of the extensions that this textbook does not use: `norms-eval` and `norms-check` of the norms extension ([Appendix F](../spec/appendix-f-norms.md)), `agents-run`, `audit-verify`, `mcp-gateway` and `a2a-gateway` of the agent governance extension ([Appendix G](../spec/appendix-g-agents.md)), `model-check` of the stochastic model extension ([Appendix H](../spec/appendix-h-stochastic.md)), `game-check` of the strategic model extension ([Appendix I](../spec/appendix-i-games.md)) `norms-indices` of the grounding extension ([Appendix J](../spec/appendix-j-grounding.md)), `amend-diff` of the amendment extension ([Appendix K](../spec/appendix-k-amendment.md)) and `decisions-verify` of the decision records ([Appendix L](../spec/appendix-l-decisions.md)) | 2.4, 11.2 |
 
 ## B.6 Where the source files are
 

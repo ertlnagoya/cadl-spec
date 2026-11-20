@@ -1213,7 +1213,7 @@ Transitional provisions are also a question for the CADL specification. Up to `c
 could not say which version's deadlines and monitors apply to a contract instance that is already
 running. From `cadl` 0.3.32 `amendment.transitional` of the amendment extension says, per contract,
 whether running instances keep the old version (`keep`) or switch to the new one (`switch`)
-([Appendix K, K.4](../spec/appendix-k-amendment.md), §13). The simulator of the exercise does not
+([Appendix K, K.4](../spec/appendix-k-amendment.md), §14). The simulator of the exercise does not
 read this declaration yet, so try the three ways above by adding them to the code in `town/`.
 
 ### Exercise 12-4: let the human and the LLM choose the speed
@@ -1264,7 +1264,217 @@ LLM used about 60,000 input and 50,000 output tokens in the §10 records (Claude
 
 ---
 
-## 13. What the specification cannot express yet
+## 13. Record the decisions (60–90 min, plus an optional exercise)
+
+The records of §4–§10 (`decisions.md`, `gsn.yaml`) are written for people. To show afterwards who
+agreed to each change and who decided it, on what basis and why, the record has to be checked by a
+program as well. From `cadl` 0.3.37, `town.steward` and `town.council` also write
+`runs/<name>/decisions.jsonl`, a decision record of
+[Appendix L](../spec/appendix-l-decisions.md):
+
+- one line per entry: objectives, proposals, measurements, checks, votes, decision requests,
+  recommendations, decisions, versions and follow-ups, each naming the earlier entries it rests
+  on (`basis`);
+- the parties and their roles: the operator (`human`), the LLM (`llm`), the steward or the council
+  (`tool`), the companies A, B, C (`agent`, voters) and the customers (`organisation`, affected,
+  without a vote);
+- the same evidence from every party, whether a person, the LLM or a tool: a reason, assumptions,
+  what it does not know, and predictions;
+- on every line the hash chain of the audit log of [Appendix G](../spec/appendix-g-agents.md#g8-audit-record).
+
+```bash
+cadl decisions-verify runs/<name>/decisions.jsonl
+```
+
+The verifier reports errors (L-1 to L-11: the record cannot be relied on as it stands) and findings
+for review (an override of the votes, a decision against the recommendation, a decision made on
+behalf of another party, a prediction that a later vote or measurement contradicted, a follow-up
+not fulfilled, …). A finding is not an error: the record should show who took the decision and
+why. The page **Decision Evidence** of CADL Explorer shows the same record as a timeline, the
+trail of each decision, the evidence of each party, and a GSN derived from the record.
+
+This section covers amendments of the rules (`ROAD_USE`) and of the contract (`DELIVERY_SLA`, the
+times promised to customers). Amendments of the regulation (the constitution) are left out
+(`--layers rule,contract`).
+
+### Exercise 13-1: who agreed to each change (robots only)
+
+Run the rule-based council for six periods and verify its record.
+
+```bash
+python -m town.council --rounds 6 --name ex13-council
+cadl decisions-verify runs/ex13-council/decisions.jsonl
+```
+
+**Goal**: from `decisions.jsonl` alone, rebuild the amendment history: for each period, the
+proposals, the first check each failed, the votes of A, B and C, and the proposal adopted.
+
+**Decision rule**: your table is correct when it gives, period by period, the same outcome as
+`history.md` in all six periods, and the verifier reports 0 errors.
+
+**Reference values** (2026-11-20, cadl 0.3.37): 56 proposals; 50 failed the gain check first, 2
+the vote, 4 passed every check; one change was adopted (period 2, `sanction_lambda 0.5 → 1`, yes:
+A and B); the record has 350 entries. Every decision is `automatic`, made by the council (a
+tool), with its rule written in the record.
+
+**Answer**: why is no finding reported, although C voted against the adopted change?
+
+### Exercise 13-2: does the evidence support the reason?
+
+Replay the English record of §4–§8 and verify it.
+
+```bash
+python -m town.steward --lang en --mode DISTRIBUTED --rounds 6 --name ex13-d \
+    --llm replay --replay-dir examples/steward-d-en --answers examples/steward-d-en/answers.yaml
+cadl decisions-verify runs/ex13-d/decisions.jsonl
+```
+
+The verifier reports 0 errors and 9 findings: `override` for D1 and D6, `against
+recommendation` for D1, and `unknowns` for six decisions.
+
+**Goal**: for every decision of a person, check the numbers in its reason against the
+measurements in its `basis` (`values` and `per_party`).
+
+**Decision rule**: a reason is supported when every number it gives as measured appears, with the
+same rounding, in a measurement in its basis. The reason of D1 gives four pairs (late deliveries
+10.4 → 1.2, the worst company's p95 wait 273 → 95.6 s, C's utility 28.8 → 19.0, road violations
+25.8 → 34.0); all eight numbers are in `P1.m0` and `P1.2.m`, so D1 is supported.
+
+**Answer**:
+
+1. Tabulate, for D1, D2, D5 and D6, the numbers in the reason and whether each is in the basis.
+2. D6 is reported as `override` although the human kept the rules, and D2 is not, although the
+   human kept the rules there too. Read L-6 of Appendix L and the gates that the two proposals
+   passed (`P2.2.c`, `P6.1.c`), and explain the difference.
+3. Do the same for the LLM's recommendations (`D1.rec`, `D2.rec`, …). Does the LLM's text meet
+   the same rule?
+
+### Exercise 13-3: a promise to check later
+
+The reason of D1 asks to re-measure C's utility and the road violations in the next period. In
+`answers.yaml` this can be written as a follow-up, and a later answer can say that it fulfils it.
+Copy `examples/steward-d-en/answers.yaml` to `my-answers.yaml` and add to D1:
+
+```yaml
+D1:
+  # choice and reason as before
+  follow_ups:
+    - text: Re-measure C's utility (28.8 to 19.0) and the road violations (25.8 to 34.0)
+      due: 2
+```
+
+Replay with `--answers my-answers.yaml` and verify: the finding `open follow-up` for `D1.f1`
+appears. Then add `fulfils: [D1.f1]` to the answer of D2 and replay again.
+
+**Goal**: decide whether D2 really fulfils `D1.f1`.
+
+**Decision rule**: a follow-up that asks to re-measure is fulfilled only by a measurement under
+the same conditions (the same demand and seeds) as the one it re-checks. Period 2 has another
+demand (normal + rush) and other seeds, and C's utility there is 56.3; the LLM wrote in D2 that it
+does not know why it differs from 28.8 → 19.0.
+
+**Answer**: is `fulfils: [D1.f1]` in D2 justified? If not, which measurement would fulfil it
+(hint: `python -m town.compare` with the seeds and interval of period 1), and where in the record
+would you put it?
+
+### Exercise 13-4: changes, anchors and keys
+
+Make three copies of your record from 13-3 and change each:
+
+| Change | How |
+|---|---|
+| one line | change the `reason` of D1 in place |
+| one line deleted | delete the line of `P1.2.vB` |
+| rewritten | change the reason of D1 and recompute the chain from that line on (`cadl.decisions.DecisionChain`) |
+
+Verify each copy three ways: without anything, with `--anchor <last digest of the original>`,
+and with a keyed record (`DecisionChain(key=...)`, then `--key`).
+
+**Goal**: fill a 3 × 3 table: which changes each way detects.
+
+**Decision rule**: compare your table with what G.8 says about the limits of the chain
+([Appendix G, G.8](../spec/appendix-g-agents.md#g8-audit-record)). Every cell must agree; a
+disagreement is a fault in the verifier or in your copy, to be found.
+
+**Answer**: where should the anchor be kept so that the operator who keeps the record cannot change
+it too?
+
+### Exercise 13-5: the LLM decides, also on the promise to customers
+
+`examples/steward-contract-en/` holds six periods run with a real LLM (Claude Opus 5.5,
+2026-11-20) under a KPI that allows the promised times to be revised, with the LLM deciding in
+place of the human (`--decider llm`) and the proposals kept to the rule and contract layers:
+
+```bash
+python -m town.steward --lang en --mode DISTRIBUTED --rounds 6 --name ex13-llm \
+    --kpi examples/steward-contract-en/kpi.md --decider llm --layers rule,contract \
+    --llm replay --replay-dir examples/steward-contract-en
+cadl decisions-verify runs/ex13-llm/decisions.jsonl
+```
+
+The verifier reports 0 errors and 59 findings: `open follow-up` 25, `prediction missed` 19,
+`delegated` 7 (every decision of the LLM, the reading of the KPI included), `unknowns` 7 and
+`override` 1. What happened, in the record:
+
+- In period 1 the LLM proposed, besides two rule changes, to relax the pickup promise from 120 s
+  to 150 s (`P1.3`, contract layer, affected: customers). It was measured with the customers'
+  values (`per_party.customers`): late deliveries 10.4 → 9.6, on-time 121.8 → 122.6 (3 of 5
+  seeds), the worst company's p95 wait unchanged at 272.6 s. It failed the gain and seed checks
+  and was not adopted.
+- The LLM, deciding for the operator, adopted `block_k 3 → 2` against the votes of B and C in
+  period 1 (D1, `override`), as the human did in the record of §4–§8, and `hold_limit 60s → 50s`
+  in period 4 by the votes (D4).
+- Every decision of the LLM gives a reason, assumptions and unknowns; together they give 45
+  predictions. The LLM as proposer and advisor gave 124 predictions, and 19 were contradicted:
+  9 on votes (for example it expected B to vote for `P1.1`, and B voted against) and 10 on
+  measurements.
+- The LLM made 25 follow-ups (for example "Analyse why C's robots are evicted more often, and
+  propose a mitigation …", D1) and fulfilled none in the record. In D6 it wrote that the
+  mitigation for C promised in D1 was "now six periods overdue".
+
+`examples/steward-contract/` holds the same run in Japanese. There the LLM kept the rules in
+periods 1 and 2 by the votes (D1 against the recommendation of the LLM as advisor) and adopted
+`block_k 3 → 2` against the votes in period 3 (D3), giving as its reason the conditions it had
+set in D1 and D2; 0 errors and 58 findings.
+
+**Goal**: judge, from the record only, whether the LLM may decide for the operator.
+
+**Decision rule**: use the rules of 13-2 and 13-3. A decider may act for the operator on a layer
+when its reasons are supported as often as the operator's in the record of §4–§8 (13-2), and it
+fulfils its follow-ups.
+
+**Answer**:
+
+1. Apply the rule of 13-2 to D1 of this record and of the record of §4–§8. Are both supported?
+2. None of the 25 follow-ups is fulfilled in the record. The decision request of the LLM
+   (`DECIDE_SCHEMA` in `town/llm_steward.py`) has no field to say that a decision fulfils an
+   earlier follow-up. Add one (`fulfils`, a list of follow-up ids) and say what changes in the
+   record. In the Japanese record, D3 refers to the conditions of D1 and D2 in its text only:
+   which entries should it name in `fulfils`?
+3. Was the contract change `P1.3` measured for the customers, as the KPI asks? Which finding
+   would the verifier report if `per_party.customers` were missing?
+
+### Exercise 13-6: the same evidence from a person and from the LLM (optional)
+
+Answer the same decision requests yourself: replay the same LLM proposals and requests, but
+decide as the human (`--decider human`, the default). Without `--answers` the loop stops at each
+request; write your answers, with `reason`, `assumptions`, `unknowns`, `follow_ups` and `fulfils`,
+to a YAML file and rerun with `--answers`.
+
+**Goal**: compare your record with the LLM's on the tab **Evidence by party** of CADL Explorer, or
+with `cadl decisions-verify --format json`: the decisions with a reason, with assumptions, with
+unknowns, the predictions and those that missed, and the follow-ups fulfilled.
+
+**Decision rule**: the record with more evidence is not the one with more text. Count, for each
+decider, the decisions whose reason is supported (the rule of 13-2) and the follow-ups fulfilled
+(the rule of 13-3); the better record has the higher share of both.
+
+**Answer**: who should be allowed to decide in place of the operator, and for which layer? Base
+your answer on the two records, not on who the decider is.
+
+---
+
+## 14. What the specification cannot express yet
 
 Building this exercise exposed five gaps in CADL 0.3. They were all there up to `cadl` 0.3.31; `cadl`
 0.3.32 adds syntax or IR output for each of them, as the items below say, while the exercise itself still keeps
@@ -1312,7 +1522,9 @@ its own files and lets the simulator apply the rules:
   lists the decision records it rests on (`decisions.md#d1`, `gsn.yaml#S2`), which parameters,
   targets and measurements name ([Appendix K, K.5](../spec/appendix-k-amendment.md)). These are
   declarations: the KPI itself, in natural language, and the records stay in `kpi.md`,
-  `decisions.md` and `gsn.yaml`.
+  `decisions.md` and `gsn.yaml`. From `cadl` 0.3.37 the records themselves have a format, the decision
+  records of [Appendix L](../spec/appendix-l-decisions.md), which the exercise writes as
+  `decisions.jsonl` and `cadl decisions-verify` checks (§13).
 
 Up to `cadl` 0.3.11, an unreadable value such as `deadline: soon` passed `cadl check` and became
 `null` in the IR; from 0.3.12 it is an error. The exercise also rejects rules whose IR lacks a value

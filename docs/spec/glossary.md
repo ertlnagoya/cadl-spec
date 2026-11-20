@@ -299,7 +299,7 @@ provides it from `cadl` 0.3.23 (`cadl norms-indices`).
 
 Terms of the format for records of decisions; see
 [Appendix L](./appendix-l-decisions.md). The reference implementation
-does not provide it yet.
+provides it from `cadl` 0.3.37 (`cadl decisions-verify`).
 
 - **Decision record** — A file of JSON Lines, beside a model, that
   records how its amendments were decided, with the hash chain of
