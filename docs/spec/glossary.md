@@ -295,6 +295,26 @@ provides it from `cadl` 0.3.23 (`cadl norms-indices`).
 - **Magnitude** — The size of the sanction or of the reward of a norm
   at full incentive intensity; a strategic model multiplies it by λ.
 
+## Decision records
+
+Terms of the format for records of decisions; see
+[Appendix L](./appendix-l-decisions.md). The reference implementation
+does not provide it yet.
+
+- **Decision record** — A file of JSON Lines, beside a model, that
+  records how its amendments were decided, with the hash chain of
+  [Appendix G, G.8](./appendix-g-agents.md#g8-audit-record).
+- **Party** — A person, organisation, software agent, LLM, or tool that
+  takes part in the decisions, with roles such as owner, voter,
+  advisor, and decider.
+- **Basis** — The earlier entries on which a decision rests: the
+  objective in force, measurements, checks, votes, a recommendation.
+- **Follow-up** — A promise, made with a decision, to check or do
+  something later; a later entry fulfils it.
+- **Finding** — Something a verifier reports for review that is not an
+  error, such as a decision that set aside the votes or did not follow
+  the recommendation.
+
 ## Verification
 
 The checks of the reference verifier are described in

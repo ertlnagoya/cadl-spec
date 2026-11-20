@@ -108,6 +108,8 @@ the order below, but each chapter is also self-contained.
 - **[Appendix H — Stochastic Model Extension](./appendix-h-stochastic.md)** — A parametric Markov model in which α, β and λ appear, properties, regime map queries, and export to the PRISM language.
 - **[Appendix I — Strategic Model Extension](./appendix-i-games.md)** — Players, profiles and payoffs on the model of Appendix H, checks that a named memoryless deterministic profile is an equilibrium against unilateral deviations, and equilibrium maps over institutional parameters.
 - **[Appendix J — Grounding of the Institutional Parameters](./appendix-j-grounding.md)** — Indices for α and β and a coverage measure for incentives, derived from the norms of a contract; their comparison with the declared values; and the payoff term of a sanction.
+- **[Appendix K — Amendment of a Model](./appendix-k-amendment.md)** — Amendable parameters, versions of a model with their effective times and transitional rules, metric targets that change over time, and references to records of human decisions.
+- **[Appendix L — Decision Records](./appendix-l-decisions.md)** — A file format for the record of how amendments were decided: parties, proposals, measurements, votes, recommendations, decisions and their basis, follow-ups, and a hash chain.
 - **[Glossary](./glossary.md)** — Terms used throughout the specification.
 
 ## Suggested Reading Paths
