@@ -478,9 +478,9 @@ keeps the two from disagreeing.
 Period 1 of the English record of Course D (`examples/steward-d-en` of
 cadl-robot-town), shortened. Each object is one line of the file; here
 it is spread over several lines, and the integrity fields are left out.
-The versions are called `v1` and `v2` after the files of the run; the
-model of the exercise does not declare the amendment extension yet, so
-this is the `sos.version` that those files would give. The predictions
+The versions are called `v1` and `v2` after the files of the run; from
+cadl-robot-town v0.5.0 these files declare the amendment extension and
+give this `sos.version`. The predictions
 of the proposal are taken from the text of its reason; the human gave
 no assumptions, unknowns, or predictions for D1, which the empty lists
 record.
@@ -632,14 +632,22 @@ From `cadl` 0.3.38 (decisions 0.2; `cadl` 0.3.37 implemented decisions
   answers the requests in place of the human for the layers given with
   `--delegate`, as a party with `on_behalf_of`. A promise to re-measure
   names the measurement of its period in `same_method_as`, and the
-  steward makes that measurement in the next period. The model of the
-  exercise does not declare the amendment extension, so its version
-  entries attach no CADL file and L-9 to L-11 are not checked.
+  steward makes that measurement in the next period. From v0.5.0 each
+  version entry, the first version included, attaches the CADL file of
+  its version, written with the amendment extension (Appendix K: the
+  amendable parameters, their places and ranges, and who decides each
+  layer), so the verifier checks L-9 to L-11 and the outcome of the
+  votes. The steward and the council adopt rule changes on behalf of the
+  operator; a regulation proposal is measured by applying its value to
+  the measurements and votes of its period; a follow-up says whether a
+  measurement, a proposal or a decision fulfils it.
 - The page Decision Evidence of cadl-explorer (from v1.5.0) reads a
   record, verifies it with `cadl.decisions`, and shows a timeline of the
   parties, the trail of each decision, the evidence of each party, the
   GSN of L.8, the findings and the chain. From v1.6.0 it shows the
-  layers of each decider and whether each follow-up was fulfilled.
+  layers of each decider and whether each follow-up was fulfilled. From
+  v1.7.0 it takes the CADL files of the versions with the record, and
+  checks L-9 to L-11 with them.
 
 ## L.11 Backward compatibility
 
