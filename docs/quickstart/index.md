@@ -165,7 +165,7 @@ lifecycles, monitors), use the **Designer** page.
 ## Path B — Write and check with the CLI {/* #path-b */}
 
 The reference implementation is the `cadl` command-line tool, distributed
-on PyPI as `cadl-lang`. The output below is from cadl 0.3.37.
+on PyPI as `cadl-lang`. The output below is from cadl 0.3.38.
 
 The commands of this path build on one another: `cadl verify` runs the
 type check of `cadl check` and adds the consistency checks.

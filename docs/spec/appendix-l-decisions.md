@@ -1,10 +1,10 @@
 ---
 sidebar_position: 20.6
 title: "Appendix L: Decision Records"
-description: "Decision records (decisions 0.1): a file format for the record of how amendments of a model were decided, with the same evidence required of every party, whether a person, an LLM, or a tool. Parties and their roles, including a party that decides in place of another; objectives, proposals, measurements, checks, votes, recommendations, requests, decisions, versions and follow-ups as entries; the basis of each decision; integrity by the hash chain of G.8; the checks that a verifier makes and the findings it reports for review; the relation to Appendix K and a mapping to GSN."
+description: "Decision records (decisions 0.2): a file format for the record of how amendments of a model were decided, with the same evidence required of every party, whether a person, an LLM, or a tool. Parties and their roles, the layers on which each decides, and a party that decides in place of another; objectives, proposals, measurements, checks, votes, recommendations, requests, decisions, versions and follow-ups, with what fulfils each follow-up, as entries; the basis of each decision; integrity by the hash chain of G.8; the checks that a verifier makes and the findings it reports for review; the relation to Appendix K and a mapping to GSN."
 ---
 
-# Appendix L — Decision Records (decisions 0.1)
+# Appendix L — Decision Records (decisions 0.2)
 
 [Appendix K, K.5](./appendix-k-amendment.md) lets a version of a model
 name the records of decisions on which it rests, by a URI reference,
@@ -16,8 +16,8 @@ check it, and show it.
 A decision record is a file beside the model, not a key of the model.
 A CADL file declares nothing to use it, and no verdict of the core or
 of an extension depends on it. The format is normative; whether a
-system keeps a decision record is its own choice. The reference
-implementation does not read or write decision records yet (L.10).
+system keeps a decision record is its own choice. L.10 says what the
+reference implementation and the exercise of Course D do with it.
 
 ## L.1 Motivation and scope
 
@@ -28,6 +28,8 @@ constitution, the three companies vote, and when the gates or the
 LLM say so, a human decides after reading a decision request in which
 the LLM recommends an option. The human also writes the KPI, and
 chooses how it is measured when the LLM reads it in more than one way.
+Changes of the regulation, the values of the constitution that bound
+the loop, are decided by another person: the regulator.
 
 Two questions are asked of such a loop afterwards.
 
@@ -54,7 +56,8 @@ system. For each decision it says:
 - who decided, by which procedure, with which reason, assumptions and
   unknowns, and on which earlier entries the decision rests;
 - which version of the model came into force;
-- what the deciders promised to follow up, and whether it was done.
+- what the deciders promised to follow up, what would fulfil each
+  promise, and whether it was done.
 
 The same evidence is asked of every party. A proposal, a
 recommendation, or a decision made by an LLM or by a tool is recorded
@@ -63,9 +66,10 @@ person: its reason, the entries it rests on, its assumptions, what it
 predicts, and what it does not know (L.4, "Evidence fields"). In Course
 D the LLM proposes and recommends, and it may also decide in place of
 the human, for amendments of the rules and of the contract with the
-customers alike. A reviewer must be able to read a decision of the LLM
-as closely as a decision of the human, and to tell from the record who
-decided in whose place.
+customers, and in place of the regulator for the regulation. A reviewer
+must be able to read a decision of the LLM as closely as a decision of
+the human, and to tell from the record who decided in whose place and
+on which layers.
 
 In scope: the entries and their fields, the references between them,
 the integrity of the file, and the checks of a verifier. Out of scope:
@@ -90,7 +94,7 @@ record.
   | `assessor` | measures proposals and checks them |
   | `voter` | votes on proposals |
   | `advisor` | recommends an option to a decider |
-  | `decider` | decides, also in place of another party (`on_behalf_of`, L.3) |
+  | `decider` | decides, on the layers given to it (`layers`, L.3), also in place of another party (`on_behalf_of`, L.3) |
   | `affected` | is affected by a decision and takes no part in it (for example customers); named so that an entry can say who is affected |
 
 - An **entry** is one line of the record after its header. Each entry
@@ -101,7 +105,9 @@ record.
   rests. A decision names its basis: the objective in force, the
   measurements, the checks, the votes, the recommendation.
 - A **follow-up** is a promise, made with a decision, to check or do
-  something later. A later entry **fulfils** it.
+  something later. A later entry **fulfils** it. A follow-up can say what
+  a fulfilling entry must be: for a promise to measure again, a
+  measurement under the same conditions as the one it re-checks.
 - Entries are never changed. A **correction** is a later entry that
   says what was wrong in an earlier one.
 
@@ -123,7 +129,7 @@ outside the record.
 
 | Line | Fields before the integrity fields |
 | --- | --- |
-| Header | `decisions_format`: `"cadl-decisions/1"`. `hash`, `key_id`, `run_id`: as in the header of G.8. `model`: `name` (the `sos.name` of the model), `version` (the `sos.version` of the first version, or `null`), `source_sha256` (the SHA-256 of the bytes of the first version of the CADL file, or `null`). `time_base`: what a period is, in words, or `null`. `started`: the time at which the record was started, as an ISO 8601 time stamp in UTC. `previous`: for a record that continues another, the `run_id` of that record and the `digest` of its end record; otherwise `null`. `parties`: the parties (below). |
+| Header | `decisions_format`: `"cadl-decisions/2"`. `hash`, `key_id`, `run_id`: as in the header of G.8. `model`: `name` (the `sos.name` of the model), `version` (the `sos.version` of the first version, or `null`), `source_sha256` (the SHA-256 of the bytes of the first version of the CADL file, or `null`). `time_base`: what a period is, in words, or `null`. `started`: the time at which the record was started, as an ISO 8601 time stamp in UTC. `previous`: for a record that continues another, the `run_id` of that record and the `digest` of its end record; otherwise `null`. `parties`: the parties (below). |
 | Entry | The common fields of L.4, then the fields of its type. |
 | End record | `decisions_end`: `true`. `entries`: the number of entries between the header and the end record. |
 
@@ -145,6 +151,14 @@ in `previous` (its `run_id` and the digest of its end record).
 | `actor` | The actor id or the role of the model that the party is, as `decided_by:` and `voters:` of K.3 name it (`COUNCIL`, `service_operator`), or `null`. |
 | `model` | For an `llm`, the model identifier; for a `tool`, its name and version; otherwise `null`. |
 | `on_behalf_of` | The `id` of the party in whose place this party acts, or `null`. An LLM that decides in place of the service operator has the role `decider` itself and names the operator's party here. |
+| `layers` | The layers on which the party decides: a list of `rule`, `contract`, and `regulation` (the layers of K.3), or `null` when they are not limited. For a party that acts on behalf of another, the layers on which it does so. |
+
+`layers` separates who may decide what. In Course D the service
+operator decides on the rules and the contract (`["rule", "contract"]`),
+the regulator on the regulation (`["regulation"]`), and the steward,
+a tool, adopts by itself only changes of the rules (`["rule"]`); an LLM
+that decides in place of the operator has at most the operator's
+layers.
 
 A party whose kind is `human` stands for a role held by a person; the
 record does not need to name the person. Who held the role is a matter
@@ -294,6 +308,13 @@ A decision also gives the evidence fields.
 | `text` | What is to be done. |
 | `due` | By when, as a `point`, or `null`. |
 | `decision` | The `id` of the decision with which it was made, or `null`. |
+| `fulfilled_by` | What fulfils it, or `null` for any later entry that names it in `fulfils`. An object with `type` (the type of the entry, or `null`), and, for a measurement, `of` (`"in_force"` or the `id` of a proposal, or `null`), `same_method_as` (the `id` of an earlier measurement whose `method` the fulfilling measurement must have: the same runs, window and description, that is, the same conditions; or `null`), and `subjects` (the values it must give, as `metric:<name>` or `metric:<name>@<party>`; may be empty). |
+
+A promise to re-measure names the measurement it re-checks in
+`same_method_as`: a measurement under other conditions (other seeds,
+another demand) does not fulfil it, however close its values. A promise
+to act (to propose a mitigation, to revise a reading) gives `type`
+`decision` or `proposal`.
 
 **`correction`**: a correction of an earlier entry.
 
@@ -322,8 +343,9 @@ A verifier MUST report the following as **errors**. A record with an
 error cannot be relied on as it stands.
 
 - **L-1** The file is JSON Lines in UTF-8, the first line is a header
-  with `decisions_format` `"cadl-decisions/1"`, and every line has the
-  fields of L.3 and L.4 for its kind and type, with no others.
+  with `decisions_format` `"cadl-decisions/2"`, and every line has the
+  fields of L.3 and L.4 for its kind and type, with no others (for a
+  record of `"cadl-decisions/1"`, see L.11).
 - **L-2** The integrity fields verify as in G.8, with the key when the
   record is keyed.
 - **L-3** The `id`s of the parties are unique, and so are the `id`s of
@@ -336,6 +358,9 @@ error cannot be relied on as it stands.
   `objective` owner; `proposal` proposer; `measurement` and `check`
   assessor; `vote` voter; `recommendation` advisor; `decision` decider;
   `request`, `follow_up`, `version`, `correction`, and `note` any party.
+  A decision that adopts a proposal of kind `amendment` is made by a
+  party whose `layers` is `null` or holds the `layer` of every change of
+  the proposal.
 - **L-6** The `choice` of a decision is one of its `options`. The votes
   on a proposal are the `vote` entries on it, one per voter: a later
   vote of a voter replaces an earlier one. A decision with `procedure`
@@ -358,7 +383,9 @@ error cannot be relied on as it stands.
   kind `llm` or `tool` gives `model`. The `on_behalf_of` of a party
   names another party, and no party acts in its own place. The
   `subject` of a prediction names a metric or a party with the role
-  `voter`.
+  `voter`. A party that acts on behalf of another acts only on layers
+  that the other decides: when the other gives `layers`, its own
+  `layers` are not `null` and are among them.
 
 When the CADL files of the versions are at hand (the paths in the
 `attachments` of the `version` entries, or given to the verifier), a
@@ -391,7 +418,8 @@ whether it was right is for the reviewer to judge.
 | **affected not measured** | A decision adopts a proposal whose `affected` parties, or, for a change of a parameter of layer `contract`, the parties with the role `affected`, have no values in `per_party` of any measurement of the proposal in the basis. |
 | **unmeasured choice** | A decision adopts a proposal of kind `amendment` with no measurement of it in its basis. |
 | **reading not decided** | An objective without `measure` was followed by measurements before any decision chose a reading. |
-| **open follow-up** | A follow-up has not been fulfilled, and its `due` point has passed (or the record is complete). |
+| **fulfilment not shown** | An entry names a follow-up in `fulfils` but is not what its `fulfilled_by` asks: another type, a measurement of something else, by another `method` than the measurement named in `same_method_as`, or without a value of a `subject`. Such an entry does not fulfil the follow-up. |
+| **open follow-up** | A follow-up has not been fulfilled (no later entry names it in `fulfils` and meets its `fulfilled_by`), and its `due` point has passed (or the record is complete). |
 | **corrected** | An entry has a correction. |
 | **open record** | The record has no end record. |
 
@@ -443,7 +471,7 @@ keeps the two from disagreeing.
 | `assumptions` | Assumption of the strategy |
 | `unknowns` and `predictions` | Context of the strategy; a prediction that a later measurement contradicts is a counter-evidence of it |
 | `recommendation` in the basis | Context of the strategy |
-| `follow_up` | Goal under the strategy, undeveloped until a later entry fulfils it; the fulfilling entry is its Solution |
+| `follow_up` | Goal under the strategy, undeveloped until a later entry fulfils it (meeting `fulfilled_by`); the fulfilling entry is its Solution |
 
 ## L.9 Example
 
@@ -458,20 +486,22 @@ no assumptions, unknowns, or predictions for D1, which the empty lists
 record.
 
 ```json
-{"decisions_format": "cadl-decisions/1", "hash": "sha256", "key_id": null,
+{"decisions_format": "cadl-decisions/2", "hash": "sha256", "key_id": null,
  "run_id": "3f2a…", "model": {"name": "RobotTown", "version": "v1", "source_sha256": "9c1e…"},
  "time_base": "one simulated hour of the robot town", "started": "2026-11-18T09:12:03Z",
  "previous": null, "parties": [
   {"id": "operator", "kind": "human", "roles": ["owner", "decider"], "name": "service operator",
-   "actor": null, "model": null, "on_behalf_of": null},
+   "actor": null, "model": null, "on_behalf_of": null, "layers": ["rule", "contract"]},
+  {"id": "regulator", "kind": "human", "roles": ["decider"], "name": "regulator",
+   "actor": null, "model": null, "on_behalf_of": null, "layers": ["regulation"]},
   {"id": "llm", "kind": "llm", "roles": ["proposer", "advisor"], "name": null, "actor": null,
-   "model": "claude-opus-5-5", "on_behalf_of": null},
+   "model": "claude-opus-5-5", "on_behalf_of": null, "layers": null},
   {"id": "steward", "kind": "tool", "roles": ["assessor", "decider"], "name": "town.steward",
-   "actor": null, "model": "cadl-robot-town (main, 2026-11-20)", "on_behalf_of": null},
-  {"id": "A", "kind": "agent", "roles": ["voter"], "name": "company A", "actor": null, "model": null, "on_behalf_of": null},
-  {"id": "B", "kind": "agent", "roles": ["voter"], "name": "company B", "actor": null, "model": null, "on_behalf_of": null},
-  {"id": "C", "kind": "agent", "roles": ["voter"], "name": "company C", "actor": null, "model": null, "on_behalf_of": null},
-  {"id": "customers", "kind": "organisation", "roles": ["affected"], "name": null, "actor": null, "model": null, "on_behalf_of": null}]}
+   "actor": null, "model": "cadl-robot-town (main, 2026-11-21)", "on_behalf_of": null, "layers": ["rule"]},
+  {"id": "A", "kind": "agent", "roles": ["voter"], "name": "company A", "actor": null, "model": null, "on_behalf_of": null, "layers": null},
+  {"id": "B", "kind": "agent", "roles": ["voter"], "name": "company B", "actor": null, "model": null, "on_behalf_of": null, "layers": null},
+  {"id": "C", "kind": "agent", "roles": ["voter"], "name": "company C", "actor": null, "model": null, "on_behalf_of": null, "layers": null},
+  {"id": "customers", "kind": "organisation", "roles": ["affected"], "name": null, "actor": null, "model": null, "on_behalf_of": null, "layers": null}]}
 {"id": "K1", "type": "objective", "point": {"period": 1}, "by": "operator",
  "text": "Deliver as many orders as possible across the town within the times we promised customers …",
  "measure": null, "basis": [], "fulfils": [], "attachments": [], "written": "…"}
@@ -526,17 +556,35 @@ record.
  "basis": ["K1.d", "P1.m0", "P1.2", "P1.2.m", "P1.2.c", "P1.2.vA", "P1.2.vB", "P1.2.vC", "D1.req", "D1.rec"], …}
 {"id": "D1.f1", "type": "follow_up", "point": {"period": 1}, "by": "operator", "decision": "D1",
  "text": "Re-measure C's utility (28.8 to 19.0) and the road violations (25.8 to 34.0)",
- "due": {"period": 2}, …}
+ "due": {"period": 2},
+ "fulfilled_by": {"type": "measurement", "of": "in_force", "same_method_as": "P1.m0",
+                  "subjects": ["metric:utility@C", "metric:road_violations"]}, …}
 {"id": "V2", "type": "version", "point": {"period": 1}, "by": "steward", "version": "v2",
  "previous": "v1", "effective": {"period": 2}, "source_sha256": "47d0…", "decision": "D1",
  "attachments": [{"path": "v2.cadl", "sha256": "47d0…", "media_type": "application/yaml"}], …}
 ```
 
-The measurement of period 2 under v2 names `D1.f1` in `fulfils`. A
-verifier reports for D1 the findings override, against recommendation,
+In period 2 the record goes on:
+
+```json
+{"id": "P2.m0", "type": "measurement", "point": {"period": 2}, "by": "steward", "of": "in_force",
+ "version": "v2", "method": {"runs": 5, "window": "1h", "description": "seeds 101–105, rush"},
+ "values": {"road_violations": 28.0, …}, "per_party": {"C": {"utility": 56.3}, …},
+ "fulfils": ["D1.f1"], …}
+{"id": "F2.D1.f1", "type": "measurement", "point": {"period": 2}, "by": "steward", "of": "in_force",
+ "version": "v2", "method": {"runs": 5, "window": "1h", "description": "seeds 1–5"},
+ "values": {"road_violations": 34.0, …}, "per_party": {"C": {"utility": 19.0}, …},
+ "compared_with": "P1.m0", "fulfils": ["D1.f1"], …}
+```
+
+A verifier reports for D1 the findings override, against recommendation,
 and unknowns, and no error: the decision gives its reason and its
 basis. For P1.2 it reports prediction missed: the LLM expected B to
-vote for the change, and B voted against it.
+vote for the change, and B voted against it. For P2.m0 it reports
+fulfilment not shown: the measurement of period 2 names `D1.f1`, but it
+was made on other seeds and another demand than P1.m0, so it does not
+re-check the values of period 1. `F2.D1.f1`, a measurement of v2 under
+the conditions of P1.m0, fulfils it.
 
 Had the service operator let the LLM decide in its place, the record
 would have one more party and the decision would be written in the same
@@ -544,7 +592,7 @@ way, with the same fields and the same checks:
 
 ```json
 {"id": "llm-decider", "kind": "llm", "roles": ["decider"], "name": null, "actor": null,
- "model": "claude-opus-5-5", "on_behalf_of": "operator"}
+ "model": "claude-opus-5-5", "on_behalf_of": "operator", "layers": ["rule", "contract"]}
 {"id": "D1", "type": "decision", "point": {"period": 1}, "by": "llm-decider",
  "options": ["P1.2", "keep"], "choice": "keep", "procedure": "vote", "rule": null,
  "reason": "Adopting it means overriding a majority vote. …",
@@ -555,11 +603,17 @@ way, with the same fields and the same checks:
 
 Here the verifier reports delegated and unknowns. Whether the LLM may
 decide in place of the operator, and for which layers, is for the
-organisation that keeps the record; the record shows that it did.
+organisation that keeps the record; the record shows that it did, and
+on which layers. An LLM that acts for the operator cannot adopt a change
+of the regulation: the operator's `layers` do not hold it (L-8), and a
+decision that adopts such a change is an error (L-5). A change of the
+regulation goes to the regulator in a request of its own, and an LLM
+that decides it acts on behalf of the regulator.
 
 ## L.10 Reference implementation status
 
-From `cadl` 0.3.37:
+From `cadl` 0.3.38 (decisions 0.2; `cadl` 0.3.37 implemented decisions
+0.1):
 
 - `cadl.decisions.DecisionChain` writes a record, and `cadl
   decisions-verify RECORD.jsonl` checks it: the errors L-1 to L-8, and
@@ -568,20 +622,34 @@ From `cadl` 0.3.37:
   `--version`). It reports the findings of L.6 and lists what it could
   not check. It counts a value as `unchanged` within 1 % of the value it
   is compared with. `--key`, `--run-id` and `--anchor` work as for
-  `cadl audit-verify`.
-- cadl-robot-town (from v0.3.0) writes `decisions.jsonl` in each run of
-  `town.steward` and `town.council`. With `--decider llm`, the LLM
-  answers the decision requests in place of the operator, as a party
-  with `on_behalf_of`. The model of the exercise does not declare the
-  amendment extension, so its version entries attach no CADL file and
-  L-9 to L-11 are not checked.
+  `cadl audit-verify`. It reads records of `cadl-decisions/1` as well
+  (L.11). The writer fills `layers` and `fulfilled_by` with `null` when
+  its caller leaves them out.
+- cadl-robot-town (from v0.4.0) writes `decisions.jsonl` in each run of
+  `town.steward` and `town.council`. The operator decides on the rules
+  and the contract, and a regulator, another party, on the regulation,
+  in a decision request of its own. With `--decider llm`, the LLM
+  answers the requests in place of the human for the layers given with
+  `--delegate`, as a party with `on_behalf_of`. A promise to re-measure
+  names the measurement of its period in `same_method_as`, and the
+  steward makes that measurement in the next period. The model of the
+  exercise does not declare the amendment extension, so its version
+  entries attach no CADL file and L-9 to L-11 are not checked.
 - The page Decision Evidence of cadl-explorer (from v1.5.0) reads a
   record, verifies it with `cadl.decisions`, and shows a timeline of the
   parties, the trail of each decision, the evidence of each party, the
-  GSN of L.8, the findings and the chain.
+  GSN of L.8, the findings and the chain. From v1.6.0 it shows the
+  layers of each decider and whether each follow-up was fulfilled.
 
 ## L.11 Backward compatibility
 
 The format is new. It changes no key of a CADL file and no verdict.
 K.5 is unchanged; L.7 says how a `ref:` of K.5 names an entry of a
 decision record.
+
+decisions 0.2 adds two fields to decisions 0.1: `layers` of a party
+and `fulfilled_by` of a follow-up, and the header names
+`"cadl-decisions/2"`. A record of `"cadl-decisions/1"` has neither
+field; a verifier reads it as a record in which every party decides on
+any layer and every follow-up is fulfilled by any later entry that names
+it, and does not accept the two fields in it.
