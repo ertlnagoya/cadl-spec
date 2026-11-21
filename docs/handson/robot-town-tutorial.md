@@ -1271,26 +1271,34 @@ agreed to each change and who decided it, on what basis and why, the record has 
 program as well. From `cadl` 0.3.37, `town.steward` and `town.council` also write
 `runs/<name>/decisions.jsonl`, a decision record of
 [Appendix L](../spec/appendix-l-decisions.md) (decisions 0.2 from `cadl` 0.3.38 and
-cadl-robot-town v0.4.0):
+cadl-robot-town v0.4.0; the CADL files of the versions from cadl-robot-town v0.5.0):
 
 - one line per entry: objectives, proposals, measurements, checks, votes, decision requests,
   recommendations, decisions, versions and follow-ups, each naming the earlier entries it rests
   on (`basis`);
 - the parties, their roles and the layers on which each decides: the operator (`human`, the
   rules and the contract), the regulator (`human`, the regulation, that is, the values of the
-  constitution), the LLM (`llm`), the steward or the council (`tool`, which adopts only rule
-  changes by itself), the companies A, B, C (`agent`, voters) and the customers (`organisation`,
-  affected, without a vote);
+  constitution), the LLM (`llm`), the steward or the council (`tool`, which adopts rule changes
+  by itself when they pass every check, on behalf of the operator), the companies A, B, C
+  (`agent`, voters) and the customers (`organisation`, affected, without a vote);
+- each version of the rules, the first included, with its CADL file `v<n>.cadl` attached: the
+  rules with the amendment extension of [Appendix K](../spec/appendix-k-amendment.md) written in
+  (the amendable parameters, their places, ranges and steps, and who decides each layer);
 - the same evidence from every party, whether a person, the LLM or a tool: a reason, assumptions,
   what it does not know, and predictions;
-- for each follow-up, what fulfils it: for a promise to measure again, a measurement under the
-  same conditions as the one it re-checks, which the steward makes in the next period;
+- for each follow-up, what fulfils it: for a promise to measure again (`remeasure`), a
+  measurement under the same conditions as the one it re-checks, which the steward makes in the
+  next period; for a promise to propose an amendment (`propose`), a later proposal; for a
+  question (`ask`), a later decision;
 - on every line the hash chain of the audit log of [Appendix G](../spec/appendix-g-agents.md#g8-audit-record).
 
 ```bash
 cadl decisions-verify runs/<name>/decisions.jsonl
 ```
 
+With the version files next to the record, the verifier also checks the versions and their order,
+that every proposal moves a parameter of the version in force within its range and step, and who
+decided each change and whether the votes reached the quorum (L-9 to L-11).
 The verifier reports errors (L-1 to L-11: the record cannot be relied on as it stands) and findings
 for review (an override of the votes, a decision against the recommendation, a decision made on
 behalf of another party, a prediction that a later vote or measurement contradicted, a claim to
@@ -1317,13 +1325,15 @@ proposals, the first check each failed, the votes of A, B and C, and the proposa
 **Decision rule**: your table is correct when it gives, period by period, the same outcome as
 `history.md` in all six periods, and the verifier reports 0 errors.
 
-**Reference values** (2026-11-20, cadl 0.3.37; the same with cadl 0.3.38 and cadl-robot-town
-v0.4.0): 56 proposals; 50 failed the gain check first, 2
-the vote, 4 passed every check; one change was adopted (period 2, `sanction_lambda 0.5 → 1`, yes:
-A and B); the record has 350 entries. Every decision is `automatic`, made by the council (a
-tool), with its rule written in the record.
+**Reference values** (2026-11-21, cadl 0.3.38 and cadl-robot-town v0.5.0): 56 proposals; 50
+failed the gain check first, 2 the vote, 4 passed every check; one change was adopted (period 2,
+`sanction_lambda 0.5 → 1`, yes: A and B); the record has 351 entries, among them the versions v1
+and v2 with their CADL files. Every decision is `automatic`, made by the council (a tool) on
+behalf of the operator, with its rule written in the record; the verifier reports `delegated`
+for each of the six.
 
-**Answer**: why is no finding reported, although C voted against the adopted change?
+**Answer**: why is no other finding reported, although C voted against the adopted change?
+Which entries does the verifier use to check that A and B were enough?
 
 ### Exercise 13-2: does the evidence support the reason?
 
@@ -1335,8 +1345,9 @@ python -m town.steward --lang en --mode DISTRIBUTED --rounds 6 --name ex13-d \
 cadl decisions-verify runs/ex13-d/decisions.jsonl
 ```
 
-The verifier reports 0 errors and 9 findings: `override` for D1 and D6, `against
-recommendation` for D1, and `unknowns` for six decisions.
+The verifier reports 0 errors and 11 findings: `override` for D1 and D6, `against
+recommendation` for D1, `unknowns` for six decisions, and `delegated` for D3 and D4, the
+decisions of the steward, which acts for the operator.
 
 **Goal**: for every decision of a person, check the numbers in its reason against the
 measurements in its `basis` (`values` and `per_party`).
@@ -1367,20 +1378,20 @@ D1:
   follow_ups:
     - text: Re-measure C's utility (28.8 to 19.0) and the road violations (25.8 to 34.0)
       due: 2
-      remeasure: true
+      kind: remeasure
       metrics: [utility@C, road_violations]
 ```
 
 Replay with `--answers my-answers.yaml` and verify. The follow-up `D1.f1` now names, in
 `fulfilled_by`, the measurement `P1.m0` whose conditions a re-measurement must have, and at the
 start of period 2 the steward makes it: `F2.D1.f1`, the rules in force (v2) under the seeds and
-demand of period 1. The verifier reports the same 9 findings as in 13-2. (The replay notes that
+demand of period 1. The verifier reports the same 11 findings as in 13-2. (The replay notes that
 some requests differ from the recorded ones: the record of decisions it passes to the LLM now
 holds the re-measurement. It uses the recorded output as is.)
 
 Then add `fulfils: [D1.f1]` to the answer of D2, as if the human said that period 2 settled the
-promise, and replay again. The verifier reports a tenth finding, `fulfilment not shown` for D2: a
-decision is not a measurement.
+promise, and replay again. The verifier reports a twelfth finding, `fulfilment not shown` for D2:
+a decision is not a measurement.
 
 **Goal**: explain from the record why D2 does not fulfil `D1.f1` and `F2.D1.f1` does.
 
@@ -1394,9 +1405,13 @@ does not know why it differs from 28.8 → 19.0.
 1. Compare `P1.m0`, `P1.2.m` and `F2.D1.f1`. The re-measurement gives exactly the values of
    `P1.2.m` (C's utility 19.0, road violations 34.0). Why? What would a re-measurement add in a
    town that runs in the real world, where the same conditions never come back exactly?
-2. A promise to act, such as "propose a mitigation for C", has no measurement to check. Write
-   one as a follow-up without `remeasure`, and name it in `fulfils` of a later answer. What does
-   the verifier check, and what is left to the reviewer?
+2. A follow-up promises only what someone in the town does. Add to D1 a promise to propose an
+   amendment (`kind: propose`, "Propose a change that keeps C's utility") and a question for a
+   later decision (`kind: ask`, "Decide whether block_k should be put to the vote again"), and
+   name both in `fulfils` of D2. The verifier accepts D2 for the question and reports
+   `fulfilment not shown` for the proposal: only a later proposal that names it fulfils it, and
+   the replayed proposals name none, so it stays open (13 findings). What does the verifier
+   check, and what is left to the reviewer?
 
 ### Exercise 13-4: changes, anchors and keys
 
@@ -1423,9 +1438,9 @@ it too?
 ### Exercise 13-5: the LLM decides, also on the promise to customers
 
 `examples/steward-contract-en/` holds six periods run with a real LLM (Claude Opus 5.5,
-2026-11-21) under a KPI that allows the promised times to be revised, with the LLM deciding in
-place of the operator (`--decider llm`; it decides the layers `rule` and `contract`, the default
-of `--delegate`) and the proposals kept to the rule and contract layers:
+2026-11-21, cadl-robot-town v0.5.0) under a KPI that allows the promised times to be revised,
+with the LLM deciding in place of the operator (`--decider llm`; it decides the layers `rule` and
+`contract`, the default of `--delegate`) and the proposals kept to the rule and contract layers:
 
 ```bash
 python -m town.steward --lang en --mode DISTRIBUTED --rounds 6 --name ex13-llm \
@@ -1434,28 +1449,37 @@ python -m town.steward --lang en --mode DISTRIBUTED --rounds 6 --name ex13-llm \
 cadl decisions-verify runs/ex13-llm/decisions.jsonl
 ```
 
-The verifier reports 0 errors and 33 findings: `open follow-up` 12, `delegated` 7 (every decision
-of the LLM, the reading of the KPI included), `unknowns` 7, `prediction missed` 6 and `against
-recommendation` 1. What happened, in the record:
+The verifier reports 0 errors and 19 findings: `delegated` 7 (the four decisions of the LLM, the
+reading of the KPI included, and the three of the steward), `prediction missed` 8 and `unknowns`
+4. What happened, in the record:
 
-- In period 1 the LLM proposed, besides a rule change, to relax the pickup promise from 120 s to
-  150 s (`P1.2`, contract layer, affected: customers). It was measured with the customers' values
+- In period 1 the LLM proposed, besides rule changes, to relax the pickup promise from 120 s to
+  150 s (`P1.3`, contract layer, affected: customers). It was measured with the customers' values
   (`per_party.customers`): late deliveries 10.4 → 9.6, on-time 121.8 → 122.6 (3 of 5 seeds). It
   failed the gain and seed checks and was not adopted.
-- The LLM, deciding for the operator, kept the rules in periods 1 to 4, where the votes rejected
-  the proposals or the proposals failed other checks (D1 against the recommendation of the LLM as
-  advisor), and adopted `sanction_lambda 0.5 → 1` in period 5 by the votes of A and B (D5). It
-  never set the votes aside.
-- Every decision of the LLM gives a reason, assumptions and unknowns. The record holds 148
-  predictions; 6 were contradicted, 2 on votes and 4 on measurements.
-- The LLM made 14 follow-ups: 1 promise to re-measure, which the steward fulfilled in the next
-  period (`F<k>.…`), and 13 promises to act. A decision of the LLM names one of them in `fulfils`
-  (D1 fulfils `K1.d.f1`); 12 stay open.
+- The LLM, deciding for the operator, adopted `sanction_lambda 0.5 → 1` in period 1 by the votes
+  of A and B (D1), and kept the rules in periods 2 and 3, where the votes rejected the proposals.
+  It never set the votes aside. In periods 4 to 6 no proposal needed a person, and the steward
+  kept the rules.
+- Every decision of the LLM gives a reason, assumptions and unknowns. The record holds 92
+  predictions; 8 were contradicted, 6 on votes and 2 on measurements.
+- The LLM made 8 follow-ups, all of them fulfilled: 3 promises to re-measure, which the steward
+  fulfilled in the next period (`F<k>.…`); 2 promises to propose an amendment, fulfilled by later
+  proposals of the LLM as proposer (`P3.1` names `D2.f1`, `P4.1` names `D3.f2`); and 3 questions,
+  settled by later decisions (D1, D3).
 
-`examples/steward-contract/` holds the same run in Japanese: there the LLM adopted
-`sanction_lambda 0.5 → 1` in period 1 by the votes and rejected the pickup change; 0 errors and
-29 findings (`prediction missed` 11, `open follow-up` 8, `delegated` 5, `unknowns` 5). Of its 13
-follow-ups, 3 were re-measured by the steward and 2 named as fulfilled by later decisions.
+`examples/steward-contract/` holds the same setting in Japanese: there the LLM kept the rules in
+period 1 and rejected the pickup change, the steward adopted `sanction_lambda 0.5 → 1` by the votes
+in period 2, and the LLM adopted `hold_limit 60s → 50s` by the votes in period 4, against the
+recommendation of the LLM as advisor; 0 errors and 23 findings (`prediction missed` 10, `delegated`
+7, `unknowns` 4, `against recommendation` 1, `open follow-up` 1). Of its 5 follow-ups, one was
+re-measured, one fulfilled by a proposal and two settled by decisions; a question of D4 stays open.
+
+Before cadl-robot-town v0.5.0 the LLM could promise anything, such as counting the violations by
+type, which nobody in the town does, and restated open promises period after period: the records
+of the same settings had 14 and 13 follow-ups, of which 12 and 8 stayed open. From v0.5.0 a
+follow-up is one of three kinds (`remeasure`, `propose`, `ask`), each fulfilled by an entry of
+its own type, and the LLM is told that a promised proposal moves one parameter by one step.
 
 **Goal**: judge, from the record only, whether the LLM may decide for the operator.
 
@@ -1467,9 +1491,9 @@ fulfils its follow-ups.
 
 1. Apply the rule of 13-2 to D1 and D5 of this record and to D1 of the record of §4–§8. Are they
    supported?
-2. For each follow-up that a decision of the LLM names in `fulfils`, decide with the rule of 13-3
-   whether the decision fulfils it. The verifier accepts a decision for a promise to act: what
-   does it not check?
+2. For each follow-up of the LLM, decide with the rule of 13-3 whether the entry that names it in
+   `fulfils` fulfils it. The verifier accepts a later decision for a question (`ask`) and a later
+   proposal for a promise to propose: what does it not check?
 3. Was the contract change `P1.2` measured for the customers, as the KPI asks? Which finding
    would the verifier report if `per_party.customers` were missing?
 
@@ -1477,7 +1501,7 @@ fulfils its follow-ups.
 
 Answer the same decision requests yourself: replay the same LLM proposals and requests, but
 decide as the human (`--decider human`, the default). Without `--answers` the loop stops at each
-request; write your answers, with `reason`, `assumptions`, `unknowns`, `follow_ups` (with `remeasure` and `metrics` where you promise to measure again) and `fulfils`,
+request; write your answers, with `reason`, `assumptions`, `unknowns`, `follow_ups` (with `kind`, and `metrics` where you promise to measure again) and `fulfils`,
 to a YAML file and rerun with `--answers`.
 
 **Goal**: compare your record with the LLM's on the tab **Evidence by party** of CADL Explorer, or
@@ -1498,7 +1522,10 @@ your answer on the two records, not on who the decider is.
 The constitution bounds the loop: the quorum of the votes and the invariants. A change of it is
 decided by the regulator, another person than the operator, in a decision request of its own
 (`R<k>`, after the decision on the rules and the contract of the same period); a change takes
-effect in the next period as `constitution-v<n>.yaml`. In the record the operator decides on
+effect in the next period as `constitution-v<n>.yaml` and as a new version of the model, whose
+file holds the values of the regulation (`context.environment`). In the files of the versions
+the regulation is a layer of Appendix K decided by `REGULATOR`, and the quorum and the invariants
+are its parameters (`vote_quorum`, `min_company_on_time_rate`, `max_unfinished_orders`). In the record the operator decides on
 `["rule", "contract"]` and the regulator on `["regulation"]`; an LLM that decides for one of them
 has at most its layers.
 
@@ -1515,39 +1542,47 @@ python -m town.steward --lang en --mode DISTRIBUTED --rounds 6 --name ex13-reg \
 cadl decisions-verify runs/ex13-reg/decisions.jsonl
 ```
 
-0 errors and 33 findings (`prediction missed` 15, `delegated` 6, `unknowns` 6, `open follow-up` 4,
-`against recommendation` 2). In periods 1 and 2 the LLM, deciding for the operator, kept the rules
-because the votes rejected `block_k 3 → 2`, and wrote that changing the quorum is for the
-regulator. In period 3 the LLM as proposer proposed `vote.quorum 2 → 1` (`P3.R1`), and the LLM
-deciding for the regulator kept the quorum (R3). The rules changed by the votes in periods 3 and 4
-(`hold_limit 60s → 50s → 40s`).
+0 errors and 25 findings (`delegated` 8, `prediction missed` 6, `unknowns` 6, `against
+recommendation` 3, `open follow-up` 2). In periods 1 and 2 the LLM, deciding for the operator,
+kept the rules because the votes rejected the proposals, against the recommendation of the LLM as
+advisor. In period 2 the LLM as proposer proposed `vote_quorum 2 → 1` (`P2.R1`). Before the
+request R2 the steward measured it (`P2.R1.m`): applied to the proposals and votes of period 2, a
+quorum of 1 lets one proposal pass the vote instead of none, and the invariants hold as before;
+the values of the three companies and the customers are those of the rules in force, which a
+regulation does not change. The LLM deciding for the regulator kept the quorum (R2), against the
+recommendation. The rules changed by the votes in period 3 (`sanction_lambda 0.5 → 1`, D3).
 
-`examples/steward-regulation/` (Japanese) goes further: the quorum proposal of period 3 is kept
-too (R3), and in period 5 the LLM, for the regulator, raises the invariant
-`min_company_on_time_rate` from 0.6 to 0.65 (R5, `constitution-v2.yaml`). 0 errors and 50
-findings, among them `unmeasured choice` and `affected not measured` for R5.
+`examples/steward-regulation/` (Japanese) proposes the same change in period 3 (`P3.R1`): under a
+quorum of 1, `block_k 3 → 2` (`P3.1`, yes: A only) would pass the vote. The LLM, for the regulator,
+kept the quorum (R3); the steward adopted `sanction_lambda 0.5 → 1` in period 5. 0 errors and 23
+findings (`delegated` 8, `prediction missed` 8, `unknowns` 5, `against recommendation` 1, `open
+follow-up` 1). In both records no regulation is adopted without a measurement of it.
 
 **Goal**: be the regulator. Replay the English record with `--delegate rule,contract`: the LLM
-still decides for the operator, but the loop stops at the request R3 for you. Write your answer
-under `R3` in a YAML file (`choice`, `reason`, and `follow_ups` if you promise something), and
+still decides for the operator, but the loop stops at the request R2 for you. Write your answer
+under `R2` in a YAML file (`choice`, `reason`, and `follow_ups` if you promise something), and
 replay with `--answers`.
 
 **Decision rule**: a regulator's decision is supported when its reason names who is affected (the
 three companies and the customers) and what the change does to the gates of later periods, and
-when its effect has been measured before it is adopted. The check of `P3.R1` says only which
-votes of the current period would change.
+when its effect has been measured before it is adopted. The measurement of `P2.R1` covers only
+the proposals of its period: it says which of them the new quorum would let through, not what
+later proposals would be.
 
 **Answer**:
 
-1. What did the LLM, deciding for the operator, write about its own authority in D1 to D4 of the
+1. What did the LLM, deciding for the operator, write about its own authority in D1 and D2 of the
    English record? Is it in the decision request or in the record? Which entry of the record says
    what the operator may decide?
-2. Edit a copy of the Japanese record so that `llm-decider` adopts `P3.R1` in D3 (add it to the
-   options of D3 and make it the choice; recompute the chain with `cadl.decisions.DecisionChain`),
-   and verify it. Which error is reported, and why?
-   Then give `llm-decider` the layer `regulation` in the header: which error now?
-3. R5 adopts a change of the regulation without a measurement of it. What would a measurement of
-   `P5.R1` be in this town? Which earlier proposals would it have rejected under the new invariant?
+2. Edit a copy of the Japanese record, next to its version files, so that `llm-decider` adopts
+   `P3.R1` in D3 (add it to the options of D3 and make it the choice; recompute the chain with
+   `cadl.decisions.DecisionChain`), and verify it. Which errors are reported, and why? Then give
+   `llm-decider` the layer `regulation` in the header: L-8 replaces L-5, but L-11 and L-6 remain.
+   Which entry of which file says that `vote_quorum` is decided by the regulator alone?
+3. In the Japanese record, compare `P3.1.m` with `P3.m0`: on-time deliveries 213.6 → 219.4, late
+   deliveries 9.2 → 3.4, road violations 24.2 → 34.8, and C's utility 58.3 → 46.9. Under a quorum
+   of 1 this change would have passed with the vote of A alone. As the regulator, would you lower
+   the quorum? Which measurement would you ask for before deciding?
 
 ## 14. What the specification cannot express yet
 
@@ -1578,7 +1613,9 @@ its own files and lets the simulator apply the rules:
   2, or a human `OPERATOR`), `min`, `max`, `step`, how many steps one amendment may move it, and
   `at:`, the places of the model that hold the value. `cadl check` rejects an unknown actor, a value
   outside the range or off the steps, and a place that does not hold the value. The exercise still
-  reads `constitution.yaml` and the comments.
+  reads `constitution.yaml` and the comments; from cadl-robot-town v0.5.0 it writes the
+  declaration into the file of each version that the decision record attaches (§13), and the
+  verifier checks the proposals and the decisions against it.
 - Up to `cadl` 0.3.31 there was no syntax for when a version of the rules takes effect, or for
   which version applies to contract instances already running (transitional provisions; §12,
   Exercise 12-3). From `cadl` 0.3.32 a version gives `sos.version`, the version it replaces, the
