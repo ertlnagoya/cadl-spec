@@ -1046,7 +1046,7 @@ cadl decisions-verify runs/<名前>/decisions.jsonl
 記録の隣にバージョンのファイルがあれば、検証器は、バージョンとその順序、どの改正案も現行のバージョンのパラメータを範囲と刻みの中で動かしているか、それぞれの変更を誰が決め、投票が定足数に達したか（L-9〜L-11）も確かめます。
 検証器は、エラー（L-1〜L-11。記録がこのままでは信頼できない）と、確認のための指摘（投票を覆した判断、推奨と違う判断、委任の範囲の外でほかの当事者に代わって行った判断、後の投票や測定と食い違った予測、約束を果たしたと書いたが条件を満たさない項目、果たされていない約束など）を報告します。指摘は誤りではありません。誰がなぜそう判断したかが記録に残っていればよいのです。CADL Explorer のページ **Decision Evidence** は、同じ記録を、時系列、判断ごとの経緯、当事者ごとの証拠、約束、記録から作った GSN で示します。
 
-演習 13-1〜13-6 は、規則（`ROAD_USE`）と契約（`DELIVERY_SLA`、顧客に約束した時間）の改正を扱います。演習 13-7 で規制を加えます。
+演習 13-1〜13-6 は、規則（`ROAD_USE`）と契約（`DELIVERY_SLA`、顧客に約束した時間）の改正を扱います。演習 13-7 で規制を加えます。任意の演習 13-8〜13-13 は、記録をさらに読み込みます。
 
 ### 演習 13-1：変更に誰が同意したか（ロボットだけ）
 
@@ -1086,6 +1086,7 @@ cadl decisions-verify runs/ex13-d/decisions.jsonl
 1. D1、D2、D5、D6 について、理由の数値と、それが根拠にあるかを表にしてください。
 2. D6 では、人は規則を変えなかったのに `override` と報告されます。D2 でも人は規則を変えませんでしたが、`override` とは報告されません。付録 L の L-6 と、2 つの改正案が通った判定（`P2.2.c`、`P6.1.c`）を読み、違いを説明してください。
 3. LLM の推奨（`D1.rec`、`D2.rec` など）にも同じ基準を当てはめてください。LLM の文章は基準を満たしますか。
+4. 各社の投票には理由がありません（`reason: null`）。B 社と C 社の投票を覆した D1 が、その反対に答えたかどうかを、記録から確かめられるでしょうか。確認する人がそれを確かめられるには、記録に何が要るでしょうか。
 
 ### 演習 13-3：後で確かめる約束
 
@@ -1204,6 +1205,240 @@ cadl decisions-verify runs/ex13-reg/decisions.jsonl
 1. 日本語の記録の D1・D2 と英語の記録の D1・D2 で、運営者に代わる LLM は、自分が何を判断してよいと書いていますか。それは判断要求か記録のどこかに書かれていますか。運営者が何を判断してよいか、LLM に何を任せたかを示すのは、記録のどの項目でしょうか。
 2. 日本語の記録のコピーを、バージョンのファイルと同じ場所で、`llm-decider` が D2 で `P2.R1` を採択するように書き換え（D2 の選択肢に加えて選んだものとし、`cadl.decisions.DecisionChain` で連鎖を計算し直す）、検査してください。どのエラーが報告され、なぜでしょうか。次に、ヘッダで `llm-decider` に層 `regulation` を与えてください。L-5 の代わりに L-8 が報告されますが、L-11 と L-6 は残ります。`vote_quorum` を決めるのは規制の担当者だけだと示すのは、どのファイルのどの項目でしょうか。
 3. 日本語の記録で、`P2.1.m` を `P2.m0` と比べてください。定時配達は 216.6 → 223.8、遅配は 11.4 → 4.2、道路の違反は 19.0 → 28.0、C 社の効用は 65.8 → 56.3（5 つのシードすべてで改善）です。定足数が 1 なら、この変更は A 社の賛成だけで通っていました。`P2.R1.m` は、C 社の反対を押し切って通る案を 4 件と数えています。規制の担当者として、定足数を下げますか。判断する前に、どの測定を求めますか。
+4. `P2.R1.m` は、定足数 2 のもとで投じられた投票に、新しい定足数を当てはめています。1 社の賛成で足りるなら、各社は同じように投票するでしょうか。しないなら、この数は変更の影響を大きく見積もっているでしょうか、小さく見積もっているでしょうか。
+
+---
+
+演習 13-8〜13-13 は任意です。記録をさらに読み込みます。委任が何を覆うか、期限の来た問い、どのバージョンも許さない案、記録から導いた GSN、ほかの SoS の記録、LLM の予測です。基準の値は 2026-11-23、cadl 0.3.40、cadl-robot-town v0.6.0 のものです（cadl 0.3.39 は委任の `until` を逆向きに読みます。13-8 では 0.3.40 以降を使ってください）。
+
+いくつかの演習では、記録のコピーを書き換えます。書き換えたら、項目から連鎖を計算し直します。
+
+```python
+# rechain.py — 項目を書き換えた判断の記録を書き直す
+import json
+from cadl.decisions import DecisionChain
+
+def load(path):
+    rows = [json.loads(l) for l in open(path, encoding="utf-8")]
+    strip = lambda d: {k: v for k, v in d.items() if k not in ("seq", "prev", "digest")}
+    return strip(rows[0]), [strip(r) for r in rows[1:] if not r.get("decisions_end")]
+
+def save(path, header, entries):
+    c = DecisionChain(run_id=header["run_id"], format=header["decisions_format"])
+    lines = [c.header(header["model"], header["parties"], header["started"],
+                      header.get("time_base"), header.get("previous"))]
+    lines += [c.entry(e) for e in entries] + [c.end()]
+    open(path, "w", encoding="utf-8").write("\n".join(lines) + "\n")
+```
+
+検証器がバージョンも確かめるように、書き換えたコピーの横にバージョンのファイル（`v<n>.cadl`）を置いてください。
+
+### 演習 13-8：委任を狭める、終える、期限を付ける（任意）
+
+13-5 の記録（`runs/ex13-llm/`）は、委任 `G.llm-decider` で始まります。運営者は、層 `rule` と `contract` について、手続きを限らず、`until: null` で、自分に代わって判断することを LLM に許しています。記録のコピーを 4 つ作り、それぞれ次のように変えます。
+
+| コピー | 変更 |
+|---|---|
+| (a) | `G.llm-decider` に `"until": {"period": 3}` |
+| (b) | 第 4 期の最初の項目の前に、運営者から `llm-decider` への新しい委任 `G.llm-decider.2` を第 4 期として入れる。`"layers": []` とし、理由（「運営者は第 4 期から判断を自分に戻す」）を書く |
+| (c) | `G.llm-decider` の `"layers": ["contract"]` |
+| (d) | `G.llm-decider` の `"layers": ["rule", "contract", "regulation"]` |
+
+検査する前に、どの判断が `G.llm-decider` のもとの判断として挙がり、どの判断が `delegated` と報告されるかを予測してください。
+
+**目標**：コピーごとに、記録が示しているのが委任の外での判断なのか、運営者が与えられない委任なのかを見分けます。
+
+**判定の基準**：ほかの当事者に代わって行った判断を委任が覆うのは、それがその判断より前の、二者の間の最後の委任で、判断がその `until` より後でなく、その層が採択した変更の層を含み、その手続きが判断の手続きを含むときです。委任する当事者が自分では判断しない層を委任することは、指摘ではなくエラー（L-8）です。
+
+**基準の値**：(a) と (b) は、D4、D5、D6 に `delegated` を報告し、理由として「G.llm-decider ended at period 3」と「G.llm-decider.2 gives no layers」を添えます。K1.d と D1〜D3 は `G.llm-decider` のもとに残ります。(c) は、D3〜D6 に `delegated`（「does not give the layer rule」）を報告します。D3〜D6 は `hold_limit` と `block_k` を変えた判断で、規則を変えなかった D1、D2 と KPI の読み方 K1.d は委任のもとに残ります。(d) は、`G.llm-decider` に L-8 のエラーを報告します。運営者が判断するのは `rule` と `contract` で、`regulation` ではありません。
+
+**問い**：
+
+1. (c) で、規則を変えなかった D1 と D2 は、契約の層だけを与える委任のもとの判断として挙がります。規則を変えないという判断は、規則の層の判断でしょうか。英語の記録では、D3 は投票を覆して規則を変えませんでした（`override`）。これも (c) では委任のもとに挙がります。そう言えるようにするには、記録に何が書かれている必要があるでしょうか。
+2. (a)〜(d) のうち、LLM が与えられた範囲の外で判断したことを示すのはどれで、委任そのものの書き方の誤りを示すのはどれでしょうか。それぞれ誰に知らせるべきでしょうか。
+3. 記録の委任には、言葉で書いた `conditions` があります（「層 rule、contract の判断要求に答える。ほかの層は判断しない」など）。検証器はこれを確かめません。あなたが LLM に与える条件を一つ書き、それを確かめるために確認する人が読む記録の項目を挙げてください。
+
+### 演習 13-9：期限の来た問い（任意）
+
+13-7 の目標と同じく規制の担当者になりますが、問いにもう一度戻ることを約束します。
+
+```bash
+python -m town.steward --mode DISTRIBUTED --rounds 6 --name ex13-9 \
+    --kpi examples/steward-regulation/kpi.md --decider llm \
+    --layers rule,contract,regulation --delegate rule,contract \
+    --llm replay --replay-dir examples/steward-regulation --answers my-reg.yaml
+```
+
+`my-reg.yaml` には次のように書きます。
+
+```yaml
+R2:
+  choice: keep
+  reason: 定足数を 1 にすると、これまでに測った案は C 社の反対を押し切って 4 件通る。定足数 2 を保つ。
+  fulfils: [D1.f1]
+  follow_ups:
+    - text: 第4期の投票の結果を見て、定足数を下げる案をもう一度考えるかを決める
+      due: 4
+      kind: ask
+```
+
+`fulfils: [D1.f1]` を忘れないでください。D1.f1 は、運営者に代わる LLM が規制の担当者に残した問い（案 1 を定足数の見直しで採るか）です。挙げないと、問いは第 2 期に、問いを出した運営者の側に `Q2` として渡されます。その判断の LLM の出力は記録にないので、再生はそこで止まります。
+
+第 4 期には規制の案がなく、ループは判断要求 `QR4`（`runs/ex13-9/p4-reg-ask.md`）で止まります。steward が、期限の来た問いをあなたに渡したのです。`QR4` に答え（選択肢は `choice: keep` だけです）、再生し直します。次に、2 つの変形を試します。R2 の問いを `due: 8`（最後の期より後）にすること、そしてそれに続く判断要求への答えで、`due: 7` の問いをもう一つ約束することです。
+
+**目標**：記録から、誰がいつ何を問われ、何が残ったかを言います。
+
+**判定の基準**：問いは、それを出した当事者の後の判断が `fulfils` に挙げることで決着します。steward は、問いの期限が来たときと、最後の期には残ったすべての問いについて、その判断を求めます。
+
+**基準の値**：`due: 4` では、記録に `QR4.req` と規制の担当者の判断 `QR4` が入ります。選択肢は `keep` だけで、`fulfils: [R2.f1]`、結果は `v1` です。エラー 0 件、指摘 21 件です。`due: 8` では、問いは最後の期（`QR6`）に渡され、その判断要求には、その期にした約束は果たされないと書かれます。そこで約束した問いは残り、検証器はそれに `open follow-up` を報告します（指摘 22 件）。
+
+**問い**：
+
+1. 問いに答えることと、問いに決着を付けることは、どう違うでしょうか。当事者が問いを先送りし続けていることを、記録から見分けられるでしょうか。
+2. 規則がサンセット条項だったら、つまり誰かが低いまま保つと決めない限り、第 4 期に定足数がひとりでに 2 に戻るのだったら、何が変わるでしょうか。そのとき判断を記録するのはどの項目でしょうか。
+
+### 演習 13-10：どのバージョンも許さない案（任意）
+
+`examples/llm-replay/` の手で書いた案を、ルールベースの委員会で再生します。
+
+```bash
+python -m town.council --proposer replay --replay-dir examples/llm-replay --name ex13-na
+cadl decisions-verify runs/ex13-na/decisions.jsonl
+```
+
+記録は 1 期で、案は 3 つです。`block_k 3 → 2`（`P1.1`、投票で否決）、集荷の約束 `120s → 180s`（`P1.2`、憲法の判定で止まる。期限と保証の行が食い違う）、`hold_limit` を「1 minute」と書き直す案（`P1.3`、`cadl check` で止まる）です。検証器は、エラー 0 件と 2 件の指摘を報告します。`P1.2` と `P1.3` の `not amendable` で、理由は「more than 1 step(s)」と「below min 10s; not on the steps of 10s; more than 1 step(s)」です。
+
+**目標**：それぞれの指摘を、`v1.cadl` の改正してよいパラメータの宣言（`amendment.parameters`：層、値、`min`、`max`、`step`）から説明し、同じ案を steward のどの判定が止めたかを言います。
+
+**判定の基準**：パラメータを範囲の外へ、または 1 刻みより大きく動かす案は、そのバージョンが許す改正ではありません（付録K、K.3）。それがエラー（L-10）になるのは判断が採択したときだけで、そうでなければ確認のための指摘です。
+
+**問い**：
+
+1. D1 が `P1.2` を採択した（`"choice": "P1.2"`）記録のコピーを作り、検査してください。先に予測してください（基準の値：エラー 2 件。委員会は規則の層しか判断しないので D1 に L-5、`P1.2` に L-10。指摘として、D1 に `delegated`（`G.council` は層 contract を与えない）、`unmeasured choice`、`affected not measured`）。
+2. 憲法の判定とバージョンの宣言は、`P1.2` を別の理由で止めました。案が 2 つの行をそろえて変えていたら、どちらが止めるでしょうか。
+
+### 演習 13-11：記録から導いた GSN（任意）
+
+CADL Explorer（v1.8.0 以降）の **Decision Evidence** のページを開き、13-3 の 2 つ目の答え（約束を 3 つ足したもの。指摘 12 件）の記録と、13-5 の記録を、それぞれバージョンのファイルとともに読み込みます。タブ **Argument (GSN)** を開きます。
+
+**目標**：導いた GSN を保証ケースとして読みます。どのゴールが支えられていないか、ケースが何を書いていないかです。
+
+**判定の基準**：下に解決（Solution）のないゴールは未展開です。ケースが成り立つのは、前提として記録されたことと、誰かが受け入れた未展開のゴールを認める限りにおいてです。
+
+**基準の値**：13-3 の記録の GSN には、判断ごとの戦略が 8 つ、D1 の約束のゴールが 3 つあり、`D1.f2`（改正案を出す約束）のゴールには解決がありません。13-5 の記録では、約束の 12 のゴールすべてに解決があり、LLM の判断には前提が 22 と、`G.llm-decider` のコンテキストが付いています。
+
+**問い**：
+
+1. 付録L の L.8 は、`unknowns` と `predictions` を戦略のコンテキストに、後の測定と食い違った予測を反証に写します。CADL Explorer の GSN はそれを示しているでしょうか。13-5 の記録の D2 の `unknowns`（B 社と C 社が反対した具体的な理由、など）のうち、判断を覆しうる疑いとして扱うのはどれで、背景として扱うのはどれでしょうか。
+2. 導いた GSN を、同じ実行で steward が人のために書く `gsn.md` と比べてください。それぞれ、もう一方が示さない何を示しているでしょうか。
+
+### 演習 13-12：ほかの SoS の判断の記録（任意）
+
+判断の記録は、ロボットの街に依存しません。コース C で選んだ SoS か、下の例を取り上げ、その規則の一つを一度改正したときの記録を手で書きます。目的、現行の規則の測定、改正案、その測定、投票、理由・前提・分からないことを持つ判断、何が果たすかを持つ約束です。
+
+<details>
+<summary>例：マンションの共用の充電器</summary>
+
+4 世帯が 2 台の充電器を共用します。予約の規則（規則の層）は管理会社が決め、測定も行います（予約の記録を読む）。LLM が改正案を出し、世帯が投票し、来客は影響を受けますが投票しません。
+
+```python
+from cadl.decisions import DecisionChain
+
+T = "2026-11-23T09:00:00Z"
+def e(eid, typ, by, period, **f):
+    return {"id": eid, "type": typ, "point": {"period": period}, "written": T, "by": by,
+            "basis": f.pop("basis", []), "fulfils": f.pop("fulfils", []),
+            "attachments": [], "generated": f.pop("generated", None), **f}
+def ev(reason, assumptions=(), unknowns=(), predictions=()):
+    return {"reason": reason, "assumptions": list(assumptions), "unknowns": list(unknowns),
+            "predictions": list(predictions)}
+def party(pid, kind, roles, name=None, model=None, layers=None):
+    return {"id": pid, "kind": kind, "roles": roles, "name": name, "actor": None,
+            "model": model, "on_behalf_of": None, "layers": layers}
+
+parties = [party("manager", "organisation", ["owner", "decider", "assessor"],
+                 "管理会社", layers=["rule"]),
+           party("llm", "llm", ["proposer", "advisor"], model="claude-opus-5-5"),
+           *[party(h, "agent", ["voter"], f"世帯 {h}") for h in ("H1", "H2", "H3", "H4")],
+           party("visitors", "organisation", ["affected"], "来客")]
+gen = {"model": "claude-opus-5-5", "request_digest": "0000000000000000"}
+log = {"runs": None, "window": "2 weeks", "description": "2 台の充電器の予約の記録"}
+entries = [
+    e("K1", "objective", "manager", 1, text="どの世帯も週に 2 回以上充電できる。",
+      measure=[{"metric": "households_below_two", "role": "goal", "direction": "decrease",
+                "target": "0"}]),
+    e("P1.m0", "measurement", "manager", 1, of="in_force", version=None, method=log,
+      values={"households_below_two": 2}, compared_with=None, runs_better=None,
+      per_party={"H3": {"charges_per_week": 1.5}, "H4": {"charges_per_week": 1.0}}),
+    e("P1.1", "proposal", "llm", 1, generated=gen, kind="amendment",
+      title="1 回の予約を 4 時間までにする",
+      changes=[{"parameter": "max_booking", "from": "8h", "to": "4h", "layer": "rule"}],
+      objective="K1", measure=None, affected=["H1", "H2", "H3", "H4", "visitors"],
+      **ev("H1 と H2 が夜通し予約して充電器をふさいでいる。",
+           ["毎日の利用には 4 時間の充電で足りる"],
+           ["H1 と H2 が代わりに一晩に 2 回予約するかどうか"],
+           [{"option": "P1.1", "subject": "metric:households_below_two",
+             "expected": "decrease", "note": None},
+            {"option": "P1.1", "subject": "vote:H1", "expected": "no", "note": None}])),
+    e("P1.1.m", "measurement", "manager", 1, basis=["P1.1"], of="P1.1", version=None,
+      method={"runs": None, "window": "2 weeks",
+              "description": "予約の記録のコピーに規則を当てはめる"},
+      values={"households_below_two": 0}, per_party=None, compared_with="P1.m0",
+      runs_better=None),
+    *[e(f"P1.1.v{h}", "vote", h, 1, proposal="P1.1", value=v, reason=r)
+      for h, v, r in (("H1", "no", "夜勤なので"), ("H2", "yes", None),
+                      ("H3", "yes", None), ("H4", "yes", None))],
+    e("D1", "decision", "manager", 1,
+      basis=["K1", "P1.m0", "P1.1", "P1.1.m"] + [f"P1.1.v{h}" for h in ("H1", "H2", "H3", "H4")],
+      question="予約の規則を変えるか", options=["P1.1", "keep"], choice="P1.1",
+      procedure="vote", rule=None, affected=["H1", "visitors"], result=None,
+      **ev("4 世帯のうち 3 世帯が賛成し、予約の記録に規則を当てはめると、週に 2 回を下回る"
+           "世帯がなくなる。", ["2 週間の記録はふだんの使い方を表している"],
+           ["来客が充電器をどう使うか"])),
+    e("D1.f1", "follow_up", "manager", 1, text="1 か月後に予約の記録を読み直す",
+      due={"period": 2}, decision="D1",
+      fulfilled_by={"type": "measurement", "of": "in_force", "same_method_as": "P1.m0",
+                    "subjects": ["metric:households_below_two"]}),
+]
+c = DecisionChain()
+lines = [c.header({"name": "EvChargers", "version": "v1", "source_sha256": "0" * 64},
+                  parties, T, "予約の記録の 2 週間")]
+lines += [c.entry(x) for x in entries] + [c.end()]
+open("decisions.jsonl", "w", encoding="utf-8").write("\n".join(lines) + "\n")
+```
+
+`cadl decisions-verify decisions.jsonl` は、エラー 0 件と 3 件の指摘を報告します。D1 の `unknowns`、D1 の `affected not measured`（`P1.1` のどの測定にも世帯と来客の値がない）、`D1.f1` の `open follow-up` です。バージョンの CADL ファイルがないので、L-9〜L-11 と投票の結果を確かめられなかったことも示します。役割 `assessor` がないと、管理会社は測定を行えません（L-5）。
+
+</details>
+
+**目標**：検証器がエラー 0 件で読む、あなたの SoS の記録と、そこに書けなかったことの一覧です。
+
+**判定の基準**：あなたの SoS に合わない欄（方法の `runs`、`per_party` の値、`point` の単位）も、記録したいのに欄が見つからなかった事実（反対票への応答、再委任、委任の条件の確認）も、一覧に入れます。項目ごとに、足りないのが付録L なのか、あなたの SoS の制度なのかを書きます。
+
+### 演習 13-13：LLM の予測（任意）
+
+LLM の 4 つの記録、つまり 13-5 の日本語と英語（`examples/steward-contract`、`examples/steward-contract-en`）と 13-7 の日本語と英語を、`cadl decisions-verify --format json` で検査します。それぞれの記録の予測を、予測した項目（改正案、推奨、判断）、主題（指標か投票か）ごとに数え、`prediction missed` と報告されたものを数えます。
+
+**目標**：記録が、LLM の予測のよさについて何を示し、何を示せないかを言います。
+
+**判定の基準**：検証器が予測を確かめるのは、それが対象とする選択肢の後の測定か、それへの後の投票とだけです。`keep` についての予測は確かめません。後のどの項目とも食い違いようのない予測は、正しいのではなく、確かめられていないのです。
+
+**基準の値**：
+
+| 記録 | 予測 | 食い違い | 改正案の予測（食い違い：指標 / 投票） | 推奨の予測 | 判断の予測 |
+|---|---|---|---|---|---|
+| 13-5 日本語 | 207 | 12 | 102（9 / 3） | 58 | 47 |
+| 13-5 英語 | 145 | 14 | 74（6 / 8） | 40 | 31 |
+| 13-7 日本語 | 170 | 12 | 91（5 / 7） | 48 | 31 |
+| 13-7 英語 | 124 | 6 | 61（5 / 1） | 36 | 27 |
+
+推奨と判断の予測は一つも食い違っておらず、食い違いようもありません。`keep` についての予測か、後のどの項目も測らない選択肢についての予測だからです。
+
+**問い**：
+
+1. 13-5 の日本語と英語の記録は同じ設定でした。LLM は、英語では投票を 2 回覆し（D2、D3）、日本語では一度も覆していません。第 2・3 期の判断要求と測定は違うでしょうか。違いが判断要求から来るのか、LLM の出力のばらつきから来るのかを、一つの記録から決められるでしょうか。
+2. `reason` は判断した者が書いたことで、どう判断したかの痕跡ではありません。LLM の理由がその選択をどこまで説明しているかを知るには、記録のほかに何を実行する必要があるでしょうか。
+3. 予測が与えるのは向き（`increase`、`decrease`、`unchanged`、`yes`、`no`）だけです。確率の欄を提案し、そのとき検証器が何を計算するかを書いてください。
 
 ## 14. 仕様でまだ書けないこと
 
