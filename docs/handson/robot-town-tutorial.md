@@ -1313,7 +1313,8 @@ CADL Explorer shows the same record as a timeline, the trail of each decision, t
 each party, the follow-ups, and a GSN derived from the record.
 
 Exercises 13-1 to 13-6 cover amendments of the rules (`ROAD_USE`) and of the contract
-(`DELIVERY_SLA`, the times promised to customers); exercise 13-7 adds the regulation.
+(`DELIVERY_SLA`, the times promised to customers); exercise 13-7 adds the regulation; exercises 13-8 to
+13-13, optional, take the record further.
 
 ### Exercise 13-1: who agreed to each change (robots only)
 
@@ -1371,6 +1372,9 @@ same rounding, in a measurement in its basis. The reason of D1 gives four pairs 
    passed (`P2.2.c`, `P6.1.c`), and explain the difference.
 3. Do the same for the LLM's recommendations (`D1.rec`, `D2.rec`, …). Does the LLM's text meet
    the same rule?
+4. The votes of the companies carry no reason (`reason: null`). Can you tell from the record
+   whether D1, which set aside the votes of B and C, answered their objections? What would the
+   record need for a reviewer to check it?
 
 ### Exercise 13-3: a promise to check later
 
@@ -1607,6 +1611,323 @@ through, and against whom, not what later proposals would be.
    5 seeds). Under a quorum of 1 this change would have passed with the vote of A alone, and
    `P2.R1.m` counts four proposals that would have passed against C. As the regulator, would you
    lower the quorum? Which measurement would you ask for before deciding?
+4. `P2.R1.m` applies the new quorum to the votes as they were cast under a quorum of 2. Would the
+   companies vote the same way if one vote were enough? If not, does the count overstate or
+   understate the effect of the change?
+
+---
+
+The exercises 13-8 to 13-13 are optional. They take the record further: what a delegation covers,
+questions that fall due, proposals that no version allows, the GSN derived from the record, a
+record of another SoS, and the predictions of the LLM. Their reference values are from
+2026-11-23, cadl 0.3.40 and cadl-robot-town v0.6.0 (cadl 0.3.39 reads `until` of a delegation
+the wrong way round; use 0.3.40 or later for 13-8).
+
+Several of them edit a copy of a record. The chain must then be recomputed from the edited entries:
+
+```python
+# rechain.py — rewrite a decision record after editing its entries
+import json
+from cadl.decisions import DecisionChain
+
+def load(path):
+    rows = [json.loads(l) for l in open(path, encoding="utf-8")]
+    strip = lambda d: {k: v for k, v in d.items() if k not in ("seq", "prev", "digest")}
+    return strip(rows[0]), [strip(r) for r in rows[1:] if not r.get("decisions_end")]
+
+def save(path, header, entries):
+    c = DecisionChain(run_id=header["run_id"], format=header["decisions_format"])
+    lines = [c.header(header["model"], header["parties"], header["started"],
+                      header.get("time_base"), header.get("previous"))]
+    lines += [c.entry(e) for e in entries] + [c.end()]
+    open(path, "w", encoding="utf-8").write("\n".join(lines) + "\n")
+```
+
+Copy the version files (`v<n>.cadl`) next to each edited copy, so that the verifier also checks
+the versions.
+
+### Exercise 13-8: narrow, end, or bound a delegation (optional)
+
+The record of 13-5 (`runs/ex13-llm/`) starts with the delegation `G.llm-decider`: the operator
+lets the LLM decide in its place on the layers `rule` and `contract`, by any procedure, with
+`until: null`. Make four copies of the record and change, in each:
+
+| Copy | Change |
+|---|---|
+| (a) | `"until": {"period": 3}` in `G.llm-decider` |
+| (b) | a new delegation `G.llm-decider.2` from the operator to `llm-decider`, at period 4, before the first entry of period 4, with `"layers": []` and a reason ("The operator takes back the decisions from period 4") |
+| (c) | `"layers": ["contract"]` in `G.llm-decider` |
+| (d) | `"layers": ["rule", "contract", "regulation"]` in `G.llm-decider` |
+
+Predict, before you verify each copy, which decisions the verifier will list as made within
+`G.llm-decider` and which it will report as `delegated`.
+
+**Goal**: tell, for each copy, whether the record shows a decision made outside a delegation or
+a delegation that the operator could not give.
+
+**Decision rule**: a delegation covers a decision made in another party's place when it is the
+last delegation between the two parties before the decision, the decision is not after its
+`until`, its layers include the layers of the change adopted, and its procedures include the
+procedure of the decision. A delegation of layers that the delegating party does not decide
+itself is an error (L-8), not a finding.
+
+**Reference values**: (a) and (b) report `delegated` for D4, D5 and D6, with the reason
+"G.llm-decider ended at period 3" and "G.llm-decider.2 gives no layers"; K1.d and D1 to D3 stay
+within `G.llm-decider`. (c) reports `delegated` for D2 only ("does not give the layer rule"): D2
+adopted `block_k 3 → 2`, and the other decisions kept the rules. (d) reports the error L-8 on
+`G.llm-decider`: the operator decides `rule` and `contract`, not `regulation`.
+
+**Answer**:
+
+1. In (c), D3 set aside the votes to keep the rules (`override`), and the verifier lists it as
+   made within a delegation that gives only the contract layer. Is a decision to keep the rules a
+   decision on the rule layer? What would the record need to say so?
+2. Which of (a) to (d) show that the LLM decided outside what it was given, and which show that
+   the delegation itself was written wrongly? Who should be told in each case?
+3. A delegation in the record has `conditions` in words ("answer the decision requests on the
+   layers rule, contract; decide on no other layer"). The verifier does not check them. Write a
+   condition you would give the LLM, and say which entries of the record a reviewer would read to
+   check it.
+
+### Exercise 13-9: a question that falls due (optional)
+
+Be the regulator again, as in the goal of 13-7, but promise to come back to the question:
+
+```bash
+python -m town.steward --lang en --mode DISTRIBUTED --rounds 6 --name ex13-9 \
+    --kpi examples/steward-regulation-en/kpi.md --decider llm \
+    --layers rule,contract,regulation --delegate rule,contract \
+    --llm replay --replay-dir examples/steward-regulation-en --answers my-reg.yaml
+```
+
+with, in `my-reg.yaml`:
+
+```yaml
+R2:
+  choice: keep
+  reason: A quorum of 1 would let every proposal measured so far pass, three of them against B
+    and four against C. Keep the quorum of 2.
+  follow_ups:
+    - text: Look at the votes of period 4 and decide whether to propose a lower quorum again
+      due: 4
+      kind: ask
+```
+
+In period 4 no regulation is proposed, and the loop stops at the request `QR4`
+(`runs/ex13-9/p4-reg-ask.md`): the steward puts the question that fell due to you. Answer it
+under `QR4` (`choice: keep` is the only option) and replay. Then try two variants: give the
+question in R2 `due: 8`, after the last period, and promise, in your answer to the request that
+follows, another question with `due: 7`.
+
+**Goal**: say, from the record, who was asked what and when, and what remains open.
+
+**Decision rule**: a question is settled by a later decision of the party that asked it, which
+names it in `fulfils`. The steward asks for that decision when the question falls due, and in
+the last period for every open question.
+
+**Reference values**: with `due: 4`, the record holds `QR4.req` and the decision `QR4` of the
+regulator, with the option `keep` only, `fulfils: [R2.f1]` and the result `v1`; 0 errors and 14
+findings. With `due: 8`, the question is put in the last period (`QR6`), whose request says that
+no promise made then can be kept; a question promised there stays open, and the verifier reports
+`open follow-up` for it (15 findings).
+
+**Answer**:
+
+1. What is the difference between answering a question and settling it? Can you tell from the
+   record whether a party keeps putting off a question?
+2. What would change if the rule were a sunset clause: the quorum goes back to 2 by itself at
+   period 4 unless someone decides to keep it lower? Which entry would then record the decision?
+
+### Exercise 13-10: a proposal that no version allows (optional)
+
+Replay the hand-written proposals of `examples/llm-replay/` with the rule-based council:
+
+```bash
+python -m town.council --proposer replay --replay-dir examples/llm-replay --name ex13-na
+cadl decisions-verify runs/ex13-na/decisions.jsonl
+```
+
+The record has one period and three proposals: `block_k 3 → 2` (`P1.1`, rejected by the vote),
+the pickup promise `120s → 180s` (`P1.2`, stopped at the constitution gate: its deadline and its
+guarantee line disagree) and `hold_limit` rewritten as "1 minute" (`P1.3`, stopped at `cadl
+check`). The verifier reports 0 errors and two findings: `not amendable` for `P1.2` ("more than
+1 step(s)") and `P1.3` ("below min 10s; not on the steps of 10s; more than 1 step(s)").
+
+**Goal**: explain each finding from the declaration of the amendable parameters in `v1.cadl`
+(`amendment.parameters`: layer, value, `min`, `max`, `step`), and say which check of the steward
+stopped the same proposal.
+
+**Decision rule**: a proposal that moves a parameter outside its range or by more than one step
+is not an amendment that the version allows (Appendix K, K.3). It is an error (L-10) only when a
+decision adopts it; otherwise it is a finding for review.
+
+**Answer**:
+
+1. Make a copy of the record in which D1 adopts `P1.2` (`"choice": "P1.2"`) and verify it.
+   Predict first. (Reference: 2 errors, L-5 for D1, because the council decides only the rule
+   layer, and L-10 for `P1.2`; and the findings `delegated` — `G.council` does not give the layer
+   contract —, `unmeasured choice` and `affected not measured` for D1.)
+2. The constitution gate and the declaration in the version caught `P1.2` for different reasons.
+   Which of the two would still catch it if the proposal changed both lines consistently?
+
+### Exercise 13-11: the GSN derived from the record (optional)
+
+Open the page **Decision Evidence** of CADL Explorer (v1.8.0 or later), and load the record of
+13-3 with the follow-ups of its second answer (12 findings) and then the record of 13-5, each
+with its version files. Open the tab **Argument (GSN)**.
+
+**Goal**: read the derived GSN as an assurance case: which goals are not supported, and what
+the case leaves out.
+
+**Decision rule**: a goal with no solution under it is undeveloped; the case holds only with
+what is recorded as assumptions and as undeveloped goals accepted by someone.
+
+**Reference values**: in the record of 13-3 the GSN has 8 strategies (one per decision) and 3
+goals for the follow-ups of D1; the goal of `D1.f2` (a promise to propose) has no solution. In
+the record of 13-5 the 10 goals of the follow-ups all have their solutions, and the decisions of
+the LLM carry 22 assumptions and the context of `G.llm-decider`.
+
+**Answer**:
+
+1. Appendix L, L.8, maps `unknowns` and `predictions` to the context of a strategy, and a
+   prediction that a later measurement contradicts to counter-evidence. Does the GSN in CADL
+   Explorer show them? Which of the `unknowns` of D2 in the record of 13-5 would you treat as a
+   doubt that could defeat the decision, and which as background?
+2. Compare the derived GSN with `gsn.md`, which the steward writes for people in the same run.
+   What does each show that the other does not?
+
+### Exercise 13-12: a decision record of another SoS (optional)
+
+A decision record does not depend on the robot town. Take the SoS you chose in Course C, or the
+one below, and write by hand the record of one amendment of one of its rules: an objective, a
+measurement of the rules in force, a proposal, its measurement, the votes, a decision with a
+reason, assumptions and unknowns, and a follow-up that says what fulfils it.
+
+<details>
+<summary>An example: shared chargers in an apartment building</summary>
+
+Four households share two chargers. The management company decides the booking rule (the
+rule layer) and also measures (it reads the booking log); an LLM proposes; the households vote;
+visitors are affected and do not vote.
+
+```python
+from cadl.decisions import DecisionChain
+
+T = "2026-11-23T09:00:00Z"
+def e(eid, typ, by, period, **f):
+    return {"id": eid, "type": typ, "point": {"period": period}, "written": T, "by": by,
+            "basis": f.pop("basis", []), "fulfils": f.pop("fulfils", []),
+            "attachments": [], "generated": f.pop("generated", None), **f}
+def ev(reason, assumptions=(), unknowns=(), predictions=()):
+    return {"reason": reason, "assumptions": list(assumptions), "unknowns": list(unknowns),
+            "predictions": list(predictions)}
+def party(pid, kind, roles, name=None, model=None, layers=None):
+    return {"id": pid, "kind": kind, "roles": roles, "name": name, "actor": None,
+            "model": model, "on_behalf_of": None, "layers": layers}
+
+parties = [party("manager", "organisation", ["owner", "decider", "assessor"],
+                 "management company", layers=["rule"]),
+           party("llm", "llm", ["proposer", "advisor"], model="claude-opus-5-5"),
+           *[party(h, "agent", ["voter"], f"household {h}") for h in ("H1", "H2", "H3", "H4")],
+           party("visitors", "organisation", ["affected"], "visitors")]
+gen = {"model": "claude-opus-5-5", "request_digest": "0000000000000000"}
+log = {"runs": None, "window": "2 weeks", "description": "booking log of the two chargers"}
+entries = [
+    e("K1", "objective", "manager", 1, text="Every household can charge at least twice a week.",
+      measure=[{"metric": "households_below_two", "role": "goal", "direction": "decrease",
+                "target": "0"}]),
+    e("P1.m0", "measurement", "manager", 1, of="in_force", version=None, method=log,
+      values={"households_below_two": 2}, compared_with=None, runs_better=None,
+      per_party={"H3": {"charges_per_week": 1.5}, "H4": {"charges_per_week": 1.0}}),
+    e("P1.1", "proposal", "llm", 1, generated=gen, kind="amendment",
+      title="Limit a booking to 4 hours",
+      changes=[{"parameter": "max_booking", "from": "8h", "to": "4h", "layer": "rule"}],
+      objective="K1", measure=None, affected=["H1", "H2", "H3", "H4", "visitors"],
+      **ev("H1 and H2 book overnight and block the chargers.",
+           ["Charging 4 h is enough for daily use"],
+           ["Whether H1 and H2 will book twice a night instead"],
+           [{"option": "P1.1", "subject": "metric:households_below_two",
+             "expected": "decrease", "note": None},
+            {"option": "P1.1", "subject": "vote:H1", "expected": "no", "note": None}])),
+    e("P1.1.m", "measurement", "manager", 1, basis=["P1.1"], of="P1.1", version=None,
+      method={"runs": None, "window": "2 weeks",
+              "description": "the rule applied to a copy of the log"},
+      values={"households_below_two": 0}, per_party=None, compared_with="P1.m0",
+      runs_better=None),
+    *[e(f"P1.1.v{h}", "vote", h, 1, proposal="P1.1", value=v, reason=r)
+      for h, v, r in (("H1", "no", "I work nights"), ("H2", "yes", None),
+                      ("H3", "yes", None), ("H4", "yes", None))],
+    e("D1", "decision", "manager", 1,
+      basis=["K1", "P1.m0", "P1.1", "P1.1.m"] + [f"P1.1.v{h}" for h in ("H1", "H2", "H3", "H4")],
+      question="Change the booking rule?", options=["P1.1", "keep"], choice="P1.1",
+      procedure="vote", rule=None, affected=["H1", "visitors"], result=None,
+      **ev("Three of four households voted for it, and the rule applied to the log leaves no "
+           "household below two charges a week.", ["The log of two weeks is typical"],
+           ["How visitors use the chargers"])),
+    e("D1.f1", "follow_up", "manager", 1, text="Read the booking log again after a month",
+      due={"period": 2}, decision="D1",
+      fulfilled_by={"type": "measurement", "of": "in_force", "same_method_as": "P1.m0",
+                    "subjects": ["metric:households_below_two"]}),
+]
+c = DecisionChain()
+lines = [c.header({"name": "EvChargers", "version": "v1", "source_sha256": "0" * 64},
+                  parties, T, "two weeks of the booking log")]
+lines += [c.entry(x) for x in entries] + [c.end()]
+open("decisions.jsonl", "w").write("\n".join(lines) + "\n")
+```
+
+`cadl decisions-verify decisions.jsonl` reports 0 errors and three findings: `unknowns` for D1,
+`affected not measured` for D1 (no measurement of `P1.1` has values for the households and the
+visitors), and `open follow-up` for `D1.f1`; it also says that it could not check L-9 to L-11 and
+the outcome of the votes, since no CADL file of a version is at hand. Without the role
+`assessor`, the manager may not make measurements (L-5).
+
+</details>
+
+**Goal**: a record of your SoS that the verifier reads with 0 errors, and a list of what you
+could not write in it.
+
+**Decision rule**: a field that does not fit your SoS (the `runs` of a method, `per_party`
+values, the unit of `point`) and a fact you wanted to record but found no field for (an answer
+to a dissenting vote, a re-delegation, a check of the conditions of a delegation) both go on the
+list. For each item, say whether the lack is in Appendix L or in the institution of your SoS.
+
+### Exercise 13-13: the predictions of the LLM (optional)
+
+Verify the four records of the LLM: 13-5 in English and Japanese (`examples/steward-contract-en`,
+`examples/steward-contract`) and 13-7 in English and Japanese, with `cadl decisions-verify
+--format json`. Count the predictions in each record by the entry that makes them (proposal,
+recommendation, decision), by subject (a metric or a vote), and those reported as `prediction
+missed`.
+
+**Goal**: say what the records tell about how well the LLM predicts, and what they cannot tell.
+
+**Decision rule**: the verifier checks a prediction only against a later measurement of the
+option it is about, or a later vote on it; it skips predictions about `keep`. A prediction that
+no later entry can contradict is not right: it is unchecked.
+
+**Reference values**:
+
+| Record | Predictions | Missed | By proposals (missed: metric / vote) | By recommendations | By decisions |
+|---|---|---|---|---|---|
+| 13-5 English | 145 | 14 | 74 (6 / 8) | 40 | 31 |
+| 13-5 Japanese | 207 | 12 | 102 (9 / 3) | 58 | 47 |
+| 13-7 English | 124 | 6 | 61 (5 / 1) | 36 | 27 |
+| 13-7 Japanese | 170 | 12 | 91 (5 / 7) | 48 | 31 |
+
+None of the predictions of a recommendation or a decision is missed, and none can be: they are
+about `keep`, or about an option that no later entry measures.
+
+**Answer**:
+
+1. The English and the Japanese records of 13-5 had the same setting; the LLM set aside the votes
+   twice in English (D2, D3) and never in Japanese. Do the decision requests and the measurements
+   of periods 2 and 3 differ? Can one record tell whether the difference comes from the requests
+   or from the variation of the LLM's output?
+2. A `reason` is what a decider wrote, not a trace of how it decided. What would you have to run,
+   besides the records, to tell how far the reasons of the LLM explain its choices?
+3. The predictions only give a direction (`increase`, `decrease`, `unchanged`, `yes`, `no`).
+   Propose a field for a probability, and say what the verifier would then compute.
 
 ## 14. What the specification cannot express yet
 
