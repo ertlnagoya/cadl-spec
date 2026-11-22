@@ -1,10 +1,10 @@
 ---
 sidebar_position: 20.6
 title: "付録L. 判断の記録"
-description: "判断の記録（decisions 0.2）の形式を規定する。モデルの改正がどのように判断されたかを記録するファイルの形式であり，人，LLM，ツールのどれにも同じ証拠を求める。当事者とその役割，各当事者が判断する層（ほかの当事者に代わって判断する当事者を含む），目的，改正案，測定，検査，投票，推奨，判断の要求，判断，バージョン，後で確かめる約束（何がそれを果たすかを含む）を項目として持つ。各判断の根拠，G.8 のハッシュの連鎖による完全性，検証者が行う検査と，確認のために報告する指摘，付録Kとの関係，GSNへの対応を定める。"
+description: "判断の記録（decisions 0.3）の形式を規定する。モデルの改正がどのように判断されたかを記録するファイルの形式であり，人，LLM，ツールのどれにも同じ証拠を求める。当事者とその役割，各当事者が判断する層（ほかの当事者に代わって判断する当事者と，それを許す委任を含む），目的，改正案，測定，検査，投票，推奨，判断の要求，判断，バージョン，後で確かめる約束（何がそれを果たすかを含む）を項目として持つ。各判断の根拠，G.8 のハッシュの連鎖による完全性，検証者が行う検査と，確認のために報告する指摘，付録Kとの関係，GSNへの対応を定める。"
 ---
 
-# 付録L. 判断の記録（decisions 0.2）
+# 付録L. 判断の記録（decisions 0.3）
 
 [付録K，K.5](./appendix-k-amendment.md)では，モデルのバージョンは，その根拠となった判断の記録を
 URI参照で指すことができる。K.5は記録そのものについては何も定めない。この付録は，そのような記録の形式を
@@ -78,6 +78,10 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。ル�
 - 後で確かめる約束（follow-up）は，判断とともに，後で何かを確かめる，または行うと約束するものである。
   後の項目が約束を果たす。約束は，それを果たす項目が何でなければならないかを示せる。測り直す約束なら，
   測り直す対象の測定と同じ条件での測定である。
+- 委任（delegation）は，ある当事者が，ほかの当事者に自分の代わりに判断させる項目である。どの層について，
+  どの手続きで，どんな条件のもとで，いつまで任せるかを示す。自分の規則で改正を採択するツールも，人に
+  代わって判断の要求に答えるLLMも，同じく委任を受けた者である。有効な委任の範囲で行った判断は，その委任の
+  もとの判断として示す。委任なしにほかの当事者に代わって行った判断は，確認のために報告する。
 - 項目は変更しない。訂正は，前の項目の誤りを述べる後の項目である。
 
 ## L.3 ファイルの形式 {/* #l3-file-format */}
@@ -93,7 +97,7 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。ル�
 
 | 行 | 完全性のフィールドより前のフィールド |
 | --- | --- |
-| ヘッダ | `decisions_format`：`"cadl-decisions/2"`。`hash`，`key_id`，`run_id`：G.8のヘッダと同じ。`model`：`name`（モデルの `sos.name`），`version`（最初のバージョンの `sos.version`，または `null`），`source_sha256`（CADLファイルの最初のバージョンのバイト列のSHA-256，または `null`）。`time_base`：期が何であるかの説明，または `null`。`started`：記録を始めた時刻（UTCのISO 8601のタイムスタンプ）。`previous`：別の記録の続きであるときは，その記録の `run_id` と終わりの記録の `digest`。そうでなければ `null`。`parties`：当事者（下記）。 |
+| ヘッダ | `decisions_format`：`"cadl-decisions/3"`。`hash`，`key_id`，`run_id`：G.8のヘッダと同じ。`model`：`name`（モデルの `sos.name`），`version`（最初のバージョンの `sos.version`，または `null`），`source_sha256`（CADLファイルの最初のバージョンのバイト列のSHA-256，または `null`）。`time_base`：期が何であるかの説明，または `null`。`started`：記録を始めた時刻（UTCのISO 8601のタイムスタンプ）。`previous`：別の記録の続きであるときは，その記録の `run_id` と終わりの記録の `digest`。そうでなければ `null`。`parties`：当事者（下記）。 |
 | 項目 | L.4の共通のフィールドと，種類ごとのフィールド。 |
 | 終わりの記録 | `decisions_end`：`true`。`entries`：ヘッダと終わりの記録のあいだの項目の数。 |
 
@@ -266,6 +270,22 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。ル�
 需要）での測定は，値がどれほど近くても約束を果たさない。行動の約束（緩和策を提案する，読み方を見直す
 など）は，`type` を `decision` または `proposal` とする。
 
+`delegation`：ある当事者が，ほかの当事者に自分の代わりに判断させる。
+
+| フィールド | 内容 |
+| --- | --- |
+| `to` | `by` に代わって判断する当事者の `id`。`on_behalf_of` が `by` である当事者。 |
+| `layers` | `to` が `by` に代わって判断してよい層。`rule`，`contract`，`regulation` の並び，または `to` のすべての層を表す `null`。空の並びは委任を終える。 |
+| `procedures` | `to` が使ってよい `decision` の手続き。`single`，`vote`，`override`，`automatic` の並び，またはどれでもよいことを表す `null`。 |
+| `conditions` | `to` が判断するときの条件の説明（たとえば，ツールが改正案を採択する前に改正案が通らなければならない検査）。空でもよい。検証者は検査しない。 |
+| `until` | 委任が及ぶ最後の時点。`point` の形，または `null`。 |
+| `reason` | `by` が任せる理由。 |
+
+委任は，その時点から `until` まで，同じ当事者から同じ当事者への後の委任が置き換えるまで有効である。
+当事者が任せてよいか，誰に任せてよいかは，記録を保管する組織が決める。記録は，誰が，いつ，どの範囲で
+任せたかを示す。こうして読み手は，委任を受けた者がその範囲の中で行った判断と，範囲の外で行った判断を
+区別できる。
+
 `correction`：前の項目の訂正。
 
 | フィールド | 内容 |
@@ -279,7 +299,8 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。ル�
 
 項目は，それより前に書かれた項目だけを指す。`basis`，`fulfils`，`proposal`，`of`，`compared_with`，
 `request`，`decision`，`objective`，`corrects`，`options`，`choice` の `id` は，前の行の `id`
-（または `"keep"`）である。項目の `point` は減らない。1つの時点の中では，項目は生じた順に書く。目的，
+（または `"keep"`）である。委任の `to` は当事者の `id` である。項目の `point` は減らない。1つの時点の
+中では，項目は生じた順に書く。委任，目的，
 改正案，測定と検査，投票，判断の要求，推奨，判断，後で確かめる約束，バージョンの順である。この順序は推奨
 であり，検証者は，この順序に従わない記録を報告しない。
 
@@ -287,16 +308,16 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。ル�
 
 検証者は，次のものをエラーとして報告しなければならない。エラーのある記録は，そのままでは信頼できない。
 
-- L-1 ファイルはUTF-8のJSON Linesであり，最初の行は `decisions_format` が `"cadl-decisions/2"` の
+- L-1 ファイルはUTF-8のJSON Linesであり，最初の行は `decisions_format` が `"cadl-decisions/3"` の
   ヘッダである。どの行も，その種類に対するL.3とL.4のフィールドを持ち，ほかのフィールドを持たない
-  （`"cadl-decisions/1"` の記録はL.11を見よ）。
+  （`"cadl-decisions/1"` と `"cadl-decisions/2"` の記録はL.11を見よ）。
 - L-2 完全性のフィールドが，G.8のとおりに検証を通る。鍵付きの記録では鍵を用いる。
 - L-3 当事者の `id` は一意であり，項目の `id` も一意である。
 - L-4 項目が指す `id` は，フィールドが求める種類の，より前の項目の `id` である（L.5）。選択肢を表す
   ところでは `"keep"` でもよい。`fulfils` は `follow_up` の項目を指す。`point` は減らない。
 - L-5 `by` は，種類が求める役割を持つ当事者を指す。`objective` は owner，`proposal` は proposer，
-  `measurement` と `check` は assessor，`vote` は voter，`recommendation` は advisor，`decision` は
-  decider である。`request`，`follow_up`，`version`，`correction`，`note` はどの当事者でもよい。
+  `measurement` と `check` は assessor，`vote` は voter，`recommendation` は advisor，`decision` と
+  `delegation` は decider である。`request`，`follow_up`，`version`，`correction`，`note` はどの当事者でもよい。
   種類が `amendment` の改正案を採択する判断は，`layers` が `null` であるか，改正案のすべての変更の
   `layer` を `layers` に持つ当事者が行う。
 - L-6 判断の `choice` は，その `options` の1つである。改正案への投票は，その改正案への `vote` の
@@ -315,15 +336,19 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。ル�
   当事者は `model` を持つ。当事者の `on_behalf_of` はほかの当事者を指し，自身の代わりを務める当事者は
   ない。予測の `subject` は，メトリクス，または役割 `voter` を持つ当事者を指す。ほかの当事者に代わる
   当事者は，その当事者が判断する層についてだけ代わる。代わられる当事者が `layers` を持つときは，代わる
-  当事者の `layers` は `null` ではなく，そのうちの層である。
+  当事者の `layers` は `null` ではなく，そのうちの層である。`delegation` の `to` は，`on_behalf_of` が
+  委任の `by` である当事者である。`to` が `layers` を持つときは，委任の `layers` は `null` ではなく，
+  そのうちの層である。
 
 バージョンのCADLファイルが手元にあるとき（`version` の項目の `attachments` のパス，または検証者に
 渡されたファイル），検証者は次のものも報告しなければならない。
 
 - L-9 ヘッダと各 `version` の項目の `source_sha256` は，ファイルのSHA-256である。ファイルの
   `sos.version`，`amendment.previous`，`amendment.effective` は項目のものと同じである。
-- L-10 種類が `amendment` の改正案の各 `parameter` は，有効なバージョンのK.3のパラメータであり，
-  `from` はそのパラメータの値，`to` はK.3が1回の改正で許す値である。
+- L-10 判断が採択する，種類が `amendment` の改正案の各 `parameter` は，有効なバージョンのK.3の
+  パラメータであり，`from` はそのパラメータの値，`to` はK.3が1回の改正で許す値である。どの判断も採択
+  しない改正案は，その外にあってもよい。記録は何が提案されたかを示し，その検査は退けられたことを示す。
+  検証者はそれを not amendable として報告する。
 - L-11 改正案を採択する判断の判断する者は，それが変える各パラメータのK.3の判断者である（`actor` が
   `decided_by:` である当事者）か，その当事者に代わって判断する（`on_behalf_of`）。そうでなければ，
   判断の `procedure` は `override` である。
@@ -336,7 +361,7 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。ル�
 | --- | --- |
 | override | 判断が投票の結果を覆した（`procedure` が `override`）。 |
 | against recommendation | 判断が，根拠にある推奨と違う選択肢を選んだ。 |
-| delegated | ほかの当事者に代わって判断する当事者（`on_behalf_of`）が判断した。サービス運営者に代わるLLMなど。 |
+| delegated | ほかの当事者に代わって判断する当事者（`on_behalf_of`）が判断し，それを覆う有効な委任がない。サービス運営者に代わるLLMなど。覆う委任とは，そのほかの当事者からこの当事者への委任で，`layers` が判断の採択する改正案のすべての変更の層を持ち，`procedures` が判断の `procedure` を持つものである。検証者は，委任が覆う判断ごとにその委任を示し，その判断は報告しない。 |
 | unknowns | 判断，または判断の根拠にある推奨が，その当事者の分からなかったことを挙げている。 |
 | prediction missed | 提案，推奨，判断の予測が，後の項目と食い違う。メトリクスの予測では，予測の対象の選択肢の後の測定が，その `compared_with` の測定と比べて，上がっていない（`increase`），下がっていない（`decrease`），変わっている（`unchanged`。許す幅は検証者が示す），または条件を満たさない。投票の予測では，予測が指す当事者の後の投票が，予測と違う。 |
 | affected not measured | 判断が採択する改正案について，その `affected` の当事者（`contract` の層のパラメータの変更では，役割 `affected` を持つ当事者）の値が，根拠にあるどの測定の `per_party` にもない。 |
@@ -344,6 +369,7 @@ KPIを複数の読み方で読んだときは，どう測るかを選ぶ。ル�
 | reading not decided | `measure` のない目的のあと，判断が読み方を選ぶ前に測定が行われた。 |
 | fulfilment not shown | 項目が `fulfils` で約束を挙げているが，その約束の `fulfilled_by` が求めるものではない。種類が違う，ほかのものを測った，`same_method_as` の測定と違う `method` で測った，または `subject` の値がない。このような項目は約束を果たさない。 |
 | open follow-up | 後で確かめる約束が果たされておらず（`fulfils` でそれを挙げ，`fulfilled_by` を満たす後の項目がない），その `due` の時点を過ぎている（または記録が完全である）。 |
+| not amendable | どの判断も採択しない，種類が `amendment` の改正案が，有効なバージョンのK.3が宣言しないパラメータを変える，またはK.3が1回の改正で許さない値に変える（L-10）。 |
 | corrected | 項目に訂正がある。 |
 | open record | 記録に終わりの記録がない。 |
 
@@ -391,6 +417,7 @@ sos:
 | `assumptions` | StrategyのAssumption |
 | `unknowns` と `predictions` | StrategyのContext。後の測定と食い違った予測は，そのStrategyへの反証である。 |
 | 根拠にある `recommendation` | StrategyのContext |
+| `delegation` | それが覆う各判断のStrategyのContext |
 | `follow_up` | Strategyの下のGoal。後の項目が（`fulfilled_by` を満たして）果たすまでは未展開とし，果たした項目をそのSolutionとする。 |
 
 ## L.9 例 {/* #l9-example */}
@@ -402,7 +429,7 @@ sos:
 D1に前提，分からないこと，予測を書かなかったので，空の並びで記録している。
 
 ```json
-{"decisions_format": "cadl-decisions/2", "hash": "sha256", "key_id": null,
+{"decisions_format": "cadl-decisions/3", "hash": "sha256", "key_id": null,
  "run_id": "3f2a…", "model": {"name": "RobotTown", "version": "v1", "source_sha256": "9c1e…"},
  "time_base": "one simulated hour of the robot town", "started": "2026-11-18T09:12:03Z",
  "previous": null, "parties": [
@@ -499,12 +526,16 @@ D1に前提，分からないこと，予測を書かなかったので，空の
 挙げるが，P1.m0とは違う乱数シードと需要で測ったので，第1期の値を確かめ直していない。P1.m0の条件で
 v2を測った `F2.D1.f1` が，約束を果たす。
 
-サービス運営者がLLMに自分の代わりに判断させていたら，記録には当事者が1つ増え，判断は同じフィールドで
-同じように書かれ，同じ検査を受ける。
+サービス運営者がLLMに自分の代わりに判断させていたら，記録には当事者が1つと，運営者からその当事者への
+委任が増え，判断は同じフィールドで同じように書かれ，同じ検査を受ける。
 
 ```json
 {"id": "llm-decider", "kind": "llm", "roles": ["decider"], "name": null, "actor": null,
  "model": "claude-opus-5-5", "on_behalf_of": "operator", "layers": ["rule", "contract"]}
+{"id": "G.llm-decider", "type": "delegation", "point": {"period": 1}, "by": "operator",
+ "to": "llm-decider", "layers": ["rule", "contract"], "procedures": ["single", "vote"],
+ "conditions": ["answer the decision requests of the steward on the rules and the contract"],
+ "until": null, "reason": "The operator lets the LLM answer the decision requests (--delegate rule,contract).", …}
 {"id": "D1", "type": "decision", "point": {"period": 1}, "by": "llm-decider",
  "options": ["P1.2", "keep"], "choice": "keep", "procedure": "vote", "rule": null,
  "reason": "Adopting it means overriding a majority vote. …",
@@ -513,22 +544,23 @@ v2を測った `F2.D1.f1` が，約束を果たす。
  "generated": {"model": "claude-opus-5-5", "request_digest": "…"}, "result": "v1", …}
 ```
 
-この場合，検証者は delegated と unknowns を報告する。LLMが運営者に代わって判断してよいか，どの層で
-よいかは，記録を保管する組織が決める。記録は，LLMが代わって判断したことと，どの層について判断したかを
-示す。運営者に代わるLLMは，規制の変更を採択できない。運営者の `layers` が規制を持たないからであり
+この場合，検証者は unknowns を報告し，D1を行った委任として G.llm-decider を示す。LLMが運営者に
+代わって判断してよいか，どの層でよいかは，記録を保管する組織が決める。記録は，LLMが代わって判断した
+こと，どの層について判断したか，誰がそれを任せたかを示す。G.llm-decider がなければ，またはLLMが投票の
+結果を覆していたら（G.llm-decider が与えない `override`），検証者は delegated を報告する。運営者に代わるLLMは，規制の変更を採択できない。運営者の `layers` が規制を持たないからであり
 （L-8），そのような変更を採択する判断はエラーである（L-5）。規制の変更は，別の判断要求で規制の担当者に
 出し，それを判断するLLMは規制の担当者に代わる。
 
 ## L.10 リファレンス実装の状況 {/* #l10-reference-implementation-status */}
 
-`cadl` 0.3.38から，次のものがある（decisions 0.2。`cadl` 0.3.37はdecisions 0.1を実装した）。
+`cadl` 0.3.39から，次のものがある（decisions 0.3。`cadl` 0.3.38はdecisions 0.2を，0.3.37はdecisions 0.1を実装した）。
 
 - `cadl.decisions.DecisionChain` は記録を書き，`cadl decisions-verify RECORD.jsonl` は記録を検査する。
   エラーL-1〜L-8と，バージョンのCADLファイル（`version` の項目の `.cadl` の添付と，`--version` で渡した
   ファイル）に対するL-9〜L-11を報告する。L.6の指摘を報告し，検査できなかったものを挙げる。値が比べる
   値の1%以内なら `unchanged` とみなす。`--key`，`--run-id`，`--anchor` は `cadl audit-verify` と同じで
-  ある。`"cadl-decisions/1"` の記録も読む（L.11）。書き手が `layers` と `fulfilled_by` を省いたときは，
-  `null` を補う。
+  ある。`"cadl-decisions/1"` と `"cadl-decisions/2"` の記録も読む（L.11）。書き手が `layers` と
+  `fulfilled_by` を省いたときは，`null` を補う。委任のもとで行った判断ごとに，その委任を示す。
 - cadl-robot-town（v0.4.0から）は，`town.steward` と `town.council` の実行ごとに `decisions.jsonl` を
   書き出す。運営者は規則と契約について判断し，規制については別の当事者である規制の担当者が，別の判断要求
   で判断する。`--decider llm` では，`--delegate` で与えた層について，LLMが人間に代わって判断要求に答え，
@@ -537,16 +569,27 @@ v2を測った `F2.D1.f1` が，約束を果たす。
   （付録K：改正してよいパラメータ，その場所と範囲，層ごとに誰が決めるか）を書いたそのバージョンのCADL
   ファイルを添付するので，検証者はL-9〜L-11と投票の結果を検査する。stewardとcouncilは，運営者に代わって
   規則の変更を採択する。規制の案は，その値をその期の測定と投票に当てはめて測る。約束は，測定，案，判断の
-  どれがそれを果たすかを示す。
+  どれがそれを果たすかを示す。v0.6.0からは，記録の初めに運営者（と規制の担当者）の委任を書く。stewardと
+  councilには規則の層を自分の規則で決めること（`automatic`）を，LLMには `--delegate` で与えた層を任せる。
+  規制の案は，それまでの期に測ったすべての案にも当てはめ，会社ごとに，その会社が反対したのに投票を通る
+  案の数を測定に残す。約束の問いは，期限が来たら判断する者に渡し，最後の期には残った問いをすべて渡す。
+  `python -m town.check_examples` は，継続的インテグレーションで見本をもう一度実行し，履歴，GSN，指摘を
+  比べる。
 - cadl-explorer（v1.5.0から）のページDecision Evidenceは，記録を読み，`cadl.decisions` で検証し，
   当事者の時系列，各判断の経緯，当事者ごとの証拠，L.8のGSN，指摘，連鎖を示す。v1.6.0からは，判断した者の
   層と，約束が果たされたかを示す。v1.7.0からは，記録とともにバージョンのCADLファイルを受け取り，それで
-  L-9〜L-11を検査する。
+  L-9〜L-11を検査する。v1.8.0からは，委任と，それぞれのもとで行った判断を挙げ，時系列とGSNに示す。
 
 ## L.11 後方互換性 {/* #l11-backward-compatibility */}
 
 この形式は新しい。CADLファイルのキーと判定を変えない。K.5は変わらない。K.5の `ref:` が判断の記録の
 項目をどう指すかは，L.7が述べる。
+
+decisions 0.3は，decisions 0.2に項目の種類 `delegation` を加え，ヘッダは `"cadl-decisions/3"` を
+示す。検証者は `"cadl-decisions/2"` の記録を以前と同じように読む。委任がないので，ほかの当事者に代わって
+行った判断はすべて delegated として報告し，その記録の中の `delegation` の項目はエラーである（L-1）。
+また，どの形式の記録についても，L-10を判断が採択する改正案に限る。どの判断も採択しないK.3の外の
+改正案は，以前はエラーであったが，指摘 not amendable になる。
 
 decisions 0.2は，decisions 0.1に2つのフィールドを加える。当事者の `layers` と，約束の `fulfilled_by` で
 あり，ヘッダは `"cadl-decisions/2"` を示す。`"cadl-decisions/1"` の記録はどちらのフィールドも持たない。
