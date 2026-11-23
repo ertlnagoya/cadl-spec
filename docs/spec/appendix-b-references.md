@@ -243,3 +243,27 @@ description: "References cited in the CADL specification."
 [119] Agent2Agent (A2A) Project, "Agent2Agent (A2A) Protocol Specification," version 1.0.0, https://a2a-protocol.org/latest/specification/ (accessed Nov. 2026).
 
 [120] W. W. Vasconcelos, M. J. Kollingbaum, and T. J. Norman, "Normative conflict resolution in multi-agent systems," Autonomous Agents and Multi-Agent Systems, vol. 19, no. 2, pp. 124-152, 2009, doi:10.1007/s10458-008-9070-9.
+
+[121] W. Kunz and H. W. J. Rittel, "Issues as Elements of Information Systems," Working Paper No. 131, Institute of Urban and Regional Development, University of California, Berkeley, 1970.
+
+[122] M. Nygard, "Documenting Architecture Decisions," Cognitect blog, 15 Nov. 2011, https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions (accessed Nov. 2026).
+
+[123] L. Moreau and P. Missier (eds.), "PROV-DM: The PROV Data Model," W3C Recommendation, 30 Apr. 2013, https://www.w3.org/TR/prov-dm/; Section 5.3.4, Delegation.
+
+[124] M. Jones, A. Nadalin, B. Campbell, J. Bradley, and C. Mortimore, "OAuth 2.0 Token Exchange," RFC 8693, Jan. 2020, https://www.rfc-editor.org/rfc/rfc8693.
+
+[125] N. Tomašev, M. Franklin, and S. Osindero, "Intelligent AI Delegation," arXiv:2602.11865 (preprint), 2026, https://arxiv.org/abs/2602.11865.
+
+[126] Compound, "Governance" (Compound v2 documentation), https://docs.compound.xyz/v2/governance/ (accessed Nov. 2026).
+
+[127] European Commission, "Better Regulation Guidelines," SWD(2021) 305 final, Brussels, 3 Nov. 2021.
+
+[128] J. Pitt, J. Schaumeier, and A. Artikis, "Axiomatization of Socio-Economic Principles for Self-Organizing Institutions," ACM Transactions on Autonomous and Adaptive Systems, vol. 7, no. 4, pp. 1-39, 2012, doi:10.1145/2382570.2382575.
+
+[129] I. Gómez-Sebastià, "NoMoDEI: A Framework for Norm Monitoring on Dynamic Electronic Institutions," PhD thesis, Universitat Politècnica de Catalunya, 2016, doi:10.5821/dissertation-2117-96154.
+
+[130] A. J. I. Jones and M. Sergot, "A Formal Characterisation of Institutionalised Power," Logic Journal of the IGPL, vol. 4, no. 3, pp. 427-443, 1996, doi:10.1093/jigpal/4.3.427.
+
+[131] P. Resnick, "On Consensus and Humming in the IETF," RFC 7282, June 2014, https://www.rfc-editor.org/rfc/rfc7282.
+
+[132] M. Turpin, J. Michael, E. Perez, and S. R. Bowman, "Language Models Don't Always Say What They Think: Unfaithful Explanations in Chain-of-Thought Prompting," in Advances in Neural Information Processing Systems 36 (NeurIPS 2023), pp. 74952-74965, 2023, doi:10.52202/075280-3275.
