@@ -239,7 +239,10 @@ in the IR or, for `yes` / `no` and negative numbers, a meaningless one
   then.
 - A transition's `deadline:` defines a normative time bound, measured
   from the moment the instance enters one of the transition's `from`
-  states. If the transition has not fired by then, this is a
+  states. Every such entry restarts it, including a self-loop, a move
+  from one `from` state to another, and a move forced by a deadline or a
+  monitor; a move to a state that is not a `from` state ends it. If the
+  transition has not fired by then, this is a
   *violation* whose severity is `Major` unless overridden in the
   `on_violation:` block, and the instance moves to the state named by
   `on_violation.transition`. When the transition has no
