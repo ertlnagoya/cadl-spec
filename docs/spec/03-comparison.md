@@ -63,7 +63,7 @@ current reference implementation already provides every item.
 ## 3.3 Uniqueness of CADL
 Within the scope of our survey, we found no existing approach that
 alone satisfies all requirements. CADL's distinguishing features are
-summarized in three points:
+summarized in four points:
 
 **(1) Three-layer integrated description:** CADL consistently describes
 three layers within a single language:
@@ -81,3 +81,53 @@ incentive intensity (λ) as numerical parameters.
 verification at design stage (consistency and safety), code generation
 at deployment, and runtime monitoring at operation, all on a unified
 language foundation.
+
+**(4) Decisions about the institution, checked against it:** Amendments
+are recorded with the same evidence for every kind of decider, whether a
+person, an LLM or a tool, and the record is checked against the
+amendable parameters and the authorities that the model itself declares
+([Appendix K](./appendix-k-amendment.md) and
+[Appendix L](./appendix-l-decisions.md)). The check says who decided
+within which authority; it does not say whether the decision was right.
+
+## 3.4 Records of Decisions and Delegation
+The languages of Section 3.2 describe institutions; the records of
+decisions that amend them ([Appendix L](./appendix-l-decisions.md)) are
+closer to work outside language design, and each of their parts has
+precedents. Recording the question, the options, the reasons and the
+assumptions of a decision is the practice of design rationale since IBIS
+[[Kunz & Rittel, 1970]](./appendix-b-references.md) and of architecture
+decision records, which are superseded rather than rewritten
+[[Nygard, 2011]](./appendix-b-references.md). W3C PROV-DM defines
+delegation (`actedOnBehalfOf`) for agents of every kind, people and
+software alike [[W3C PROV-DM, 2013]](./appendix-b-references.md). OAuth
+token exchange carries who acts for whom
+[[RFC 8693]](./appendix-b-references.md), and recent work on LLM agents
+gives a delegation a scope, an expiry and revocation
+[[Tomašev+, arXiv 2026]](./appendix-b-references.md). DAO governors
+record proposals, votes and delegated votes, and execute what passes
+[[Compound Governance]](./appendix-b-references.md). Regulatory impact
+assessment fixes, before a rule is adopted, how and when it will be
+evaluated [[EC, Better Regulation 2021]](./appendix-b-references.md).
+Assurance cases are generated from models and re-evaluated during
+operation [[Wei+, JSS 2024]](./appendix-b-references.md). In normative
+multi-agent systems, the rules of an institution are changed by those
+with the institutionalised power to change them
+[[Jones & Sergot, 1996]](./appendix-b-references.md),
+[[Pitt+, TAAS 2012]](./appendix-b-references.md), and a monitor can
+follow norms that are added and removed at run time
+[[Gómez-Sebastià, 2016]](./appendix-b-references.md).
+
+Appendix L combines these parts for the amendments of an institutional
+model. Within the scope of our survey, we found no record format that is
+checked afterwards against the model's own declaration of what may be
+amended, within which range and step, by whom and by which procedure
+(Appendix K, K.3); that requires the same evidence of a person, an LLM
+and a tool; that reports a decision made on behalf of another party
+outside the layers and procedures it was delegated; and that accepts a
+promise to re-measure as kept only when a later measurement under the
+same conditions shows it. CADL does not claim the parts: rationale
+fields, hash chains, delegation and its provenance, ex-post evaluation,
+and the generation of GSN are established. Work on LLM delegation and
+on audit trails of agents is appearing quickly, so this comparison
+reflects the literature as of November 2026.

@@ -47,4 +47,6 @@ file format for the record of how amendments were decided, kept beside
 the model. From `cadl` 0.3.37 the reference implementation writes and
 verifies it (`cadl decisions-verify`, L.10); from 0.3.38, decisions 0.2,
 with the layers on which each party decides and what fulfils each
-follow-up.
+follow-up; from 0.3.39, decisions 0.3, with delegations of decisions. The
+questions it leaves open are RD-8.6 to RD-8.9 of
+[Section 9.8](./09-research.md).
