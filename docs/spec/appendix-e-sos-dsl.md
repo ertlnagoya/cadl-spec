@@ -234,7 +234,9 @@ in the IR or, for `yes` / `no` and negative numbers, a meaningless one
 - A transition fires when the instance is in one of its `from` states,
   its `on:` event occurs, and its `when:` guard, if any, holds. A
   `message_event` occurs when that message is sent; a `rule` used as an
-  event occurs when it becomes true.
+  event occurs when it becomes true. Its value before its first evaluation
+  is taken as false, so a rule that holds at its first evaluation occurs
+  then.
 - A transition's `deadline:` defines a normative time bound, measured
   from the moment the instance enters one of the transition's `from`
   states. If the transition has not fired by then, this is a
@@ -251,7 +253,8 @@ in the IR or, for `yes` / `no` and negative numbers, a meaningless one
 - `monitors` evaluate independently of the lifecycle state machine but
   can read `state` (current lifecycle state) in their `rule:`. A
   monitor with `sampling: event` is evaluated on every event delivered
-  to the instance, one with `periodic(d)` every `d`. On match, a
+  to the instance, one with `periodic(d)` when the instance is created
+  and then every `d`. On match, a
   monitor reports a violation labelled by `on_match.violation` and, if
   `on_match.transition` is given, also moves the instance to that
   state.
@@ -449,7 +452,11 @@ contract that has a `lifecycle:` or `monitors:` block it produces:
   `on_match.violation`.
 
 In `cadl` 0.3 the generated runtime matches an `on:` event by comparing its
-text with the name of the event posted by the host application, and it
+text with the name of the event posted by the host application. A
+transition whose `on:` is a `rule` therefore fires only if the host detects
+that the rule has become true (evaluating it after each world update and
+taking its value before the first evaluation as false, E.5) and posts an event whose name is the
+text of the rule. The generated runtime
 evaluates a `rule` without function calls: a rule that contains one,
 such as `collision_watch` in E.6, never matches. The generated
 evaluator does not support the arithmetic operators `+ - * /` or
