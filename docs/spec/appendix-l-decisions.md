@@ -456,6 +456,21 @@ whether it was right is for the reviewer to judge.
 | **corrected** | An entry has a correction. |
 | **open record** | The record has no end record. |
 
+A verifier SHOULD also count the predictions of the record: how many a
+later entry checked, how many of those it contradicted (prediction
+missed), and, for each of the others, why no later entry checked it. A
+prediction is not checked when it is about `keep`, which no later entry
+measures; when no later measurement of its option, or no later vote of
+the party it names, follows it; or when the later entries cannot be
+compared with it (a vote prediction whose `expected` is neither `yes`
+nor `no`, or measurements without the value of its subject). A
+prediction that no later entry checked is not a finding: the record
+shows neither that it was borne out nor that it was missed. A writer
+that wants the predictions of a decision to be checked measures the
+option it chose after the decision, under conditions that the decision
+did not use, and compares it with the version in force under the same
+conditions (L.10).
+
 ## L.7 Relation to Appendix K
 
 An entry of `amendment.decisions` (K.5) names an entry of a decision
@@ -667,7 +682,9 @@ From `cadl` 0.3.39 (decisions 0.3; `cadl` 0.3.38 implemented decisions
   `cadl audit-verify`. It reads records of `cadl-decisions/1` and `/2`
   as well (L.11). The writer fills `layers` and `fulfilled_by` with
   `null` when its caller leaves them out. For each decision made within
-  a delegation it names the delegation.
+  a delegation it names the delegation. From `cadl` 0.3.41 it counts
+  the predictions (L.6): checked, missed, and not checked, with the
+  reason.
 - cadl-robot-town (from v0.4.0) writes `decisions.jsonl` in each run of
   `town.steward` and `town.council`. The operator decides on the rules
   and the contract, and a regulator, another party, on the regulation,
@@ -693,7 +710,11 @@ From `cadl` 0.3.39 (decisions 0.3; `cadl` 0.3.38 implemented decisions
   follow-up is put to its decider when it falls due, and every open
   question in the last period. `python -m town.check_examples` runs the
   examples again in continuous integration and compares their histories,
-  GSN and findings.
+  GSN and findings. From v0.7.0, when the steward adopts an amendment,
+  it measures the adopted proposal and the version in force under the
+  seeds and demand of the next period (`D<k>.n` and `D<k>.n0`), which
+  the decision did not use, so that a later entry checks the predictions
+  of the decision about its choice.
 - The page Decision Evidence of cadl-explorer (from v1.5.0) reads a
   record, verifies it with `cadl.decisions`, and shows a timeline of the
   parties, the trail of each decision, the evidence of each party, the
@@ -702,7 +723,11 @@ From `cadl` 0.3.39 (decisions 0.3; `cadl` 0.3.38 implemented decisions
   v1.7.0 it takes the CADL files of the versions with the record, and
   checks L-9 to L-11 with them. From v1.8.0 it lists the delegations and
   the decisions made within each, and shows them in the timeline and the
-  GSN.
+  GSN. From v1.9.0 its GSN has every element of L.8 (the measure in
+  force, the point, the unknowns and predictions, a prediction that a
+  later measurement contradicts as a counter-evidence, and an open
+  follow-up as an undeveloped goal), and it shows the counts of the
+  predictions.
 
 ## L.11 Backward compatibility
 
