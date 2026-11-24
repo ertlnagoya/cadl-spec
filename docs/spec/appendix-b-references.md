@@ -279,3 +279,5 @@ description: "References cited in the CADL specification."
 [137] J. F. Hübner, J. S. Sichman, and O. Boissier, "Using the MOISE+ for a Cooperative Framework of MAS Reorganisation," in Advances in Artificial Intelligence – SBIA 2004, LNCS 3171, pp. 506-515, Springer, 2004, doi:10.1007/978-3-540-28645-5_51.
 
 [138] Object Management Group, "Systems Modeling API and Services, Version 1.0," formal/26-03-04, Sept. 2025, https://www.omg.org/spec/SystemsModelingAPI/1.0.
+
+[139] A. Sorici, G. Picard, O. Boissier, A. Santi, and J. F. Hübner, "Multi-Agent Oriented Reorganisation within the JaCaMo infrastructure," in Proc. 3rd Int. Workshop on Infrastructures and Tools for Multiagent Systems (ITMAS 2012), Valencia, Spain, pp. 135-148, 2012, https://riunet.upv.es/handle/10251/16889.
