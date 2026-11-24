@@ -237,6 +237,16 @@ in the IR or, for `yes` / `no` and negative numbers, a meaningless one
   event occurs when it becomes true. Its value before its first evaluation
   is taken as false, so a rule that holds at its first evaluation occurs
   then.
+- One occurrence fires at most one transition: the first in declaration
+  order whose `from` state and guard hold. When several occurrences
+  happen at the same instant (for example two rules become true after
+  one world update), they are taken one at a time in the declaration
+  order of the transitions that use them, each in the state that the
+  previous one left; a transition enabled by a move made earlier in the
+  same instant therefore fires in that instant.
+- Entering a state listed in `lifecycle.terminal` closes the instance:
+  afterwards no transition, deadline, or monitor acts on it, including
+  the monitors that remain to be evaluated in the same instant.
 - A transition's `deadline:` defines a normative time bound, measured
   from the moment the instance enters one of the transition's `from`
   states. Every such entry restarts it, including a self-loop, a move
@@ -261,6 +271,13 @@ in the IR or, for `yes` / `no` and negative numbers, a meaningless one
   monitor reports a violation labelled by `on_match.violation` and, if
   `on_match.transition` is given, also moves the instance to that
   state.
+- An ordering comparison (`<`, `<=`, `>`, `>=`) is false when either
+  operand is not a number (a string that reads as a number counts as
+  that number) or refers to an attribute that has no value; `NOT` of
+  such a comparison is therefore true. The logic is two-valued, as in
+  the reference evaluator; there is no third value such as "unknown".
+  A rule that must not hold when a value is missing or of another type
+  should test for it explicitly.
 - `incentives.rules` (existing) and `monitor.on_match` (extension)
   cooperate: rewards/penalties reference the violations and transitions
   that this extension makes addressable.
@@ -459,12 +476,27 @@ text with the name of the event posted by the host application. A
 transition whose `on:` is a `rule` therefore fires only if the host detects
 that the rule has become true (evaluating it after each world update and
 taking its value before the first evaluation as false, E.5) and posts an event whose name is the
-text of the rule. The generated runtime
+text of the rule. The generated runtime handles each posted event at once,
+in the state the instance is in, so when several rules become true after
+the same world update the host must post their events in the declaration
+order of the transitions that use them (E.5). The generated runtime
 evaluates a `rule` without function calls: a rule that contains one,
 such as `collision_watch` in E.6, never matches. The generated
 evaluator does not support the arithmetic operators `+ - * /` or
 duration literals (`5s`) in a `rule` either. The values of `now`,
 `request`, and the observed attributes are supplied by the host.
+
+The generated runtime acts only when the host calls `Tick`. A deadline
+is detected at the first tick at or after its expiry, and the period of
+a `periodic(d)` monitor is the minimum interval between two samples: the
+next sample is due `d` after the tick at which the previous one was
+taken. With a host that ticks once per frame, deadline violations are
+therefore reported up to one frame late, and the delay of periodic
+samples accumulates over the samples: each sample can be up to one frame
+late, and with 16 ms frames the delay of a `periodic(10min)` monitor
+reached 992 ms in a differential test of the generated code. This can change
+which samples see a violation. A host that needs samples at `k * d`
+must tick at those times.
 
 Reward / sanction execution is **out of scope** for this revision; the
 runtime SHOULD record reward and sanction events but is not required to
