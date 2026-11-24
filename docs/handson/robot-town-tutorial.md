@@ -1331,7 +1331,7 @@ proposals, the first check each failed, the votes of A, B and C, and the proposa
 **Decision rule**: your table is correct when it gives, period by period, the same outcome as
 `history.md` in all six periods, and the verifier reports 0 errors.
 
-**Reference values** (2026-11-22, cadl 0.3.39 and cadl-robot-town v0.6.0): 56 proposals; 50
+**Reference values** (2026-11-24, cadl 0.3.41 and cadl-robot-town v0.7.1): 56 proposals; 50
 failed the gain check first, 2 the vote, 4 passed every check; one change was adopted (period 2,
 `sanction_lambda 0.5 → 1`, yes: A and B); the record has 352 entries, among them the versions v1
 and v2 with their CADL files and the delegation `G.council`. Every decision is `automatic`, made
@@ -1483,9 +1483,14 @@ included, as made within the delegation `G.llm-decider`, which the operator gave
 
 `examples/steward-contract/` holds the same setting in Japanese: there the LLM kept the rules in
 periods 1 and 2 and then adopted, by the votes, `hold_limit 60s → 50s` (period 3), `hold_limit
-50s → 40s` (4), `block_k 3 → 2` (5) and `block_k 2 → 1` (6); 0 errors and 20 findings
-(`prediction missed` 12, `unknowns` 7, `against recommendation` 1). Its 12 follow-ups are all
-fulfilled: 4 re-measured, 2 by proposals (`P4.1`, `P5.1`), 6 by decisions.
+50s → 40s` (4), `block_k 3 → 2` (5) and `block_k 2 → 1` (6); 0 errors and 31 findings
+(`prediction missed` 23, `unknowns` 7, `against recommendation` 1). Its 12 follow-ups are all
+fulfilled: 4 re-measured, 2 by proposals (`P4.1`, `P5.1`), 6 by decisions. From cadl-robot-town
+v0.7.0 the steward also measures each adopted amendment, and the version it replaces, under the
+seeds and demand of the next period (`D<k>.n`, compared with `D<k>.n0`); 11 of the 23 contradicted
+predictions are contradicted by `D3.n` and `D4.n`, among them 10 of D3, D4 and their
+recommendations, which expected the two `hold_limit` changes to improve the service. (These
+values are from a replay with cadl 0.3.41 and cadl-robot-town v0.7.1.)
 
 Before cadl-robot-town v0.5.0 the LLM could promise anything, such as counting the violations by
 type, which nobody in the town does, and restated open promises period after period: the records
@@ -1561,7 +1566,9 @@ python -m town.steward --lang en --mode DISTRIBUTED --rounds 6 --name ex13-reg \
 cadl decisions-verify runs/ex13-reg/decisions.jsonl
 ```
 
-0 errors and 15 findings (`prediction missed` 6, `unknowns` 7, `against recommendation` 2); the
+0 errors and 16 findings (`prediction missed` 7, `unknowns` 7, `against recommendation` 2; two of
+the `prediction missed` concern one prediction of `P5.2`, contradicted by its measurement `P5.2.m`
+and by `D5.n`, the measurement of the adopted change under the seeds and demand of period 6); the
 verifier lists the decisions of the LLM under the delegations `G.llm-decider` and
 `G.llm-regulator`, and those of the steward under `G.steward`. In periods 1 and 2 the LLM,
 deciding for the operator, kept the rules because the votes rejected the proposals (in period 1
@@ -1581,7 +1588,7 @@ answered (`QR4`). The steward adopted `sanction_lambda 0.5 → 1` by itself in p
 measurement: under a quorum of 1, `block_k 3 → 2` (`P2.1`, yes: A only) would pass the vote. The
 LLM, for the regulator, kept the quorum (R2) against the recommendation and answered its own
 question in period 4 (`QR4`); the steward adopted `block_k 3 → 2` in period 5 and `block_k 2 → 1`
-in period 6. 0 errors and 22 findings (`prediction missed` 12, `unknowns` 7, `against
+in period 6. 0 errors and 23 findings (`prediction missed` 13, `unknowns` 7, `against
 recommendation` 3). In both records no regulation is adopted without a measurement of it, and no
 follow-up is left open.
 
@@ -1620,7 +1627,7 @@ through, and against whom, not what later proposals would be.
 The exercises 13-8 to 13-13 are optional. They take the record further: what a delegation covers,
 questions that fall due, proposals that no version allows, the GSN derived from the record, a
 record of another SoS, and the predictions of the LLM. Their reference values are from
-2026-11-23, cadl 0.3.40 and cadl-robot-town v0.6.0 (cadl 0.3.39 reads `until` of a delegation
+2026-11-24, cadl 0.3.41 and cadl-robot-town v0.7.1 (cadl 0.3.39 reads `until` of a delegation
 the wrong way round; use 0.3.40 or later for 13-8).
 
 Several of them edit a copy of a record. The chain must then be recomputed from the edited entries:
@@ -1726,10 +1733,10 @@ names it in `fulfils`. The steward asks for that decision when the question fall
 the last period for every open question.
 
 **Reference values**: with `due: 4`, the record holds `QR4.req` and the decision `QR4` of the
-regulator, with the option `keep` only, `fulfils: [R2.f1]` and the result `v1`; 0 errors and 14
+regulator, with the option `keep` only, `fulfils: [R2.f1]` and the result `v1`; 0 errors and 15
 findings. With `due: 8`, the question is put in the last period (`QR6`), whose request says that
 no promise made then can be kept; a question promised there stays open, and the verifier reports
-`open follow-up` for it (15 findings).
+`open follow-up` for it (16 findings).
 
 **Answer**:
 
@@ -1785,7 +1792,10 @@ what is recorded as assumptions and as undeveloped goals accepted by someone.
 **Reference values**: in the record of 13-3 the GSN has 8 strategies (one per decision) and 3
 goals for the follow-ups of D1; the goal of `D1.f2` (a promise to propose) has no solution. In
 the record of 13-5 the 10 goals of the follow-ups all have their solutions, and the decisions of
-the LLM carry 22 assumptions and the context of `G.llm-decider`.
+the LLM carry 22 assumptions and the context of `G.llm-decider`; no prediction of a decision is
+contradicted, so the GSN has no counter-evidence. In the Japanese record of 13-5
+(`examples/steward-contract`) it has 5, under D3 and D4: their predictions about the adopted
+`hold_limit` changes, contradicted by `D3.n` and `D4.n`.
 
 **Answer**:
 
@@ -1906,17 +1916,25 @@ missed`.
 option it is about, or a later vote on it; it skips predictions about `keep`. A prediction that
 no later entry can contradict is not right: it is unchecked.
 
-**Reference values**:
+**Reference values** (the first three numbers are the `predictions` of `cadl decisions-verify
+--format json`):
 
-| Record | Predictions | Missed | By proposals (missed: metric / vote) | By recommendations | By decisions |
-|---|---|---|---|---|---|
-| 13-5 English | 145 | 14 | 74 (6 / 8) | 40 | 31 |
-| 13-5 Japanese | 207 | 12 | 102 (9 / 3) | 58 | 47 |
-| 13-7 English | 124 | 6 | 61 (5 / 1) | 36 | 27 |
-| 13-7 Japanese | 170 | 12 | 91 (5 / 7) | 48 | 31 |
+| Record | Predictions | Checked | Missed | By proposals (missed: metric / vote) | By recommendations (missed) | By decisions (missed) |
+|---|---|---|---|---|---|---|
+| 13-5 English | 145 | 91 | 14 | 74 (6 / 8) | 40 (0) | 31 (0) |
+| 13-5 Japanese | 207 | 158 | 23 | 102 (10 / 3) | 58 (5) | 47 (5) |
+| 13-7 English | 124 | 57 | 6 | 61 (5 / 1) | 36 (0) | 27 (0) |
+| 13-7 Japanese | 170 | 89 | 13 | 91 (6 / 7) | 48 (0) | 31 (0) |
 
-None of the predictions of a recommendation or a decision is missed, and none can be: they are
-about `keep`, or about an option that no later entry measures.
+The predictions not checked are about `keep`, about an option that no later entry measures or
+votes on, or cannot be compared. From cadl-robot-town v0.7.0 a prediction of a recommendation or
+a decision about the amendment adopted can be contradicted too: the steward measures the
+adopted option under the seeds and demand of the next period (`D<k>.n`). In the Japanese record of
+13-5 the predictions of D3, D4 and their recommendations that the `hold_limit` changes would
+improve the service are contradicted by `D3.n` and `D4.n`. The table counts predictions; the
+verifier reports a finding for each entry that contradicts one, so the findings can outnumber
+them: in the English record of 13-7, `P5.2.m` and `D5.n` both contradict one prediction of `P5.2`
+(7 findings, 6 predictions).
 
 **Answer**:
 
