@@ -267,3 +267,15 @@ description: "References cited in the CADL specification."
 [131] P. Resnick, "On Consensus and Humming in the IETF," RFC 7282, June 2014, https://www.rfc-editor.org/rfc/rfc7282.
 
 [132] M. Turpin, J. Michael, E. Perez, and S. R. Bowman, "Language Models Don't Always Say What They Think: Unfaithful Explanations in Chain-of-Thought Prompting," in Advances in Neural Information Processing Systems 36 (NeurIPS 2023), pp. 74952-74965, 2023, doi:10.52202/075280-3275.
+
+[133] M. T. Moghaddam, "Compliance-by-Construction Argument Graphs: Using Generative AI to Produce Evidence-Linked Formal Arguments for Certification-Grade Accountability," arXiv:2604.04103 (preprint), 2026, https://arxiv.org/abs/2604.04103.
+
+[134] A. Ruan and X. Zhang, "AgentCity: Constitutional Governance for Autonomous Agent Economies via Separation of Power," arXiv:2604.07007 (preprint), 2026, https://arxiv.org/abs/2604.07007.
+
+[135] K. Patil, "SentinelAgent: Intent-Verified Delegation Chains for Securing Federal Multi-Agent AI Systems," arXiv:2604.02767 (preprint), 2026, https://arxiv.org/abs/2604.02767.
+
+[136] A. Mishra and K. Sharad, "Observability for Delegated Execution in Agentic AI Systems," arXiv:2606.09692 (preprint), 2026, https://arxiv.org/abs/2606.09692.
+
+[137] J. F. Hübner, J. S. Sichman, and O. Boissier, "Using the MOISE+ for a Cooperative Framework of MAS Reorganisation," in Advances in Artificial Intelligence – SBIA 2004, LNCS 3171, pp. 506-515, Springer, 2004, doi:10.1007/978-3-540-28645-5_51.
+
+[138] Object Management Group, "Systems Modeling API and Services, Version 1.0," formal/26-03-04, Sept. 2025, https://www.omg.org/spec/SystemsModelingAPI/1.0.
