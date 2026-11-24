@@ -68,24 +68,28 @@ decisions that amend it ([Appendix K](./appendix-k-amendment.md),
 a plan of changes to the organisation; Designer roles propose plans, a
 Selector chooses one, an OrgManager carries it out, and a Historian
 records each change [[Hübner+, SBIA 2004]](./appendix-b-references.md).
-The paper defines no versions of the organisation and leaves open what
-happens to the commitments that agents made under a role that is
-removed. OperA leaves to future work the verification of a model after a
-change, such as the removal of a role, and does not define how a running
-society moves to a changed model
-[[Dignum, 2004]](./appendix-b-references.md). SysML v2 stores the history of a
-model as commits that cannot be changed, with branches and tags
-[[OMG, Systems Modeling API 2025]](./appendix-b-references.md). These are
-versions of a design repository, not of running instances, and a commit
-has no attribute for who decided it; a reason can be given only as free
-text. A DAO governor such as Compound's delays the execution of an
-adopted proposal by a timelock and records proposals, votes and
-delegated votes [[Compound Governance]](./appendix-b-references.md). It
-checks the proposal threshold, the quorum and the delegated votes when a
-proposal is executed, but not whether the change is one that a model
-declares amendable, and it has no versions or transitional provisions.
-CADL is rated ○ in the last row because Appendix L checks a record after
-the fact and enforces nothing at run time.
+In JaCaMo, a reorganisation stops the affected groups and schemes,
+changes the specification, and starts them again; each instruction to an
+agent says whether it is carried out at once or only after the agent has
+finished the goals it committed to before
+[[Sorici+, ITMAS 2012]](./appendix-b-references.md). The specification is changed in
+place: no versions are defined, and the old specification is not kept.
+OperA leaves to future work the verification of a model after a change,
+such as the removal of a role, and does not define how a running society
+moves to a changed model [[Dignum, 2004]](./appendix-b-references.md).
+SysML v2 stores the history of a model as commits that cannot be
+changed, with branches and tags
+[[OMG, Systems Modeling API 2025]](./appendix-b-references.md). These are versions of a design
+repository, not of running instances, and a commit has no attribute for
+who decided it; a reason can be given only as free text. A DAO governor
+such as Compound's delays the execution of an adopted proposal by a
+timelock and records proposals, votes and delegated votes
+[[Compound Governance]](./appendix-b-references.md). It checks the proposal
+threshold, the quorum and the delegated votes when a proposal is
+executed, but not whether the change is one that a model declares
+amendable, and it has no versions or transitional provisions. CADL is
+rated ○ in the last row because Appendix L checks a record after the
+fact and enforces nothing at run time.
 
 ## 3.3 Uniqueness of CADL
 Within the scope of our survey, we found no existing approach that
