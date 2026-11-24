@@ -465,7 +465,7 @@ the party it names, follows it; or when the later entries cannot be
 compared with it (a vote prediction whose `expected` is neither `yes`
 nor `no`, or measurements without the value of its subject). A
 prediction that no later entry checked is not a finding: the record
-shows neither that it was borne out nor that it was missed. A writer
+does not show whether it was right or wrong. A writer
 that wants the predictions of a decision to be checked measures the
 option it chose after the decision, under conditions that the decision
 did not use, and compares it with the version in force under the same
@@ -712,7 +712,8 @@ From `cadl` 0.3.39 (decisions 0.3; `cadl` 0.3.38 implemented decisions
   examples again in continuous integration and compares their histories,
   GSN and findings. From v0.7.0, when the steward adopts an amendment,
   it measures the adopted proposal and the version in force under the
-  seeds and demand of the next period (`D<k>.n` and `D<k>.n0`), which
+  seeds and demand of the next period (`D<k>.n` and `D<k>.n0`; after
+  the last period, those of the first period of the scenario), which
   the decision did not use, so that a later entry checks the predictions
   of the decision about its choice.
 - The page Decision Evidence of cadl-explorer (from v1.5.0) reads a

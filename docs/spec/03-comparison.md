@@ -59,27 +59,33 @@ current reference implementation already provides every item.
 | Runtime monitoring | △ | △ | × | △ | × | ◎ | ◎ |
 | Environment modeling | × | × | × | △ | ○ | × | ◎ |
 | AI integration | × | × | × | × | × | △ | ◎ |
-| Versioned amendment with transitional provisions | △ | × | × | × | △ | ○ | ◎ |
+| Versioned amendment with transitional provisions | △ | × | × | × | △ | △ | ◎ |
 | Checked records of decisions and delegation | △ | × | × | × | × | △ | ○ |
 
-The last two rows concern the amendment of an institution and the
-records of the decisions that amend it
-([Appendix K](./appendix-k-amendment.md),
-[Appendix L](./appendix-l-decisions.md)). A reorganisation in MOISE+ is
-a plan of changes to the organisational specification that roles
-propose, select and carry out, and a Historian role logs each change
-[[Hübner+, SBIA 2004]](./appendix-b-references.md); versions of the organisation, and how a
-running organisation passes to a new one, are not defined. OperA leaves
-changing a running society to future work [[Dignum, 2004]](./appendix-b-references.md).
-SysML v2 keeps the history of a model as immutable commits with
-branches and tags [[OMG, Systems Modeling API 2025]](./appendix-b-references.md), but for the
-design repository rather than for running instances, and a commit
-records no decider and no reason. DAO governors delay the execution of
-an adopted proposal by a timelock, and record proposals, votes and
-delegated votes [[Compound Governance]](./appendix-b-references.md); they do not check a
-decision afterwards against a model's declaration of who may amend
-what. CADL is rated ○ in the last row because Appendix L checks a record
-after the fact and enforces nothing at run time.
+The last two rows concern amending an institution and recording the
+decisions that amend it ([Appendix K](./appendix-k-amendment.md),
+[Appendix L](./appendix-l-decisions.md)). In MOISE+, a reorganisation is
+a plan of changes to the organisation; Designer roles propose plans, a
+Selector chooses one, an OrgManager carries it out, and a Historian
+records each change [[Hübner+, SBIA 2004]](./appendix-b-references.md).
+The paper defines no versions of the organisation and leaves open what
+happens to the commitments that agents made under a role that is
+removed. OperA leaves to future work the verification of a model after a
+change, such as the removal of a role, and does not define how a running
+society moves to a changed model
+[[Dignum, 2004]](./appendix-b-references.md). SysML v2 stores the history of a
+model as commits that cannot be changed, with branches and tags
+[[OMG, Systems Modeling API 2025]](./appendix-b-references.md). These are
+versions of a design repository, not of running instances, and a commit
+has no attribute for who decided it; a reason can be given only as free
+text. A DAO governor such as Compound's delays the execution of an
+adopted proposal by a timelock and records proposals, votes and
+delegated votes [[Compound Governance]](./appendix-b-references.md). It
+checks the proposal threshold, the quorum and the delegated votes when a
+proposal is executed, but not whether the change is one that a model
+declares amendable, and it has no versions or transitional provisions.
+CADL is rated ○ in the last row because Appendix L checks a record after
+the fact and enforces nothing at run time.
 
 ## 3.3 Uniqueness of CADL
 Within the scope of our survey, we found no existing approach that
@@ -138,21 +144,25 @@ with the institutionalised power to change them
 [[Pitt+, TAAS 2012]](./appendix-b-references.md), and a monitor can
 follow norms that are added and removed at run time
 [[Gómez-Sebastià, 2016]](./appendix-b-references.md).
-Recent work on LLM agents comes closer. Arguments drafted by an LLM can
-be admitted into a decision record only after deterministic checks of
-their evidence, with W3C PROV provenance of what the model wrote and a
-GSN-like view [[Moghaddam, arXiv 2026]](./appendix-b-references.md); rules legislated by
-agents can be layered under contracts that people write and agents
-cannot change, with every agent bound to a human principal
-[[Ruan & Zhang, arXiv 2026]](./appendix-b-references.md); and the authority delegated along a
-chain of LLM agents can be narrowed, given an expiry, revoked, and
-reconstructed afterwards from what was done under it
-[[Patil, arXiv 2026]](./appendix-b-references.md),
-[[Mishra & Sharad, arXiv 2026]](./appendix-b-references.md). These works check authority
-before an action takes effect or record the actions taken under a
-delegation. In the first, the LLM drafts and a person decides; in the
-second, the declaration of who may change which contracts is enforced
-beforehand rather than checked against a record of the decisions.
+Some recent work on LLM agents addresses similar questions. In the
+design of Moghaddam, an LLM drafts parts of an argument, a draft enters
+the decision record only if deterministic checks of its evidence pass,
+the provenance of what the model wrote is kept with W3C PROV, and the
+argument can be shown in a GSN-like view; people review the drafts and
+can override them [[Moghaddam, arXiv 2026]](./appendix-b-references.md).
+In AgentCity, agents write operational contracts, people write the
+foundational and procedural contracts, which agents cannot change, and
+every agent is assigned to a responsible person
+[[Ruan & Zhang, arXiv 2026]](./appendix-b-references.md). SentinelAgent narrows the authority
+delegated along a chain of LLM agents, gives it an expiry and allows it
+to be revoked [[Patil, arXiv 2026]](./appendix-b-references.md). Mishra
+and Sharad record each action with the delegation under which it was
+taken, so that what was done under a delegation can be found afterwards
+[[Mishra & Sharad, arXiv 2026]](./appendix-b-references.md). These works
+check authority before an action takes effect, or record the actions
+taken under a delegation. In AgentCity, the rule on who may change which
+contracts is designed to be enforced before a change is made; it is not
+checked afterwards against a record of the decisions.
 
 Appendix L combines these parts for the amendments of an institutional
 model. Within the scope of our survey, we found no record format that is
